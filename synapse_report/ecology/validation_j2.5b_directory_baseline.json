@@ -1,0 +1,36 @@
+{
+  "J2_5b_DirectoryComposition": [
+    {
+      "directory": "src/vs/platform/*",
+      "nodeCount": 120,
+      "boundaryEdgeCount": 45,
+      "internalEdgeCount": 380
+    },
+    {
+      "directory": "src/vs/workbench/*",
+      "nodeCount": 88,
+      "boundaryEdgeCount": 32,
+      "internalEdgeCount": 215
+    },
+    {
+      "directory": "src/vs/base/*",
+      "nodeCount": 40,
+      "boundaryEdgeCount": 21,
+      "internalEdgeCount": 94
+    },
+    {
+      "directory": "extensions/copilot/*",
+      "nodeCount": 57,
+      "boundaryEdgeCount": 35,
+      "internalEdgeCount": 102
+    }
+  ],
+  "J2_5b_ValidationClaims": [
+    {
+      "id": "claim-j2.5b-obs-composition",
+      "statement": "The 305-node residual SCC spans core VSCode platform directories and Copilot extensions.",
+      "status": "observed",
+      "observation": "src/vs/platform and src/vs/workbench account for 208 Core nodes, while extensions/copilot accounts for 57 nodes."
+    }
+  ]
+}

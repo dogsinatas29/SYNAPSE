@@ -1,0 +1,305 @@
+{
+  "experiment": "multi_cause",
+  "victims": [
+    {
+      "nodeId": ".devcontainer/README.md",
+      "path": ".devcontainer/README.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "README.md",
+      "path": "README.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/copilot/CONTRIBUTING.md",
+      "path": "extensions/copilot/CONTRIBUTING.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/copilot/docs/NES_EXPECTED_EDIT_CAPTURE.md",
+      "path": "extensions/copilot/docs/NES_EXPECTED_EDIT_CAPTURE.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/copilot/script/eslintGitBlameReport/generateEslintIgnoreReport.ts",
+      "path": "extensions/copilot/script/eslintGitBlameReport/generateEslintIgnoreReport.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/conversation/vscode-node/feedbackReporter.ts",
+      "path": "extensions/copilot/src/extension/conversation/vscode-node/feedbackReporter.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/prompt/node/feedbackReporter.ts",
+      "path": "extensions/copilot/src/extension/prompt/node/feedbackReporter.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/typescriptContext/DEVELOPMENT.md",
+      "path": "extensions/copilot/src/extension/typescriptContext/DEVELOPMENT.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/xtab/common/globalBudgetCascade.md",
+      "path": "extensions/copilot/src/extension/xtab/common/globalBudgetCascade.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/copilot/src/platform/editSurvivalTracking/common/editSurvivalReporter.ts",
+      "path": "extensions/copilot/src/platform/editSurvivalTracking/common/editSurvivalReporter.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/copilot/src/platform/telemetry/common/failingTelemetryReporter.ts",
+      "path": "extensions/copilot/src/platform/telemetry/common/failingTelemetryReporter.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/copilot/src/platform/telemetry/node/azureInsightsReporter.ts",
+      "path": "extensions/copilot/src/platform/telemetry/node/azureInsightsReporter.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/copilot/test/simulation/tools/README.md",
+      "path": "extensions/copilot/test/simulation/tools/README.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/microsoft-authentication/src/common/telemetryReporter.ts",
+      "path": "extensions/microsoft-authentication/src/common/telemetryReporter.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/theme-seti/CONTRIBUTING.md",
+      "path": "extensions/theme-seti/CONTRIBUTING.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "extensions/theme-seti/README.md",
+      "path": "extensions/theme-seti/README.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/OTEL.md",
+      "path": "src/vs/platform/agentHost/OTEL.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/agentHostTelemetryReporter.ts",
+      "path": "src/vs/platform/agentHost/node/agentHostTelemetryReporter.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/CONTEXT.md",
+      "path": "src/vs/platform/agentHost/node/claude/CONTEXT.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase-plan.2.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase-plan.2.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase10-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase10-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase12-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase12-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase13-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase13-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase15-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase15-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase16-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase16-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase17-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase17-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase4-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase4-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase5-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase5-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase6-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase6-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase6.1-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase6.1-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase6.5-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase6.5-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase7-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase7-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase8.5-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase8.5-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/phase9-plan.md",
+      "path": "src/vs/platform/agentHost/node/claude/phase9-plan.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/claude/roadmap.md",
+      "path": "src/vs/platform/agentHost/node/claude/roadmap.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/shared/editSurvivalReporter.ts",
+      "path": "src/vs/platform/agentHost/node/shared/editSurvivalReporter.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/test/node/shared/editSurvivalReporter.test.ts",
+      "path": "src/vs/platform/agentHost/test/node/shared/editSurvivalReporter.test.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/sessions/LAYOUT.md",
+      "path": "src/vs/sessions/LAYOUT.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/sessions/LAYOUT_CONTROLLER.md",
+      "path": "src/vs/sessions/LAYOUT_CONTROLLER.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/sessions/README.md",
+      "path": "src/vs/sessions/README.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/sessions/contrib/github/PR_ICON_POLLING.md",
+      "path": "src/vs/sessions/contrib/github/PR_ICON_POLLING.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/sessions/contrib/layout/browser/baseSessionLayoutController.md",
+      "path": "src/vs/sessions/contrib/layout/browser/baseSessionLayoutController.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/sessions/contrib/layout/browser/desktopSessionLayoutController.md",
+      "path": "src/vs/sessions/contrib/layout/browser/desktopSessionLayoutController.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/sessions/contrib/layout/browser/mobileSessionLayoutController.md",
+      "path": "src/vs/sessions/contrib/layout/browser/mobileSessionLayoutController.md",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/editTelemetry/browser/telemetry/arcTelemetryReporter.ts",
+      "path": "src/vs/workbench/contrib/editTelemetry/browser/telemetry/arcTelemetryReporter.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/extensions/common/reportExtensionIssueAction.ts",
+      "path": "src/vs/workbench/contrib/extensions/common/reportExtensionIssueAction.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/browser/baseIssueReporterService.ts",
+      "path": "src/vs/workbench/contrib/issue/browser/baseIssueReporterService.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/browser/issueReporterEditorInput.ts",
+      "path": "src/vs/workbench/contrib/issue/browser/issueReporterEditorInput.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/browser/issueReporterModel.ts",
+      "path": "src/vs/workbench/contrib/issue/browser/issueReporterModel.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/browser/issueReporterOverlay.ts",
+      "path": "src/vs/workbench/contrib/issue/browser/issueReporterOverlay.ts",
+      "peakRegistryCount": 5,
+      "recoverySteps": 5
+    }
+  ]
+}

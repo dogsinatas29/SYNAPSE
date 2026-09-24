@@ -1,0 +1,50 @@
+{
+  "C1": {
+    "edgeCount": 39824,
+    "largestSccSize": 6,
+    "top10SccSum": 33,
+    "totalSccCount": 14,
+    "nodesInScc": 41,
+    "sccOccupancy": 0.00414727898037629
+  },
+  "C2": {
+    "edgeCount": 39824,
+    "largestSccSize": 6,
+    "top10SccSum": 33,
+    "totalSccCount": 14,
+    "nodesInScc": 41,
+    "sccOccupancy": 0.00414727898037629
+  },
+  "C3": {
+    "edgeCount": 48865,
+    "largestSccSize": 157,
+    "top10SccSum": 193,
+    "totalSccCount": 26,
+    "nodesInScc": 225,
+    "sccOccupancy": 0.022759457819138174
+  },
+  "C4": {
+    "edgeCount": 89506,
+    "largestSccSize": 2489,
+    "top10SccSum": 2562,
+    "totalSccCount": 50,
+    "nodesInScc": 2648,
+    "sccOccupancy": 0.26785353024479064
+  },
+  "C5": {
+    "edgeCount": 102325,
+    "largestSccSize": 2699,
+    "top10SccSum": 2748,
+    "totalSccCount": 50,
+    "nodesInScc": 2832,
+    "sccOccupancy": 0.2864657090835525
+  },
+  "BASE": {
+    "edgeCount": 102325,
+    "largestSccSize": 2699,
+    "top10SccSum": 2748,
+    "totalSccCount": 50,
+    "nodesInScc": 2832,
+    "sccOccupancy": 0.2864657090835525
+  }
+}

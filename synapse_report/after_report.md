@@ -1,0 +1,9487 @@
+# SYNAPSE Reasoning Report
+
+## Graph Stats
+- Nodes: 14695
+- Edges: 112029
+
+## Q1~Q8 Answers
+
+### Q3: 무엇이 핵심이고 무엇이 부수적인가? (Core vs Utility)
+**Summary**: Identified 174 Core Pillars, 0 Supporting nodes, and 0 Utilities.
+**Confidence**: 0.9
+
+#### Items:
+- **@modelcontextprotocol/sdk/server/mcp** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **@modelcontextprotocol/sdk/types** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **@typescript-eslint/typescript-estree** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **@vscode/prompt-tsx/dist/base/output/rawTypes** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **ahp_types** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **base/common/types** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/agents/node/adapters/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/agents/vscode-node/agentTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/chatSessions/claude/node/sessionParser/claudeSessionSchema.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/chatSessions/common/taskApiTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/chronicle/common/cloudSessionTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/lib/panelShared/panelTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/basePanelTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/test/modelPicker.test.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/statementTree.test.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/networkingTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/contextProviders/contextItemSchemas.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/inlineChat/node/promptCraftingTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/prompt/common/specialRequestTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/tools/common/toolSchemaNormalizer.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/tools/common/virtualTools/virtualToolTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/typescript.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/typescripts.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/extension/typescriptContext/vscode-node/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/platform/chat/common/commonTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/platform/chat/common/conversationOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/platform/configuration/common/jsonSchema.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/platform/customInstructions/common/promptTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/platform/endpoint/common/endpointTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/platform/filesystem/common/fileTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/inlineEditsModelsTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/xtabPromptOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/platform/workspaceChunkSearch/common/githubAvailableEmbeddingTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/shared-fetch-utils/common/fetchTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/util/common/test/shims/chatTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/util/common/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/util/vs/base/common/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/src/vscodeTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/test/base/simulationOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/test/pipeline/logRecordingTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/test/simulation/shared/sharedTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/test/simulation/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/test/simulation/workbench/stores/nesExternalOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/copilot/test/simulation/workbench/stores/runnerOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/markdown-language-features/src/preview/previewConfig.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/markdown-language-features/types/previewMessaging** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/notebook-renderers/src/rendererTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/terminal-suggest/src/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **extensions/typescript-language-features/src/tsServer/protocol/protocol** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/base/browser/trustedTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/base/browser/ui/scrollbar/scrollableElementOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/base/browser/ui/scrollbar/scrollbarState.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/base/browser/ui/tree/compressedObjectTreeModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/base/common/jsonSchema.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/base/common/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/base/parts/sandbox/common/electronTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/base/parts/sandbox/common/sandboxTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/base/parts/sandbox/node/electronTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/browser/config/editorConfiguration.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/browser/viewParts/viewLines/viewLineOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/browser/widget/diffEditor/diffEditorOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/browser/widget/diffEditor/diffEditorViewModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/browser/widget/multiDiffEditor/model.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/config/editorConfiguration.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/config/editorOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/core/text/getPositionOffsetTransformerFromTextModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/languages/languageConfigurationRegistry.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/model.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/model/textModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/model/textModelSearch.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/model/textModelText.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/modelLineProjectionData.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/services/model.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/services/textResourceConfiguration.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/textModelEditSource.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/textModelEvents.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/textModelGuides.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/tokenizationTextModelPart.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/viewModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/viewModel/modelLineProjection.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/viewModel/screenReaderSimpleModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/viewModel/viewModelDecoration.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/viewModel/viewModelImpl.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/viewModel/viewModelLines.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/common/viewModelEventDispatcher.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/contrib/codeAction/common/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/contrib/documentSymbols/browser/outlineModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/contrib/hover/browser/contentHoverTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/contrib/hover/browser/hoverTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/contrib/inlineCompletions/browser/model/inlineCompletionsModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/contrib/inlineCompletions/browser/model/textModelValueReference.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/contrib/inlineCompletions/browser/view/inlineEdits/inlineEditsModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/contrib/semanticTokens/common/semanticTokensConfig.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/standalone/common/monarch/monarchTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/test/browser/config/testConfiguration.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/editor/test/common/testTextModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/platform/agentHost/common/agentHostSchema.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/platform/agentHost/common/claudeModelConfig.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/platform/agentHost/common/sandboxConfigSchema.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/platform/agentHost/common/state/sessionState.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/platform/agentHost/node/claude/clientTools/claudeJsonSchemaToZod.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/platform/browserView/common/cdp/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/platform/configuration/common/configuration.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/platform/configuration/common/configurationRegistry.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/platform/mcp/common/mcpPlatformTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/platform/otel/node/otlp/otlpJsonTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/sessions/contrib/github/browser/models/githubPullRequestCIModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/sessions/contrib/github/browser/models/githubPullRequestReviewThreadsModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/sessions/contrib/github/common/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/api/common/extHostTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/common/editor/editorGroupModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/accessibility/browser/accessibilityConfiguration.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionApprovalModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/browser/chatManagement/chatModelsViewModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/common/languageModels.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/common/languageModelsConfiguration.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/common/model/chatModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/common/model/chatViewModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/common/participants/chatParticipantContribTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/common/promptSyntax/hookSchema.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/common/promptSyntax/hookTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/common/promptSyntax/promptTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/chat/common/requestParser/chatParserTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/codeEditor/browser/simpleEditorOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/comments/browser/commentsModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/comments/common/commentModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/debug/common/debugModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/debug/common/replModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/debug/test/browser/mockDebugModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/files/common/explorerModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/imageCarousel/browser/imageCarouselTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/markers/browser/markersFilterOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/markers/browser/markersModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/mcp/common/mcpRegistryTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/mcp/common/mcpTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/mcp/test/common/mcpRegistryTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/mergeEditor/browser/model/mergeEditorModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/mergeEditor/browser/view/viewModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/browser/contrib/find/findModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/browser/diff/diffCellEditorOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/browser/diff/diffElementViewModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/browser/diff/diffNestedCellViewModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/browser/diff/notebookDiffViewModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/browser/notebookOptions.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/browser/viewModel/baseCellViewModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/browser/viewModel/codeCellViewModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/browser/viewModel/foldingModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/browser/viewModel/markupCellViewModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/browser/viewModel/notebookViewModelImpl.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/common/model/notebookCellTextModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/onboarding/browser/spotlight/spotlightTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/search/browser/AISearch/aiSearchModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/search/browser/AISearch/aiSearchModelBase.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/search/browser/notebookSearch/notebookSearchModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/search/browser/notebookSearch/notebookSearchModelBase.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/search/browser/searchTreeModel/searchModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/monitoring/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/testing/browser/explorerProjections/testingViewState.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/testing/common/configuration.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/testing/common/testExplorerFilterState.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/testing/common/testingStates.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/testing/common/testTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/contrib/welcomeOnboarding/common/onboardingTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/services/remote/common/tunnelModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/services/search/common/localFileSearchWorkerTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/services/search/common/searchExtConversionTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/services/search/common/searchExtTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **src/vs/workbench/services/search/common/searchExtTypesInternal.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **typescript/lib/tsserverlibrary** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **vscode-languageserver-types** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+
+### Q4: 어디서 확장해야 하나? (Where are the Extension Points?)
+**Summary**: Identified 722 Designed Extension Points.
+**Confidence**: 1
+
+#### Items:
+- **eslint.Rule.RuleModule** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 44 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/byok/node/openAIEndpoint.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/endpoint/node/chatEndpoint.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 11 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/byok/vscode-node/abstractLanguageModelChatProvider.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- **extensions/copilot/src/extension/byok/vscode-node/abstractLanguageModelChatProvider.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- **extensions/copilot/src/extension/byok/vscode-node/test/geminiNativeProvider.spec.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 11 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **extensions/copilot/src/extension/common/contributions.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/chat/common/chatHookService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/chat/common/sessionTranscriptService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/chat/vscode-node/test/chatDebugFileLoggerService.spec.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **Copilot.ContextResolver** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeMcpServerRegistry.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/.eslintplugin/no-funny-filename.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 91 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 74 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermissionService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermission.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeAgentSdkLoaderService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/common/folderRepositoryManager.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeCodeSdkService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/networking/common/networking.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 12 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/common/folderRepositoryManager.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/copilotCLIChatSessionParticipant.spec.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/byok/vscode-node/test/anthropicProvider.spec.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 51 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 23 architectural clusters.
+- **extensions/copilot/src/platform/endpoint/common/endpointProvider.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/claudeSlashCommandRegistry.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/lib/vscode-node/test/nesProvider.spec.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCLIImageSupport.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/agents/vscode-node/githubOrgChatResourcesService.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 14 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
+- **extensions/copilot/src/extension/inlineEdits/node/nextEditProviderTelemetry.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/mcpHandler.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCli.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudePluginService.spec.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/userInputHelpers.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/common/agentSessionsWorkspace.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/common/customSessionTitleService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vscode-dts/vscode.d.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 24 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
+- **extensions/copilot/src/extension/agents/vscode-node/test/githubOrgChatResourcesService.spec.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/common/taskApiTypes.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/node/sessionParser/test/claudeCodeSessionService.spec.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/byok/vscode-node/test/anthropicProvider.spec.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 51 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 23 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliSessionService.spec.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/extension/commands/node/commandService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/extension/trajectory/vscode-node/otelChatDebugLogProvider.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 100 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 79 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/config.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/config.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/fileSystem.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/progress.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/typescript-language-features/src/tsServer/versionManager.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/textDocumentManager.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/agent/defaultAgentInstructions.tsx** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/nesFetch/common/completionsFetchService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/networking.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/notificationSender.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/completionsPromptFactory/completionsPromptFactory.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/completionsPromptFactory/completionsPromptFactory.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/similarFiles/relatedFiles.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/fetcher.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/telemetry.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/networkingTypes.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/telemetry.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/ignore/common/ignoreService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/textDocument.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/textDocument.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/snippetInclusion/selectRelevance.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/snippetInclusion/selectRelevance.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/components/components.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 159 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 34 architectural clusters.
+- **extensions/copilot/src/extension/prompt/node/intents.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 29 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/base/promptRenderer.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/workbench/common/workbenchService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/chat/common/chatAgents.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/authentication/common/authentication.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/prompt/node/intents.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 29 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/util/common/test/shims/textEditor.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/extension/inlineEdits/node/nextEditResult.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/inlineEdits/common/statelessNextEditProvider.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/diff/common/diffService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/features/diagnosticsBasedCompletions/diagnosticsCompletions.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/features/diagnosticsBasedCompletions/diagnosticsCompletions.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- **extensions/copilot/src/platform/inlineEdits/common/observableWorkspace.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/xtab/common/similarFilesContextService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/linkify/common/linkifyService.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/components/components.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 159 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 34 architectural clusters.
+- **extensions/copilot/src/extension/intents/node/toolCallingLoop.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/inlineChat/vscode-node/inlineChatCommands.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/html-language-features/client/src/requests.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/common/chatResponseStreamImpl.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/filesystem/common/fileSystemService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/contrib/terminalContrib/suggest/browser/terminal.suggest.contribution.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 19 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/missionControlApiClient.spec.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/extension/mcp/vscode-node/util.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/mcp/vscode-node/nuget.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/snippet/browser/snippetParser.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/prompt/node/chatMLFetcher.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/prompt/node/promptVariablesService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/agents/vscode-node/test/githubOrgChatResourcesService.spec.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/review/node/test/githubReviewAgent.spec.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/prompt/vscode-node/endpointProviderImpl.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotcliPromptResolver.spec.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/search/common/searchService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/platform/tabs/common/tabsAndEditorsService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/devcontainer/common/devContainerConfigurationService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/git/common/gitCommitMessageService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/git/common/gitDiffService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/requestLogger/node/requestLogger.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/settingsEditor/common/settingsEditorSearchService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/agent/promptRegistry.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 18 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/prompt/node/intents.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 29 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/panel/safeElements.tsx** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/5710.summarized.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/5710.summarized.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **editorCommon.IEditorDecorationsCollection** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **.eslint-plugin-local/code-layering.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **IssueModel** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/menu/menubar.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/common/actions.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/tempo-actions.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 251 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 132 architectural clusters.
+- **src/vs/editor/browser/editorExtensions.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 67 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 59 architectural clusters.
+- **src/vs/workbench/common/contributions.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 67 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 51 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCloudSessionContentBuilder.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/review/common/reviewService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/scopeSelection/common/scopeSelection.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/testing/common/workspaceMutationManager.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/tools/common/toolsService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/tools/common/virtualTools/toolEmbeddingsComputer.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/tools/common/toolsRegistry.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 27 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/adjustSelection.spec.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/tools/node/test/testToolsService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/configuration-editing/src/settingsDocumentHelper.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p1/source/f1.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p10/source/f2.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chronicle/common/test/sessionStoreTracking.spec.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 13 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/statementTree.test.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 35 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 30 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/claudeChatSessionContentProvider.spec.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/claudeChatSessionContentProvider.spec.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p4/source/f1.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/telemetryHandlers.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/types/src/contextProviderApiV1.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/contextProvider.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **cli/src/log.rs** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/api.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/lib/node/chatLibMain.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/platform/telemetry/common/telemetry.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 18 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 10 architectural clusters.
+- **extensions/copilot/src/platform/networking/common/networking.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 12 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
+- **extensions/copilot/src/platform/authentication/common/copilotTokenManager.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/authentication/node/copilotTokenManager.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/errors.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/chat/common/chatMLFetcher.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/chat/common/chatSessionService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/configuration/common/configurationService.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/platform/configuration/common/configurationService.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/platform/dialog/common/dialogService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/extensions/common/extensionsService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/git/common/gitExtensionService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/git/common/gitService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/workspace/common/workspaceService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/extension/inlineEdits/node/nextEditProvider.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/inlineEdits/test/node/random.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/languages/common/languageFeaturesService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/platform/languages/common/languageDiagnosticsService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/lib/node/chatLibMain.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/src/platform/log/common/logService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/mcp/common/mcpService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/mcp/common/mcpService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/networking/node/baseFetchFetcher.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **EventTarget** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/notebook/common/alternativeContent.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/notebook/common/notebookService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/notification/common/notificationService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/platform/open/common/opener.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCliBridgeSpanProcessor.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeMessageDispatch.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **SpanExporter** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/statementTree.test.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 35 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 30 architectural clusters.
+- **extensions/copilot/src/extension/intents/test/node/editCodeIntent.spec.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/remoteCodeSearch/node/codeSearchRepoAuth.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/remoteSearch/common/codeOrDocsSearchClient.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/survey/common/surveyService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/inlineEdits/node/nextEditProviderTelemetry.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/platform/telemetry/node/baseExperimentationService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **IExperimentationFilterProvider** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/common/services.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/workspace/common/workspaceService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/platform/testing/common/testProvider.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/testing/node/testDepsResolver.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/common/component.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/util/common/diff.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 12 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 10 architectural clusters.
+- **extensions/copilot/src/extension/byok/common/test/geminiMessageConverter.spec.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **cli/src/util/sync.rs** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/languageContextProvider/vscode-node/languageContextProviderService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/inlineChat2/node/inlineChatIntent.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/codeEditorWidget.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/event.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/event.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/htmlContent.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/lifecycle.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 18 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/debugLocation.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/logging/logging.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/observables/baseObservable.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/base.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/base.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/resources.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/ternarySearchTree.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/addFileReference.spec.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/uri.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/util/vs/editor/common/core/edits/edit.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/editor/common/core/edits/stringEdit.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/equals.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/inline/visualization.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/vscodeInlineCompletionItemProvider.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/editor/common/core/text/abstractText.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/util/vs/editor/common/core/text/positionToOffsetImpl.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/editor/common/diff/linesDiffComputer.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/diff/common/diffWorker.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/inlineEdits/test/node/runRecording.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/util/vs/editor/common/model/mirrorTextModel.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/copilot/src/util/vs/platform/instantiation/common/instantiation.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/util/vs/editor/common/model/mirrorTextModel.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/configuration-editing/src/configurationEditingMain.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/completionNotifier.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/test/base/cache.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/test/base/cache.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/test/simulation/diagnosticProviders/utils.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- **extensions/copilot/test/simulation/diagnosticProviders/utils.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- **extensions/copilot/test/codeMapper/codeMapper.stest.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/api/common/extHostExtensionActivator.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/test/simulation/fixtures/codeMapper/quickInput.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/contrib/hover/browser/markdownHoverParticipant.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/extension/xtab/common/globalBudgetCascade.md** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/glob.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/test/simulation/fixtures/doc/issue-6406/debugModel.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 50 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/base/common/console.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/debug/common/debug.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 13 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 59 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 43 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/statementTree.test.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 35 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 30 architectural clusters.
+- **src/vs/editor/common/editorCommon.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 42 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 34 architectural clusters.
+- **src/vs/editor/contrib/zoneWidget/browser/zoneWidget.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/actions/browser/dropdownWithPrimaryActionViewItem.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
+- **src/vs/platform/actions/browser/toolbar.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 59 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 43 architectural clusters.
+- **src/vscode-dts/vscode.d.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 24 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
+- **src/vs/workbench/contrib/notebook/browser/controller/coreActions.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 10 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **extensions/copilot/test/simulation/fixtures/generate/issue-6505/chatParserTypes.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/filters.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 24 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
+- **IResourceMarkersTemplateData>** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/tree/objectTree.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 17 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 50 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/platform/list/browser/listService.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 18 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 17 architectural clusters.
+- **src/vs/workbench/browser/parts/views/viewPane.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 44 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
+- **src/vs/workbench/contrib/markers/browser/markersTreeViewer.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/byok/vscode-node/openRouterProvider.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/git/vscode/git.d.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 10 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/git/src/ipc/ipcServer.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/git/src/terminal.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/languages.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 30 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 20 architectural clusters.
+- **extensions/copilot/src/platform/git/vscode/git.d.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 10 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vscode-dts/vscode.d.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 24 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
+- **src/vs/editor/common/languages.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 30 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 20 architectural clusters.
+- **src/vscode-dts/vscode.d.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 24 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 16 architectural clusters.
+- **extensions/copilot/src/platform/telemetry/common/telemetry.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 18 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 10 architectural clusters.
+- **extensions/github-authentication/src/node/authServer.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/platform/test/node/testWorkbenchService.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 32 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/platform/telemetry/vscode-node/githubTelemetrySender.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/media-preview/src/mediaPreview.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/media-preview/src/ownedStatusBarEntry.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/microsoft-authentication/src/common/publicClientCache.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/languages.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 30 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 20 architectural clusters.
+- **extensions/references-view/src/references-view.d.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/typescript-language-features/src/tsServer/versionProvider.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/typescript-language-features/src/tsServer/server.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/vscode-colorize-perf-tests/test/colorize-fixtures/test-treeView.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 23 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 21 architectural clusters.
+- **ITreeItem>** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/list/list.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 69 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 50 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/platform/list/browser/listService.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 18 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 17 architectural clusters.
+- **src/vs/workbench/common/views.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/base/browser/dom.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/dropdown/dropdown.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/vscode-colorize-perf-tests/test/colorize-fixtures/test-treeView.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 23 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 21 architectural clusters.
+- **src/vs/base/browser/ui/widget.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 24 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 18 architectural clusters.
+- **src/vs/base/browser/ui/toggle/toggle.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/browser/dnd.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/list/rangeMap.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/test/simulation/fixtures/edit/6276.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/list/list.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 69 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **src/vs/base/parts/ipc/test/browser/ipc.mp.test.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/parts/ipc/common/ipc.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 30 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 22 architectural clusters.
+- **extensions/git/src/askpass-main.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/git/src/ipc/ipcServer.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/base/parts/ipc/common/ipc.net.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/parts/ipc/test/common/ipc.test.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/parts/ipc/common/ipc.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 30 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 22 architectural clusters.
+- **src/vs/base/parts/storage/common/storage.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/base/parts/storage/common/storage.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **extensions/mermaid-markdown-features/preview-src/shared/diagramManager.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/grid/grid.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/browser/ui/toolbar/toolbar.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/languages/javaScriptReact.tmLanguage.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 10 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
+- **HTMLElement>** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/base/browser/ui/list/list.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 69 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **src/vs/base/common/fuzzyScorer.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/util/vs/base/common/lifecycle.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 18 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
+- **src/vs/editor/browser/view/viewPart.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 17 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 17 architectural clusters.
+- **src/vs/editor/browser/controller/editContext/editContext.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/controller/editContext/screenReaderUtils.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/viewEventHandler.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/editor/browser/editorExtensions.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 67 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 59 architectural clusters.
+- **src/vs/editor/browser/services/bulkEditService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/opener/common/opener.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/modelLineProjectionData.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/view/viewLayer.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/editor/browser/view/dynamicViewOverlay.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/editor/browser/viewParts/glyphMargin/glyphMargin.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/view/viewLayer.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/codeEditorWidget.1.summarized.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/editor/browser/widget/diffEditor/components/accessibleDiffViewer.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/widget/diffEditor/diffProviderFactoryService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/common/diff/documentDiffProvider.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/browser/widget/diffEditor/diffEditorWidget.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/widget/diffEditor/utils/editorGutter.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/widget/diffEditor/utils.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/agents/node/langModelServer.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/editor/common/editorCommon.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 42 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 34 architectural clusters.
+- **src/vs/editor/common/config/fontInfo.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/common/coordinatesConverter.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/core/characterClassifier.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/undoRedo/common/undoRedo.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/editor/common/model/textModelPart.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/model/tokens/abstractSyntaxTokenBackend.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/common/worker/webWorker.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/editor/common/services/textModelSync/textModelSync.protocol.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/languages/language.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/tokens/lineTokens.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/editorExtensions.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 67 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 59 architectural clusters.
+- **src/vs/editor/browser/editorBrowser.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 14 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
+- **src/vs/editor/contrib/colorPicker/browser/colorPickerParticipantUtils.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/hover/browser/hoverTypes.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/editor/contrib/find/browser/findController.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/peekView/browser/peekView.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/contrib/gotoSymbol/browser/goToCommands.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/list/listWidget.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 36 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
+- **peekView.PeekViewWidget** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 50 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/platform/accessibility/browser/accessibleViewRegistry.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 29 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 22 architectural clusters.
+- **src/vs/editor/browser/editorBrowser.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 14 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
+- **src/vs/platform/quickinput/common/quickAccess.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/editor/contrib/quickAccess/browser/gotoLineQuickAccess.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/common/languages.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 30 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 20 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/codeMapper/patchEditGeneration.tsx** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/editorBrowser.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 14 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
+- **src/vs/editor/contrib/quickAccess/browser/commandsQuickAccess.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/quickAccess/browser/gotoSymbolQuickAccess.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/quickinput/browser/quickInputService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/quickinput/common/quickInput.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/contrib/gotoSymbol/browser/peek/referencesController.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/services/abstractCodeEditorService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/platform/configuration/common/configurationService.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/code/electron-main/main.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/editor/browser/services/bulkEditService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/editor/common/services/languageService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/services/textResourceConfiguration.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/defaultAccount/common/defaultAccount.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/keybinding/common/abstractKeybindingService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/label/common/label.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/workspace/common/workspace.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/editor/common/services/treeSitter/treeSitterLibraryService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **languages.IState** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/languages.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 30 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 20 architectural clusters.
+- **src/vs/editor/common/languages/linkComputer.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/actions/browser/actionViewItemService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/browser/ui/dropdown/dropdownActionViewItem.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/platform/agentHost/common/agentHostFileSystemProvider.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/log/common/log.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 17 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
+- **src/vs/platform/agentHost/common/agentHostChangesetOperationService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/node/agentHostCompletions.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/common/agentHostGitService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/common/agentHostGitStateService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/common/agentPluginManager.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/common/agentService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/agentHost/node/claude/claudeAgentSdkService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/node/shared/loopbackProxyServer.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/agentHost/common/sessionDataService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/agentHost/common/sessionDataService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/agentHost/node/shared/agentHostOctoKitService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/common/agentServerTools.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/agentHost/node/shared/copilotApiService.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/agentHost/common/agentHostFileSystemService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/test/simulation/fixtures/codeMapper/extHostExtensionActivator.test.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/agentHost/common/agentHostChangesetService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- **src/vs/platform/agentHost/test/node/copilotAgentSession.test.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/windows/electron-main/windowImpl.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/platform/backup/electron-main/backup.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/clipboard/common/clipboardService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/diagnostics/common/diagnostics.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/dialogs/electron-main/dialogMainService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
+- **src/vs/platform/environment/common/environmentService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/extensionManagement/common/abstractExtensionManagementService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/extensionManagement/common/extensionGalleryManifestService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/extensionManagement/common/extensionGalleryService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/extensionManagement/common/extensionTipsService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/extensionManagement/common/extensionsProfileScannerService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/extensionManagement/common/abstractExtensionManagementService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/extensionManagement/common/extensionsScannerService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/platform/extensionManagement/common/extensionTipsService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/extensionManagement/common/extensionsScannerService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/platform/extensionRecommendations/common/extensionRecommendations.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/extensionResourceLoader/common/extensionResourceLoader.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/files/common/fileService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/files/node/diskFileSystemProviderServer.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/files/common/diskFileSystemProvider.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/files/node/watcher/baseWatcher.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/files/common/watcher.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/files/common/files.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 13 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
+- **src/vs/platform/keybinding/common/baseResolvedKeybinding.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/codeAction/test/browser/codeActionModel.test.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/platform/keyboardLayout/common/keyboardMapper.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/languagePacks/common/languagePacks.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/list/browser/listService.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 18 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 17 architectural clusters.
+- **src/vs/platform/log/common/log.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 17 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
+- **src/vs/platform/log/common/log.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 17 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 11 architectural clusters.
+- **src/vs/platform/mcp/common/mcpManagementService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/mcp/common/mcpManagementService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/meteredConnection/common/meteredConnection.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/native/common/native.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/policy/common/copilotManagedSettings.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/policy/common/policy.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/quickinput/browser/pickerQuickAccess.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 17 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 15 architectural clusters.
+- **src/vs/platform/theme/common/themeService.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 18 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 13 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 50 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/platform/agentHost/node/agentSdkDownloader.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/request/common/request.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/sandbox/common/sandboxHelperService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/encryption/common/encryptionService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/secrets/common/secrets.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/sign/common/abstractSignService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/storage/common/storage.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/telemetry/common/1dsAppender.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/telemetry/common/errorTelemetry.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/agentHost/node/agentHostTelemetryService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/src/platform/telemetry/vscode-node/telemetryServiceImpl.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/telemetry/common/telemetry.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/terminal/common/capabilities/capabilities.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/tunnel/common/tunnel.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/update/common/update.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/url/common/url.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/url/common/urlService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/files/common/files.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 13 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
+- **src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 9 architectural clusters.
+- **src/vs/platform/userDataProfile/common/userDataProfileStorageService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/userDataProfile/common/userDataProfileStorageService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/base/parts/storage/common/storage.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/userDataSync/common/abstractSynchronizer.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 13 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/userDataSync/common/userDataSync.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/platform/userDataSync/common/abstractSynchronizer.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 13 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/userDataSync/common/userDataSyncStoreService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/find/test/browser/findController.test.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/userDataSync/common/userDataSync.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/platform/webContentExtractor/common/webContentExtractor.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/workspace/common/workspace.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **BaseWorkspace** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/script/analyzeEdits.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/remote/common/remoteExtensionsScanner.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/configurationResolver/common/variableResolver.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/sessions/browser/chatDashboardService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/paneCompositePart.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/panel/workspace/visualFileTree.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/sessions/browser/parts/titlebarPart.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/part.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/tempo-actions.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 251 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 132 architectural clusters.
+- **IFileTemplateData>** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/browser/parts/sessionHeaderMetaActionViewItem.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/browser/ui/tree/tree.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 50 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 38 architectural clusters.
+- **src/vs/platform/actions/browser/actionWidgetDropdownActionViewItem.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/workbench/browser/parts/views/viewPaneContainer.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/widget/input/editor/agentHostInputCompletionsBase.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/AI_CUSTOMIZATIONS.md** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/sessions/contrib/providers/remoteAgentHost/test/browser/remoteAgentHostCustomizationHarness.test.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/contrib/chat/browser/sessionTypePicker.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/inlineChat/browser/inlineChatSessionService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsOpener.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/contrib/chat/browser/sessionWorkspacePicker.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/contrib/chat/browser/sessionTaskRunner.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/contrib/semanticTokens/test/browser/documentSemanticTokens.test.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostModelPicker.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/contrib/layout/browser/baseSessionLayoutController.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostModePicker.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/services/sessions/common/session.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/sessions/contrib/providers/agentHost/browser/baseAgentHostSessionsProvider.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/quickinput/browser/pickerQuickAccess.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 17 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 15 architectural clusters.
+- **src/vs/sessions/electron-browser/parts/titlebarPart.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/notebook/test/browser/testNotebookEditor.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/chat/common/chatEntitlementService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/chatSessionsService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/services/workingCopy/common/resourceWorkingCopy.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/debug/common/abstractDebugAdapter.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/remote/common/managedSocket.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/notebook/common/notebookKernelService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/workingCopy/common/workingCopyFileService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/textfile/common/textfiles.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/api/common/extHost.protocol.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 86 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/api/common/extHostDebugService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/extensions/common/extensionDescriptionRegistry.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/api/common/extHostRpcService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/api/common/extHostTask.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/terminal/common/terminal.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/workbench/api/common/extHostTerminalService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/testing/common/testTypes.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/testing/common/testItemCollection.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/askUserQuestionHandler.spec.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/copilot/src/extension/codeBlocks/vscode-node/provider.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **extensions/copilot/test/simulation/fixtures/doc/issue-6406/debugModel.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/api/common/extHostConsoleForwarder.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/api/common/extHostExtensionService.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/api/common/extHostRequireInterceptor.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/platform/dialogs/common/dialogs.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/base/browser/ui/breadcrumbs/breadcrumbsWidget.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/editor/editorPane.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 32 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 28 architectural clusters.
+- **src/vs/workbench/browser/parts/editor/editorWithViewState.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/common/editor.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 37 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 32 architectural clusters.
+- **src/vs/workbench/browser/parts/editor/textEditor.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/editor/textCodeEditor.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/browser/parts/editor/textResourceEditor.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/browser/parts/titlebar/menubarControl.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/titlebar/titlebarActions.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/browser/parts/titlebar/titlebarPart.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/actions/browser/menuEntryActionViewItem.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **extensions/markdown-language-features/markdown-editor-src/editor.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 15 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 12 architectural clusters.
+- **src/vs/workbench/common/editor/editorInput.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 36 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 29 architectural clusters.
+- **src/vs/workbench/common/editor.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 37 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 32 architectural clusters.
+- **src/vs/workbench/common/editor/resourceEditorInput.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/common/editor/textResourceEditorInput.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/common/editor/textEditorModel.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/contrib/browserView/electron-browser/browserEditor.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 16 implementations.
+- **src/vs/workbench/contrib/codeEditor/browser/find/simpleFindWidget.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/clickBrowserTool.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 25 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/platform/undoRedo/common/undoRedo.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/editor/common/services/resolverService.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 14 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 14 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/attachments/chatContextPickService.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingActions.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/actions/exportAgentHostDebugLogsAction.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/dropdown/dropdownActionViewItem.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/base/browser/ui/list/listPaging.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/extensions/browser/extensionsViews.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatInputPickerActionItem.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/tree/asyncDataTree.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/attachments/chatVariables.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/multiDiffEditor/browser/multiDiffSourceResolverService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/browser/ui/table/table.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/defaultModelContribution.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/plugins/pluginGitCommandService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/tools/chatToolRiskAssessmentService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatCollapsibleContentPart.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolInvocationSubPart.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 11 implementations.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/abstractToolConfirmationSubPart.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- **src/vs/base/browser/ui/list/list.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 69 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/enablement.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/languageModels.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/enablement.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/plugins/AGENTS_PLUGINS.md** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/tools/languageModelToolsConfirmationService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **Iterable** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/chat/common/chatSessionsService.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/contrib/chat/browser/chat.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/platform/agentHost/test/node/agentHostFileMonitorService.test.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/base/browser/ui/list/list.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 69 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 42 architectural clusters.
+- **src/vs/workbench/browser/parts/views/viewPane.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 44 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
+- **src/vs/editor/common/model.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **FilterData>** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/list/browser/listService.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 18 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 17 architectural clusters.
+- **src/vs/workbench/browser/parts/views/viewPane.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 44 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 24 architectural clusters.
+- **IErrorTemplateData>** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/debug/common/debug.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 13 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/base/browser/ui/table/table.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **FuzzyScore>** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/common/views.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/workbench/contrib/emmet/browser/emmetActions.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/extensions/browser/abstractRuntimeExtensionsEditor.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/extensions/browser/extensionRecommendationNotificationService.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- **src/vs/platform/userDataSync/common/extensionsSync.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/decorations/common/decorations.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **ExplorerItem>** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/files/browser/views/explorerViewer.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/inlineChat/browser/inlineChatWidget.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/issue/common/issue.contribution.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/issue/browser/baseIssueReporterService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/issue/common/issue.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/issue/browser/screenshotService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/localization/common/localization.contribution.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/mcp/common/mcpGatewayService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/mcp/common/discovery/nativeMcpDiscoveryAbstract.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/mcp/common/discovery/nativeMcpDiscoveryAbstract.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/mergeEditor/browser/commands/commands.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/browser/widget/multiDiffEditor/workbenchUIElementFactory.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/notebook/browser/controller/coreActions.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 10 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/workbench/contrib/notebook/browser/controller/coreActions.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 10 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **src/vs/workbench/contrib/notebook/browser/view/cellPart.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 17 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/workingCopy/common/storedFileWorkingCopy.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/workingCopy/common/untitledFileWorkingCopy.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/languageDetection/common/languageDetectionWorkerService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/common/editor/textResourceEditorInput.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/contrib/performance/browser/startupTimings.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **IActionsColumnTemplateData>** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/contrib/processExplorer/browser/processExplorerControl.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/common/views.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 8 architectural clusters.
+- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 59 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 43 architectural clusters.
+- **src/vs/workbench/contrib/search/browser/searchTreeModel/fileMatch.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/search/browser/searchTreeModel/textSearchHeading.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/snippets/browser/snippets.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/splash/browser/splash.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/tags/common/workspaceTags.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/tasks/browser/abstractTaskService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/base/common/parsers.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/tasks/common/tasks.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/terminal/common/basePty.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/terminal/browser/baseTerminalBackend.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/terminal/browser/terminalProfileResolverService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/terminal/common/terminalExtensionPoints.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/terminal/common/capabilities/commandDetectionCapability.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/runInTerminalTool.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/contrib/terminalContrib/links/browser/links.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- **src/vs/code/electron-main/main.ts** (Score: 1): - 7 implementations
+- [EXTENSION_DENSITY] Has 7 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **src/vs/workbench/api/node/extHostSearch.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/configuration/common/configuration.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/configuration/common/jsonEditing.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/configurationResolver/browser/baseConfigurationResolverService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/api/test/browser/mainThreadDocumentsAndEditors.test.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/path/common/pathService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/contextview/browser/contextView.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/dialogs/common/dialogs.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/workbench/services/dialogs/browser/abstractFileDialogService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/extensionManagement/common/extensionManagementChannelClient.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/extensions/common/abstractExtensionService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/extensions/common/abstractExtensionService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/extensions/common/extensionHostKind.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/files/common/elevatedFileService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/editor/test/browser/editorGroupsService.test.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/integrity/common/integrity.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/keybinding/browser/keyboardLayoutService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/lifecycle/common/lifecycleService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/localization/common/locale.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **BaseWorkbenchMcpManagementService** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/editor/common/services/modelService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/path/common/pathService.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 5 architectural clusters.
+- **src/vs/platform/defaultAccount/common/defaultAccount.ts** (Score: 1): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/remote/common/abstractRemoteAgentService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/search/common/search.ts** (Score: 1): - 6 implementations
+- [EXTENSION_DENSITY] Has 6 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 4 architectural clusters.
+- **src/vs/workbench/services/textfile/browser/textFileService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/timer/browser/timerService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/untitled/common/untitledTextEditorInput.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/userDataProfile/common/userDataProfile.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/userData/browser/userDataInit.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/browser/panecomposite.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/workingCopy/common/workingCopyBackupService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/workingCopy/common/workingCopyBackupTracker.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/workingCopy/common/workingCopyHistoryService.ts** (Score: 1): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 3 architectural clusters.
+- **src/vs/workbench/services/workingCopy/test/browser/workingCopyEditorService.test.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/workingCopy/electron-browser/workingCopyBackupService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/services/workspaces/browser/abstractWorkspaceEditingService.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/workspaces/common/workspaces.ts** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/workbench/browser/parts/paneCompositePart.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 6 architectural clusters.
+- **test/automation/src/viewlet.ts** (Score: 1): - 5 implementations
+- [EXTENSION_DENSITY] Has 5 implementations.
+- **events.EventEmitter** (Score: 1): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **src/vs/platform/update/electron-main/abstractUpdateService.ts** (Score: 0.9): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- **src/vs/workbench/contrib/debug/browser/baseDebugView.ts** (Score: 0.9): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- **src/vs/workbench/contrib/snippets/browser/commands/abstractSnippetsActions.ts** (Score: 0.9): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- **src/vs/workbench/contrib/snippets/browser/commands/abstractSnippetsActions.ts** (Score: 0.9): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- **src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/commandLinePresenter/commandLinePresenter.ts** (Score: 0.9): - 4 implementations
+- [EXTENSION_DENSITY] Has 4 implementations.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/fetch.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **extensions/copilot/src/platform/notebook/common/alternativeContentProvider.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **extensions/copilot/src/platform/notebook/common/alternativeNotebookDocument.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **extensions/copilot/src/shared-fetch-utils/common/fetchTypes.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **extensions/typescript-language-features/src/configuration/configuration.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **DefinitionProviderBase** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **extensions/typescript-language-features/src/test/smoke/implementationsCodeLens.test.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/editor/contrib/folding/browser/folding.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **WarmQuery** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/platform/agentHost/node/agentHostTerminalManager.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/workbench/browser/parts/compositeBarActions.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/workbench/browser/parts/editor/editorPart.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/workbench/browser/parts/editor/editorTabsControl.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingModifiedFileEntry.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/buffers/buffer.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **src/vs/workbench/contrib/mergeEditor/browser/view/editors/codeEditorView.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **extensions/copilot/src/extension/agents/node/adapters/types.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/extension/byok/vscode-node/customOAIProvider.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/logger.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/extension/intents/node/editCodeIntent.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/extension/intents/node/agentIntent.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/platform/endpoint/node/copilotChatEndpoint.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/platform/authentication/vscode-node/copilotTokenManager.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/platform/inlineEdits/common/workspaceEditTracker/historyContextProvider.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/platform/snippy/common/snippyService.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/workspaceChunkSearchService.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/ipynb/src/notebookSerializer.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **extensions/typescript-language-features/src/languageFeatures/codeLens/baseCodeLensProvider.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/base/browser/ui/scrollbar/abstractScrollbar.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/editor/browser/gpu/atlas/atlas.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/editor/browser/gpu/renderStrategy/baseRenderStrategy.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/base/common/history.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/editor/contrib/hover/browser/hoverOperation.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/editor/contrib/quickAccess/browser/editorNavigationQuickAccess.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/platform/agentHost/common/relayTransport.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **AsyncGenerator** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **void>** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/platform/download/common/download.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/platform/userDataSync/common/abstractJsonSynchronizer.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/platform/userInteraction/browser/userInteractionService.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostSettingsShared.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/services/authentication/browser/authenticationUsageService.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/browser/parts/editor/editorPlaceholder.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatEditPillElement.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatInputNotificationService.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentCustomizationSyncProvider.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/contrib/webviewPanel/browser/webviewWorkbenchService.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/contrib/debug/common/debugVisualizers.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/contrib/extensions/browser/extensionsWidgets.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/contrib/notebook/browser/viewModel/baseCellViewModel.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/contrib/notebook/common/notebookLoggingService.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/api/node/proxyResolver.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+- **src/vs/workbench/contrib/testing/browser/explorerProjections/index.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+
+### Q5: 어디를 건드리면 무너지는가? (Blast Radius)
+**Summary**: Identified structural blast radius for 6529 nodes.
+**Confidence**: 0.9
+
+#### Items:
+- **@modelcontextprotocol/sdk/server/mcp** (Score: 4): [CRITICAL] Classified as CORE.
+- **@modelcontextprotocol/sdk/types** (Score: 4): [CRITICAL] Classified as CORE.
+- **@typescript-eslint/typescript-estree** (Score: 4): [CRITICAL] Classified as CORE.
+- **@vscode/prompt-tsx/dist/base/output/rawTypes** (Score: 4): [CRITICAL] Classified as CORE.
+- **ahp_types** (Score: 4): [CRITICAL] Classified as CORE.
+- **base/common/types** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/agents/node/adapters/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/agents/vscode-node/agentTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/chatSessions/claude/node/sessionParser/claudeSessionSchema.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/chatSessions/common/taskApiTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chronicle/common/cloudSessionTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/lib/panelShared/panelTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/basePanelTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/test/modelPicker.test.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/statementTree.test.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/networkingTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/contextProviders/contextItemSchemas.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/inlineChat/node/promptCraftingTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/prompt/common/specialRequestTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/tools/common/toolSchemaNormalizer.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/tools/common/virtualTools/virtualToolTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/typescript.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/typescripts.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/extension/typescriptContext/vscode-node/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/platform/chat/common/commonTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/platform/chat/common/conversationOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/platform/configuration/common/jsonSchema.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/platform/customInstructions/common/promptTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/platform/endpoint/common/endpointTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/platform/filesystem/common/fileTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/inlineEditsModelsTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/xtabPromptOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/platform/workspaceChunkSearch/common/githubAvailableEmbeddingTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/shared-fetch-utils/common/fetchTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **extensions/copilot/src/util/common/test/shims/chatTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/util/common/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/util/vs/base/common/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/src/vscodeTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/test/base/simulationOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/test/pipeline/logRecordingTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/test/simulation/shared/sharedTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/test/simulation/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/test/simulation/workbench/stores/nesExternalOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/copilot/test/simulation/workbench/stores/runnerOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/markdown-language-features/src/preview/previewConfig.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/markdown-language-features/types/previewMessaging** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/notebook-renderers/src/rendererTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/terminal-suggest/src/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **extensions/typescript-language-features/src/tsServer/protocol/protocol** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/base/browser/trustedTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/base/browser/ui/scrollbar/scrollableElementOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/base/browser/ui/scrollbar/scrollbarState.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/base/browser/ui/tree/compressedObjectTreeModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/base/common/jsonSchema.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/base/common/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/base/parts/sandbox/common/electronTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/base/parts/sandbox/common/sandboxTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/base/parts/sandbox/node/electronTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/browser/config/editorConfiguration.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/browser/viewParts/viewLines/viewLineOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/browser/widget/diffEditor/diffEditorOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/browser/widget/diffEditor/diffEditorViewModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/browser/widget/multiDiffEditor/model.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/config/editorConfiguration.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/config/editorOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/core/text/getPositionOffsetTransformerFromTextModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/languages/languageConfigurationRegistry.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/model.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **src/vs/editor/common/model/textModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/model/textModelSearch.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/model/textModelText.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/modelLineProjectionData.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **src/vs/editor/common/services/model.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/services/textResourceConfiguration.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **src/vs/editor/common/textModelEditSource.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/textModelEvents.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/textModelGuides.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/tokenizationTextModelPart.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/viewModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/viewModel/modelLineProjection.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/viewModel/screenReaderSimpleModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/viewModel/viewModelDecoration.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/viewModel/viewModelImpl.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/viewModel/viewModelLines.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/common/viewModelEventDispatcher.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/contrib/codeAction/common/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/contrib/documentSymbols/browser/outlineModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/contrib/hover/browser/contentHoverTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/contrib/hover/browser/hoverTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **src/vs/editor/contrib/inlineCompletions/browser/model/inlineCompletionsModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/contrib/inlineCompletions/browser/model/textModelValueReference.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/contrib/inlineCompletions/browser/view/inlineEdits/inlineEditsModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/contrib/semanticTokens/common/semanticTokensConfig.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/standalone/common/monarch/monarchTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/test/browser/config/testConfiguration.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/editor/test/common/testTextModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/platform/agentHost/common/agentHostSchema.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/platform/agentHost/common/claudeModelConfig.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/platform/agentHost/common/sandboxConfigSchema.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/platform/agentHost/common/state/sessionState.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/platform/agentHost/node/claude/clientTools/claudeJsonSchemaToZod.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/platform/browserView/common/cdp/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/platform/configuration/common/configuration.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/platform/configuration/common/configurationRegistry.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/platform/mcp/common/mcpPlatformTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/platform/otel/node/otlp/otlpJsonTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/sessions/contrib/github/browser/models/githubPullRequestCIModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/sessions/contrib/github/browser/models/githubPullRequestReviewThreadsModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/sessions/contrib/github/common/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/api/common/extHostTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/common/editor/editorGroupModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/accessibility/browser/accessibilityConfiguration.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionApprovalModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/browser/chatManagement/chatModelsViewModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/common/languageModels.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/common/languageModelsConfiguration.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/common/model/chatModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/common/model/chatViewModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/common/participants/chatParticipantContribTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/common/promptSyntax/hookSchema.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/common/promptSyntax/hookTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/common/promptSyntax/promptTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/chat/common/requestParser/chatParserTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/codeEditor/browser/simpleEditorOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/comments/browser/commentsModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/comments/common/commentModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/debug/common/debugModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/debug/common/replModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/debug/test/browser/mockDebugModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/files/common/explorerModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/imageCarousel/browser/imageCarouselTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/markers/browser/markersFilterOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/markers/browser/markersModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/mcp/common/mcpRegistryTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/mcp/common/mcpTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/mcp/test/common/mcpRegistryTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/mergeEditor/browser/model/mergeEditorModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/mergeEditor/browser/view/viewModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/browser/contrib/find/findModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/browser/diff/diffCellEditorOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/browser/diff/diffElementViewModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/browser/diff/diffNestedCellViewModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/browser/diff/notebookDiffViewModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/browser/notebookOptions.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/browser/viewModel/baseCellViewModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/browser/viewModel/codeCellViewModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/browser/viewModel/foldingModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/browser/viewModel/markupCellViewModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/browser/viewModel/notebookViewModelImpl.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/common/model/notebookCellTextModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/notebook/common/model/notebookTextModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/onboarding/browser/spotlight/spotlightTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/search/browser/AISearch/aiSearchModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/search/browser/AISearch/aiSearchModelBase.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/search/browser/notebookSearch/notebookSearchModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/search/browser/notebookSearch/notebookSearchModelBase.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/search/browser/searchTreeModel/searchModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/monitoring/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/testing/browser/explorerProjections/testingViewState.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/testing/common/configuration.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/testing/common/testExplorerFilterState.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/testing/common/testingStates.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/contrib/testing/common/testTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/welcomeOnboarding/common/onboardingTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/services/remote/common/tunnelModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/services/search/common/localFileSearchWorkerTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/services/search/common/searchExtConversionTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/services/search/common/searchExtTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **src/vs/workbench/services/search/common/searchExtTypesInternal.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **typescript/lib/tsserverlibrary** (Score: 4): [CRITICAL] Classified as CORE.
+- **vscode-languageserver-types** (Score: 4): [CRITICAL] Classified as CORE.
+- **claudeAgentSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **claudeMapSessionEvents.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **Copilot.ContextResolver** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeSessionStateService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeSessionUri.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeSessionStateService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/sessionParser/claudeCodeSessionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/sessionParser/sdkSessionAdapter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/agentSessionsWorkspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/common/chatSessionMetadataStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/chatSessionWorkspaceFolderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/chatSessionWorktreeCheckpointService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/chatSessionWorktreeService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/folderRepositoryManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/common/sessionEventRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/common/customSessionTitleService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliSessionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/commands/sendContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/copilotCLIChatSessionInitializer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/copilotCLISessionTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/chatSessionRepositoryTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/claudeChatSessionContentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCLIChatSessions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCloudSessionContentBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCloudSessionsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/folderRepositoryManagerImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/sessionOptionGroupBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/sessionRequestLifecycle.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode/chatSessionsUriHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/sessionIndexingPreference.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/sessionStoreTracking.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/node/cloudSessionApiClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/node/cloudSessionIdStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/node/sessionReindexer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/common/modelContextProtocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/common/ghostTextContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/test/context.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/textDocumentManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/auth/copilotTokenManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/citationManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/completionsContext.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/contextProviderBridge.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/contextProviderRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/contextProviderStatistics.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/context.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/textDocumentManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/snippetInclusion/cursorContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/types/src/contextProviderApiV1.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/context/node/resolvers/selectionContextHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversationStore/node/conversationStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineChat/node/codeContextRegion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/components/expectedEditCaptureController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/components/logContextRecorder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/languageContextProvider/vscode-node/languageContextProviderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompt/node/documentContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/todoListContextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/common/chatDiskSessionResources.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/backgroundTodoAgent/backgroundTodoAgentSessionHistoryStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/base/copilotIdentity.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/chatDiskSessionResourcesImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/diagnosticsContext.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/languageServerContextPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/workspace/workspaceContext.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/baseContextProviders.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/contextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/typescriptContext/vscode-node/languageContextService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/similarFilesContextService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/authentication/common/copilotTokenManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/authentication/common/copilotTokenStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/authentication/node/copilotTokenManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/authentication/test/node/simulationTestCopilotTokenManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/authentication/vscode-node/copilotTokenManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/authentication/vscode-node/session.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/chatSessionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/chat/common/sessionTranscriptService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/chronicle/common/sessionStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chronicle/node/sessionStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/extContext/common/extensionContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/languageContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/inlineEditLogContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/workspaceEditTracker/historyContextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/workspaceEditTracker/nesHistoryContextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/interactive/common/interactiveSessionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/languageContextProvider/common/languageContextProviderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/languageContextProvider/common/nullLanguageContextProviderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/languageServer/common/languageContextService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/node/chatWebSocketManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/node/sqlite/otelSqliteStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/simulationTestContext/common/simulationTestContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/extensionContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/promptContextModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/testing/common/workspaceMutationManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/test/base/simulationContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/contextMenu.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/utils/documentContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/askpassManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/cloneManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/utils/documentContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/notebookModelStoreSync.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commandManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/preview/previewManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/shared/diagramManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/mermaid-markdown-features/src/webviewManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/commandManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/nodeManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/versionManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/contextmenu.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/contextview/contextview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/parts/contextmenu/common/contextmenu.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/controller/editContext/editContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/controller/editContext/native/nativeEditContextRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/controller/editContext/textArea/textAreaEditContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/controller/editContext/textArea/textAreaEditContextInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/controller/editContext/textArea/textAreaEditContextState.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/gpu/viewGpuContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/view/renderingContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/view/viewController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/viewParts/viewLines/domReadingContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/common/cursor/cursorContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/common/editorContextKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/common/model/tokens/treeSitter/tokenStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/common/viewModel/overviewZoneManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/common/viewModel/viewContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/codeAction/browser/codeActionController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/contextmenu/browser/contextmenu.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/dropOrPasteInto/browser/copyPasteController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/dropOrPasteInto/browser/dropIntoEditorController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/find/browser/findController.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/gotoSymbol/browser/peek/referencesController.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/hover/browser/contentHoverController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/hover/browser/glyphHoverController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/inlayHints/browser/inlayHintsController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/inlineCompletions/browser/controller/inlineCompletionContextKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/inlineCompletions/browser/controller/inlineCompletionsController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/message/browser/messageController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/snippet/browser/snippetController2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/snippet/browser/snippetSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/stickyScroll/browser/stickyScrollController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/suggest/browser/suggestController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/common/agentHostSessionType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/common/agentPluginManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/common/sessionDataService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/common/state/sessionActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/common/state/sessionProtocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/common/state/sessionReducers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/common/state/sessionTransport.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/agentHostStateManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/agentHostTerminalManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/node/agentPluginManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/claude/claudeAgentSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/claude/claudeMapSessionEvents.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/claude/claudeSessionMetadataStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/claude/clientTools/claudeSessionClientToolsModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/claude/CONTEXT.md** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/claude/customizations/claudeSessionCustomizationDiscovery.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/copilot/copilotAgentSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/copilot/copilotSessionLauncher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/copilot/copilotSessionWrapper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/copilot/mapSessionEvents.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/copilot/pendingEditContentStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/copilot/sessionCustomizationDiscovery.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/sessionDatabase.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/sessionDataService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/sessionPermissions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/shared/mcpCustomizationController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/test/common/sessionTestHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/test/node/claudeMapSessionEvents.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/browserView/electron-main/browserSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/browserView/electron-main/browserSessionTrust.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/contextkey/browser/contextKeyService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/contextkey/common/contextkey.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/contextkey/common/contextkeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/contextview/browser/contextMenuService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/contextview/browser/contextView.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/contextview/browser/contextViewService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/history/browser/contextScopedHistoryWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/mcp/common/modelContextProtocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/quickInputController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/terminal/common/capabilities/terminalCapabilityStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/terminal/common/requestStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/uriIdentity/common/uriIdentity.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/uriIdentity/common/uriIdentityService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/userDataSync/common/userDataSyncLocalStoreService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/userDataSync/common/userDataSyncStoreService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/webview/common/webviewManagerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/workspace/common/editSessions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/media/style.css** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/media/chatCompositeBar.css** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/sessionBarStyles.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/sessionHeader.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/sessionHeaderMetaActionViewItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/browser/parts/sessionsPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/sessionView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/sessionsSetUpService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/sessionStatusIcon.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/common/agentHostSessionsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/common/agentHostSessionWorkspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/common/contextkeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/common/sessionsTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/sessionEditorComments.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/newChatContextAttachments.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/sessionsChatHistory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/sessionsTasksService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/sessionTaskRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/contrib/chat/browser/sessionTypePicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/contrib/chat/browser/sessionWorkspacePicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/contrib/layout/browser/baseSessionLayoutController.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/contrib/layout/browser/desktopSessionLayoutController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/layout/browser/mobileSessionLayoutController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/baseAgentHostSessionsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/contrib/providers/copilotChatSessions/browser/copilotChatSessionsChangesets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/browser/copilotChatSessionsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/localChatSessions/browser/localChatSessionsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/remoteAgentHost/browser/remoteAgentHostSessionsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/sessionsLifecycleTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/views/sessionsList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/views/sessionsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/electron-browser/sessions.main.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/browser/sessionContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/browser/sessionGroupsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/browser/sessionSectionOrderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/browser/sessionsListModelService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/browser/sessionsPartService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/browser/sessionsProvidersService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/browser/sessionsRecencyHistory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/browser/sessionsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/browser/visibleSessions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/common/session.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/services/sessions/common/sessionsManagement.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/common/sessionsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/workspace/browser/workspaceContextService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/api/common/extHostChatSessions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/editorCommandsContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/common/contextkeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/common/voiceTranscriptStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatContextActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostNewSessionFolderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionListStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionUri.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostSessionWorkingDirectoryResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostUntitledProvisionalSessionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsFilter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsOpener.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsViewer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/sessionTypeAvailability.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/attachments/chatContextPickService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/attachments/chatImplicitContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/attachments/chatScreenshotContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingEditorContextKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingExplanationModelManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingSessionStorage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatSessions/chatSessions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatSetup/chatSetupController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/contextContrib/chatContextService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/voiceClient/voiceSessionController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/sessionTargetPickerActionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widgetHosts/viewPane/chatContextUsageWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/actions/chatContextKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatSessionsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/common/contextContrib/chatContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/model/chatModelStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatSessions/chatSessionsService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/commentsController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/common/commentContextKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/rawDebugSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/editSessions/browser/editSessions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/editSessions/common/editSessions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/editSessions/common/editSessionsStorageClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/inlineChat/browser/inlineChatController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/inlineChat/browser/inlineChatSessionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/mcp/common/mcpTaskManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/common/modelContextProtocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/common/modelContextProtocolApps.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/cellStatusBar/executionStatusBarItemController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/controller/foldingController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/viewModel/viewContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/common/notebookContextKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/scmHistoryChatContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchChatContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/browser/terminalContextMenu.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/browser/widgets/widgetManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/common/terminalContextKey.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/chat/browser/terminalChatController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/links/browser/terminalLinkManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/testing/browser/explorerProjections/testItemContextOverlay.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/testing/common/storedValue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/testing/common/testingContextKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/extensions/common/extensionHostManagers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/search/common/textSearchManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/search/node/textSearchManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/textfile/common/textFileEditorModelManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/workingCopy/common/abstractFileWorkingCopyManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/workingCopy/common/fileWorkingCopyManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/workingCopy/common/storedFileWorkingCopy.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/workingCopy/common/storedFileWorkingCopyManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/workingCopy/test/browser/storedFileWorkingCopy.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/workspaces/common/workspaceIdentityService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/context.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.agents/skills/launch/scripts/launch.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **.agents/skills/launch/scripts/monaco-paste.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-no-telemetry-common-property.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.vscode-test.js** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/commands.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/commands/agent_kill.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/commands/agent_logs.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/commands/agent_ps.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/commands/agent_stop.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/commands/serve_web.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/commands/update.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/lib.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/challenge.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/util/zipper.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/.eslintplugin/no-funny-filename.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/.eslintplugin/no-missing-linebreak.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/script/alternativeAction/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/script/scoredEditsReconciler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/script/test/scoredEditsReconciler.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/script/testGeneration/editFromPatchTests.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agentDebug/common/toolResultRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agentDebug/vscode-node/toolResultContentRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/node/adapters/anthropicAdapter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/node/adapters/openaiAdapterForSTests.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/node/langModelServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/agents/node/test/mockLanguageModelServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/vscode-node/askAgentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/vscode-node/exploreAgentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/vscode-node/githubOrgChatResourcesService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/agents/vscode-node/githubOrgCustomAgentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/vscode-node/githubOrgInstructionsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/vscode-node/planAgentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/vscode-node/promptFileContrib.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/vscode-node/test/askAgentProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/vscode-node/test/githubOrgChatResourcesService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/agents/vscode-node/test/githubOrgCustomAgentProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/vscode-node/test/githubOrgInstructionsProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/vscode-node/test/mockOctoKitService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/agents/vscode-node/test/planAgentProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/api/vscode/extensionApi.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/api/vscode/vscodeContextProviderApi.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/authentication/vscode-node/authentication.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/common/anthropicMessageConverter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/common/byokProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/common/geminiFunctionDeclarationConverter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/common/geminiMessageConverter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/common/test/anthropicMessageConverter.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/common/test/byokProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/common/test/geminiFunctionDeclarationConverter.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/common/test/geminiMessageConverter.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/byok/node/azureOpenAIEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/node/openAIEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/byok/node/test/azureOpenAIEndpoint.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/node/test/openAIEndpoint.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/abstractLanguageModelChatProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/byok/vscode-node/anthropicProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/azureProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/byokContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/byokModelInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/byokOTelHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/byokStorageService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/customEndpointProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/customOAIProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/geminiNativeProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/ollamaProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/openAIProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/openRouterProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/byok/vscode-node/test/anthropicProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/byok/vscode-node/test/azureProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/test/byokModelInfo.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/test/byokOTelHelpers.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/test/customEndpointProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/test/geminiNativeProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/byok/vscode-node/test/ollamaProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/test/openRouterEndpoint.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/byok/vscode-node/xAIProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chat/test/vscode-node/chatHookService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chat/vscode-node/chatDebugFileLoggerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chat/vscode-node/chatHookService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chat/vscode-node/chatHookTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chat/vscode-node/chatQuota.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chat/vscode-node/hooksOutputChannel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chat/vscode-node/sessionTranscriptService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chat/vscode-node/test/chatDebugFileLoggerService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatInputNotification/vscode-node/byokUtilityModel.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatInputNotification/vscode-node/test/byokUtilityModel.contribution.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessionContext/vscode-node/chatSessionContextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeAgentSdkLoaderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeFolderInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeMcpServerRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeMessageDispatch.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeModelId.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudePlanFileTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeRuntimeDataService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermission.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermissionRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeToolPermissionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/claude/common/claudeTools.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/mcpServers/ideMcpServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/mcpServers/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/slashCommands/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/test/claudeMessageDispatch.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/test/claudePlanFileTracker.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/test/claudeToolPermissionRegistry.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/test/ideMcpServer.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/test/toolInvocationFormatter.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/toolInvocationFormatter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/askUserQuestionHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/bashToolHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/exitPlanModeHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/common/toolPermissionHandlers/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/bundledClaudeAgentSdkLoaderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeCodeAgent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeCodeFolderMru.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeCodeModels.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeCodeSdkService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeLanguageModelServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeModelId.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeOTelTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeProjectFolders.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudePromptResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeRuntimeDataService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeSettingsChangeTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/claudeSkills.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/mcpServers/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/sessionParser/claudeSessionParser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/sessionParser/test/claudeCodeSessionService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/claude/node/sessionParser/test/claudeSessionParser.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/sessionParser/test/claudeSessionSchema.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/sessionParser/test/sdkSessionAdapter.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/slashCommands/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/askUserQuestionHandler.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudeCodeAgent.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudeCodeAgentOTel.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudeCodeFolderMru.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudeCodeModels.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudeModelId.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudePluginService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudeProjectFolders.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudeRuntimeDataService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudeSessionStateService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudeSettingsChangeTracker.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/claudeToolPermissionService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/extractSessionId.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/mockClaudeCodeSdkService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/mockClaudeToolPermissionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/resolvePromptToContentBlocks.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/test/skillConfigLocations.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/toolPermissionHandlers/editToolHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/node/toolPermissionHandlers/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/claudeAgentSdkLoaderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/claudeSlashCommandService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/mcpServers/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/routingClaudeAgentSdkLoaderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/agentsCommand.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/claudeSlashCommandRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/hooksCommand.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/memoryCommand.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/terminalCommand.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/test/claudeSlashCommandRegistry.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/slashCommands/test/terminalCommand.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/test/claudeAgentSdkLoaderService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/test/claudeSlashCommandService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/test/routingClaudeAgentSdkLoaderService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/claude/vscode-node/toolPermissionHandlers/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/builtinSlashCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/claudeWorkspaceFolderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/externalEditTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/skillConfigLocations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/test/externalEditTracker.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/test/mockChatSessionMetadataStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/test/ttlCache.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/ttlCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/common/workspaceInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/common/copilotCLIPrompt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/common/copilotCLITools.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/common/delegationSummaryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/common/pendingRequestContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/common/test/copilotCLITools.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/common/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/cliHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCli.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCliBridgeSpanProcessor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCLIImageSupport.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotcliPromptResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCLISkills.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/copilotCLITodoWorker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/exitPlanModeHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/logger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/mcpHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/missionControlApiClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/nodePtyShim.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/permissionHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/ripgrepShim.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/buildSandboxConfigForCLI.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliAgents.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliAuth.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliBridgeSpanProcessor.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliModels.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotcliPromptResolver.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotcliSession.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliSessionService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCliShims.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/copilotCLISkills.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/exitPlanModeHandler.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/mcpHandler.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/missionControlApiClient.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/nodePtyShim.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/permissionHelpers.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/testHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/test/todoSqlQuery.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/todoSqlQuery.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/node/userInputHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/askUserQuestionHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/chatSessionMetadataStoreImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/commands/addFileReference.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/commands/addSelection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/commands/context.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/commands/diffCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/commands/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/commands/pickSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/copilotCLICustomizationProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/copilotCLIFolderMru.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/copilotCLIPromptReferences.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/customSessionTitleServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/diffState.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/inProcHttpServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/lockFile.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/readonlyContentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/addFileReference.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/addSelection.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/askUserQuestionHandler.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/chatSessionInitializer.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/chatSessionMetadataStoreImpl.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/closeAllForSession.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/closeDiff.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/context.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/copilotCLICustomizationProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/copilotCLISDKUpgrade.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/copilotCLISessionTracker.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/diagnosticsChanged.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/diffCommands.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/diffState.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/getDiagnostics.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/getSelection.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/getVscodeInfo.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/inProcHttpServer.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/lockFile.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/openDiff.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/readonlyContentProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/selectionChanged.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/testHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/test/updateSessionName.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/tools/closeDiff.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/tools/getDiagnostics.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/tools/getSelection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/tools/getVscodeInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/tools/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/tools/openDiff.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/tools/push/diagnosticsChanged.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/tools/push/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/tools/push/selectionChanged.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/tools/updateSessionName.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node/tools/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/agentSessionsWorkspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/chatHistoryBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/chatSessions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/chatSessionWorkspaceFolderServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/chatSessionWorktreeCheckpointServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/chatSessionWorktreeServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/claudeCustomizationProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/claudeSessionOptionBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/claudeWorkspaceFolderServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/cloudBackendTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCLIChatSessionsContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCLIModelDetails.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCLIPythonEnvironmentApi.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCLIPythonTerminalService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCLIShim.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCLITerminalIntegration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCLITerminalLinkProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/copilotCloudGitOperationsManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/jobsApiBackend.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/prContentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/pullArtifactResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/pullRequestCreationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/pullRequestDetectionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/pullRequestFileChangesService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/taskApiBackend.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/taskTurnStreamer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/chatHistoryBuilder.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/chatSessionWorkspaceFolderService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/claudeChatSessionContentProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/claudeCustomizationProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/claudeSessionOptionBuilder.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/claudeWorkspaceFolderService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/copilotCLIChatSessionParticipant.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/copilotCLIChatSessions.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/copilotCLIModelDetails.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/copilotCLITerminalIntegration.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/copilotCLITerminalLinkProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/copilotCloudSessionsProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/folderRepositoryManager.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/pullRequestDetectionService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/sessionOptionGroupBuilder.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/sessionRequestLifecycle.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/test/worktreeSharing.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode-node/worktreeSharing.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode/cloudAgentBackend.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode/copilotCodingAgentUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chatSessions/vscode/test/copilotCodingAgentUtils.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/circuitBreaker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/eventTranslator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/secretFilter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/sessionSyncStateService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/test/circuitBreaker.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/test/eventTranslator.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/test/extractAssistantResponse.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/test/secretFilter.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/test/sessionIndexingPreference.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/node/cloudSessionStoreClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/node/test/cloudSessionApiClient.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/node/test/cloudSessionIdStore.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/node/test/cloudSessionStoreClient.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/node/test/sessionReindexer.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/vscode-node/remoteSessionExporter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/vscode-node/sessionStoreTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/vscode-node/sessionSync.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/vscode-node/sessionSyncStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/vscode-node/test/remoteSessionExporter.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/vscode-node/test/sessionStoreTracker.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/codeBlocks/node/codeBlockProcessor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/codeBlocks/node/test/codeBlockProcessor.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/codeBlocks/vscode-node/chatBlockLanguageFeatures.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/codeBlocks/vscode-node/provider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/commands/node/commandService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/common/constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/common/contributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/bridge/src/completionsTelemetryServiceBridge.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/completionsServiceBridges.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/codeReferencing/citationManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/codeReferencing/codeReferenceEngagementTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/codeReferencing/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/codeReferencing/matchNotifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/codeReferencing/outputChannel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/codeReferencing/test/codeReferenceEngagementTracker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/codeReferencing/test/codeReferencing.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/codeReferencing/test/matchNotifier.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/completionsObservableWorkspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/config.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/contextProviderMatch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/copilotCompletionFeedbackTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/copilotPanel/common.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/copilotPanel/copilotListDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/copilotPanel/copilotSuggestionsPanel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/copilotPanel/copilotSuggestionsPanelManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/copilotPanel/panelConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/extensionStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/fileSystem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/ghostText/ghostTextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/icon.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/lib/copilotPanel/common.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/lib/copilotPanel/panel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/lib/panelShared/common.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/modelPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/modelPickerUserSelection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/baseListDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/baseSuggestionsPanel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/baseSuggestionsPanelManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/highlighter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/languages/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/themes/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/statusBar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/statusBarPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/telemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/test/config.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/vscodeInlineCompletionItemProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/auth/copilotTokenNotifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/auth/orgs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/changeTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/completionNotifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/completionsObservableWorkspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/completionState.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/config.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/defaultHandlers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/diagnostics.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/documentTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/error/userErrorNotifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/experiments/defaultExpFilters.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/experiments/expConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/experiments/features.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/experiments/featuresService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/experiments/filters.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/experiments/similarFileOptionsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/experiments/similarFileOptionsProviderCpp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/experiments/telemetryNames.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/experiments/test/features.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/fileReader.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/fileSystem.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/asyncCompletions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/blockTrimmer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/cacheUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/completionsCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/completionsFromNetwork.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/configBlockMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/contextualFilterConstants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/copilotCompletion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/current.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/ghostText.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/ghostTextStrategy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/last.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/multilineModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/multilineModelWeights.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/normalizeIndent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/requestContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/resultType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/speculativeRequestCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/statementTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/streamedCompletionSplitter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/telemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/asyncCompletions.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/blockTrimmer.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/current.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/ghostText.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/last.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/multilineModel.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/normalizeIndent.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText/test/streamedCompletionSplitter.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/helpers/cache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/helpers/iterableHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/inlineCompletion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/generatedLanguages.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/languageDetection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/languages.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/test/generatedLanguages.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/test/languageDetection.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/localFileSystem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/logger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/logging/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/networkConfiguration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/networking.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/notificationSender.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/config.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/fetch.fake.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/fetch.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/model.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/openai.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/test/config.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/test/fetch.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/postInsertion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/progress.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/asyncUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/completionsPromptFactory/cascadingPromptFactory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/completionsPromptFactory/completionsPromptFactory.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/completionsPromptFactory/componentsCompletionsPromptFactory.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/codeSnippets.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/completionsPromptRenderer.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/currentFile.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/diagnostics.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/elision.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/marker.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/recentEdits.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/similarFiles.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/splitContextPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/splitContextPromptRenderer.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/traits.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/components/virtualComponent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/contextProviderRegistryCpp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/contextProviderRegistryCSharp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/contextProviderRegistryMultiLanguage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/contextProviderRegistryTs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/contextProviders/codeSnippets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/contextProviders/diagnostics.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/contextProviders/traits.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/parseBlock.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/prompt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/recentEdits/emptyRecentEditsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/recentEdits/recentEditsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/recentEdits/recentEditsReducer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/repository.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/similarFiles/compositeRelatedFilesProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/similarFiles/neighborFiles.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/similarFiles/openTabFiles.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/similarFiles/relatedFiles.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/test/contextProviderRegistry.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/test/contextProviderRegistryTs.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/test/contextProviderStatistics.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/test/contextProviderStatistics.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/test/defaultDiagnosticSettings.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/test/prompt.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/test/prompt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/test/relatedFiles.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/test/repository.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/connectionState.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/errorCreator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/handlePostInsertion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/logger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/network.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/snippy.proto.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/telemetryHandlers.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/test/network.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/suggestions/partialSuggestions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/suggestions/suggestions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/suggestions/test/suggestions.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/telemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/telemetry/userConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/changeTracker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/completionNotifier.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/completionsPrompt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/completionState.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/copilotTokenManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/fetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/fileReader.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/filesystem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/inlineCompletion.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/localFileSystem.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/loggerHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/noopTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/postInsertion.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/snapshot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/telemetry.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/telemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/telemetrySpy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/testContentExclusion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/testHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/textDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/test/textDocumentManager.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/textDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/async.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/documentEvaluation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/map.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/promiseQueue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/runtimeMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/typebox.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/unknown.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/jsx-runtime/jsx-runtime.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/components/components.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/components/hooks.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/components/reconciler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/components/virtualPrompt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/components/walker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/error.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/fileLoader.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/languageMarker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/parse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/prompt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/snippetInclusion/jaccardMatching.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/snippetInclusion/selectRelevance.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/snippetInclusion/similarFiles.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/snippetInclusion/snippets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/snippetInclusion/subsetMatching.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/components/hooks.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/components/reconciler.test.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/components/testHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/components/virtualPrompt.test.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/components/walker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/languageMarker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/multisnippet.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/parse.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/similarFiles.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/snippets.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/subsetMatching.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/tokenizer.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/tokenization/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/tokenization/tokenizer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/types/src/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions/common/config.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions/common/copilotInlineCompletionItemProviderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions/common/parseBlock.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions/vscode-node/completionsCoreContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions/vscode-node/completionsUnificationContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions/vscode-node/copilotInlineCompletionItemProviderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/configuration/vscode-node/configurationMigration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/context/node/resolvers/extensionApi.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/context/node/resolvers/fixSelection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/context/node/resolvers/genericInlineIntentInvocation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/context/node/resolvers/genericPanelIntentInvocation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/context/node/resolvers/inlineChatSelection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/context/node/resolvers/inlineFixIntentInvocation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/context/node/resolvers/promptWorkspaceLabels.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/context/node/resolvers/test/vscodeContext.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/context/node/resolvers/vscodeContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/context/vscode/context.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/contextKeys/vscode-node/contextKeys.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/common/languageModelAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/common/languageModelChatMessageHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/node/aiMappedEditsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/node/githubPullRequestProviders.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/aiMappedEditsContrib.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/chatParticipants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/conversationFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/feedbackCollection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/feedbackContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/languageModelAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/languageModelAccessPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/logWorkspaceState.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/newWorkspaceFollowup.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/remoteAgents.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/resolveModelId.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/terminalFixGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/test/conversationFeature.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/test/interactiveEditorSessionProvider.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/test/interactiveSessionProvider.telemetry.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/test/languageModelAccess.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/test/newWorkspaceFollowup.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/test/userActionsResolvedModel.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/userActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversation/vscode-node/welcomeMessageProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/conversationStore/node/conversationStore.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/diagnosticsContext/vscode/diagnosticsContextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/extension/vscode-node/contributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/extension/vscode-node/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/extension/vscode-node/services.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/extension/vscode-worker/contributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/extension/vscode-worker/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/extension/vscode-worker/services.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/extension/vscode/contributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/extension/vscode/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/extension/vscode/services.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/externalAgents/node/modelProxyProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/externalAgents/node/oaiLanguageModelServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/externalAgents/vscode-node/lmProxyContrib.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/getting-started/common/newWorkspaceContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/getting-started/vscode-node/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/getting-started/vscode-node/newWorkspace.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/getting-started/vscode-node/newWorkspaceInitializer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/git/common/mergeConflictService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/git/vscode/mergeConflictParser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/git/vscode/mergeConflictServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/git/vscode/scmContextprovider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/githubMcp/common/githubMcpDefinitionProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/githubMcp/test/node/githubMcpDefinitionProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/githubMcp/vscode-node/githubMcp.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/githubPullRequest.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/ignore/vscode-node/ignoreProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineChat/node/diagnosticsTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineChat/node/rendererVisualization.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineChat/vscode-node/inlineChatCodeActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineChat/vscode-node/inlineChatCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/inlineChat/vscode-node/inlineChatNotebookActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineChat2/node/inlineChatIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/inlineChat2/node/inlineChatPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineChat2/node/progressMessages.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineChat2/node/progressMessagesPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineChat2/test/node/inlineChat2Prompt.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineChat2/test/node/inlineChatIntent.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/common/common.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/common/correlationId.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/common/delay.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/common/editRebase.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/common/informationDelta.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/common/nearbyCursorInlineEditProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/common/nesTriggerHint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/common/observableWorkspaceRecordingReplayer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/common/rejectionCollector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/common/userInteractionMonitor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/node/continuousEnhancedTelemetrySender.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/node/createNextEditProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/node/debugRecorder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/node/diffNextEdits.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/node/importFiltering.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/node/nesConfigs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/node/nextEditCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/node/nextEditProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/inlineEdits/node/nextEditProviderTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/inlineEdits/node/nextEditResult.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/inlineEdits/node/rebaseResult.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/node/speculativeRequestManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/common/editRebase.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/common/userHappinessScore.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/common/userInteractionMonitor.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/continuousEnhancedTelemetrySender.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/debugRecorder.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/fileLoading.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/ignoreImportChanges.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/nesXtabHistoryTracker.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/nextEditCacheCursorDistance.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/nextEditCacheRebase.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/nextEditProviderCaching.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/nextEditProviderSpeculative.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/nextEditProviderTelemetry.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/recordings/RejectionCollector.test1.w.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/rejectionCollector.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/node/runRecording.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/inlineEdits/test/vscode-node/diagnosticsCollection.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/vscode-node/documentFilter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/vscode-node/inlineEditTriggerer.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/vscode-node/isInlineSuggestion.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/vscode-node/isSubword.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/test/vscode-node/raceAndAll.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/components/inlineEditDebugComponent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/components/nesFeedbackSubmitter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/components/test/inlineEditDebugComponent.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/components/test/nesFeedbackSubmitter.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/features/diagnosticsBasedCompletions/anyDiagnosticsCompletionProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/features/diagnosticsBasedCompletions/asyncDiagnosticsCompletionProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/features/diagnosticsBasedCompletions/diagnosticsCompletions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/features/diagnosticsBasedCompletions/importDiagnosticsCompletionProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/features/diagnosticsCompletionProcessor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/features/diagnosticsInlineEditProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/inlineCompletionProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/inlineEditModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/inlineEditProviderFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/inlineEditTriggerer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/isInlineSuggestion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/jointInlineCompletionProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/parts/common.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/parts/documentFilter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/parts/inlineEditLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/parts/verifyTextDocumentChanges.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/parts/vscodeWorkspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/raceAndAll.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/similarFilesContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/utils/observablesUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/utils/translations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/inlineEdits/vscode-node/utils/virtualTextDocumentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/common/agentConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/common/intents.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/agentIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/allIntents.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/askAgentIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/cacheBreakpoints.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/editCodeIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/editCodeIntent2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/editCodeStep.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/explainIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/fixIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/generateCodeIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/generateNewWorkspaceContent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/hookResultProcessor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/intentService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/newIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/newNotebookIntent.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/newNotebookIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/notebookEditorIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/promptOverride.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/reviewIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/searchIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/searchKeywordsIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/searchPanelIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/setupTests.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/terminalExplainIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/terminalIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/test/agentSummarizeCommand.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/test/backgroundTodoEnablement.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/test/contextSizeOverride.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/test/promptOverride.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/test/searchSubagentGating.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/test/summarizeThreshold.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/testIntent/setupTestsFrameworkQueryInvocation.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/testIntent/setupTestsInvocation.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/testIntent/summarizedDocumentWithSelection.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/testIntent/testDeps.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/testIntent/testFromSrcInvocation.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/testIntent/testFromTestInvocation.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/testIntent/testIntent.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/testIntent/testPromptUtil.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/testIntent/userQueryParser.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/toolCallingLoop.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/intents/node/unknownIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/node/vscodeIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/test/node/editCodeIntent.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/intents/test/node/hookResultProcessor.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/test/node/mockChatHookService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/test/node/toolCallingLoopAutopilot.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/test/node/toolCallingLoopHooks.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/test/node/toolCallingLoopTelemetryLinking.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/test/node/toolCallingLoopUsage.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/test/node/validateToolMessages.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/vscode-node/fixTestFailureContributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/vscode-node/newWorkspacePreviewFileSystemProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/intents/vscode-node/newWorkspaceTextDocumentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/common/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/common/filePathLinkifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/common/linkifiedText.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/common/linkifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/common/linkifyService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/linkify/common/modelFilePathLinkifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/common/responseStreamWithLinkification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/common/statCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/test/node/filePathLinkifier.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/test/node/linkifier.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/test/node/modelFilePathLinkifier.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/test/node/statCaching.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/test/node/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/test/vscode-node/findWord.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/test/vscode-node/notebookCellLinkifier.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/test/vscode-node/symbolLinkifier.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/test/vscode-node/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/vscode-node/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/vscode-node/findSymbol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/vscode-node/findWord.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/vscode-node/inlineCodeSymbolLinkifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/vscode-node/notebookCellLinkifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/linkify/vscode-node/symbolLinkifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/log/node/chatLogExport.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/log/vscode-node/extensionStateCommand.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/log/vscode-node/loggingActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/log/vscode-node/requestLogTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/log/vscode-node/test/sanitizeNetworkError.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/log/vscode-node/test/sanitizer.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/mcp/test/vscode-node/commands.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/mcp/test/vscode-node/nuget.integration.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/mcp/test/vscode-node/nuget.mapping.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/mcp/test/vscode-node/nuget.stub.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/mcp/test/vscode-node/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/mcp/vscode-node/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/mcp/vscode-node/mcpToolCallingLoop.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/mcp/vscode-node/mcpToolCallingLoopPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/mcp/vscode-node/mcpToolCallingTools.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/mcp/vscode-node/nuget.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/mcp/vscode-node/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/notebook/vscode-node/followActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/common/launchConfigService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/node/commandToConfigConverter.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/node/copilotDebugCommandSessionFactory.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/node/copilotDebugWorker/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/node/copilotDebugWorker/open.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/node/copilotDebugWorker/rpc.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/node/copilotDebugWorker/shared.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/node/copilotDebugWorker/streamSplitter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/node/debuggableCommandIdentifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/node/languageToolsProvider.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/node/parseLaunchConfigFromResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/test/node/debuggableCommandIdentifier.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/test/node/parseLaunchConfigFromResponse.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/vscode-node/copilotDebugCommandContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/vscode-node/copilotDebugCommandHandle.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/vscode-node/copilotDebugCommandSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/vscode-node/onboardTerminalTestsContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/onboardDebug/vscode/launchConfigService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/otel/vscode-node/otelContrib.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/power/common/powerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/power/vscode-node/powerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/power/vscode-node/powerStateLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/common/chatVariablesCollection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/common/codeGuesser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/common/conversation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/common/fileTreeParser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/common/importStatement.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/common/intents.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/common/promptCategorizationTaxonomy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/common/repository.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/common/streamingGrammar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/common/toolCallRound.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/chatMLFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompt/node/chatMLFetcherTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/chatParticipantRequestHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/chatParticipantTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/codebaseToolCalling.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/conversation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/defaultIntentRequestHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/definitionAroundCursor.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/devContainerConfigGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/editFromDiffGeneration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/editGeneration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/executionSubagentToolCallingLoop.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/feedbackGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/gitBranch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/gitCommitMessageGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/githubPullRequestTitleAndDescriptionGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/indentationGuesser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/intentDetector.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/intentRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/intents.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompt/node/promptCategorizer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/promptVariablesService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompt/node/pseudoStartStopConversationCallback.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/repoInfoTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/responseProcessorContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/searchSubagentToolCallingLoop.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/settingsEditorSearchResultsSelector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/streamingEdits.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/summarizer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/telemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/test/chatMLFetcherResponseApiTelemetry.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/test/chatMLFetcherRetry.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/test/defaultIntentRequestHandler.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/test/feedbackGenerator.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/test/indentationGuesser.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/test/positionOffsetTransformer.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/test/repoInfoTelemetry.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/test/streamingEdits.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/test/testFiles.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/test2Impl.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/testExample.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/testFiles.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/node/title.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/test/common/fileTreeParser.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/test/common/newWorkspaceFileTreeTraversal.poc.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/test/common/streamingGrammar.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/test/node/conversation.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/test/node/searchSubagentToolCallingLoop.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/debugCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/devContainerConfigurationServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/endpointProviderImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompt/vscode-node/gitCommitMessageServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/gitDiffService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/promptVariablesService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/renameSuggestions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/requestLoggerImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/requestLoggerToolResult.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/scenarioAutomationEndpointProviderImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/settingsEditorSearchServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/test/gitDiffService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/test/promptVariablesService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompt/vscode-node/workspaceEditRecorder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/promptFileContext/vscode-node/promptFileContextService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/agentConversationHistory.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/agentPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/allAgentPrompts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/anthropicPrompts.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/backgroundSummarizer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/backgroundTodoAgent/backgroundTodoAgentProcessor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/backgroundTodoAgent/backgroundTodoAgentPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/backgroundTodoAgent/test/backgroundTodoAgentHistoryStore.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/backgroundTodoAgent/test/backgroundTodoAgentProcessor.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/backgroundTodoAgent/test/backgroundTodoAgentProcessorLifecycle.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/backgroundTodoAgent/test/backgroundTodoAgentPrompt.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/compactionEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/copilotCLIPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/defaultAgentInstructions.tsx** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/agent/executionSubagentPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/familyHPrompts.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/fileLinkificationInstructions.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/geminiPrompts.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/minimaxPrompts.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/openai/defaultOpenAIPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/openai/gpt51CodexPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/openai/gpt51Prompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/openai/gpt52Prompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/openai/gpt53CodexPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/openai/gpt54Prompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/openai/gpt55BasePrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/openai/gpt55Prompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/openai/gpt5CodexPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/openai/gpt5Prompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/openai/hiddenModelMPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/promptRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/agent/searchSubagentPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/simpleSummarizedHistoryPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/summarizedConversationHistory.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/test/agentPrompt.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/test/agentTasksInstructions.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/test/backgroundSummarizer.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/test/compactionEndpoint.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/test/copilotCLIPrompt.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/test/parseAttachments.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/test/summarization.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/test/terminalPrompt.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/toolSearchInstructions.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/vscModelPrompts.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/xAIPrompts.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/agent/zaiPrompts.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/base/capabilities.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/base/common.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/base/instructionMessage.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/base/promptElement.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/base/promptRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/base/responseTranslationRules.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/base/safetyRules.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/base/tag.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/base/terminalState.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/base/test/promptRenderer.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/codeMapper/codeMapper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/codeMapper/codeMapperPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/codeMapper/codeMapperService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/codeMapper/patchEditGeneration.tsx** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/devcontainer/devContainerConfigPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/feedback/currentChange.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/feedback/provideFeedback.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/git/gitChanges.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/git/gitCommitMessagePrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/github/pullRequestDescriptionPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/adjustSelection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/diffEditGeneration.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/fixCookbookService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/inlineChatEditCodePrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/inlineChatEditMarkdownPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/inlineChatFix3Prompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/inlineChatGenerateCodePrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/inlineChatGenerateMarkdownPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/inlineChatNotebookCommon.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/inlineChatNotebookCommonPromptElements.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/inlineChatNotebookEditPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/inlineChatNotebookFixPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/inlineChatNotebookGeneratePrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/inlineChatWorkspaceSearch.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/promptingSummarizedDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/pythonCookbookData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/summarizedDocument/fragments.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/summarizedDocument/implementation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/summarizedDocument/projectedText.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/summarizedDocument/summarizeDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/summarizedDocument/summarizeDocumentHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/utils/streaming.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/inline/visualization.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/inline/workingCopies.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/notebook/commonPrompts.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/binaryFileHexdump.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/chatVariables.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/codebaseAgentPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/codeBlockFormattingRules.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/conversationHistory.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/currentEditor.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/currentSelection.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/customInstructions.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/definitionAtPosition.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/editCodePrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/editCodePrompt2.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/editorIntegrationRules.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/explain.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/fileVariable.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/gitBranch.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/image.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/newNotebook.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/newWorkspace/newWorkspace.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/newWorkspace/newWorkspaceContents.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/notebookEditCodePrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/notebookInlinePrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/notebookSummaryChangePrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/notebookVariables.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/panelChatBasePrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/panelChatFixPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/preferences.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/projectLabels.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/promptCategorization.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/promptFile.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/referencesAtPosition.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/safeElements.tsx** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/panel/search.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/searchPanelKeywordsPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/searchPanelPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/startDebugging.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/symbolAtCursor.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/symbolDefinitions.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/terminal.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/terminalExplain.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/terminalLastCommand.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/terminalQuickFix.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/terminalSelection.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/test/chatVariablesHelpers.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/test/fileVariable.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/test/title.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/test/toolCalling.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/title.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/toolCalling.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/unsafeElements.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/vscode.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/workspace/test/visualFileTree.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/workspace/visualFileTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/panel/workspace/workspaceFoldersHint.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/panel/workspace/workspaceStructure.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/settingsEditor/settingsEditorSuggestQueryPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/adjustSelection.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/test/chatDiskSessionResources.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/cppNoExtraSemicolons.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/cppNoExtraSemicolons.summarized.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/problem1.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/problem1.summarized.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/simpleClass.summarized.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/vscode.proposed.chatParticipantAdditions.d.summarized.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/vscode.proposed.chatParticipantAdditions.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/projectedText.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/summarizeDocument.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/summarizeDocumentPlayground.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/workingCopies.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/renameSuggestions/common/namingConvention.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/renameSuggestions/node/renameSuggestionsPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/renameSuggestions/node/renameSuggestionsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/renameSuggestions/test/common/namingConvention.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/renameSuggestions/test/node/renameSuggestionsProvider.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/review/node/doReview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/review/node/githubPullRequestReviewerCommentsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/review/node/githubReviewAgent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/review/node/test/doReview.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/review/node/test/githubReviewAgent.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/review/node/test/reviewCommand.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/search/vscode-node/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/settingsSchema/vscode-node/settingsSchemaFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/survey/vscode-node/surveyCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/telemetry/common/lifecycleTelemetryContrib.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/telemetry/vscode/githubTelemetryForwardingContrib.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/configurations.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/editFromDiffGeneration.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/extractCodeSnippets.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/intent.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/notebookPromptRendering.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/patchEditGeneration.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/pseudoStartStopConversationCallback.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/services.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/streaming.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/summarizedDocumentRendering.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/telemetry.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/testHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/utils.fileTree.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/node/utils.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/vscode-node/configurations.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/vscode-node/endpoints.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/vscode-node/extension.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/vscode-node/sanity.sanity-test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/vscode-node/services.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/vscode-node/session.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/vscode-node/textDocumentManager.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/testing/common/files.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/testing/node/aiEvaluationService.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/testing/node/setupTestsFileManager.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/testing/vscode/setupTestContributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/askQuestionsTypes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/editToolLearningService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/editToolLearningStates.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/memoryCleanupService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/skillTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/test/toolNames.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/test/toolService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/toJsonSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/toolDeferralService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/toolNames.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/toolsRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/tools/common/toolsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/tools/common/toolUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/virtualTools/builtInToolGroupHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/virtualTools/preComputedToolEmbeddingsCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/virtualTools/toolEmbeddingsComputer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/tools/common/virtualTools/toolEmbeddingsLocalCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/virtualTools/toolGrouping.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/virtualTools/toolGroupingService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/virtualTools/virtualTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/virtualTools/virtualToolGroupCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/virtualTools/virtualToolGrouper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/virtualTools/virtualToolsConstants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/common/virtualTools/virtualToolSummarizer.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/abstractReplaceStringTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/allTools.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/applyPatch/parseApplyPatch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/applyPatch/parser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/applyPatchTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/codebaseTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/createDirectoryTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/createFileTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/editFileHealing.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/editFileToolResult.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/editFileToolUtils.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/editNotebookTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/executionSubagentTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/findFilesTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/findTestsFilesTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/findTextInFilesTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/getErrorsTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/getNotebookCellOutputTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/githubRepoSemanticSearchTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/githubTextSearchTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/imageToolUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/insertEditTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/installExtensionTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/listDirTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/manageTodoListTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/memoryContextPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/memoryTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/multiReplaceStringTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/newNotebookTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/newWorkspace/newWorkspaceTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/notebookSummaryTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/readFileTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/readProjectStructureTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/replaceStringTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/resolveMemoryFileUriTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/runNotebookCellTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/scmChangesTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/searchSubagentTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/searchWorkspaceSymbolsTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/sessionStoreSqlTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/skillTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/applyPatch.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/editFileToolUtils.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/editNotebookTool.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/editToolLearningService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/executionSubagentTool.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/findFiles.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/findTextInFilesResult.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/findTextInFilesTool.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/getErrorsResult.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/getErrorsTool.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/imageToolUtils.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/memoryTool.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/multiReplaceStringTool.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/readFile.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/searchSubagentTool.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/searchToolTestUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/sessionStoreSqlTool.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/skillTool.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/testTools.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/testToolsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/tools/node/test/toJsonSchema.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/toolCalling.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/toolTestUtils.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/toolUtils.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/test/viewImage.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/todoListContextPrompt.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/toolSearchTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/toolUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/viewImageTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/vscodeAPITool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/node/vscodeCmdTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/test/common/toolSchemaNormalizer.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/test/node/applyPatch/applyPatch.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/test/node/applyPatch/parser.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/test/node/replaceString/replaceStringTool.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/test/node/virtualTools/testVirtualTools.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/test/node/virtualTools/toolEmbeddingsCache.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/test/node/virtualTools/toolEmbeddingsLocalCache.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/test/node/virtualTools/virtualToolGrouper.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/test/node/virtualTools/virtualToolGrouping.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/vscode-node/allTools.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/vscode-node/fetchWebPageTool.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/vscode-node/switchAgentTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/vscode-node/test/inputGlobToPattern.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/vscode-node/test/skillTool.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/vscode-node/tools.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/tools/vscode-node/toolsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/trajectory/vscode-node/otelSpanToChatDebugEvent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/trajectory/vscode-node/otlpFormatConversion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/trajectory/vscode-node/test/debugLogEntryConverters.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/trajectory/vscode-node/test/otelSpanToChatDebugEvent.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/trajectory/vscode-node/test/otlpFormatConversion.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/common/serverProtocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p2/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p2/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/nes/p1/source/test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/vscode-node/inspector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/vscode-node/nesRenameService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/vscode-node/throttledDebounce.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceChunkSearch/vscode-node/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceChunkSearch/vscode-node/workspaceChunkSearch.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceChunkSearch/vscode-node/workspaceIndexingStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceRecorder/common/jsonlUtil.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceRecorder/common/workspaceListenerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceRecorder/vscode-node/safeFileWriteUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceRecorder/vscode-node/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceRecorder/vscode-node/utilsObservable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceRecorder/vscode-node/workspaceListenerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceRecorder/vscode-node/workspaceRecorder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceRecorder/vscode-node/workspaceRecorderFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceSemanticSearch/node/combinedRank.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceSemanticSearch/node/semanticSearchTextSearchProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/workspaceSemanticSearch/node/test/ranking.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/diffHistoryForPrompt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/fetchStreamError.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/inlineSuggestion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/lineRange.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/lintErrors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/promptCrafting.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/promptCraftingUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/recentFilesForPrompt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/systemMessages.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/tags.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/terminalOutput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/common/xtabCurrentDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/node/cursorLineDivergence.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/node/editIntent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/node/responseFormatHandlers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/node/xtabEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/node/xtabNextCursorPredictor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/node/xtabPatchResponseHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/node/xtabProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/node/xtabUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/common/inlineSuggestion.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/common/lintErrors.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/common/promptCrafting.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/common/recentFilesForPrompt.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/common/responseProcessor.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/node/cursorLineDivergence.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/node/diffHistoryForPrompt.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/node/editIntent.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/node/responseFormatHandlers.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/node/xtabNextCursorPredictor.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/node/xtabPatchResponseHandler.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/node/xtabProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/xtab/test/node/xtabUtils.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/lib/node/chatLibMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/lib/vscode-node/test/getInlineCompletions.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/lib/vscode-node/test/nesProvider.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/lib/vscode-node/test/simpleExperimentationService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/authentication/common/authentication.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/authentication/common/authenticationUpgrade.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/authentication/common/authenticationUpgradeService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/authentication/common/copilotToken.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/authentication/common/staticGitHubAuthenticationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/authentication/test/node/authentication.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/authentication/test/node/copilotToken.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/authentication/vscode-node/authenticationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/blockedExtensionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/chatAgents.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/chat/common/chatDebugFileLoggerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/chatHookService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/chat/common/chatMLFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/chat/common/chatModelDetails.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/chatQuotaService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/chatQuotaServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/globalStringUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/hookCommandTypes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/hookExecutor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/hooksOutputChannel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/interactionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/responses.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/common/sessionUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/node/hookExecutor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/test/common/chatQuotaServiceImpl.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/test/common/commonTypes.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/test/common/fetchStreamRecorder.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/test/common/mockChatMLFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/test/common/staticChatMLFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/test/common/streamingMockChatMLFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/test/common/testChatSessionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/test/node/hookExecutor.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chat/vscode/chatSessionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chronicle/node/test/sessionStore.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chunking/common/chunk.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chunking/common/chunkingEndpointClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chunking/common/chunkingEndpointClientImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chunking/common/chunkingStringUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chunking/node/naiveChunker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/chunking/node/naiveChunkerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/commands/common/mockRunCommandExecutionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/commands/common/runCommandExecutionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/commands/vscode/runCommandExecutionServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/completions-core/common/openai/copilotAnnotations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/configuration/common/configurationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/configuration/common/defaultsOnlyConfigurationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/configuration/common/jsonSchemaDraft7.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/configuration/common/validator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/configuration/test/common/inMemoryConfigurationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/configuration/test/common/validator.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/configuration/vscode/configurationServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/configuration/vscode/test/configurationServiceImpl.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/customInstructions/common/customInstructionsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/customInstructions/test/node/customInstructionsService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/debug/common/debugOutputService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/debug/vscode/debugOutputServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/devcontainer/common/devContainerConfigurationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/dialog/common/dialogService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/dialog/vscode/dialogServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/diff/common/diffService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/diff/common/diffWorker.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/diff/node/diffServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/diff/node/diffWorkerMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editing/common/abstractText.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editing/common/edit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editing/common/edits.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editing/common/notebookDocumentSnapshot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editing/common/offsetLineColumnConverter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editing/common/positionOffsetTransformer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editing/common/textDocumentSnapshot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editing/node/edits.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editSurvivalTracking/common/arcTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editSurvivalTracking/common/editCollector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editSurvivalTracking/common/editComputer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editSurvivalTracking/common/editSurvivalTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editSurvivalTracking/common/editSurvivalTrackerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/editSurvivalTracking/test/common/editCollector.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/embeddings/common/embeddingsComputer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/embeddings/common/embeddingsGrouper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/embeddings/common/embeddingsIndex.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/embeddings/common/embeddingsStorage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/embeddings/common/remoteEmbeddingsComputer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/embeddings/common/vscodeIndex.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/embeddings/test/node/embeddingsGrouper.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/embeddings/test/node/packEmbedding.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/common/capiClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/common/chatModelCapabilities.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/common/compactionDataContainer.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/common/domainService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/common/endpointProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/endpoint/common/licenseAgreement.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/common/phaseDataContainer.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/common/statefulMarkerContainer.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/common/thinkingDataContainer.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/autoChatEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/automodeService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/capiClientImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/chatEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/endpoint/node/copilotChatEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/domainServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/embeddingsEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/imageLimits.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/messagesApi.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/modelMetadataFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/proxy4oEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/proxyAgenticEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/proxyInstantApplyShortEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/proxyModelHelper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/proxyXtabEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/responsesApi.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/responsesApiDebugDump.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/routerDecisionFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/searchAgentChatEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/test/automodeService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/test/copilotChatEndpoint.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/test/imageLimits.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/test/responsesApi.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/node/test/responsesApiToolSearch.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/azureEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/capiEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/chatModelCapabilities.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/customNesEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/messagesApi.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/mockEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/openaiCompatibleEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/routerDecisionFetcher.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/stream.splitChunk.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/stream.sseProcessor.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/test/openaiCompatibleEndpoint.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/test/node/testEndpointProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/vscode-node/extChatEndpoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/vscode-node/extChatTokenizer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/endpoint/vscode-node/test/extChatEndpoint.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/extensions/common/extensionsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/extensions/common/packageJson.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/extensions/vscode/extensionsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/filesystem/common/fileSystemService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/filesystem/node/fileSystemServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/filesystem/node/test/mockFileSystemService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/filesystem/vscode/fileSystemServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/git/common/gitCommitMessageService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/git/common/gitDiffService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/git/common/gitExtensionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/git/common/gitService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/git/common/nullGitDiffService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/git/common/nullGitExtensionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/git/common/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/git/vscode-node/gitServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/git/vscode-node/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/git/vscode/gitExtensionServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/github/common/githubAPI.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/github/common/githubApiFetcherService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/github/common/githubService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/github/common/nullOctokitServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/github/common/octoKitServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/github/node/githubRepositoryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/ignore/common/ignoreService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/ignore/node/ignoreFile.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/ignore/node/ignoreServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/ignore/node/remoteContentExclusion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/ignore/node/test/mockAuthenticationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/ignore/node/test/mockCAPIClientService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/ignore/node/test/mockGitService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/ignore/node/test/mockWorkspaceService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/ignore/node/test/remoteContentExclusion.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/ignore/vscode-node/ignoreService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/image/common/imageService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/image/common/imageTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/image/common/test/imageTelemetry.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/image/common/test/testImageData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/image/node/imageServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/image/vscode-node/imageServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineCompletions/common/api.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/codeActionData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/diagnosticData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/documentId.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/edit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/editUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/fetchCancellationError.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/importFilteringOptions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/jointCompletionsProviderOptions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/languageId.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/nextCursorLinePrediction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/permutation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/rootedLineEdit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/textEditLength.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/textEditLengthHelper/combineTextEditInfos.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/textEditLengthHelper/length.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/textEditLengthHelper/textEditInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/triggerOptions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/dataTypes/xtabHistoryOptions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/debugRecorderBookmark.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/editReason.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/inlineEditsModelService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/nesActivationStatusTelemetry.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/observableGit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/observableWorkspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/inlineEdits/common/responseProcessor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/statelessNextEditProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/inlineEdits/common/statelessNextEditProviders.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/utils/observable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/utils/stringifyChatMessages.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/utils/tsExpr.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/utils/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/workspaceEditTracker/nesXtabHistoryTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/workspaceEditTracker/singleFileStaticWorkspaceEditTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/workspaceEditTracker/staticWorkspaceEditTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/common/workspaceEditTracker/workspaceDocumentEditTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/node/inlineEditsModelService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/test/common/statelessNextEditProviers.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/test/common/textEditLength.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/test/common/xtabPromptOptions.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/test/node/edits.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/inlineEdits/test/node/random.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/interactive/vscode/interactiveSessionServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/languages/common/languageDiagnosticsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/languages/common/languageFeaturesService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/languages/common/testLanguageDiagnosticsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/languages/vscode/languageDiagnosticsServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/languages/vscode/languageFeaturesServicesImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/log/common/logExecTime.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/log/common/logService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/log/common/messageStringify.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/log/test/common/loggerHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/log/test/common/subLogger.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/log/vscode/outputChannelLogTarget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/mcp/common/mcpService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/mcp/vscode/mcpServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/mcp/vscode/test/mcpService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/multiFileEdit/common/editLogService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/multiFileEdit/common/multiFileEditQualityTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/nesFetch/common/completionHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/nesFetch/common/completionsAPI.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/nesFetch/common/completionsFetchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/nesFetch/common/responseStream.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/nesFetch/node/completionsFetchServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/nesFetch/node/streamTransformer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/common/anthropic.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/common/fetch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/common/fetcherService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/common/networking.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/networking/common/openai.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/common/responseConvert.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/common/toolDeferralService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/node/baseFetchFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/networking/node/chatStream.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/node/chatWebSocketTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/node/fetcherFallback.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/node/nodeFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/node/nodeFetchFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/node/stream.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/node/taggedCacheInterceptor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/node/test/chatWebSocketManager.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/node/test/nodeFetcherService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/node/test/taggedCacheInterceptor.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/test/node/fetch.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/test/node/fetcherFallback.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/test/node/headerContributors.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/test/node/networking.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/vscode-node/electronFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/vscode-node/fetcherServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/vscode-node/test/fetcherServiceCrash.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/vscode-node/test/nodeFetchFetcherCache.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/common/alternativeContent.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/notebook/common/alternativeContentEditGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/common/alternativeContentFormat.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/common/alternativeContentProvider.json.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/common/alternativeContentProvider.text.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/common/alternativeContentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/notebook/common/alternativeContentProvider.xml.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/common/alternativeNotebookDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/notebook/common/alternativeNotebookTextDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/common/helpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/common/mockAlternativeContentService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/common/notebookDiff.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/common/notebookService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/notebook/common/notebookSummaryTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/common/offsetTranslator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/test/common/offsetTranslator.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/test/node/alternativeContent.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/test/node/alternativeContentEditGenerator.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/test/node/alternativeNotebookTextDocument.spec.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/test/node/notebookService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/test/node/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/vscode/notebookExectionServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/vscode/notebookServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notebook/vscode/notebookSummaryTrackerImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/notification/common/notificationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/notification/vscode/notificationServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/open/common/opener.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/open/vscode/opener.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/openai/node/fetch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/openai/node/test/chatTokens.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/agentOTelEnv.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/genAiAttributes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/genAiEvents.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/genAiMetrics.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/messageFormatters.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/noopOtelService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/otelConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/otelService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/agentOTelEnv.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/agentTraceHierarchy.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/byokProviderSpans.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/capturingOTelService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/chatMLFetcherSpanLifecycle.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/genAiEvents.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/genAiMetrics.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/messageFormatters.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/noopOtelService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/otelConfig.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/serviceRobustness.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/workspaceOTelMetadata.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/workspaceOTelMetadata.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/node/extractToolParameters.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/node/inMemoryOTelService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/node/otelServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/node/sqlite/sqliteSpanExporter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/node/sqlite/test/otelSqliteStore.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/node/test/extractToolParameters.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/node/test/traceContextPropagation.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/chunkGroupTypes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/indentationStructure.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/nodes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/parserService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/parserServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/fixtures/problem1.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/fixtures/test.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/fixtures/vscode.proposed.chatParticipantAdditions.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/indentationStructure.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/projectTemplatesIndex/common/projectTemplatesIndex.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/promptFiles/common/promptsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/promptFiles/node/automaticInstructionsCollector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/promptFiles/test/common/mockPromptsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/promptFiles/test/node/agentInstructionsLocator.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/promptFiles/test/node/automaticInstructionsCollector.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/promptFiles/test/node/mockFiles.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/promptFiles/vscode-node/agentInstructionsLocator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/promptFiles/vscode-node/promptsServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/prompts/common/promptPathRepresentationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/prompts/test/node/promptPathRepresentationService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/proxyModels/common/proxyModelsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/proxyModels/node/proxyModelsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/releaseNotes/common/releaseNotesService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/releaseNotes/vscode/releaseNotesServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/remoteCodeSearch/common/adoCodeSearchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/remoteCodeSearch/common/githubCodeSearchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/remoteCodeSearch/common/remoteCodeSearch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/remoteCodeSearch/node/codeSearchRepoAuth.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/remoteCodeSearch/vscode-node/codeSearchRepoAuth.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/remoteRepositories/common/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/remoteRepositories/vscode/remoteRepositories.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/remoteSearch/common/codeOrDocsSearchClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/remoteSearch/common/codeOrDocsSearchErrors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/remoteSearch/common/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/remoteSearch/node/codeOrDocsSearchClientImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/requestLogger/common/capturingToken.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/requestLogger/common/requestLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/requestLogger/node/nullRequestLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/requestLogger/node/requestLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/requestLogger/test/node/testRequestLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/review/common/reviewCommand.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/review/common/reviewService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/review/vscode/reviewServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/scopeSelection/common/scopeSelection.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/scopeSelection/vscode-node/scopeSelectionImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/search/common/searchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/search/vscode-node/searchServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/search/vscode/baseSearchServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/settingsEditor/common/settingsEditorSearchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/snippy/common/snippyCompute.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/snippy/common/snippyFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/snippy/common/snippyNotifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/snippy/common/snippyService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/snippy/common/snippyServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/snippy/common/snippyTypes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/survey/common/surveyService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/survey/vscode/surveyServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/tabs/common/tabsAndEditorsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/tabs/vscode/tabsAndEditorsServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/tasks/common/tasksService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/tasks/common/testTasksService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/tasks/vscode/tasksService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/common/baseTelemetryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/common/ghTelemetrySender.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/common/ghTelemetryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/common/msftTelemetrySender.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/common/nullExperimentationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/common/nullTelemetryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/common/telemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/telemetry/common/telemetryData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/node/azureInsights.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/node/baseExperimentationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/telemetry/node/spyingTelemetryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/test/node/experimentation.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/test/node/telemetry.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/test/node/telemetry2.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/vscode-node/githubTelemetrySender.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/telemetry/vscode-node/microsoftExperimentationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/vscode-node/microsoftTelemetrySender.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/telemetry/vscode-node/telemetryServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/terminal/common/terminalService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/terminal/vscode/terminalBufferListener.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/terminal/vscode/terminalServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/common/endpointTestFixtures.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/common/testCustomInstructionsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/common/testExtensionsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/common/testNotebookService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/fetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/isInExtensionHost.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/services.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/simulationWorkspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/simulationWorkspaceServices.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/telemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/telemetryFake.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/testChatAgentService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/testHeaderContributor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/testWorkspaceService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/testing/common/nullTestProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/testing/common/nullWorkspaceMutationManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/testing/common/setupTestExtensions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/testing/common/testLogService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/testing/common/testProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/testing/node/setupTestDetector.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/testing/node/testDepsResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/testing/test/node/setupTestDetector.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/testing/vscode/testProviderImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/thinking/common/thinking.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/thinking/common/thinkingUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/tokenizer/node/parseTikTokens.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/tokenizer/node/promptTokenDetails.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/tokenizer/node/tikTokenizerImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/tokenizer/node/tikTokenizerWorker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/tokenizer/node/tokenizer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/tokenizer/test/node/tokenizer.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/urlChunkSearch/node/urlChunkEmbeddingsIndex.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workbench/common/workbenchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/workbench/vscode/workbenchServiceImpt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspace/common/workingDirectory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspace/common/workspaceService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/workspace/vscode/workspaceServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/common/rerankerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/common/workspaceChunkSearch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/codeSearch/codeSearchChunkSearch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/codeSearch/codeSearchRepo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/codeSearch/externalIngestClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/codeSearch/externalIngestIndex.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/codeSearch/repoTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/codeSearch/workspaceDiff.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/codeSearch/workspaceFolderIdMap.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/nullWorkspaceFileIndex.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/scenarioAutomationWorkspaceChunkSearchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/workspaceChunkAndEmbeddingCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/workspaceChunkEmbeddingsIndex.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/workspaceChunkSearchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/node/workspaceFileIndex.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/test/node/externalIngest.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/test/node/scenarioAutomationWorkspaceChunkSearchService.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceChunkSearch/test/node/workspaceFolderIdMap.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceRecorder/common/resolvedRecording/documentHistory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceRecorder/common/resolvedRecording/operation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceRecorder/common/resolvedRecording/resolvedRecording.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceRecorder/common/resolvedRecording/sliceRecording.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceRecorder/common/workspaceLog.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/workspaceState/common/promptContextModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/annotatedLineRange.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/arrays.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/async.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/asyncIterableUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/backwardCompatSetting.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/cache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/chatResponseStreamImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/common/crypto.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/debugValueEditorGlobals.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/diff.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/common/errorMessage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/errors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/fileSystem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/fileTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/glob.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/hexdump.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/imageUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/languages.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/lock.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/markdown.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/notebooks.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/pathRedaction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/performance.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/progress.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/progressRecorder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/racePromise.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/range.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/result.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/services.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/common/taskSingler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/telemetryCorrelationId.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/async.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/common/asyncIterableUtils.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/mockChatResponseStream.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/notebooks.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/performance.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/result.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/shims/editing.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/shims/enums.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/shims/l10n.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/shims/newSymbolName.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/shims/notebookDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/shims/notebookEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/shims/terminal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/shims/textDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/shims/textEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/common/test/shims/themes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/shims/vscodeTypesShim.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/simpleMock.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/testUtils.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/testUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/time.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/timeTravelScheduler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/tokenizer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/variableLengthQuantity.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/vscodeVersion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/node/crypto.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/node/jsonFile.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/node/ports.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/node/test/glob.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/node/worker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/test/node/errorMessage.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/test/node/variableLengthQuantity.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/arrays.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/arraysFind.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/assert.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/async.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/buffer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/cache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/cancellation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/charCode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/codicons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/codiconsLibrary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/codiconsUtil.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/collections.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/date.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/diff/diff.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/diff/diffChange.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/equals.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/errors.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/event.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/extpath.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/functional.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/glob.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/hash.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/htmlContent.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/iconLabels.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/iterator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/lazy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/lifecycle.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/linkedList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/map.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/marshallingIds.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/mime.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/network.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/numbers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/objects.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/path.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/platform.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/process.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/resources.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/sequence.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/sseParser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/stopwatch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/stream.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/strings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/symbols.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/ternarySearchTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/themables.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/uint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/uri.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/uuid.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/yaml.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/node/ports.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/editOperation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/edits/arrayEdit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/edits/edit.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/editor/common/core/edits/lengthEdit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/edits/lineEdit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/edits/stringEdit.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/editor/common/core/edits/textEdit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/position.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/range.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/ranges/lineRange.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/ranges/offsetRange.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/text/abstractText.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/editor/common/core/text/positionToOffset.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/text/positionToOffsetImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/editor/common/core/text/textLength.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/core/wordHelper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/diff/defaultLinesDiffComputer/algorithms/diffAlgorithm.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/editor/common/diff/defaultLinesDiffComputer/algorithms/dynamicProgrammingDiffing.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/diff/defaultLinesDiffComputer/algorithms/myersDiffAlgorithm.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/diff/defaultLinesDiffComputer/computeMovedLines.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/diff/defaultLinesDiffComputer/defaultLinesDiffComputer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/diff/defaultLinesDiffComputer/heuristicSequenceOptimizations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/diff/defaultLinesDiffComputer/lineSequence.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/diff/defaultLinesDiffComputer/linesSliceCharSequence.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/diff/defaultLinesDiffComputer/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/diff/legacyLinesDiffComputer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/diff/linesDiffComputer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/editor/common/diff/rangeMapping.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/editor/common/model/mirrorTextModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/editor/common/model/prefixSumComputer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/nls.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/platform/instantiation/common/descriptors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/platform/instantiation/common/graph.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/platform/instantiation/common/instantiation.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/platform/instantiation/common/instantiationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/platform/instantiation/common/serviceCollection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostDocumentData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/diagnostic.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/es5ClassCompat.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/location.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/markdownString.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/notebooks.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/position.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/range.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/selection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/snippetString.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/snippetTextEdit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/symbolInformation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/api/common/extHostTypes/textEdit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/contrib/chat/common/promptSyntax/promptFileParser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/workbench/contrib/terminalContrib/suggest/browser/terminalGitBashHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/cache-cli.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/cache.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/test/base/cachingChatMLFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/cachingChunksEndpointClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/cachingCodeSearchClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/cachingCompletionsFetchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/cachingEmbeddingsFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/cachingResourceFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/chatMLCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/completionsCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/embeddingsCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/extHostContext/simulationExtHostContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/extHostContext/simulationExtHostToolsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/extHostContext/simulationWorkspaceExtHost.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/hash.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/pausableThrottledWorker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/rubric.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/salts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/simulationBaseline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/simulationEndpointHealth.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/simulationOutcome.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/simuliationWorkspaceChunkSearch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/spyingChatMLFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/stdout.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/throttlingChatMLFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/throttlingCodeOrDocsSearchClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/base/validate.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/cacheSalt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/codeMapper/codeMapper.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/test/e2e/cli.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/edit.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/evaluators/pythonFix.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/explain.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/fetchWebPageTool.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/findFilesTool.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/markdown.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/newNotebook.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/newWorkspace.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/notebookTools.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/pythonFix.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/scenarioLoader.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/scenarioTest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/search.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/semanticSearch.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/semanticSearchView.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/system.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/terminal.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/testHelper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/tools.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/toolSimTest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/typescriptFix.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/variables.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/vscode-metaprompt.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/vscode.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/e2e/workspace-e2e.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/inline/agent.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/inline/fixing.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/inline/inlineEditCode.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/inline/inlineExplain.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/inline/inlineGenerateCode.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/inline/multiFileEdit.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/inline/review.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/inline/slashDoc.py.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/inline/test/assertPyDocstring.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/intent/inlineChatIntent.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/intent/intentTest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/intent/panelChatIntent.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/jsonOutputPrinter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/outputColorer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/alternativeAction/processor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/alternativeAction/types.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/alternativeAction/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/cursorJump/cursorJumpPromptStep.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/cursorJump/cursorJumpResponseStep.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/cursorJump/detectJump.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/cursorJump/detectJump.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/output.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/parseInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/pipeline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/promptStep.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/replayRecording.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/responseStep.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/streamJsonRecords.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/test/cursorJumpPipeline.e2e.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/test/fixtures/cursorJumpFixtureData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/test/fixtures/fixtureData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/test/pipeline.e2e.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/test/pipeline.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/test/responseStep.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/test/streamJsonRecords.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/test/writeStream.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/pipeline/writeStream.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/prompts/customInstructions.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/prompts/devContainerConfigGenerator.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/prompts/gitCommitMessageGenerator.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/prompts/newNotebookCell.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/prompts/newWorkspace.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/prompts/settingsEditorSearchResultsSelector.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/scenarios/test-generate-markdown/file.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/scenarios/test-scenario-fix-typescript/file1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/scenarios/test-scenario-fix-typescript/file2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/debugCommandToConfig.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/debugTools.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/diagnosticProviders/cpp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/diagnosticProviders/diagnosticsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/diagnosticProviders/eslint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/diagnosticProviders/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/diagnosticProviders/python.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/diagnosticProviders/roslyn.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/diagnosticProviders/ruff.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/diagnosticProviders/tsc.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/diagnosticProviders/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/test/simulation/externalScenarios.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/edit-asyncawait-4151/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/edit-slice-4149/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/edit/issue-5755/vscode.proposed.chatParticipantAdditions.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/edit/issue-7996/codeEditorWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/edit/issue-8129/optimize.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/python/pyright_annotated_types_missing_argument.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/python/pyright_await_in_non_async_function.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/python/pyright_can_not_be_assigned_to_1.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/python/pyright_can_not_be_assigned_to_2.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/python/pyright_optional_member_access.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/python/pyright_parameter_already_assigned.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/python/pyright_self_as_first_argument.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/eslint_constructor_super.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/inlineChatSimulator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2339_3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2341.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/py_end_test/tests/ex_test.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/py_start_test/tests/test_ex.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/inlineChatSimulator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/inlineEdit/fileLoading.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/inlineEdit/inlineEdit.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/inlineEdit/inlineEditScoringService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/inlineEdit/inlineEditTester.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/language/lsifLanguageFeatureService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/language/simulationLanguageFeatureService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/language/tsServerClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/nesCoffeTests.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/nesCoffeTestsTypes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/nesExternalTests.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/nesOptionsToConfigurations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/notebookEdits.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/notebooks.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/outcomeValidators.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/panelCodeMapperSimulator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/renameSuggestionsProvider.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/setupTests.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/shared/grepFilter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/simulationTestProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/slash-test/testGen.cpp.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/slash-test/testGen.csharp.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/slash-test/testGen.java.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/slash-test/testGen.js.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/slash-test/testGen.py.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/slash-test/testGen.ts.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/stestUtil.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/testInformation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/testSnapshot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/tools/toolcall.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulationLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulationMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulationTests.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/taskRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/testExecutionInExtension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/testExecutor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/testVisualizationRunnerSTest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/testVisualizationRunnerSTestRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/test/index.js** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/test/index.js** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/adb.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/package.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-tests/test/colorize-fixtures/test.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/chat-simulation/fixtures/_chatperf_errors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/code-agent-host.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/code-cli.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/code-server.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/code.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/generate-definitelytyped.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/node-electron.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **src/typings/copilot-api.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/filters.perf.data.js** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/filters.perf.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/test/node/testRemoteAgentHost.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/instantiation/test/common/instantiationService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/bulkEdit/browser/bulkFileEdits.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vscode-dts/vscode.proposed.chatParticipantAdditions.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vscode-dts/vscode.proposed.chatParticipantPrivate.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vscode-dts/vscode.proposed.editorHoverVerbosityLevel.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vscode-dts/vscode.proposed.languageModelThinkingPart.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vscode-dts/vscode.proposed.languageModelToolResultAudience.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vscode-dts/vscode.proposed.mcpServerDefinitions.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vscode-dts/vscode.proposed.mcpToolDefinitions.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vscode-dts/vscode.proposed.resolvers.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/integration/browser/src/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-amd-node-module.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-ensure-no-disposables-leak-in-test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-import-patterns.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-layering.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **.eslint-plugin-local/code-limited-top-functions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-no-dangerous-type-assertions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-no-deep-import-of-internal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-no-direct-gulp-import.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-no-http-import.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-no-nls-in-standalone-editor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-no-runtime-import.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-no-standalone-editor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-no-static-node-module-import.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-no-untyped-meta-access.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-parameter-properties-must-have-explicit-accessibility.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/code-translation-remind.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **.eslint-plugin-local/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/build.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/async_pipe.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/auth.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/commands/agent_host.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/commands/agent.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/commands/output.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/commands/tunnels.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/desktop/version_manager.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/download_cache.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/json_rpc.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/msgpack_rpc.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/rpc.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/agent_host.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/code_server.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/control_server.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/dev_tunnels.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/local_forwarding.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/port_forwarder.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/server_bridge.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/service.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/singleton_client.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/singleton_server.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/tunnels/socket_signal.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/update_service.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/util.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/util/command.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/util/http.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/util/io.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/util/prereqs.rs** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/util/sync.rs** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/script/analyzeEdits.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/script/simulate.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/lib/src/prompt/test/determineTimeComplexity.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/testdata/lazy_greet.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/map.summarized.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/map.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/problem2.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/problem2.summarized.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/docGenParsing.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/languageLoader.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/parserImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/parserWithCaching.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/parserWorker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/querying.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/selectionParsing.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/structure.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/testGenParsing.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/treeSitterLanguages.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/treeSitterQueries.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/node/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/findLastTest/ts.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/findLastTest/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/fixtures/dllmain.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/fixtures/test.go** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/fixtures/test.java** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/fixtures/try.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getNodeMatchingSelection.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getNodeToDocument.cpp.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getNodeToDocument.java.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getNodeToDocument.py.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getNodeToDocument.ts.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getNodeToDocument.util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getParseErrorCount.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getStructure.cpp.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getStructure.csharp.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getStructure.golang.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getStructure.java.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getStructure.js.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getStructure.py.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getStructure.ruby.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getStructure.rust.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getStructure.ts.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getStructure.tsx.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/getStructure.util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/markers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/parser.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/common/test/annotatedSrc.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/scenarios/test-explain/functions.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/scenarios/test-explain/methods.java** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/cpp/basic/main.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/cpp/headers/json_fwd.hpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/doc-ts-interface/codeImportPatterns.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/cpp/basic/main.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/cpp/headers/json_fwd.hpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2420/file0.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2420/file1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/generate-for-selection/base/common/map.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/testVisualizationRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/lib/jquery.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/php-language-features/src/features/completionItemProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/php-language-features/src/features/hoverProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/php-language-features/src/features/phpGlobalFunctions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/php-language-features/src/features/phpGlobals.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/php-language-features/src/features/signatureHelpProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/php-language-features/src/features/utils/async.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/php-language-features/src/features/utils/markedTextUtil.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/php-language-features/src/features/validationProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/php-language-features/src/phpMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/scripts/update-specs.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-tests/test/colorize-fixtures/test.c** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-tests/test/colorize-fixtures/test.cc** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-tests/test/colorize-fixtures/test.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-tests/test/colorize-fixtures/test.go** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/code-sessions-web.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/code-web.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/test-documentation.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/test-integration.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/test-remote-integration.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/test-web-integration.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/test.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/dompurify/dompurify.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/containers/entrypoint.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/scripts/run-docker.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/scripts/run-macOS.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/scripts/run-ubuntu.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **test/unit/node/index.js** (Score: 1): [LOW] Classified as UTILITY.
+- **cli/src/log.rs** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/configuration-editing/src/configurationEditingMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/configuration-editing/src/extensionsProposals.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/configuration-editing/src/importExportProfiles.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/configuration-editing/src/node/net.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/configuration-editing/src/settingsDocumentHelper.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/script/setup/copySources.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/chronicle/common/test/sessionStoreTracking.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/parseBlock.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/parseBlock.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/test/common/importRewriting.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p1/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p1/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p1/source/f3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p1/source/f4.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p10/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p10/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p10/source/f3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p11/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p11/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p11/source/f3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p4/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p4/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p4/source/f3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p4/source/f4.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p4/source/f5.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p5/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p5/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p5/source/f3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p8/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p8/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p8/source/f3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p9/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p9/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p9/source/f3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p9/source/f4.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/api.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/classContextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/code.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/functionContextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/host.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/methodContextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/moduleContextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/nesRenameValidator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/nullContextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/protocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/sourceFileContextProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/common/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/node/create.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/node/host.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/node/main.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/node/test/languageServerProxy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/node/test/languageServices.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/node/test/nes.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/node/test/simple.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/src/node/test/testing.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/browser/htmlServerMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/browser/htmlServerWorkerMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/customData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/htmlServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/languageModelCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/modes/cssMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/modes/embeddedSupport.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/modes/formatting.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/modes/htmlFolding.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/modes/htmlMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/modes/javascriptMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/modes/javascriptSemanticTokens.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/modes/languageModes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/modes/selectionRanges.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/modes/semanticTokens.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/node/htmlServerMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/node/htmlServerNodeMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/node/nodeFs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/requests.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/test/completions.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/test/documentContext.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/test/embedded.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/test/folding.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/test/formatting.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/test/hover.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/test/rename.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/test/selectionRanges.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/test/semanticTokens.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/test/words.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/utils/arrays.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/utils/positions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/utils/runner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/utils/strings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/src/utils/validation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/curl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-tests/test/colorize-fixtures/test-80644.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/chat-simulation/common/utils.js** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/chat-simulation/test-chat-mem-leaks.js** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/sync-agent-host-protocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/monaco.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/activityBar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/agentsWindow.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/application.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/chat.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/code.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/debug.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/editor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/editors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/electron.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/explorer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/extensions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/keybindings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/localization.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/logger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/notebook.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/peek.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/playwrightBrowser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/playwrightDriver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/playwrightElectron.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/problems.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/processes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/profiler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/quickaccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/quickinput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/scm.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/search.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/settings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/statusbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/task.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/terminal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/automation/src/viewlet.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **test/automation/src/workbench.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/cli.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/desktop.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/detectors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/devTunnel.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/githubAuth.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/main.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/server.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/serverWeb.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/uiTest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/sanity/src/wsl.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/configuration-editing/src/test/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/test/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/test/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/test/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/test/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/notebook-renderers/src/test/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-api-tests/src/singlefolder-tests/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-api-tests/src/workspace-tests/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-perf-tests/src/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-tests/src/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/integration/electron/testrunner.js** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/configuration-editing/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/configuration-editing/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/client/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/client/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/debug-auto-launch/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/debug-server-ready/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/extension-editing/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/extension-editing/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/grunt/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/gulp/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/client/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/client/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/server/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/notebook-src/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/jake/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/client/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/client/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/server/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/server/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/markdown-editor-src/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/notebook/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/preview-src/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-math/notebook/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-math/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-math/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/chat/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/notebook-renderers/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/php-language-features/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/search-result/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/search-result/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/simple-browser/preview-src/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/simple-browser/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/simple-browser/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/tsconfig.base.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/tunnel-forwarding/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-api-tests/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-perf-tests/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-tests/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-test-resolver/tsconfig.browser.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-test-resolver/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/.eslintplugin/no-nls-localize.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/.eslintplugin/no-runtime-import.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/.eslintplugin/no-test-imports.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/.eslintplugin/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/pullRequestModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/debug/vscode/debugOutputListener.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/git/vscode/git.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/platform/ignore/vscode/ignoreInfoFileContentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/test/node/testWorkbenchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/test/simulation/fixtures/edit-add-explicit-type-issue-3759/pullRequestModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/edit/issue-release-142/testAuthProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/python/pyright_general_type_issue.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/python/pyright_no_abstract_class_instantiation.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/actionButton.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/api/api1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/api/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/api/git.constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/api/git.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/artifactProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/askpass.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/autofetch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/blame.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/branchProtection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/cache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/decorationProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/decorators.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/diagnostics.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/editSessionIdentityProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/emoji.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/fileSystemProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/git-base.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/git.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/gitEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/historyItemDetailsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/historyProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/hover.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/ipc/ipcServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/git/src/main.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/model.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/operation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/postCommitCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/protocolHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/pushError.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/quickDiffProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/remotePublisher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/remoteSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/repository.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/repositoryCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/staging.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/statusbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/terminal.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/git/src/test/askpassManager.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/test/git.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/test/repositoryCache.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/test/smoke.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/timelineProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/uri.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/watch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/auth.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/branchProtection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/canonicalUriProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/credentialProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/historyItemDetailsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/links.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/publish.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/pushErrorHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/remoteSourceProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/remoteSourcePublisher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/shareProviders.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/test/github.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/typings/git.constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/typings/git.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github/src/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/client/src/autoInsertion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/client/src/browser/htmlClientMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/client/src/customData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/client/src/htmlClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/client/src/languageParticipants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/client/src/node/htmlClientMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/client/src/node/nodeFs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/html-language-features/client/src/requests.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/markdown-language-features/preview-src/activeLineMarker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/preview-src/csp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/preview-src/diffScrollSync.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/preview-src/events.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/preview-src/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/preview-src/loading.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/preview-src/messaging.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/preview-src/pre.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/preview-src/scroll-sync.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/preview-src/settings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/preview-src/strings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/client/client.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/client/fileWatchingManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/client/inMemoryDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/client/protocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/client/workspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/copyImage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/insertResource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/openFrontMatterSettings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/openImage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/refreshPreview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/reloadPlugins.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/renderDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/reopenAsPreview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/showPreview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/showPreviewSecuritySelector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/showSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/commands/toggleLock.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/extension.browser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/extension.shared.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/extensions/yamlPreamble/yamlPreamble.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/languageFeatures/copyFiles/copyFiles.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/languageFeatures/copyFiles/dropOrPasteResource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/languageFeatures/copyFiles/newFilePathGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/languageFeatures/copyFiles/pasteUrlProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/languageFeatures/copyFiles/shared.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/languageFeatures/copyFiles/smartDropOrPaste.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/languageFeatures/copyFiles/snippets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/languageFeatures/diagnostics.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/languageFeatures/fileReferences.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/languageFeatures/linkUpdater.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/languageFeatures/updateLinksOnPaste.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/logging.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/markdownEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/markdownExtensions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/preview/documentRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/preview/lineDiff.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/preview/markdownEditorProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/preview/preview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/preview/renderedDiffWarning.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/preview/scrolling.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/preview/security.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/preview/topmostLineMonitor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/slugify.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/test/copyFile.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/test/documentLink.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/test/engine.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/test/engine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/test/nulLogging.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/test/pasteUrl.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/test/urlToUri.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/test/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/types/textDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/arrays.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/async.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/cancellation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/dispose.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/document.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/dom.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/file.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/mimes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/openDocumentLink.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/resourceMap.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/resources.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/schemes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/uriList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/url.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/markdown-language-features/src/util/uuid.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/src/codelensProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/src/commandHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/src/contentProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/src/delayer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/src/documentMergeConflict.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/src/documentTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/src/interfaces.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/src/mergeConflictMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/src/mergeConflictParser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/src/mergeDecorator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/merge-conflict/src/services.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/features/date.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/features/jsonContributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/features/packageJSONContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/npmBrowserMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/npmMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/npmScriptLens.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/npmView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/preferred-pm.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/readScripts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/scriptHover.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/npm/src/tasks.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/api.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/configurePlugin.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/goToProjectConfiguration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/learnMoreAboutRefactorings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/openJsDocLink.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/openTsServerLog.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/reloadProject.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/restartTsServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/selectTypeScriptVersion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/tsserverRequests.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/commands/useTsgo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/configuration/configuration.browser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/configuration/configuration.electron.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/configuration/configuration.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/typescript-language-features/src/configuration/documentSelector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/configuration/fileSchemes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/configuration/languageDescription.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/configuration/languageIds.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/configuration/schemes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/experimentationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/extension.browser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/filesystems/ata.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/filesystems/autoInstallerFs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/filesystems/memFs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/callHierarchy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/codeLens/baseCodeLensProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/codeLens/implementationsCodeLens.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/codeLens/referencesCodeLens.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/completions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/copyPaste.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/definitionProviderBase.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/definitions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/diagnostics.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/directiveCommentCompletions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/documentHighlight.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/documentSymbol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/fileConfigurationManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/fileReferences.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/fixAll.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/folding.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/formatting.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/hover.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/implementations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/inlayHints.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/jsDocCompletions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/linkedEditing.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/organizeImports.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/quickFix.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/refactor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/references.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/rename.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/semanticTokens.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/signatureHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/smartSelect.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/sourceDefinition.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/tagClosing.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/tsconfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/typeDefinitions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/updatePathsOnRename.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/util/codeAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/util/copilot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/util/dependentRegistration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/util/snippetForFunctionCall.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/util/textRendering.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageFeatures/workspaceSymbols.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/languageProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/lazyClientHost.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/logging/logger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/logging/logLevelMonitor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/logging/telemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/logging/tracer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/remoteRepositories.browser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/task/taskProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/task/tsconfigProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/smoke/completions.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/smoke/implementationsCodeLens.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/typescript-language-features/src/test/smoke/jsDocCompletions.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/smoke/quickFix.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/smoke/referencesCodeLens.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/suggestTestHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/testUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/unit/cachedResponse.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/unit/functionCallSnippet.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/unit/jsdocSnippet.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/unit/onEnter.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/unit/requestQueue.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/unit/server.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/test/unit/textRendering.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsconfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/api.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/bufferSyncSupport.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/cachedResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/callbackMap.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/cancellation.electron.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/cancellation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/fileWatchingManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/logDirectoryProvider.electron.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/logDirectoryProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/pluginPathsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/plugins.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/protocol/errorCodes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/protocol/fixNames.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/protocol/modifiers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/protocol/protocol.const.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/requestQueue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/server.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/typescript-language-features/src/tsServer/serverError.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/serverProcess.browser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/serverProcess.electron.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/spawner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/versionProvider.electron.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/tsServer/versionProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/typescript-language-features/src/typeConverters.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/typescriptService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/typescriptServiceClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/typeScriptServiceClientHost.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/ui/activeJsTsEditorTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/ui/intellisenseStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/ui/largeProjectStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/ui/managedFileContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/ui/suggestNativePreview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/ui/typingsStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/ui/versionStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/arrays.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/async.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/cancellation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/configuration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/dispose.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/fs.electron.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/fs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/hash.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/lazy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/objects.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/packageInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/platform.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/regexp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/relativePathResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/resourceMap.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/src/utils/temp.electron.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-api-tests/src/singlefolder-tests/workspace.tasks.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vscode-dts/vscode.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vscode-dts/vscode.proposed.canonicalUriProvider.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vscode-dts/vscode.proposed.scmArtifactProvider.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vscode-dts/vscode.proposed.scmHistoryProvider.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/chat-lib/tsconfig.base.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/chat-lib/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/script/electron/simulationWorkbenchMain.js** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/node/cpuUsage.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/extension/src/panelShared/languages/javaScriptReact.tmLanguage.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/editorGroupWatermark.summarized.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/editorGroupWatermark.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/tempo-actions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/tempo-chatActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/tempo-chatContextActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/fixtures/chatSetup.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/fixtures/test.js** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/parser/test/node/fixtures/test.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/filters.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/naturalLanguage/korean.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/normalization.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/scenarios/test-tools/workspace/chatSetup.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/codeMapper/quickInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/test/simulation/fixtures/edit-refactor-loop/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/edit/6276.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/test/simulation/fixtures/edit/issue-6973/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/edit/issue-7202/languageModelToolsContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/gen/commandCenterControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/generate/issue-6505/chatParserTypes.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/test/simulation/fixtures/tests/py_end_test/src/ex.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/py_start_test/src/ex.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/vscode/editorGroupWatermark.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/prTitleAndDescription.stest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-perf-tests/test/colorize-fixtures/test-treeView.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/vscode-colorize-tests/test/colorize-fixtures/basic.java** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-tests/test/colorize-fixtures/test-173216.sh** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-tests/test/colorize-fixtures/test-78769.cpp** (Score: 1): [LOW] Classified as UTILITY.
+- **src/typings/editContext.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/browser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/canIUse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/cssValue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/deviceAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/dnd.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/dom.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/dompurify/dompurify.js** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/domSanitize.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/domStylesheets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/event.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/fonts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/formattedTextRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/history.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/keyboardEvent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/markdownRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/mouseEvent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/touch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/actionbar/actionbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/actionbar/actionViewItems.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/animations/animations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/aria/aria.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/breadcrumbs/breadcrumbsWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/button/button.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/centered/centeredViewLayout.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/countBadge/countBadge.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/dialog/dialog.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/dnd/dnd.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/dropdown/dropdown.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/dropdown/dropdownActionViewItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/findinput/findInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/findinput/findInputToggles.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/findinput/replaceInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/grid/grid.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/highlightedlabel/highlightedLabel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/hover/hover.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/hover/hoverDelegate.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/hover/hoverDelegate2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/hover/hoverDelegateFactory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/hover/hoverWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/iconLabel/iconLabel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/iconLabel/iconLabels.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/iconLabel/simpleIconLabel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/icons/iconSelectBox.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/inputbox/inputBox.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/keybindingLabel/keybindingLabel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/list/list.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/list/listPaging.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/list/listView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/list/listWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/list/rowCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/menu/menu.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/menu/menubar.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/pixelSpinner/pixelSpinner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/progressbar/progressAccessibilitySignal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/progressbar/progressbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/radio/radio.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/resizable/resizable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/sash/sash.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/scrollbar/abstractScrollbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/scrollbar/horizontalScrollbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/scrollbar/scrollableElement.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/scrollbar/scrollbarArrow.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/scrollbar/verticalScrollbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/selectBox/selectBox.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/selectBox/selectBoxCustom.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/selectBox/selectBoxNative.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/severityIcon/severityIcon.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/splitview/paneview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/splitview/splitview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/table/table.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/table/tableWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/toggle/toggle.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/toolbar/toolbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/tree/abstractTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/tree/asyncDataTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/tree/dataTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/tree/indexTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/tree/indexTreeModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/tree/objectTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/tree/objectTreeModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/tree/tree.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/tree/treeDefaults.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/browser/ui/widget.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/window.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/actions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/common/codicons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/codiconsLibrary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/codiconsUtil.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/comparers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/dataTransfer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/date.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/errorMessage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/filters.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/history.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/htmlContent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/iconLabels.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/image.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/iterator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/jsonc.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/jsonErrorMessages.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/keyCodes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/layout.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/lazy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/linkedText.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/marked/marked.js** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/navigator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/numbers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/parsers.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/common/ports.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/product.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/range.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/resourceTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/scrollable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/severity.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/tfIdf.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/themables.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/parts/contextmenu/electron-browser/contextmenu.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/parts/sandbox/electron-browser/electronTypes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/parts/sandbox/electron-browser/globals.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/parts/sandbox/electron-browser/preload.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/browser/actionbar.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/browser/markdownRenderer.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/browser/ui/toolbar/toolbar.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/browser/ui/tree/asyncDataTree.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/browser/ui/tree/compressedObjectTreeModel.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/browser/ui/tree/dataTree.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/browser/ui/tree/objectTree.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/snapshot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/code/electron-browser/workbench/workbench.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/dataTransfer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/services/inlineCompletionsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/services/openerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/widget/diffEditor/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/widget/diffEditor/diffEditor.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/widget/multiDiffEditor/colors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/browser/widget/multiDiffEditor/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/common/config/editorConfigurationSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/common/services/completionsEnablement.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/common/services/getIconClasses.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/common/services/treeViewsDnd.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/common/services/treeViewsDndService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/codeAction/browser/codeActionContributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/colorPicker/browser/colorPickerParts/colorPickerCloseButton.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/editorState/browser/keybindingCancellation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/find/browser/findOptionsWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/find/browser/findWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/find/browser/findWidgetSearchHistory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/find/browser/replaceWidgetHistory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/gotoSymbol/browser/peek/referencesTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/gotoSymbol/browser/peek/referencesWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/hover/browser/contentHoverStatusBar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/hover/browser/hoverCopyButton.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/hover/test/browser/hoverCopyButton.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/inlineCompletions/browser/view/inlineEdits/components/gutterIndicatorMenu.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/quickAccess/browser/commandsQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/suggest/browser/suggestWidgetStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/symbolIcons/browser/symbolIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/toggleTabFocusMode/browser/toggleTabFocusMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/contrib/unicodeHighlighter/browser/bannerController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/standalone/browser/quickAccess/standaloneCommandsQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/standalone/browser/quickAccess/standaloneHelpQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/editor/standalone/browser/standaloneLayoutService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/nls.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/accessibility/browser/accessibilityService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/accessibility/browser/accessibleView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/accessibility/browser/accessibleViewRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/accessibilitySignal/browser/progressAccessibilitySignalScheduler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/action/common/action.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/action/common/actionCommonCategories.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actions/browser/actionbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actions/browser/actionViewItemService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/actions/browser/actionWidgetDropdownActionViewItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/actions/browser/buttonbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actions/browser/dropdownActionViewItemWithKeybinding.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actions/browser/dropdownWithPrimaryActionViewItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/actions/browser/floatingMenu.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actions/browser/menuEntryActionViewItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/actions/browser/toolbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/actions/common/actions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actions/common/actions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actions/common/menuResetAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actions/common/menuService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actionWidget/browser/actionList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actionWidget/browser/actionWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actionWidget/browser/actionWidgetDropdown.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actionWidget/browser/tabbedActionListWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/actionWidget/test/browser/tabbedActionListWidget.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/browser/agentHost.config.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/common/agentHost.config.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/common/agentHostStarter.config.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/assignment/common/assignment.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/browserView/common/browserChatToolReferenceNames.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/browserView/common/browserPermissions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/browserView/common/browserView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/browserView/common/browserViewTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/browserView/common/browserViewUri.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/browserView/common/playwrightService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/browserView/electron-browser/preload-browserView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/clipboard/common/clipboardService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/clipboard/test/common/testClipboardService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/commands/common/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/contextkey/common/scanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/contextview/browser/contextMenuHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/defaultAccount/common/defaultAccount.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/dialogs/common/dialogs.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/dialogs/electron-browser/dialog.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/dnd/browser/dnd.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/editor/browser/editor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/externalTerminal/common/externalTerminal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/externalTerminal/electron-browser/externalTerminalService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/externalTerminal/electron-main/externalTerminal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/history/browser/historyWidgetKeybindingHint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/hover/browser/hover.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/hover/browser/hoverService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/hover/browser/hoverWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/hover/browser/updatableHoverWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/hover/test/browser/hoverService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/hover/test/browser/nullHoverService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/instantiation/common/descriptors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/instantiation/common/extensions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/instantiation/common/instantiation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/jsonschemas/common/jsonContributionRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/keybinding/common/abstractKeybindingService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/keybinding/common/keybinding.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/keybinding/common/keybindingResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/keybinding/common/keybindingsRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/keyboardLayout/common/keyboardConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/label/common/label.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/languagePacks/common/localizedStrings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/layout/browser/layoutService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/list/browser/listService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/markdown/browser/markdownRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/menubar/electron-browser/menubar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/meteredConnection/common/meteredConnection.config.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/native/common/native.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/notification/common/notification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/opener/browser/link.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/opener/common/opener.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/product/common/product.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/commandsQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/helpQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/pickerQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/quickinput/browser/quickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/quickInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/quickInputActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/quickInputBox.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/quickInputList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/quickInputService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/quickinput/browser/quickInputUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/quickPickPin.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/tree/quickInputDelegate.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/tree/quickInputTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/tree/quickInputTreeAccessibilityProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/tree/quickInputTreeController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/tree/quickInputTreeFilter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/tree/quickInputTreeRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/tree/quickInputTreeSorter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/browser/tree/quickTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/quickinput/common/quickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/quickinput/common/quickInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/quickinput/test/browser/quickinput.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/registry/common/platform.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/storage/common/storage.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/telemetry/common/telemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/theme/browser/defaultStyles.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/browser/iconsStyleSheet.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colorRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colors/baseColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colors/chartsColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colors/editorColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colors/inputColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colors/listColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colors/menuColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colors/minimapColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colors/miscColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colors/quickpickColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colors/searchColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/colorUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/iconRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/sizes/baseSizes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/sizeUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/theme.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/theme/common/themeService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/theme/common/tokenClassificationRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/tunnel/common/tunnelProxy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/update/common/update.config.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/url/common/trustedDomains.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/url/common/urlGlob.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/window/common/window.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/window/electron-browser/window.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/workspace/common/virtualWorkspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/accountTitleBarState.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/actions/vscodeActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/chatDashboardService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/browser/dnd.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/layoutActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/menus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/mobileNavigationStack.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/openInVSCodeUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/paneCompositePartService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/auxiliaryBarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/chatCompositeBar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/chatView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/menubar.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/contributions/mobileChangesView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/contributions/mobileDiffColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/contributions/mobilePulldownDismiss.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/longPress.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobileAuxiliaryBarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobileChipLaneScroll.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobileEdgeSwipe.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobileLayout.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobilePanelPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobilePickerSheet.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobileSessionFilterChips.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobileSessionsPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobileSidebarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobileSortGroupSheet.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobileTitlebarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/mobile/mobileVisualViewport.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/panelPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/parts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/projectBarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/sessionDropTarget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/sessionsParts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/sidebarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/parts/titlebarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/browser/sessions.web.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/widget/openInVSCodeWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/browser/workbench.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/common/categories.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/common/sizes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/common/theme.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/common/welcome.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/accountMenu/browser/account.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedback.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackAttachment.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackAttachmentEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackAttachmentWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackEditorActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackEditorOverlay.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackEditorUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackHover.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackItemsBackend.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackPRThreadResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackReviewCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/agentFeedbackService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/browser/nullAgentFeedbackService.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/test/browser/agentFeedbackAttachment.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/test/browser/agentFeedbackEditorOverlayWidget.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/test/browser/agentFeedbackPRThreadResolver.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/test/browser/agentFeedbackService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/agentFeedback/test/browser/sessionEditorComments.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/aiCustomizationTreeView/browser/aiCustomizationOverviewView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/aiCustomizationTreeView/browser/aiCustomizationTreeView.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/aiCustomizationTreeView/browser/aiCustomizationTreeView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/aiCustomizationTreeView/browser/aiCustomizationTreeViewViews.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/applyCommitsToParentRepo/browser/applyChangesToParentRepo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/aquarium/browser/aquarium.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/aquarium/browser/aquariumOverlay.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/aquarium/browser/fish.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/aquarium/browser/fishFeedingStreak.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/aquarium/browser/vscodeLogoPath.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/browserView/browser/sessionBrowserView.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/browserView/browser/sessionBrowserView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/changes/browser/changes.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/changes/browser/changesActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/changes/browser/changesMultiDiffSourceResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/changes/browser/changesView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/changes/browser/changesViewActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/changes/browser/changesViewRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/changes/browser/changesViewService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/changes/browser/checksActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/changes/browser/checksWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/changes/common/changes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/changes/common/changesViewService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/agentHostDelegation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/branchChatSessionAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/chat.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/chatView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/mobile/mobileSessionTypePicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/mobile/mobileWorkspacePickerSheet.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/modelPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/newChatInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/newChatInSessionWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/newChatModelPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/newChatPickerTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/newChatWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/newSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/noAgentHostEmptyState.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/nullChatTipService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/registerDefaultSessionTaskRunners.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/repoPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/runScriptAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/runScriptCustomTaskWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/sessionsChatAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/sessionsOpenerParticipant.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/taskCommand.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/webWorkspacePicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/workbenchSessionTaskRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/browser/worktreeCreatedTaskDispatcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/common/constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/electron-browser/chat.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/test/browser/modelPicker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/test/browser/runScriptCustomTaskWidget.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/test/browser/sessionsTaskService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/test/browser/sessionTypePicker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/test/browser/sessionWorkspacePicker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/test/browser/taskCommand.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/test/browser/workbenchSessionTaskRunner.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chat/test/browser/worktreeCreatedTaskDispatcher.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/chatDebug/browser/chatDebug.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/codeReview/browser/codeReview.contributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/codeReview/browser/codeReviewService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/configuration/browser/configuration.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/editor/browser/editor.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/editor/test/browser/editor.contribution.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/files/browser/files.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/files/browser/filesView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/files/browser/syncChangesActionViewItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/files/browser/workspaceFolderActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/fileTreeView/browser/fileTreeView.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/github/browser/pullRequestActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/layout/browser/sessions.layout.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/layout/test/browser/baseSessionLayoutController.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/layout/test/browser/desktopSessionLayoutController.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/layout/test/browser/layoutControllerTestUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/onboardingTours/browser/newSessionTourContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/onboardingTours/browser/newSessionViewTourContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/onboardingTours/browser/onboardingTours.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/onboardingTours/browser/tours/newSessionTour.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/onboardingTours/browser/tours/newSessionViewTour.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/policyBlocked/browser/policyBlocked.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/policyBlocked/browser/sessionsPolicyBlocked.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostAgentPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostClaudePermissionModePicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostModelPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostModePicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostPermissionPickerActionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostPermissionPickerDelegate.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostSessionBranchActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostSessionConfigPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostSettings.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostSettingsFileSystemProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostSettingsShared.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentHostSkillButtons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentSessionSettings.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/agentSessionSettingsFileSystemProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/exportDebugLogsAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/localAgentHost.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/mobile/mobileAgentHostModePicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/mobile/mobileChatInputConfigPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/mobile/mobileChatPhoneInputPresenter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/browser/openSessionEventsFileActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/electron-browser/agentHost.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/test/browser/agentHost/agentHostPermissionPickerDelegate.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/test/browser/agentHostClaudePermissionModePicker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/test/browser/agentHostSkillButtons.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/test/browser/agentSessionSettingsFileSystemProvider.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/agentHost/test/browser/openSessionEventsFile.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/browser/branchPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/browser/claudePermissionModePicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/browser/copilotChatSessions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/browser/copilotChatSessionsActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/browser/isolationPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/browser/mobilePermissionPicker.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/browser/mobilePermissionPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/browser/modePicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/browser/permissionPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/test/browser/claudePermissionModePicker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/test/browser/copilotChatSessionsProvider.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/copilotChatSessions/test/browser/isolationPicker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/localChatSessions/browser/localChatSessions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/localChatSessions/test/browser/localChatSessionsProvider.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/remoteAgentHost/browser/hostFilter.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/remoteAgentHost/browser/hostFilterActionViewItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/remoteAgentHost/browser/managedReconnectAgentHostContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/remoteAgentHost/browser/manageRemoteAgentHosts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/remoteAgentHost/browser/mobileHostFilterActionViewItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/remoteAgentHost/browser/remoteAgentHostActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/remoteAgentHost/browser/remoteHostOptions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/remoteAgentHost/browser/tunnelAgentHost.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/providers/remoteAgentHost/browser/wslAgentHost.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/search/browser/search.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessionInputBanners/browser/sessionInputBanners.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessionInputBanners/browser/sessionInputBannerWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessionInputBanners/test/browser/sessionInputBanners.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/agentHostShortcutsWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/aiCustomizationShortcutsWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/customizationsToolbar.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/mobile/mobileOverlayContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/newSessionActionViewItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/sessionHoverContent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/sessions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/sessionsActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/sessionsTelemetry.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/sessionsTitleBarWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/browser/views/sessionsViewActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/test/browser/agentHostShortcutsWidget.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/test/browser/aiCustomizationShortcutsWidget.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/sessions/test/browser/sessionsLifecycleTracker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/terminal/browser/agentHostSessionTaskRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/terminal/browser/sessionsTerminalContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/terminal/test/browser/agentHostSessionTaskRunner.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/terminal/test/browser/sessionsTerminalContribution.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/tunnelHost/electron-browser/tunnelHost.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/tunnelHost/test/electron-browser/tunnelHost.contribution.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/contrib/workspace/browser/workspace.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/electron-browser/actions/vscodeActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/electron-browser/parts/titlebarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/electron-browser/sessions.desktop.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/electron-browser/sessions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/agentHost/browser/agentHostCustomizationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/agentHostFilter/browser/agentHostFilterService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/agentHostFilter/common/agentHostFilter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/agentHostFilter/test/browser/agentHostFilterService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/chatView/browser/chatViewFactory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/browser/sessionNavigation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/browser/sessionsManagementService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/common/sessionContextKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/test/browser/sessionGroupsService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/test/browser/sessionNavigation.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/test/browser/sessionsListModelService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/sessions/test/browser/sessionsManagementService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/title/browser/titleService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/services/title/electron-browser/titleService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/sessions.common.main.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/sessions.web.main.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/test/browser/auxiliaryBarPart.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/test/browser/layoutActions.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/sessions/test/browser/resolveRemoteAuthority.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/api/browser/mainThreadBrowserTunnelProxy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/api/browser/mainThreadChatSessions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/api/browser/mainThreadOutputService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/api/browser/viewsExtensionPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/api/common/configurationExtensionPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/api/common/jsonValidationExtensionPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/actions/developerActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/actions/helpActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/actions/layoutActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/actions/listCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/actions/navigationActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/actions/quickAccessActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/actions/textInputActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/actions/widgetNavigationCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/actions/windowActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/actions/workspaceActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/actions/workspaceCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/composite.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/contextkeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/dnd.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/editor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/labels.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/layout.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/panecomposite.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/part.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/activitybar/activitybarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/auxiliarybar/auxiliaryBarActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/auxiliarybar/auxiliaryBarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/banner/bannerPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/compositeBar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/compositeBarActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/compositePart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/dialogs/dialog.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/dialogs/dialog.web.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/dialogs/dialogHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/auxiliaryEditorPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/breadcrumbs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/breadcrumbsControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/breadcrumbsPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/diffEditorCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/editor.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/editorActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/editorCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/editorConfiguration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/editorDropTarget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/editorGroupWatermark.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/editorParts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/editorQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/editorTabsControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/editor/modalEditorPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/multiEditorTabsControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/editor/singleEditorTabsControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/globalCompositeBar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/notifications/notificationAccessibleView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/notifications/notificationsActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/notifications/notificationsAlerts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/notifications/notificationsCenter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/notifications/notificationsCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/notifications/notificationsList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/notifications/notificationsStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/notifications/notificationsToasts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/notifications/notificationsViewer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/paneCompositeBar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/paneCompositePart.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/paneCompositePartService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/panel/panelActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/panel/panelPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/sidebar/sidebarActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/sidebar/sidebarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/statusbar/statusbarActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/statusbar/statusbarItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/statusbar/statusbarModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/statusbar/statusbarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/titlebar/commandCenterControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/titlebar/menubar.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/titlebar/menubarControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/titlebar/titlebarActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/titlebar/titlebarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/titlebar/windowTitle.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/views/checkbox.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/views/treeView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/views/viewFilter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/views/viewMenuActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/views/viewPane.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/views/viewPaneContainer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/views/viewsViewlet.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/parts/visibleViewContainersTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/quickaccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/style.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/window.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/workbench.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/workbench.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/browser/workbench.zenMode.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/common/activity.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/common/comments.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/common/component.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/common/composite.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/common/configuration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/common/contributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/common/dialogs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/common/memento.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/common/notifications.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/common/panecomposite.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/common/theme.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/common/views.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/accessibility/browser/accessibility.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/accessibility/browser/accessibilityStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/accessibility/browser/accessibleViewActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/accessibility/browser/accessibleViewContributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/accessibility/browser/accessibleViewKeybindingResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/accessibility/browser/editorAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/accessibility/browser/extensionAccesibilityHelp.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/accessibility/browser/unfocusedViewDimmingContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/accessibility/common/accessibilityCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/accessibilitySignals/browser/accessibilitySignal.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/accessibilitySignals/browser/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/accessibilitySignals/browser/openDiffEditorAnnouncement.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/agentsVoice.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/agentsVoiceSessionsPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/agentsVoiceWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/agentsVoiceWidgetBinding.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/agentsVoiceWindowService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/components/confirmationComponent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/components/feedbackDialog.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/components/headerComponent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/components/onboardingComponent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/components/sessionListComponent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/components/statusRowsComponent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/components/tokens.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/components/transcriptComponent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/components/voiceBarComponent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/transcriptsView/voiceEventStream.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/transcriptsView/voiceEventStreamView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/transcriptsView/voiceTranscripts.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/browser/transcriptsView/voiceTranscriptsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/common/agentsVoice.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/common/agentsVoiceColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/agentsVoice/electron-browser/agentsVoiceNativeCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/authentication/browser/actions/manageAccountPreferencesForExtensionAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/authentication/browser/actions/manageAccountPreferencesForMcpServerAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/authentication/browser/actions/manageAccountsAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/authentication/browser/actions/manageDynamicAuthenticationProvidersAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/authentication/browser/actions/manageTrustedExtensionsForAccountAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/authentication/browser/actions/manageTrustedMcpServersForAccountAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/authentication/browser/actions/signOutOfAccountAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/authentication/browser/authentication.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/bracketPairColorizer2Telemetry/browser/bracketPairColorizer2Telemetry.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/browser/browserView.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/common/browserEditorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/common/browserSearch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/common/browserView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/common/browserZoomService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/browserEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/browserView/electron-browser/browserView.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/browserViewWorkbenchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserDataStorageFeatures.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserDevToolsFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserEditorChatFeatures.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserEditorEmulationFeatures.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserEditorErrorFeatures.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserEditorFindFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserEditorZoomFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserFavoritesFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserHistoryFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserNavigationFeatures.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserPermissionsFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserRemoteFeatures.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserSearchFeatures.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserTabManagementFeatures.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/browserWelcomeFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/features/webContentsViewRendererFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/overlayManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/browserToolHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/browserTools.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/clickBrowserTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/dragElementTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/handleDialogBrowserTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/hoverElementTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/navigateBrowserTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/openBrowserTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/openBrowserToolNonAgentic.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/readBrowserTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/runPlaywrightCodeTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/screenshotBrowserTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/tools/typeBrowserTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/electron-browser/widgets/browserUrlBarWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/browserView/test/electron-browser/widgets/browserUrlBarWidget.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/bulkEdit/browser/preview/bulkEdit.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/bulkEdit/browser/preview/bulkEditPane.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/bulkEdit/browser/preview/bulkEditTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/callHierarchy/browser/callHierarchyTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/accessibility/chatAccessibilityProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/accessibility/chatAccessibilityService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/accessibility/chatResponseAccessibleView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/accessibility/chatTerminalOutputAccessibleView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatAccessibilityActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatAgentRecommendationActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatClear.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatCodeblockActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatContinueInAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatCopyActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatDeveloperActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatElicitationActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatExecuteActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatFileTreeActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatForkActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatGettingStarted.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatImportExport.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatLanguageModelActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatMoveActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatNewActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatOpenAgentDebugPanelAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatPluginActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatPromptNavigationActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatQueueActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatQuickInputActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatTitleActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatToolActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatToolPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/chatTransfer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/createPluginAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/actions/exportAgentHostDebugLogsAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/actions/openCopilotCliStateFileAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentPluginActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentPluginEditor/agentPluginEditorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentPluginEditor/agentPluginItems.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentPluginsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostChatInputPicker.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostFolderPickerActionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostPermissionUiContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/stateToProgressAdapter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionHoverWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsBanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/agentSessionsQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionProjectionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentSessionsExperiments.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentTitleBarStatusService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/experiments/agentTitleBarStatusWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/experiments/unifiedQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/experiments/unifiedQuickAccessActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/localAgentDisabledInputTipContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/agentSessions/localAgentSessionsController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagement.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationWelcomePage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationWelcomePagePromptLaunchers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/customizationGroupHeaderRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/embeddedAgentPluginDetail.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/embeddedMcpServerDetail.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/mcpListWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/pluginListWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/aiCustomization/toolsListWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/attachments/chatAttachmentResolveService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/attachments/chatAttachmentWidgetRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/attachments/chatAttachmentWidgets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/attachments/chatDynamicVariables.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/attachments/chatVariables.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/attachments/implicitContextAttachment.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chat.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chat.shared.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chat.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/chat.view.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatCustomizationDiscoveryRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugCacheExplorerView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugCollapsible.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugDetailPanel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugEditorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugEventDetailRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugEventList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugFilters.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugFlowChart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugFlowChartView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugFlowGraph.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugFlowLayout.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugHomeView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugHookContentRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugLogsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugMessageContentRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugModelTurnContentRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugOverviewView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatDebug/chatDebugToolCallContentRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingEditorActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingEditorOverlay.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatGoalSummaryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatImageCarouselService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatManagement/chatManagement.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatManagement/chatModelsWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatParticipant.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatQuotaNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatRepoInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatSessions/chatSessionDescription.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatSessions/chatSessionPickerActionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatSetup/chatSetup.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatSetup/chatSetupContributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatSetup/chatSetupGrowthSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatSetup/chatSetupProviders.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatSetup/chatSetupRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatSlashCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatStatus/chatStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatStatus/chatStatusDashboard.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatStatus/chatStatusEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatStatus/chatStatusItemService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatTipCatalog.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatTipEligibilityTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatTipService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatTipStorageKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/chatWindowNotifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/claudePluginRecommendations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/codeBlockContextProviderService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/contextContrib/chatContext.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/createSlashCommandsUsageTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/defaultModelContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/enablementActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/enablementStatusWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/exploreAgentDefaultModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/hasByokModelsContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/planAgentDefaultModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/planReviewFeedback/planReviewFeedbackEditorActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/pluginInstallService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/pluginUrlHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/attachInstructionsAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/chatModeActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/hookActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/newPromptFileActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/pickers/askForPromptName.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/pickers/askForPromptSourceFolder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/pickers/promptFilePickers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/promptCodingAgentActionOverlay.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/promptFileActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/promptUrlHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/runPromptAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/saveAsPromptFileActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/promptSyntax/skillActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/telemetry/chatModelCountTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/tools/chatToolRiskAssessmentService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/tools/clientToolSetsContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/tools/languageModelToolsConfirmationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/tools/languageModelToolsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/tools/toolHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/tools/toolResultCompressorService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/tools/toolSetsContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/utilityModelContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/viewsWelcome/chatViewsWelcome.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/viewsWelcome/chatViewsWelcomeHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/viewsWelcome/chatViewWelcomeController.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/voiceClient/micCaptureService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/voiceClient/ttsPlaybackService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/voiceClient/voiceClientService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/voiceClient/voiceTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/voiceClient/voiceToolDispatchService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatAgentHover.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatArtifactsWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentMarkdownRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatAgentCommandContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatAnonymousRateLimitedPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatAttachmentsContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatChangesSummaryPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatCodeCitationContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatCollapsibleContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatCollapsibleMarkdownContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatCollections.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatCommandContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatConfirmationContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatConfirmationWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatContentCodePools.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatContentParts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatDiffBlockPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatDisabledClaudeHooksContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatEditPillElement.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatElicitationContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatErrorConfirmationPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatErrorContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatExtensionsContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatExternalEditContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatHookContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatInlineAnchorWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatMarkdownAnchorService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatMarkdownContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatMarkdownDecorationsRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatMarkdownTableScrolling.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatMcpServersInteractionContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatMultiDiffContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatOutputPartStateCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPlanReviewPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatProgressContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatPullRequestContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatQuestionCarouselPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatQuotaExceededPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatReferencesContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatResourceGroupWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatSubagentContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatSuggestNextWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatTaskContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatTextEditContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatThinkingContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatThinkingExternalResourcesWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatTipContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatTodoListWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatToolInputOutputContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatToolOutputContentSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatTreeContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatWorkspaceEditContentPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/abstractToolConfirmationSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/autoApproveMessageWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatAgentFeedbackReviewConfirmationSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatExtensionsInstallToolSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatInputOutputMarkdownProgressPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatMcpAppSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatModifiedFilesConfirmationSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatResultListSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatSandboxPrerequisiteConfirmationSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatSimpleToolProgressPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatTerminalToolConfirmationSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatTerminalToolProgressPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolConfirmationCarouselPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolConfirmationSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolInvocationPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolInvocationSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolOutputPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolPartUtilities.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolPostExecuteConfirmationPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolProgressPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/chatToolStreamingSubPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/toolRiskBadgeHelper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/toolInvocationParts/toolRiskBadgeWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatDragAndDrop.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatListRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatListWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatPendingDragAndDrop.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatWidgetService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatFollowups.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatGoalBannerWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatInputNotificationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatInputNotificationWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatInputPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatInputPickerActionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatModelPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatPhoneInputPresenter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/chatQueuePickerActionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/delegationSessionPickerActionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/editor/chatInputCompletions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/editor/editorHoverWrapper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/modelPickerActionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/modePickerActionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/permissionPickerActionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/input/workspacePickerActionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widgetHosts/chatQuick.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widgetHosts/editor/chatEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widgetHosts/editor/chatEditorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widgetHosts/viewPane/chatContextUsageDetails.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widgetHosts/viewPane/chatViewPane.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widgetHosts/viewPane/chatViewTitleControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/actions/chatActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/attachments/chatVariableEntries.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/attachments/chatVariables.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/common/chat.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatArtifactExtraction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatDebugEvents.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatDebugService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatErrorMessages.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatImageExtraction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatPerf.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatPermissionStorageKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatPermissionWarnings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatProgressFormatting.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatSelectedModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatService/chatService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatService/chatServiceImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/chatService/chatServiceTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/languageModelStats.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/model/chatProgressTypes/chatElicitationRequestPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/model/chatProgressTypes/chatPlanReviewData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/model/chatProgressTypes/chatQuestionCarouselData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/model/chatProgressTypes/chatToolInvocation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/model/chatSessionOperationLog.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/model/chatStreamStats.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/model/chatTransferService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/model/chatUri.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/model/chatWordCounter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/model/objectMutationLog.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/participants/chatAgents.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/participants/chatSlashCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/plugins/pluginInstallService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/promptSyntax/chatPromptFilesContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/requestParser/chatRequestParser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/chatExternalPathConfirmation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/chatUrlFetchingConfirmation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/chatUrlFetchingPatterns.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/confirmationTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/editFileTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/manageTodoListTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/resolveDebugEventDetailsTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/reviewPlanTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/runSubagentTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/setArtifactRulesTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/setArtifactsTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/taskCompleteTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/toolHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/builtinTools/tools.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/chatArtifactsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/chatTodoListService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/copilotToolIds.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/languageModelToolsConfirmationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/common/tools/languageModelToolsContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/languageModelToolsParametersSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/languageModelToolsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/promptTsxTypes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tools/toolResultCompressor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/tunnelHost.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/voiceChatService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/voiceClient/voiceClientService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/voicePlaybackService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/widget/annotations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/widget/chatColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/widget/chatLayoutService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/widget/chatWidgetHistoryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/common/workingDirectory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/actions/chatDeveloperActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/actions/chatExportZip.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/actions/debugAgentHostAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/actions/exportAgentHostDebugLogsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/actions/exportAgentTracesDb.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/actions/voiceChatActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/agentSessions/agentSessionsActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/builtInTools/fetchPageTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/builtInTools/tools.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/chat.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/chatLifecycle.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/toggleRemoteConnectionsActionViewItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/electron-browser/tunnelHost.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/actions/chatQueueActions.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/actions/chatTitleActions.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/agentSessions/agentSessionApprovalModel.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/agentSessions/agentSessionsDataSource.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/agentSessions/agentSessionViewModel.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/agentSessions/localAgentDisabledInputTipContribution.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/agentSessions/localAgentSessionsController.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/agentSessions/stateToProgressAdapter.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/attachments/chatVariables.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatAttachmentResolveService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatEditing/chatEditingService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatImageCarouselService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatManagement/chatModelsViewModel.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatManagement/chatModelsWidget.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatQuotaExceededPart.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatQuotaNotification.integrationTest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatQuotaNotification.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatSetup/chatSetupGrowthSession.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatStatusDashboard.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatStatusEntry.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/chatTipService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/defaultModelContribution.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/hasByokModelsContribution.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/plugins/pluginUrlHandler.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/tools/languageModelToolsConfirmationService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/tools/languageModelToolsService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/tools/toolHelpers.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/tools/toolResultCompressorService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/tools/toolSetsContribution.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatAttachmentsContentPart.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatInlineAnchorWidget.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatMarkdownContentPart.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatPlanReviewPart.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatQuestionCarouselPart.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatSubagentContentPart.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatThinkingContentPart.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatToolProgressPart.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/chatMarkdownRenderer.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/chatMarkdownTableScrolling.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/input/chatInputNotificationWidget.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/input/chatSelectedTools.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/mockChatWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/chatErrorMessages.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/chatImageExtraction.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/chatPermissionWarnings.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/chatService/chatService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/chatService/mockChatService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/languageModels.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/mockChatSessionsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/mockChatVariables.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/model/chatModel.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/model/chatModelStore.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/model/mockChatModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/requestParser/chatRequestParser.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/tools/builtinTools/chatExternalPathConfirmation.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/tools/builtinTools/runSubagentTool.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/tools/mockLanguageModelToolsConfirmationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/tools/mockLanguageModelToolsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/voiceChatService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/widget/annotations.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/common/widget/chatWidgetHistoryService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/electron-browser/chatLifecycle.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeActions/browser/codeActions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeActions/browser/codeActionsContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/accessibility/accessibility.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/codeEditor.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/diffEditorAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/editorFindAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/editorSettingsMigration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/emptyTextEditorHint/emptyTextEditorHint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/find/simpleFindWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/codeEditor/browser/inspectKeybindings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/outline/documentSymbolsTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/quickaccess/gotoLineQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/quickaccess/gotoSymbolQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/toggleColumnSelection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/toggleMinimap.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/toggleMultiCursorModifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/toggleOvertype.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/toggleRenderControlCharacter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/toggleRenderWhitespace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/toggleWordWrap.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/browser/workbenchReferenceSearch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/electron-browser/codeEditor.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/electron-browser/displayChangeRemeasureFonts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/electron-browser/inputClipboardActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/electron-browser/sleepResumeRepaintMinimap.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/codeEditor/electron-browser/startDebugTextMate.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/commands/common/commands.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/commentFormActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/commentNode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/comments.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/comments.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/commentsAccessibility.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/commentsFilterOptions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/commentsTreeViewer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/commentsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/commentsViewActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/commentThreadAdditionalActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/commentThreadHeader.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/reactionsAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/browser/timestamp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/comments/common/commentCommandIds.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/customEditor/common/contributedCustomEditors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/customEditor/common/extensionPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/baseDebugView.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/debug/browser/breakpointsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/callStackView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debug.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugActionViewItems.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugAdapterManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugANSIHandling.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugChatIntegration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugConsoleQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugExpressionRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugHover.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugProgress.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugSessionPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugSettingMigration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugTaskRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugTitle.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugToolBar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/debugViewlet.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/disassemblyView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/exceptionWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/linkDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/loadedScriptsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/repl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/replAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/replAccessibleView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/replViewer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/runAndDebugAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/statusbarColorProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/variablesView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/watchExpressionsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/browser/welcomeView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/common/breakpoints.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/common/debugger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/common/debugLifecycle.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/common/debugSchemas.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/common/loadedScriptsPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/test/browser/linkDetector.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/test/browser/variablesView.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/debug/test/browser/watchExpressionView.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/dropOrPasteInto/browser/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/dropOrPasteInto/browser/configurationSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/dropOrPasteInto/browser/dropOrPasteInto.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/editSessions/browser/editSessionsViews.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/editTelemetry/browser/editStats/aiStatsChart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/editTelemetry/browser/editStats/aiStatsStatusBar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/editTelemetry/browser/editTelemetry.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/editTelemetry/browser/settingIds.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/emmet/browser/actions/expandAbbreviation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/emmet/browser/emmet.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/encryption/electron-browser/encryption.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/abstractRuntimeExtensionsEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/extensions/browser/browserRuntimeExtensionsEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensionEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensionEnablementWorkspaceTrustTransitionParticipant.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensionFeaturesTab.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensions.web.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensionsActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensionsDependencyChecker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensionsIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensionsList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensionsQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensionsViewer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensionsViewlet.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/browser/extensionsViews.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/extensions/browser/extensionsWidgets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/common/extensionQuery.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/common/extensions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/common/extensionsFileTemplate.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/common/extensionsInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/common/installExtensionsTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/common/runtimeExtensionsInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/common/searchExtensionsTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/electron-browser/debugExtensionHostAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/electron-browser/devtoolsExtensionHost.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/electron-browser/extensionProfileService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/electron-browser/extensions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/electron-browser/extensionsActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/extensions/electron-browser/runtimeExtensionsEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/externalTerminal/browser/externalTerminal.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/externalTerminal/electron-browser/externalTerminal.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/externalTerminal/test/electron-browser/externalTerminal.contribution.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/externalUriOpener/common/configuration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/externalUriOpener/common/contributedOpeners.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/externalUriOpener/common/externalUriOpener.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/externalUriOpener/common/externalUriOpenerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/editors/textFileSaveErrorHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/explorerViewlet.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/fileActions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/fileActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/fileCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/fileConstants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/files.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/files.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/views/emptyView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/views/explorerDecorationsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/views/explorerView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/views/explorerViewer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/files/browser/views/openEditorsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/browser/workspaceWatcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/common/dirtyFilesIndicator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/common/files.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/electron-browser/fileActions.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/test/browser/explorerFindProvider.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/files/test/browser/explorerView.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/folding/browser/folding.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/format/browser/format.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/format/browser/formatActionsMultiple.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/format/browser/formatActionsNone.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/imageCarousel/browser/imageCarousel.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/imageCarousel/test/browser/imageCarousel.contribution.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/inlineChat/browser/inlineChat.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/inlineChat/browser/inlineChatAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/inlineChat/browser/inlineChatActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/inlineChat/browser/inlineChatAffordanceWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/inlineChat/browser/inlineChatDefaultModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/inlineChat/browser/inlineChatWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/inlineChat/common/inlineChat.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/inlineChat/test/browser/inlineChatZoneMenus.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/browser/githubUploadService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/browser/issue.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/browser/issueFormService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/browser/issueQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/browser/issueService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/browser/issueTroubleshoot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/browser/recordingService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/browser/screenshotAnnotation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/browser/screenshotService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/issue/common/issue.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/issue/common/issue.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/issue/electron-browser/issue.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/electron-browser/issueService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/electron-browser/nativeGitHubUploadService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/electron-browser/nativeIssueFormService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/electron-browser/nativeRecordingService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/issue/electron-browser/nativeScreenshotService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/keybindings/browser/keybindings.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/languageDetection/browser/languageDetection.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/languageStatus/browser/languageStatus.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/languageStatus/browser/languageStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/limitIndicator/browser/limitIndicator.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/list/browser/list.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/list/browser/listResizeColumnAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/list/browser/tableColumnResizeQuickPick.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/localHistory/browser/localHistory.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/localHistory/browser/localHistory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/localHistory/browser/localHistoryCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/localHistory/browser/localHistoryTimeline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/localHistory/electron-browser/localHistory.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/localHistory/electron-browser/localHistoryCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/localization/browser/localization.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/localization/common/localization.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/localization/common/localizationsActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/localization/electron-browser/localization.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/localization/electron-browser/minimalTranslations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/logs/browser/logs.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/logs/common/logs.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/logs/common/logsActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/logs/electron-browser/logs.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markdown/browser/markdown.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markdown/browser/markdownDocumentRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markdown/browser/markdownSettingRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markdown/browser/markedGfmHeadingIdPlugin.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markdown/browser/markedKatexSupport.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markdown/common/markdownColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markdown/common/markedKatexExtension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markdown/test/browser/markdownKatexSupport.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markdown/test/browser/markdownSettingRenderer.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markers/browser/markers.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markers/browser/markers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markers/browser/markersAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markers/browser/markersChatContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markers/browser/markersFileDecorations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markers/browser/markersTable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markers/browser/markersTreeViewer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/markers/browser/markersView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markers/browser/markersViewActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markers/browser/messages.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/markers/common/markers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcp.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcp.view.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpAddContextContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpCommandsAddConfiguration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpDiscovery.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpElicitationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpMigration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpPromptArgumentPick.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpResourceQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpServerActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpServerEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpServerIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpServersView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/mcpServerWidgets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/browser/openPanelChatAndGetWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/common/discovery/extensionMcpDiscovery.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/common/mcpCommandIds.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/common/mcpConfiguration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/common/mcpContextKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/common/mcpRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/common/mcpSamplingLog.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mcp/common/mcpSamplingService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mergeEditor/browser/commands/commands.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/mergeEditor/browser/commands/devCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mergeEditor/browser/mergeEditor.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mergeEditor/browser/mergeEditorAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mergeEditor/common/mergeEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mergeEditor/electron-browser/devCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/mergeEditor/electron-browser/mergeEditor.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/meteredConnection/browser/meteredConnection.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/meteredConnection/browser/meteredConnectionStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/multiDiffEditor/browser/actions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/multiDiffEditor/browser/icons.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/multiDiffEditor/browser/multiDiffEditor.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/multiDiffEditor/browser/multiDiffSourceResolverService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/multiDiffEditor/browser/scmMultiDiffSourceResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/chat/notebookChatUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/clipboard/notebookClipboard.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/editorHint/emptyCellEditorHint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/find/findFilters.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/find/notebookFindReplaceWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/find/notebookFindWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/gettingStarted/notebookGettingStarted.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/layout/layoutActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/navigation/arrow.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/notebookVariables/notebookVariableCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/notebookVariables/notebookVariableContextKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/notebookVariables/notebookVariablesDataSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/notebookVariables/notebookVariablesTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/notebookVariables/notebookVariablesView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/outline/notebookOutline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/contrib/profile/notebookProfile.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/controller/cellOutputActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/controller/chat/cellChatActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/controller/chat/notebook.chat.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/controller/chat/notebookChatContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/controller/layoutActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/controller/notebookIndentationActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/controller/variablesActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/diff/notebookDiffActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/diff/notebookDiffList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/notebookAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/notebookAccessibleView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/notebookExtensionPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/replEditorAccessibleView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/view/cellParts/cellActionView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/view/cellParts/cellStatusPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/view/cellParts/cellToolbars.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/view/cellParts/cellWidgets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/viewParts/notebookEditorToolbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/notebook/browser/viewParts/notebookTopCellToolbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/onboarding/browser/onboarding.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/onboarding/browser/onboardingService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/onboarding/browser/spotlight/onboardingTarget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/onboarding/browser/spotlight/spotlightOverlay.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/onboarding/browser/spotlight/spotlightPresentation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/onboarding/common/onboardingPresentation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/onboarding/common/onboardingRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/onboarding/common/onboardingScenario.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/onboarding/common/onboardingScenarioService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/onboarding/test/browser/onboardingService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/opener/browser/opener.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/outline/browser/outline.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/outline/browser/outline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/outline/browser/outlineActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/outline/browser/outlinePane.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/outline/browser/outlineViewState.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/output/browser/output.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/output/browser/outputAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/output/browser/outputServices.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/output/browser/outputView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/performance/browser/performance.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/performance/browser/performance.web.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/performance/browser/startupTimings.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/performance/electron-browser/performance.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/performance/electron-browser/startupProfiler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/performance/electron-browser/startupTimings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/keybindingsEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/keybindingWidgets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/keyboardLayoutPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/preferences.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/preferencesActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/preferencesEditorRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/preferencesIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/preferencesSearch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/preferencesWidgets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/settingsEditor2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/settingsEditorSettingIndicators.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/settingsLayout.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/settingsSearchMenu.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/settingsTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/settingsTreeModels.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/settingsWidgets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/browser/tocTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/common/preferences.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/common/preferencesContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/preferences/common/settingsEditorColorRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/processExplorer/browser/processExplorer.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/processExplorer/browser/processExplorer.web.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/processExplorer/browser/processExplorerControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/processExplorer/browser/processExplorerEditorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/processExplorer/electron-browser/processExplorer.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/processExplorer/electron-browser/processExplorerControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/quickaccess/browser/commandsQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/quickaccess/browser/quickAccess.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/quickaccess/browser/viewQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/relauncher/browser/relauncher.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/relauncher/test/browser/relauncher.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/browser/explorerViewItems.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/browser/remote.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/browser/remote.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/browser/remoteConnectionHealth.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/browser/remoteExplorer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/browser/remoteIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/browser/remoteIndicator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/browser/remoteStartEntry.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/browser/remoteStartEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/browser/tunnelView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/common/remote.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remote/electron-browser/remote.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remoteCodingAgents/browser/remoteCodingAgents.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remoteCodingAgents/common/remoteCodingAgentsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/remoteTunnel/electron-browser/remoteTunnel.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/replNotebook/browser/replEditorAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/sash/browser/sash.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/sash/browser/sash.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/activity.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/menus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/quickDiff.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/scm.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/scm.service.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/scmAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/scmHistory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/scmHistoryViewPane.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/scmRepositoriesViewPane.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/scmRepositoryRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/scmViewPane.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/scmViewPaneContainer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/scmViewService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/browser/workingSet.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scm/common/scm.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scrollLocking/browser/scrollLocking.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/scrollLocking/browser/scrollLocking.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/anythingQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/patternInputWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/quickTextSearch/textSearchQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/replaceContributions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/search.common.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/search.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchActionsBase.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchActionsCopy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchActionsFind.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchActionsNav.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchActionsRemoveReplace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchActionsSymbol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchActionsTextQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchActionsTopBar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchFindInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchMessage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchQuickAccess.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchResultsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/searchWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/browser/symbolsQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/common/constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/common/search.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/search/common/searchHistoryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/searchEditor/browser/constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/searchEditor/browser/searchEditor.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/searchEditor/browser/searchEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/searchEditor/browser/searchEditorActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/searchEditor/browser/searchEditorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/share/browser/share.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/share/browser/shareService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/share/common/share.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/snippets/browser/commands/configureSnippets.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/snippets/browser/snippets.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/speech/browser/speech.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/speech/browser/speechAccessibilitySignal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/speech/browser/speechService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/speech/common/speechService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/splash/browser/partsSplash.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/splash/browser/splash.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/splash/browser/splash.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/splash/electron-browser/splash.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/styleOverrides/browser/styleOverrides.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/surveys/browser/languageSurveys.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/surveys/browser/nps.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/surveys/browser/survey.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tags/electron-browser/tags.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/browser/abstractTaskService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/tasks/browser/runAutomaticTasks.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/browser/task.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/browser/taskQuickPick.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/browser/taskService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/browser/tasksQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/common/jsonSchema_v1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/common/jsonSchema_v2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/common/jsonSchemaCommon.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/common/problemMatcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/common/taskConfiguration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/common/taskDefinitionRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/common/tasks.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/tasks/common/taskService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/common/taskSystem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/common/taskTemplates.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/electron-browser/taskService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/tasks/test/common/taskConfiguration.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/telemetry/browser/telemetry.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/browser/terminal.web.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/browser/terminalIconPicker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/browser/terminalTabsChatEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/browser/terminalTabsList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/browser/terminalView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/browser/widgets/terminalHoverWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/test/browser/terminalStatusList.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminal/test/common/terminalColorRegistry.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/chat/browser/terminalChat.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/chat/browser/terminalChatAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/chat/browser/terminalChatAccessibleView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/chat/browser/terminalChatActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/chat/browser/terminalChatEnabler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/chat/browser/terminalChatWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/find/browser/terminalFindAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/find/browser/terminalFindWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/quickAccess/browser/terminal.quickAccess.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/quickAccess/browser/terminalQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/suggest/browser/terminalSymbolIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/voice/browser/terminalVoice.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/terminalContrib/voice/browser/terminalVoiceActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/testing/browser/testCoverageView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/testing/browser/testExplorerActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/testing/browser/testingExplorerFilter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/testing/browser/testingExplorerView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/testing/browser/testingViewPaneContainer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/testing/browser/testResultsView/testResultsTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/themes/browser/themes.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/timeline/browser/timeline.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/timeline/browser/timeline.service.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/timeline/browser/timelinePane.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/typeHierarchy/browser/typeHierarchyTree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/update/browser/postUpdateWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/update/browser/update.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/update/browser/update.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/update/browser/updateTitleBarEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/update/browser/updateTooltip.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/update/common/update.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/update/common/updateUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/update/test/browser/releaseNotesRenderer.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/url/browser/externalUriResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/url/browser/trustedDomains.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/url/browser/trustedDomainService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/url/browser/trustedDomainsValidator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/url/browser/url.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/userDataProfile/browser/userDataProfile.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/userDataProfile/browser/userDataProfile.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/userDataProfile/browser/userDataProfileActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/userDataProfile/browser/userDataProfilesEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/userDataSync/browser/userDataSync.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/userDataSync/browser/userDataSync.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/userDataSync/browser/userDataSyncConflictsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/userDataSync/browser/userDataSyncTrigger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/userDataSync/browser/userDataSyncViews.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/userDataSync/electron-browser/userDataSync.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/webview/browser/webview.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/webview/browser/webview.web.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/webview/browser/webviewFindAccessibilityHelp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/webview/browser/webviewFindWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/webview/electron-browser/webview.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/webview/electron-browser/webviewCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/webviewPanel/browser/webviewCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/webviewPanel/browser/webviewPanel.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/webviewView/browser/webviewView.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/webviewView/browser/webviewViewPane.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeAgentSessions/browser/agentSessionsWelcome.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeAgentSessions/browser/agentSessionsWelcome.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeBanner/browser/welcomeBanner.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStarted.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStartedAccessibleView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStartedColors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStartedExtensionPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStartedIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStartedInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStartedList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/browser/gettingStartedService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/browser/startupPage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/common/gettingStartedContent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/common/media/notebookProfile.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/common/media/theme_picker_small.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeGettingStarted/common/media/theme_picker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeOnboarding/browser/onboardingVariationA.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeOnboarding/browser/welcomeOnboarding.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeOnboarding/common/onboardingService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeViews/common/newFile.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeViews/common/viewsWelcome.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeViews/common/viewsWelcomeContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeViews/common/viewsWelcomeExtensionPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeWalkthrough/browser/editor/editorWalkThrough.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeWalkthrough/browser/editor/vs_code_editor_walkthrough.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeWalkthrough/browser/walkThrough.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeWalkthrough/browser/walkThroughActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/welcomeWalkthrough/common/walkThroughUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/workspace/browser/workspace.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/workspace/browser/workspaceTrustEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/workspace/common/workspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/workspaces/browser/recentRemoteFolderPruner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/workspaces/browser/workspaces.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/electron-browser/actions/developerActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/electron-browser/actions/installActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/electron-browser/actions/windowActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/electron-browser/desktop.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/electron-browser/parts/dialogs/dialog.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/electron-browser/parts/dialogs/dialogHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/electron-browser/parts/titlebar/menubarControl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/electron-browser/parts/titlebar/titlebarPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/electron-browser/window.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/accessibility/common/accessibleViewInformationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/accessibility/electron-browser/accessibilityService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/accounts/browser/defaultAccount.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/actions/common/menusExtensionPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/activity/browser/activityService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/activity/common/activity.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/assignment/common/assignmentFilters.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/assignment/common/assignmentService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/assignment/test/common/nullAssignmentService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/authentication/browser/authenticationAccessService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/authentication/browser/authenticationExtensionsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/authentication/browser/authenticationMcpAccessService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/authentication/browser/authenticationMcpService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/authentication/browser/authenticationMcpUsageService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/authentication/browser/authenticationQueryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/authentication/browser/authenticationUsageService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/authentication/common/authentication.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/authentication/common/authenticationQuery.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/authentication/test/browser/authenticationQueryService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/authentication/test/browser/authenticationQueryServiceMocks.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/auxiliaryWindow/browser/auxiliaryWindowService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/auxiliaryWindow/electron-browser/auxiliaryWindowService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/banner/browser/bannerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/chat/common/chatEntitlementService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/clipboard/browser/clipboardService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/configuration/common/jsonEditing.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/configuration/test/common/testServices.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/configurationResolver/browser/baseConfigurationResolverService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/configurationResolver/browser/configurationResolverService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/configurationResolver/common/configurationResolverSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/configurationResolver/common/configurationResolverUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/configurationResolver/electron-browser/configurationResolverService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/contextmenu/electron-browser/contextmenuService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/dialogs/browser/abstractFileDialogService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/dialogs/browser/fileDialogService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/dialogs/browser/simpleFileDialog.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/dialogs/common/dialogService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/dialogs/electron-browser/fileDialogService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/dialogs/test/electron-browser/fileDialogService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/driver/browser/driver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/driver/common/driver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/editor/common/editorService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/environment/common/environmentService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/environment/electron-browser/shellEnvironmentService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/extensionManagement/browser/extensionBisect.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/extensionManagement/common/extensionFeatures.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/extensionManagement/common/extensionFeaturesManagemetService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/extensionManagement/common/extensionsIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/extensionRecommendations/common/extensionIgnoredRecommendationsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/extensions/browser/extensionUrlHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/extensions/common/extensionsRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/host/browser/browserHostService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/host/browser/host.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/integrity/browser/integrityService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/integrity/common/integrity.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/integrity/electron-browser/integrityService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/keybinding/browser/keybindingService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/keybinding/browser/unboundCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/label/common/labelService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/language/common/languageService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/layout/browser/layoutService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/lifecycle/browser/lifecycleService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/lifecycle/common/lifecycle.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/localization/browser/localeService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/localization/common/locale.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/localization/electron-browser/localeService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/log/common/logConstants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/notification/common/notificationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/outline/browser/outline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/outline/browser/outlineService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/output/common/output.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/panecomposite/browser/panecomposite.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/policies/browser/accountPolicyGate.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/policies/browser/accountPolicyGateContribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/power/browser/powerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/power/common/powerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/power/electron-browser/powerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/preferences/browser/keybindingsEditorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/preferences/browser/keybindingsEditorModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/preferences/common/preferences.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/preferences/common/preferencesValidation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/progress/browser/progressService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/quickinput/browser/quickInputService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/secrets/electron-browser/secretStorageService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/statusbar/browser/statusbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/suggest/browser/simpleSuggestWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/suggest/browser/simpleSuggestWidgetDetails.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/suggest/browser/simpleSuggestWidgetRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/textMate/common/TMGrammars.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/browser/browserHostColorSchemeService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/browser/colorThemeCss.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/browser/fileIconThemeData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/browser/productIconThemeData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/browser/workbenchThemeService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/colorExtensionPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/colorThemeData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/colorThemeSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/fileIconThemeSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/hostColorSchemeService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/iconExtensionPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/plistParser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/productIconThemeSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/textMateScopeMatcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/themeCompatibility.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/themeConfiguration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/themeExtensionPoints.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/tokenClassificationExtensionPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/common/workbenchThemeService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/electron-browser/nativeHostColorSchemeService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/themes/electron-browser/themes.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/timer/browser/timerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/timer/electron-browser/timerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/title/browser/titleService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/title/electron-browser/titleService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/userDataProfile/browser/iconSelectBox.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/userDataProfile/common/userDataProfileIcons.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/userDataSync/common/userDataSync.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/views/browser/viewDescriptorService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/views/browser/viewsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/views/common/viewContainerModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/views/common/viewsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/views/test/browser/viewContainerModel.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/views/test/browser/viewDescriptorService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/workspaces/browser/abstractWorkspaceEditingService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/workspaces/browser/workspaceEditingService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/workspaces/browser/workspaceTrustEditorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/workspaces/common/workspaceEditing.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/workspaces/common/workspaceUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/services/workspaces/electron-browser/workspaceEditingService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/baseUI.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/chat/chatAgentFeedbackReviewConfirmation.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/chat/chatFixtureUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/chat/chatProgressContentPart.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/chat/chatQuestionCarousel.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/chat/chatTerminalCollapsible.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/chat/chatToolRiskBadge.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/chat/chatWidget.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/chat/promptFilePickers.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/chat/renderChatInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/editor/codeActionList.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/editor/findWidget.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/editor/inlineChatAffordance.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/editor/inlineChatZoneWidget.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/fixtureUtilsCss.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/onboarding/spotlightOverlay.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/sessions/agentSessionsViewer.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/sessions/chatCompositeBar.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/sessions/sessionHeader.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/componentFixtures/sessions/viewAllChanges.fixture.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/parts/activitybar/activitybarPart.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/test/browser/quickAccess.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/workbench.common.main.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/workbench.web.main.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/testdata/testTokenizer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/prompt/src/test/testdata/testWishlist.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/types/src/codeCitation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/completions-core/vscode-node/types/src/core.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/5710.summarized.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/5710.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/edit/5710.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p12/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p12/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p12/source/f3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p12/source/f4.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p12/source/f5.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p13/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p13/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p13/source/f3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p14/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p14/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p14/source/f3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p14/source/f4.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p14/source/f5.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p14/source/f6.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p3/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p3/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p6/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p6/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p7/source/f1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p7/source/f2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/company.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/disposable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/employee.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/entity.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/eventProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/events.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/legalEntity.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/main.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src/person.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/networking/common/capiClientFetchedValue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/shared-fetch-utils/common/advancedFetcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/shared-fetch-utils/common/fetchedValue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/shared-fetch-utils/common/httpResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/shared-fetch-utils/common/middleware/authBlockedMiddleware.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/shared-fetch-utils/common/middleware/etagMiddleware.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/shared-fetch-utils/common/middleware/serverErrorBackoffMiddleware.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/shared-fetch-utils/common/middleware/windowActiveMiddleware.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/shared-fetch-utils/common/test/advancedFetcher.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/shared-fetch-utils/common/test/fetchedValue.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/shared-fetch-utils/common/test/httpResponse.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/responseModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/common/test/responseModel.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/node/fileExporters.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/platform/otel/node/test/fileExporters.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/base.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/observableInternal/changeTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/commonFacade/cancellation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/commonFacade/deps.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/debugLocation.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/observableInternal/debugName.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/experimental/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/logging/consoleObservableLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/logging/debugger/debuggerRpc.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/logging/debugger/devToolsLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/logging/debugger/rpc.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/logging/debugGetDependencyGraph.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/logging/logging.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/observableInternal/map.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/observables/baseObservable.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/util/vs/base/common/observableInternal/observables/constObservable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/observables/derived.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/observables/derivedImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/observables/lazyObservableValue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/observables/observableFromEvent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/observables/observableSignal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/observables/observableSignalFromEvent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/observables/observableValue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/observables/observableValueOpts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/reactions/autorun.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/reactions/autorunImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/set.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/transaction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/utils/promise.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/utils/runOnChange.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/utils/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/utils/utilsCancellation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/src/util/vs/base/common/observableInternal/utils/valueWithChangeEvent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-perf-tests/test/colorize-fixtures/test-checker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/base.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/changeTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/commonFacade/cancellation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/commonFacade/deps.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/debugLocation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/debugName.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/experimental/reducer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/experimental/time.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/experimental/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/logging/consoleObservableLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/logging/debugger/debuggerRpc.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/logging/debugger/devToolsLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/logging/debugger/rpc.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/logging/debugGetDependencyGraph.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/logging/logging.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/map.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/observables/baseObservable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/observables/constObservable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/observables/derived.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/observables/derivedImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/observables/lazyObservableValue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/observables/observableFromEvent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/observables/observableSignal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/observables/observableSignalFromEvent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/observables/observableValue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/observables/observableValueOpts.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/reactions/autorun.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/reactions/autorunImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/set.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/transaction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/utils/promise.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/utils/runOnChange.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/utils/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/utils/utilsCancellation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/common/observableInternal/utils/valueWithChangeEvent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/observables/observable.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/observable/common/observableMemento.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/codeMapper/scanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/codeMapper/scannerTypes.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/doc-explain-ts-code/charCode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/doc-explain-ts-code/strings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/eslint_class_methods_use_this.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/eslint_consistent_this.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/eslint_no_case_declarations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/eslint_no_dupe_else_if.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/eslint_no_duplicate_case.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/eslint_no_duplicate_imports.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2345_2/database_mock.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2345_2/file0.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2345_2/file1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2345_3/database_mock.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2345_3/file0.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2554/database_mock.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2554/file1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/fixing/typescript/tsc_error_2554/legacy_database.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/gen-top-level-function/charCode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/gen-top-level-function/strings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/multiFileEdit/fibonacci/bar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/multiFileEdit/fibonacci/foo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/multiFileEdit/fibonacci/version1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/multiFileEdit/fsprovider/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/multiFileEdit/fsprovider/src/fileSystemProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/generate-jest/some/app.js** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/generate-jest/some/sum.js** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/generate-jest/some/sum.test.js** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/simple-ts-proj-with-test-file-1/src/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/simple-ts-proj-with-test-file-1/src/test/index.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/simple-ts-proj-with-test-file-2/src/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/simple-ts-proj-with-test-file-2/src/test/index.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/simple-ts-proj-with-test-file/src/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/simple-ts-proj-with-test-file/src/test/index.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/ts-leading-whitespace/charCode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/ts-leading-whitespace/strings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/fixtures/tests/ts-leading-whitespace/uint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/amlModeToolbar.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/amlPicker.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/app.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/baselineJSONPicker.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/compareAgainstRunPicker.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/currentRunPicker.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/diffEditor.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/draggableBottomBorder.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/editor.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/errorComparison.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/filterUtils.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/localModeToolbar.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/monacoUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/nesExternalModeToolbar.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/openInVSCode.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/output.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/pickerStyle.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/request.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/scorecard.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/scorecardByLanguage.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/testCaseSummary.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/testFilterer.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/testList.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/testRun.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/testView.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/components/toolbar.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/initArgs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/simulationWorkbench.tsx** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/amlResults.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/amlSimulations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/baselineJSONProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/detectedTests.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/resolvedAMLRun.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/resolvedSimulationRun.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/runnerTestStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/simulationBaseline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/simulationRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/simulationStorage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/simulationTestsProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/simulationWorkspaceState.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/storage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/testRun.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/stores/testSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/utils/simulationExec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/utils/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/test/simulation/workbench/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/tsconfig.base.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/copilot/tsconfig.worker.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/client/src/browser/cssClientMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/client/src/cssClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/client/src/customData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/client/src/dropOrPaste/dropOrPasteResource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/client/src/dropOrPaste/shared.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/client/src/dropOrPaste/uriList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/client/src/node/cssClientMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/client/src/node/nodeFs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/client/src/requests.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/browser/cssServerMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/browser/cssServerWorkerMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/cssServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/customData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/languageModelCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/node/cssServerMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/node/cssServerNodeMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/node/nodeFs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/requests.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/test/completion.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/test/links.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/utils/runner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/utils/strings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/css-language-features/server/src/utils/validation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/abbreviationActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/balance.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/browser/emmetBrowserMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/bufferStream.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/defaultCompletionProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/editPoint.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/emmetCommon.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/evaluateMathExpression.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/imageSizeHelper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/incrementDecrement.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/locateFile.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/matchTag.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/mergeLines.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/node/emmetNodeMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/parseDocument.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/reflectCssValue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/removeTag.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/selectItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/selectItemHTML.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/selectItemStylesheet.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/splitJoinTag.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/abbreviationAction.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/completion.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/cssAbbreviationAction.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/editPointSelectItemBalance.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/evaluateMathExpression.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/incrementDecrement.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/partialParsingStylesheet.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/reflectCssValue.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/tagActions.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/testUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/toggleComment.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/updateImageSize.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/test/wrapWithAbbreviation.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/toggleComment.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/updateImageSize.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/updateTag.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/emmet/src/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/extension-editing/src/constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/extension-editing/src/extensionEditingBrowserMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/extension-editing/src/extensionEditingMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/extension-editing/src/extensionEngineValidation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/extension-editing/src/extensionLinter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/extension-editing/src/jsonReconstruct.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/extension-editing/src/packageDocumentHelper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/extension-editing/src/packageDocumentL10nSupport.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/src/api/api1.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/src/api/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/src/decorators.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/src/foldingProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/src/model.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/src/remoteProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/src/remoteSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/src/test/foldingProvider.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git-base/src/util.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/git/src/typings/git-base.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/common/env.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/common/errors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/common/experimentationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/common/keychain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/common/logger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/common/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/config.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/flows.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/github.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/githubServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/node/authServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/github-authentication/src/node/buffer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/node/crypto.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/node/fetch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/test/flows.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/test/node/authServer.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/github-authentication/src/test/node/fetch.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/common.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/deserializers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/helper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/ipynbMain.browser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/ipynbMain.node.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/ipynbMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/notebookAttachmentCleaner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/notebookImagePaste.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/notebookSerializer.node.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/notebookSerializer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/notebookSerializer.web.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/notebookSerializerWorker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/notebookSerializerWorker.web.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/serializers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/test/clearOutputs.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/test/notebookModelStoreSync.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/ipynb/src/test/serializers.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/client/src/browser/jsonClientMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/client/src/jsonClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/client/src/languageParticipants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/client/src/languageStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/client/src/node/jsonClientMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/client/src/node/schemaCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/client/src/utils/hash.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/client/src/utils/urlMatch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/server/src/browser/jsonServerMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/server/src/browser/jsonServerWorkerMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/server/src/jsonServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/server/src/languageModelCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/server/src/node/jsonServerMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/server/src/node/jsonServerNodeMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/server/src/utils/runner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/json-language-features/server/src/utils/validation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/less/package.json** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/less.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/src/audioPreview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/src/binarySizeStatusBarEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/src/imagePreview/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/src/imagePreview/sizeStatusBarEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/src/imagePreview/zoomStatusBarEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/src/mediaPreview.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/media-preview/src/ownedStatusBarEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/media-preview/src/util/dispose.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/src/util/dom.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/src/util/uuid.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/media-preview/src/videoPreview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/chat/index-editor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/chat/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/chat/mermaidWebview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/chat/vscodeApi.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/markdown/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/notebook/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/shared/config.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/shared/disposable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/shared/iconPackConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/shared/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/preview-src/shared/vsCodeTheme.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/src/chatOutputRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/src/editorManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/src/markdownMermaid/config.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/src/markdownMermaid/markdownIt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/src/util/dispose.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/src/util/html.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/mermaid-markdown-features/src/util/uuid.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/betterSecretStorage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/common/accountAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/common/async.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/common/cachePlugin.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/common/config.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/common/env.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/common/event.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/common/loggerOptions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/common/loopbackClientAndOpener.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/common/publicClientCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/microsoft-authentication/src/common/scopeData.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/common/test/loopbackClientAndOpener.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/common/test/scopeData.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/cryptoUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/logger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/node/authProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/node/buffer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/node/cachedPublicClientApplication.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/node/flows.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/node/loopbackTemplate.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/node/publicClientCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/node/test/flows.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/microsoft-authentication/src/UriEventHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/src/calls/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/src/calls/model.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/src/highlights.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/src/navigation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/src/references-view.d.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/references-view/src/references/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/src/references/model.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/src/tree.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/src/types/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/src/types/model.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/references-view/src/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/simple-browser/preview-src/events.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/simple-browser/preview-src/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/simple-browser/src/dispose.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/simple-browser/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/simple-browser/src/simpleBrowserManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/simple-browser/src/simpleBrowserView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/simple-browser/src/uuid.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/scripts/pullFishBuiltins.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/scripts/pullZshBuiltins.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/scripts/terminalScriptHelpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/azd.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/cd.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/code-insiders.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/code-tunnel-insiders.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/code-tunnel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/code.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/copilot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/gh.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/git.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/npm.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/npx.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/pnpm.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/set-location.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/apt.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/dotnet.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/echo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/ls.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/mkdir.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/node.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/python.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/python3.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/rm.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/rmdir.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/touch.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/yarn.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/constants.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/api-bindings/types.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/autocomplete-parser/caches.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/autocomplete-parser/errors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/autocomplete-parser/parseArguments.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/autocomplete/fig/hooks.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/autocomplete/generators/cache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/autocomplete/generators/customSuggestionsGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/autocomplete/generators/helpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/autocomplete/generators/scriptSuggestionsGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/autocomplete/state/generators.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/autocomplete/state/types.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/execute.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/fig-autocomplete-shared/convert.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/fig-autocomplete-shared/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/fig-autocomplete-shared/mixins.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/fig-autocomplete-shared/revert.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/fig-autocomplete-shared/specMetadata.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/fig-autocomplete-shared/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/figInterface.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/shared/errors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/shared/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/shared/internal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/shared/test/utils.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/shared/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/shell-parser/command.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/shell-parser/errors.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/shell-parser/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/shell-parser/parser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/shell-parser/test/command.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/fig/shell-parser/test/parser.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/helpers/completionItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/helpers/executable.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/helpers/file.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/helpers/filepaths.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/helpers/keyvalue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/helpers/os.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/helpers/promise.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/helpers/uri.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/shell/bash.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/shell/common.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/shell/fish.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/shell/fishBuiltinsCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/shell/pwsh.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/shell/zsh.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/shell/zshBuiltinsCache.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/terminalSuggestMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/completions/cd.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/completions/code-insiders.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/completions/code.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/completions/git-branch.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/completions/upstream/echo.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/completions/upstream/git.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/completions/upstream/ls.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/completions/upstream/mkdir.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/completions/upstream/rm.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/completions/upstream/rmdir.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/completions/upstream/touch.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/fig.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/helpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/terminalSuggestMain.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/test/tokens.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/tokens.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/upstreamSpecs.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/vscode-colorize-tests/test/colorize-fixtures/test.py** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/rsync.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/scp.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/terminal-suggest/src/completions/upstream/ssh.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/src/fileWatcherManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/src/logging.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/src/pathMapper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/src/serverHost.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/src/typingsInstaller/jsTyping.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/src/typingsInstaller/typingsInstaller.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/src/util/args.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/src/util/hrtime.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/src/wasmCancellationToken.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/src/webServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **extensions/typescript-language-features/web/src/workerSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/mock-policy-server/endpoints.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/mock-policy-server/public/app.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **scripts/mock-policy-server/server.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/tsconfig.base.json** (Score: 1): [LOW] Classified as UTILITY.
+- **src/tsconfig.defineClassFields.json** (Score: 1): [LOW] Classified as UTILITY.
+- **src/tsconfig.json** (Score: 1): [LOW] Classified as UTILITY.
+- **src/tsconfig.monaco.json** (Score: 1): [LOW] Classified as UTILITY.
+- **src/tsconfig.tsec.json** (Score: 1): [LOW] Classified as UTILITY.
+- **src/tsconfig.vscode-dts.json** (Score: 1): [LOW] Classified as UTILITY.
+- **src/tsconfig.vscode-proposed-dts.json** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/virtualScheduling/embedding.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/virtualScheduling/globalTimeApi.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/virtualScheduling/loggingTimeApi.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/virtualScheduling/processor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/virtualScheduling/recordingTimeApi.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/virtualScheduling/runWithFakedTimers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/virtualScheduling/timeApi.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/virtualScheduling/trace.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/virtualScheduling/traceLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/virtualScheduling/virtualClock.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/base/test/common/virtualScheduling/virtualTimeApi.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/codexMapAppServerEvents.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/codexSessionConfigKeys.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/AbsolutePathBuf.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/AgentPath.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ApplyPatchApprovalParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/AuthMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/AutoCompactTokenLimitScope.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ClientInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ClientRequest.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/CollaborationMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ContentItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ConversationGitInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ConversationSummary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ExecCommandApprovalParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FileChange.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ForcedLoginMethod.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FunctionCallOutputBody.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FunctionCallOutputContentItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FuzzyFileSearchMatchType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FuzzyFileSearchParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FuzzyFileSearchResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FuzzyFileSearchResult.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FuzzyFileSearchSessionCompletedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FuzzyFileSearchSessionStartParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FuzzyFileSearchSessionStopParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FuzzyFileSearchSessionUpdatedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/FuzzyFileSearchSessionUpdateParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/GetAuthStatusParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/GetAuthStatusResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/GetConversationSummaryParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/GetConversationSummaryResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/GitDiffToRemoteParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ImageDetail.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/InitializeCapabilities.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/InitializeParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/InitializeResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/InputModality.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/InternalSessionSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/LocalShellAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/LocalShellExecAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/LocalShellStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/MessagePhase.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ModeKind.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ParsedCommand.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/Personality.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/PlanType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/RealtimeConversationVersion.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/RealtimeOutputModality.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/RealtimeVoice.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/RealtimeVoicesList.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ReasoningEffort.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ReasoningItemContent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ReasoningItemReasoningSummary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ReasoningSummary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/RequestId.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ResourceContent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ResponseItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/serde_json/JsonValue.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ServerNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/SessionSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/Settings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/SubAgentSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ThreadId.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ThreadMemoryMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/Account.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AccountLoginCompletedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AccountRateLimitsUpdatedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AccountUpdatedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ActivePermissionProfile.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AddCreditsNudgeCreditType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AdditionalFileSystemPermissions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AdditionalNetworkPermissions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AdditionalPermissionProfile.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AgentMessageDeltaNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AnalyticsConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppBranding.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppListUpdatedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppMetadata.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppReview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ApprovalsReviewer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppsConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppScreenshot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppsDefaultConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppsListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppsListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppSummary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppToolApproval.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AppToolsConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AskForApproval.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AutoReviewDecisionSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CancelLoginAccountParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CodexErrorInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CollabAgentState.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CollabAgentStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CollabAgentTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CollabAgentToolCallStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CollaborationModeListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CollaborationModeListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CollaborationModeMask.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CommandExecOutputDeltaNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CommandExecOutputStream.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CommandExecParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CommandExecResizeParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CommandExecTerminalSize.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CommandExecTerminateParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CommandExecutionOutputDeltaNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CommandExecutionSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CommandExecutionStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CommandExecWriteParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CommandMigration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ComputerUseRequirements.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/Config.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigBatchWriteParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigEdit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigLayer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigLayerMetadata.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigLayerSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigReadParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigReadResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigRequirements.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigRequirementsReadResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfiguredHookHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfiguredHookMatcherGroup.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigValueWriteParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigWarningNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ConfigWriteResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ContextCompactedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CreditsSnapshot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/DeprecationNoticeNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/DynamicToolCallOutputContentItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/DynamicToolCallResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/DynamicToolCallStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/DynamicToolSpec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/EnvironmentAddParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ErrorNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ExperimentalFeatureEnablementSetParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ExperimentalFeatureListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ExternalAgentConfigDetectParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ExternalAgentConfigDetectResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ExternalAgentConfigImportCompletedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ExternalAgentConfigImportParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ExternalAgentConfigMigrationItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ExternalAgentConfigMigrationItemType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FeedbackUploadParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FileChangeOutputDeltaNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FileChangePatchUpdatedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FileSystemAccessMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FileSystemPath.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FileSystemSandboxEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FileSystemSpecialPath.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FileUpdateChange.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ForcedChatgptWorkspaceIds.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsChangedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsCopyParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsCreateDirectoryParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsGetMetadataParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsReadDirectoryParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsReadFileParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsRemoveParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsUnwatchParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsWatchParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsWatchResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsWriteFileParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GetAccountParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GetAccountRateLimitsResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GetAccountResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GitInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GrantedPermissionProfile.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GuardianApprovalReview.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GuardianApprovalReviewAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GuardianApprovalReviewStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GuardianCommandSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GuardianRiskLevel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GuardianUserAuthorization.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/GuardianWarningNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookCompletedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookErrorInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookEventName.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookExecutionMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookHandlerType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookMetadata.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookMigration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookOutputEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookOutputEntryKind.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookPromptFragment.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookRunStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookRunSummary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookScope.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HooksListEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HooksListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HooksListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookStartedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/HookTrustStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ItemCompletedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ItemGuardianApprovalReviewCompletedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ItemGuardianApprovalReviewStartedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ItemStartedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ListMcpServerStatusParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/LoginAccountParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ManagedHooksRequirements.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MarketplaceAddParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MarketplaceAddResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MarketplaceInterface.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MarketplaceLoadErrorInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MarketplaceRemoveParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MarketplaceRemoveResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MarketplaceUpgradeErrorInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MarketplaceUpgradeParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MarketplaceUpgradeResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpResourceReadParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpResourceReadResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpServerMigration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpServerOauthLoginCompletedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpServerOauthLoginParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpServerStatusDetail.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpServerToolCallParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpServerToolCallResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpToolCallError.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpToolCallProgressNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpToolCallResult.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpToolCallStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MemoryCitation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MemoryCitationEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MergeStrategy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MigrationDetails.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/MockExperimentalMethodParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/Model.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ModelAvailabilityNux.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ModelListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ModelListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ModelProviderCapabilitiesReadParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ModelReroutedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ModelRerouteReason.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ModelServiceTier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ModelUpgradeInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ModelVerification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ModelVerificationNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/NetworkAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/NetworkApprovalContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/NetworkApprovalProtocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/NetworkDomainPermission.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/NetworkRequirements.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/NetworkUnixSocketPermission.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/NonSteerableTurnKind.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/OverriddenMetadata.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PatchApplyStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PatchChangeKind.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PermissionGrantScope.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PermissionProfileListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PermissionsRequestApprovalParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PermissionsRequestApprovalResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PlanDeltaNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginAuthPolicy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginAvailability.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginDetail.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginHookSummary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginInstalledParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginInstalledResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginInstallParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginInstallPolicy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginInstallResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginInterface.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginListMarketplaceKind.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginMarketplaceEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginReadParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginReadResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareCheckoutParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareCheckoutResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareDeleteParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareDiscoverability.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareListItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginSharePrincipal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginSharePrincipalRole.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginSharePrincipalType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareSaveParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareTarget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareTargetRole.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareUpdateDiscoverability.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareUpdateTargetsParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginShareUpdateTargetsResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginSkillReadParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginsMigration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginSummary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PluginUninstallParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ProcessExitedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ProcessKillParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ProcessOutputDeltaNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ProcessOutputStream.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ProcessResizePtyParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ProcessSpawnParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ProcessTerminalSize.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ProcessWriteStdinParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/RateLimitReachedType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/RateLimitSnapshot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/RateLimitWindow.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/RawResponseItemCompletedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ReasoningEffortOption.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ReasoningSummaryPartAddedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ReasoningSummaryTextDeltaNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ReasoningTextDeltaNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/RemoteControlConnectionStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/RemoteControlDisableResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/RemoteControlEnableResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/RemoteControlStatusChangedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/RemoteControlStatusReadResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/RequestPermissionProfile.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ResidencyRequirement.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ReviewDelivery.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ReviewStartParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ReviewStartResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ReviewTarget.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SandboxMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SandboxPolicy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SandboxWorkspaceWrite.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SendAddCreditsNudgeEmailParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ServerRequestResolvedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SessionMigration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SessionSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillDependencies.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillErrorInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillInterface.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillMetadata.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillsChangedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillsConfigWriteParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillScope.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillsListEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillsListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillsListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillSummary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SkillToolDependency.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SortDirection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SubagentMigration.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TerminalInteractionNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TextPosition.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TextRange.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/Thread.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadActiveFlag.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadApproveGuardianDeniedActionParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadArchivedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadArchiveParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadBackgroundTerminalsCleanParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadClosedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadCompactStartParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadDecrementElicitationParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadForkParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadForkResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadGoal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadGoalClearedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadGoalClearParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadGoalGetParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadGoalGetResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadGoalSetParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadGoalSetResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadGoalStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadGoalUpdatedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadIncrementElicitationParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadInjectItemsParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadLoadedListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadMemoryModeSetParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadMetadataGitInfoUpdateParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadMetadataUpdateParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadMetadataUpdateResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadNameUpdatedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadReadParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadReadResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeAppendAudioParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeAppendTextParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeAudioChunk.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeClosedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeErrorNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeItemAddedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeListVoicesParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeListVoicesResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeOutputAudioDeltaNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeSdpNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeStartedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeStartParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeStartTransport.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeStopParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeTranscriptDeltaNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRealtimeTranscriptDoneNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadResumeParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadResumeResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRollbackParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadRollbackResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadSearchParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadSearchResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadSearchResult.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadSetNameParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadSettings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadSettingsUpdatedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadSettingsUpdateParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadShellCommandParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadSortKey.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadSourceKind.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadStartedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadStartParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadStartResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadStartSource.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadStatusChangedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadTokenUsage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadTokenUsageUpdatedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadTurnsItemsListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadTurnsItemsListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadTurnsListParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadTurnsListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadUnarchivedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadUnarchiveParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadUnarchiveResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadUnsubscribeParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TokenUsageBreakdown.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ToolsV2.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/Turn.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnCompletedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnDiffUpdatedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnEnvironmentParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnError.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnInterruptParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnItemsView.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnPlanStep.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnPlanStepStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnPlanUpdatedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnStartedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnStartParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnStartResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/TurnStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/WarningNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/WebSearchAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/WindowsSandboxSetupCompletedNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/WindowsSandboxSetupMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/WindowsSandboxSetupStartParams.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/WindowsWorldWritableWarningNotification.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/WriteStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/Verbosity.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/WebSearchAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/WebSearchContextSize.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/WebSearchLocation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/WebSearchMode.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/WebSearchToolConfig.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ApplyPatchApprovalResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ExecCommandApprovalResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ExecPolicyAmendment.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/NetworkPolicyAmendment.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/NetworkPolicyRuleAction.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/ReviewDecision.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/GitDiffToRemoteResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/GitSha.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/AddCreditsNudgeEmailStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/SendAddCreditsNudgeEmailResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CancelLoginAccountResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/CancelLoginAccountStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ExperimentalFeature.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ExperimentalFeatureListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ExperimentalFeatureStage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsReadDirectoryEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/FsReadDirectoryResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationArrayType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationConstOption.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationEnumSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationLegacyTitledEnumSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationMultiSelectEnumSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationSingleSelectEnumSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationStringFormat.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationStringSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationStringType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationTitledEnumItems.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationTitledMultiSelectEnumSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationTitledSingleSelectEnumSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationUntitledEnumItems.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationUntitledMultiSelectEnumSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/McpElicitationUntitledSingleSelectEnumSchema.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PermissionProfileListResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/PermissionProfileSummary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadUnsubscribeResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/ThreadUnsubscribeStatus.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/WindowsSandboxReadiness.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/platform/agentHost/node/codex/protocol/generated/v2/WindowsSandboxReadinessResponse.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/animations/animation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/animations/animationRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/animations/blockAnimations.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/buffers/buffer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/buffers/bufferRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/buffers/offBuffer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/buffers/paragraphBuffer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/buffers/wordBuffer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/browser/widget/chatContentParts/chatIncrementalRendering/chatIncrementalRendering.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **src/vs/workbench/contrib/chat/test/browser/widget/chatContentParts/chatIncrementalRendering.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/componentFixtures/playwright/tests/imageCarousel.spec.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/componentFixtures/playwright/tests/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/application.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/activityBar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/chat.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/core.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/debug.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/editor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/explorer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/extensions.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/keybindings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/localization.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/notebook.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/problems.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/profiler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/quickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/scm.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/search.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/settings.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/statusbar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/task.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/terminal.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/automationTools/windows.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/options.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/stdio.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/mcp/src/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/accessibility/accessibility.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/agentsWindow/agentsWindow.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/chat/chatDisabled.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/chat/chatSessions.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/chat/copilotCli.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/extensions/extension-host-restart.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/extensions/extensions.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/languages/languages.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/multiroot/multiroot.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/notebook/notebook.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/preferences/preferences.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/search/search.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/statusbar/statusbar.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/task/task-quick-pick.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/task/task.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/terminal/terminal-editors.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/terminal/terminal-helpers.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/terminal/terminal-input.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/terminal/terminal-persistence.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/terminal/terminal-profiles.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/terminal/terminal-shellIntegration.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/terminal/terminal-splitCwd.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/terminal/terminal-stickyScroll.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/terminal/terminal-tabs.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/terminal/terminal.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/workbench/data-loss.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/workbench/launch.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/areas/workbench/localization.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/main.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **test/smoke/src/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **eslint.Rule.RuleModule** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/trajectory/vscode-node/otelChatDebugLogProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/terminalContrib/suggest/browser/terminal.suggest.contribution.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/snippet/browser/snippetParser.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **editorCommon.IEditorDecorationsCollection** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **IssueModel** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/editorExtensions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **EventTarget** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **SpanExporter** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **IExperimentationFilterProvider** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/codeEditorWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/api/common/extHostExtensionActivator.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/hover/browser/markdownHoverParticipant.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/xtab/common/globalBudgetCascade.md** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/test/simulation/fixtures/doc/issue-6406/debugModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/common/console.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/debug/common/debug.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/editorCommon.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/zoneWidget/browser/zoneWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/notebook/browser/controller/coreActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **IResourceMarkersTemplateData>** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/languages.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **DefinitionProviderBase** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **ITreeItem>** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/browser/ui/list/rangeMap.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/parts/ipc/test/browser/ipc.mp.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/parts/ipc/common/ipc.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/git/src/askpass-main.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/parts/ipc/common/ipc.net.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/parts/ipc/test/common/ipc.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/parts/storage/common/storage.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **HTMLElement>** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/common/fuzzyScorer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/view/viewPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/controller/editContext/screenReaderUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/viewEventHandler.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/services/bulkEditService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/view/viewLayer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/view/dynamicViewOverlay.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/viewParts/glyphMargin/glyphMargin.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/src/extension/prompts/node/test/fixtures/codeEditorWidget.1.summarized.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/widget/diffEditor/components/accessibleDiffViewer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/widget/diffEditor/diffProviderFactoryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/diff/documentDiffProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/widget/diffEditor/diffEditorWidget.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/widget/diffEditor/utils/editorGutter.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/widget/diffEditor/utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/config/fontInfo.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/coordinatesConverter.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/core/characterClassifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/undoRedo/common/undoRedo.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/model/textModelPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/model/tokens/abstractSyntaxTokenBackend.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/base/common/worker/webWorker.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/services/textModelSync/textModelSync.protocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/languages/language.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/tokens/lineTokens.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/editorBrowser.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/colorPicker/browser/colorPickerParticipantUtils.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/folding/browser/folding.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/peekView/browser/peekView.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/gotoSymbol/browser/goToCommands.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **peekView.PeekViewWidget** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/quickAccess/browser/gotoLineQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/quickAccess/browser/gotoSymbolQuickAccess.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/services/abstractCodeEditorService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/code/electron-main/main.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/services/languageService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/workspace/common/workspace.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/services/treeSitter/treeSitterLibraryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **languages.IState** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/languages/linkComputer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/common/agentHostFileSystemProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/log/common/log.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/common/agentHostChangesetOperationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/node/agentHostCompletions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/common/agentHostGitService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/common/agentHostGitStateService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/common/agentService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/node/claude/claudeAgentSdkService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/node/shared/loopbackProxyServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/node/shared/agentHostOctoKitService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/common/agentServerTools.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/node/shared/copilotApiService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/common/agentHostFileSystemService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/copilot/test/simulation/fixtures/codeMapper/extHostExtensionActivator.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/common/agentHostChangesetService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **WarmQuery** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/test/node/copilotAgentSession.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/windows/electron-main/windowImpl.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/backup/electron-main/backup.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/diagnostics/common/diagnostics.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/dialogs/electron-main/dialogMainService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/environment/common/environmentService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/extensionManagement/common/abstractExtensionManagementService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/extensionManagement/common/extensionGalleryManifestService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/extensionManagement/common/extensionGalleryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/extensionManagement/common/extensionTipsService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/extensionManagement/common/extensionsProfileScannerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/extensionManagement/common/extensionsScannerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/extensionRecommendations/common/extensionRecommendations.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/extensionResourceLoader/common/extensionResourceLoader.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/files/common/fileService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/files/node/diskFileSystemProviderServer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/files/common/diskFileSystemProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/files/node/watcher/baseWatcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/files/common/watcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/files/common/files.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/keybinding/common/baseResolvedKeybinding.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/codeAction/test/browser/codeActionModel.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/keyboardLayout/common/keyboardMapper.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/languagePacks/common/languagePacks.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/mcp/common/mcpManagementService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/meteredConnection/common/meteredConnection.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/policy/common/copilotManagedSettings.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/policy/common/policy.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/node/agentSdkDownloader.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/request/common/request.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/sandbox/common/sandboxHelperService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/encryption/common/encryptionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/secrets/common/secrets.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/sign/common/abstractSignService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/telemetry/common/1dsAppender.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/telemetry/common/errorTelemetry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/node/agentHostTelemetryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/terminal/common/capabilities/capabilities.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/tunnel/common/tunnel.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/update/common/update.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/update/electron-main/abstractUpdateService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/url/common/url.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/url/common/urlService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/userDataProfile/common/userDataProfileStorageService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/userDataSync/common/abstractSynchronizer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/userDataSync/common/userDataSync.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/find/test/browser/findController.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/webContentExtractor/common/webContentExtractor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **BaseWorkspace** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/remote/common/remoteExtensionsScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/configurationResolver/common/variableResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **IFileTemplateData>** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/widget/input/editor/agentHostInputCompletionsBase.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/AI_CUSTOMIZATIONS.md** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/sessions/contrib/providers/remoteAgentHost/test/browser/remoteAgentHostCustomizationHarness.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/contrib/semanticTokens/test/browser/documentSemanticTokens.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/notebook/test/browser/testNotebookEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/workingCopy/common/resourceWorkingCopy.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/debug/common/abstractDebugAdapter.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/remote/common/managedSocket.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/notebook/common/notebookKernelService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/workingCopy/common/workingCopyFileService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/textfile/common/textfiles.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/api/common/extHost.protocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/api/common/extHostDebugService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/extensions/common/extensionDescriptionRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/api/common/extHostRpcService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/api/common/extHostTask.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/terminal/common/terminal.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/api/common/extHostTerminalService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/testing/common/testItemCollection.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/api/common/extHostConsoleForwarder.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/api/common/extHostExtensionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/api/common/extHostRequireInterceptor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/editor/editorPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/editor/editorPane.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/editor/editorWithViewState.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/common/editor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/editor/textEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/editor/textCodeEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/browser/parts/editor/textResourceEditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **extensions/markdown-language-features/markdown-editor-src/editor.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/common/editor/editorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/common/editor/resourceEditorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/common/editor/textResourceEditorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/common/editor/textEditorModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/services/resolverService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/browser/chatEditing/chatEditingModifiedFileEntry.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/common/plugins/pluginGitCommandService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/common/enablement.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/chat/common/plugins/AGENTS_PLUGINS.md** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **Iterable** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/agentHost/test/node/agentHostFileMonitorService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **FilterData>** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **IErrorTemplateData>** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **FuzzyScore>** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/emmet/browser/emmetActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/extensions/browser/extensionRecommendationNotificationService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/userDataSync/common/extensionsSync.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/decorations/common/decorations.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **ExplorerItem>** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/issue/browser/baseIssueReporterService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/mcp/common/mcpGatewayService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/mcp/common/discovery/nativeMcpDiscoveryAbstract.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/mergeEditor/browser/view/editors/codeEditorView.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/browser/widget/multiDiffEditor/workbenchUIElementFactory.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/notebook/browser/view/cellPart.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/workingCopy/common/untitledFileWorkingCopy.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/languageDetection/common/languageDetectionWorkerService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **IActionsColumnTemplateData>** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/search/browser/searchTreeModel/fileMatch.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/search/browser/searchTreeModel/textSearchHeading.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/snippets/browser/commands/abstractSnippetsActions.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/snippets/browser/snippets.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/tags/common/workspaceTags.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/terminal/common/basePty.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/terminal/browser/baseTerminalBackend.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/terminal/browser/terminalProfileResolverService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/terminal/common/terminalExtensionPoints.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/terminal/common/capabilities/commandDetectionCapability.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/commandLinePresenter/commandLinePresenter.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/runInTerminalTool.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/contrib/terminalContrib/links/browser/links.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/api/node/extHostSearch.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/configuration/common/configuration.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/api/test/browser/mainThreadDocumentsAndEditors.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/path/common/pathService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/extensionManagement/common/extensionManagementChannelClient.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/extensions/common/abstractExtensionService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/extensions/common/extensionHostKind.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/files/common/elevatedFileService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/editor/test/browser/editorGroupsService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/keybinding/browser/keyboardLayoutService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/lifecycle/common/lifecycleService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **BaseWorkbenchMcpManagementService** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/editor/common/services/modelService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/remote/common/abstractRemoteAgentService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/search/common/search.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/textfile/browser/textFileService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/untitled/common/untitledTextEditorInput.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/userDataProfile/common/userDataProfile.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/userData/browser/userDataInit.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/workingCopy/common/workingCopyBackupService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/workingCopy/common/workingCopyBackupTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/workingCopy/common/workingCopyHistoryService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/workingCopy/test/browser/workingCopyEditorService.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/workbench/services/workingCopy/electron-browser/workingCopyBackupService.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **src/vs/platform/workspaces/common/workspaces.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **events.EventEmitter** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+
+### Q6: 시스템 경계는 어디인가? (Where are the boundaries?)
+**Summary**: Identified 79 Boundaries and 0 Crossers based on structural topology.
+**Confidence**: 1
+
+#### Items:
+- **Group[12 nodes]** (Score: 1): Isolated Island with 12 nodes. Highly decoupled.
+- **Group[71 nodes]** (Score: 1): Isolated Island with 71 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[5 nodes]** (Score: 1): Isolated Island with 5 nodes. Highly decoupled.
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[6 nodes]** (Score: 1): Isolated Island with 6 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[9 nodes]** (Score: 1): Isolated Island with 9 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[4 nodes]** (Score: 1): Isolated Island with 4 nodes. Highly decoupled.
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[4 nodes]** (Score: 1): Isolated Island with 4 nodes. Highly decoupled.
+- **Group[9 nodes]** (Score: 1): Isolated Island with 9 nodes. Highly decoupled.
+- **Group[15 nodes]** (Score: 1): Isolated Island with 15 nodes. Highly decoupled.
+- **Group[8 nodes]** (Score: 1): Isolated Island with 8 nodes. Highly decoupled.
+- **Group[8 nodes]** (Score: 1): Isolated Island with 8 nodes. Highly decoupled.
+- **Group[8 nodes]** (Score: 1): Isolated Island with 8 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[12 nodes]** (Score: 1): Isolated Island with 12 nodes. Highly decoupled.
+- **Group[12 nodes]** (Score: 1): Isolated Island with 12 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[5 nodes]** (Score: 1): Isolated Island with 5 nodes. Highly decoupled.
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[11 nodes]** (Score: 1): Isolated Island with 11 nodes. Highly decoupled.
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[5 nodes]** (Score: 1): Isolated Island with 5 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[6 nodes]** (Score: 1): Isolated Island with 6 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[91 nodes]** (Score: 0.9830508474576272): Cohesive structural Boundary with 91 nodes (Modularity: 98.3%).
+- **Group[26 nodes]** (Score: 0.96): Cohesive structural Boundary with 26 nodes (Modularity: 96.0%).
+- **Group[2244 nodes]** (Score: 0.9574273412271259): Cohesive structural Boundary with 2244 nodes (Modularity: 95.7%).
+- **Group[21 nodes]** (Score: 0.95): Cohesive structural Boundary with 21 nodes (Modularity: 95.0%).
+- **Group[30 nodes]** (Score: 0.9310344827586207): Cohesive structural Boundary with 30 nodes (Modularity: 93.1%).
+- **Group[342 nodes]** (Score: 0.9258720930232558): Cohesive structural Boundary with 342 nodes (Modularity: 92.6%).
+- **Group[146 nodes]** (Score: 0.9250585480093677): Cohesive structural Boundary with 146 nodes (Modularity: 92.5%).
+- **Group[19 nodes]** (Score: 0.918918918918919): Cohesive structural Boundary with 19 nodes (Modularity: 91.9%).
+- **Group[24 nodes]** (Score: 0.9183673469387755): Cohesive structural Boundary with 24 nodes (Modularity: 91.8%).
+- **Group[452 nodes]** (Score: 0.9110787172011662): Cohesive structural Boundary with 452 nodes (Modularity: 91.1%).
+- **Group[15 nodes]** (Score: 0.9047619047619048): Cohesive structural Boundary with 15 nodes (Modularity: 90.5%).
+- **Group[11 nodes]** (Score: 0.8947368421052632): Cohesive structural Boundary with 11 nodes (Modularity: 89.5%).
+- **Group[72 nodes]** (Score: 0.8776041666666666): Cohesive structural Boundary with 72 nodes (Modularity: 87.8%).
+- **Group[12 nodes]** (Score: 0.875): Cohesive structural Boundary with 12 nodes (Modularity: 87.5%).
+- **Group[38 nodes]** (Score: 0.8613861386138614): Cohesive structural Boundary with 38 nodes (Modularity: 86.1%).
+- **Group[48 nodes]** (Score: 0.8037383177570093): Cohesive structural Boundary with 48 nodes (Modularity: 80.4%).
+- **Group[18 nodes]** (Score: 0.7735849056603774): Cohesive structural Boundary with 18 nodes (Modularity: 77.4%).
+- **Group[11 nodes]** (Score: 0.6764705882352942): Cohesive structural Boundary with 11 nodes (Modularity: 67.6%).
+- **Group[10 nodes]** (Score: 0.631578947368421): Cohesive structural Boundary with 10 nodes (Modularity: 63.2%).
+- **Group[137 nodes]** (Score: 0.6127320954907162): Cohesive structural Boundary with 137 nodes (Modularity: 61.3%).
+- **Group[1989 nodes]** (Score: 0.5279416702643066): Cohesive structural Boundary with 1989 nodes (Modularity: 52.8%).
+

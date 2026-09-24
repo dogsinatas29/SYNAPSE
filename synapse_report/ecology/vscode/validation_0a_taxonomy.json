@@ -1,0 +1,15 @@
+{
+  "totalEdges": 102357,
+  "knownProvenanceEdges": 79881,
+  "unknownRuntimeEdges": 22476,
+  "coverageRatio": 0.7804156042087986,
+  "distribution": {
+    "I0": 22476,
+    "I1": 39581,
+    "I2": 0,
+    "I3": 1226,
+    "I4": 26223,
+    "I5": 12819,
+    "OTHER": 32
+  }
+}

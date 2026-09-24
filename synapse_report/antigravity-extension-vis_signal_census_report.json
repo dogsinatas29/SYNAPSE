@@ -1,0 +1,85 @@
+{
+  "totalSignals": 102,
+  "totalNodes": 405,
+  "signalizedNodes": 91,
+  "nodeCoverage": 22.47,
+  "signalDensity": 0.25,
+  "uniqueSignals": 3,
+  "topSignals": [
+    {
+      "signalId": "lifecycle_control",
+      "count": 43
+    },
+    {
+      "signalId": "object_creation",
+      "count": 34
+    },
+    {
+      "signalId": "state_mutation",
+      "count": 25
+    }
+  ],
+  "topNodes": [
+    {
+      "nodeId": "src/core/reasoning/rules/flow/DataPipelineRule.ts",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "dist/core/DataPipeline.js",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "src/core/StateAuditPipeline.ts",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "src/core/reasoning/builders/ArchitecturalReasoningModelBuilder.ts",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "src/cli/audit_pipeline.ts",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "src/core/reasoning/pipeline/ArchitecturalReasoningPipeline.ts",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "src/core/DataPipeline.ts",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "dist/core/canvas-engine/StateManager.js",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "src/core/canvas-engine/StateManager.ts",
+      "signalCount": 2
+    },
+    {
+      "nodeId": "src/core/reasoning/ReasoningPipelineRunner.ts",
+      "signalCount": 2
+    }
+  ],
+  "signalsPerNodeHistogram": {
+    "1": 80,
+    "2": 11,
+    "3": 0,
+    "4+": 0
+  },
+  "averageSignalsPerSignalizedNode": 1.12,
+  "distribution": {
+    "state_mutation": {
+      "count": 25,
+      "percent": 24.51
+    },
+    "object_creation": {
+      "count": 34,
+      "percent": 33.33
+    },
+    "lifecycle_control": {
+      "count": 43,
+      "percent": 42.16
+    }
+  }
+}

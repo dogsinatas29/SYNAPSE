@@ -1,0 +1,96 @@
+{
+  "heuristic_audit": {
+    "no_match": {
+      "total": 4385,
+      "giant": 633,
+      "secondary": 14,
+      "dag": 3738
+    },
+    "implements": {
+      "total": 142,
+      "giant": 6,
+      "secondary": 0,
+      "dag": 136
+    },
+    "import_generic": {
+      "total": 5640,
+      "giant": 1034,
+      "secondary": 7,
+      "dag": 4599
+    },
+    "function_call": {
+      "total": 49,
+      "giant": 4,
+      "secondary": 0,
+      "dag": 45
+    },
+    "register": {
+      "total": 12107,
+      "giant": 2446,
+      "secondary": 47,
+      "dag": 9614
+    },
+    "error": {
+      "total": 8,
+      "giant": 0,
+      "secondary": 0,
+      "dag": 8
+    },
+    "decorator": {
+      "total": 9,
+      "giant": 3,
+      "secondary": 0,
+      "dag": 6
+    },
+    "extends": {
+      "total": 73,
+      "giant": 7,
+      "secondary": 0,
+      "dag": 66
+    },
+    "import_type": {
+      "total": 63,
+      "giant": 7,
+      "secondary": 0,
+      "dag": 56
+    }
+  },
+  "ablation_test": {
+    "baseline": {
+      "largest_scc": 2699,
+      "top10_scc_sum": 2748,
+      "secondary_scc_sum": 49,
+      "secondary_scc_count": 9,
+      "total_scc_count": 50,
+      "nodes_in_scc": 2832,
+      "scc_density": 0.19977426636568849
+    },
+    "without_structure_mass": {
+      "largest_scc": 712,
+      "top10_scc_sum": 750,
+      "secondary_scc_sum": 38,
+      "secondary_scc_count": 9,
+      "total_scc_count": 36,
+      "nodes_in_scc": 804,
+      "scc_density": 0.0567155756207675
+    },
+    "without_registration_glue": {
+      "largest_scc": 2038,
+      "top10_scc_sum": 2088,
+      "secondary_scc_sum": 50,
+      "secondary_scc_count": 9,
+      "total_scc_count": 49,
+      "nodes_in_scc": 2172,
+      "scc_density": 0.15321670428893905
+    },
+    "without_call_flow": {
+      "largest_scc": 1343,
+      "top10_scc_sum": 1407,
+      "secondary_scc_sum": 64,
+      "secondary_scc_count": 9,
+      "total_scc_count": 38,
+      "nodes_in_scc": 1468,
+      "scc_density": 0.10355530474040632
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "I1_CALL": {
+    "largestSccContribution": 0.5035198221563542
+  },
+  "I2_CONTROL": {
+    "largestSccContribution": 0
+  },
+  "I3_REGISTRATION": {
+    "largestSccContribution": 0.18377176732123007
+  },
+  "I4_STRUCTURE": {
+    "largestSccContribution": 0.8188217858466098
+  },
+  "I5_METADATA": {
+    "largestSccContribution": 0.07780659503519823
+  },
+  "I0_UNKNOWN_REMAINING": {
+    "largestSccContribution": 0
+  }
+}

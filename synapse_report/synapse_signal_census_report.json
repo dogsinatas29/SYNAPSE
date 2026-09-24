@@ -1,0 +1,62 @@
+{
+  "totalSignals": 9,
+  "uniqueSignals": 5,
+  "topSignals": [
+    {
+      "signalId": "dependency_resolution",
+      "count": 3
+    },
+    {
+      "signalId": "state_mutation",
+      "count": 2
+    },
+    {
+      "signalId": "cross_boundary_reference",
+      "count": 2
+    },
+    {
+      "signalId": "lifecycle_control",
+      "count": 1
+    },
+    {
+      "signalId": "object_creation",
+      "count": 1
+    }
+  ],
+  "topNodes": [
+    {
+      "nodeId": "GraphModel",
+      "signalCount": 4
+    },
+    {
+      "nodeId": "CanvasEngine",
+      "signalCount": 3
+    },
+    {
+      "nodeId": "MemoryManager",
+      "signalCount": 2
+    }
+  ],
+  "distribution": {
+    "state_mutation": {
+      "count": 2,
+      "percent": 22.22
+    },
+    "lifecycle_control": {
+      "count": 1,
+      "percent": 11.11
+    },
+    "cross_boundary_reference": {
+      "count": 2,
+      "percent": 22.22
+    },
+    "dependency_resolution": {
+      "count": 3,
+      "percent": 33.33
+    },
+    "object_creation": {
+      "count": 1,
+      "percent": 11.11
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import { runBundle } from '../../cli/run_b5_bundle';
 import { ArchitectureAuditor } from './ArchitectureAuditor';
-import { ProjectContextDetector } from '../analysis/semantic/ProjectContextDetector';
-import { SemanticClassifier } from '../analysis/semantic/SemanticClassifier';
+
+
 import type { ASTVerificationResult } from '../../cli/ast_verification_engine';
 import { 
     GraphSnapshot,
@@ -583,22 +583,7 @@ export function printSummary(
 export class ValidationEngine {
     static analyzeState(snapshot: Readonly<GraphSnapshot>, runCount: number, workspaceRoot: string, intentEdges?: any[]): ValidationContext {
         // --- [P0.5] Semantic Classification Preprocessing ---
-        const resolution = ProjectContextDetector.detect(workspaceRoot);
-        const profile = SemanticClassifier.getProfile(resolution);
-        
-        if (profile) {
-            console.log(`[ValidationEngine] Applying Semantic Profile: ${profile.profileId}`);
-            for (const node of snapshot.nodes) {
-                const filePath = (node as any).filePath || node.id;
-                const classification = SemanticClassifier.classify(filePath, profile);
-                if (classification.semanticRole !== 'UNCLASSIFIED' && classification.semanticRole !== 'UNKNOWN') {
-                    (node as any).semanticRole = classification.semanticRole;
-                    (node as any).semanticClassification = classification; // Evidence-backed Classification
-                }
-            }
-        } else {
-            console.log(`[ValidationEngine] No Semantic Profile found. Running generic analysis (UNKNOWN fallback).`);
-        }
+        console.log(`[ValidationEngine] No Semantic Profile found. Running generic analysis (UNKNOWN fallback).`);
         // ----------------------------------------------------
 
         const runs: ParsedRun[] = [];

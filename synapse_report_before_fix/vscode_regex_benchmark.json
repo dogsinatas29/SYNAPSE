@@ -1,0 +1,2467 @@
+[
+  {
+    "directory": "external:",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "external:/",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/alpha",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/alpha/boot",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arc",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arc/kernel",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/boot",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/common",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/include",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/include/asm",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/kernel",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/mach-bcm",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/mach-dove",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/mach-footbridge",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/mach-footbridge/include",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/mach-imx",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/mach-mv78xx0",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/mach-nomadik",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/mach-npcm",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/mach-omap1",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/mach-omap2",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/arm/mach-orion5x",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/powerpc",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/powerpc/boot",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/s390",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/s390/boot",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "arch/s390/pci",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "demo",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.036,
+      "dominatorLoss": false,
+      "signalLoss": 0.0188,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "docs",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/gpu",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/gpu/drm",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/gpu/drm/amd",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/hid",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/hid/amd-sfh-hid",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/hid/amd-sfh-hid/hid_descriptor",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/hid/amd-sfh-hid/sfh1_1",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/hid/bpf",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/hid/bpf/progs",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/hv",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/input",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/input/keyboard",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/mfd",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/net",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/net/ethernet",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/net/ethernet/mellanox",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/phy",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "drivers/phy/motorola",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "home",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "home/dogsinatas",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "home/dogsinatas/TypeScript_project",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "home/dogsinatas/TypeScript_project/antigravity-extension-vis",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "mile_stone",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0336,
+      "dominatorLoss": false,
+      "signalLoss": 0.1229,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "mile_stone/구현안된목록",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.002,
+      "dominatorLoss": false,
+      "signalLoss": 0.027,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "mile_stone/구현안된목록/b",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "mile_stone/technical_debt",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "mm",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "mm/kasan",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "mm/kfence",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "mm/kmsan",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "release_note",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0171,
+      "dominatorLoss": false,
+      "signalLoss": 0.0351,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.001,
+      "dominatorLoss": false,
+      "signalLoss": 0.0191,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "scratch",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0033,
+      "dominatorLoss": false,
+      "signalLoss": 0.0955,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "scripts",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.11,
+      "dominatorLoss": true,
+      "signalLoss": 0.2038,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "scripts/debug",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "scripts/validation",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "scripts/validations",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0113,
+      "dominatorLoss": false,
+      "signalLoss": 0.0724,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src",
+    "q4": {
+      "membershipLoss": 0.9655,
+      "rankLoss": 1.0416,
+      "dominatorLoss": true,
+      "signalLoss": 0.9659,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.9474,
+      "rankLoss": 0.9666,
+      "dominatorLoss": true,
+      "signalLoss": 0.8825,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "src/analysis",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/bootstrap",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0935,
+      "dominatorLoss": true,
+      "signalLoss": 0.0738,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "src/cli",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.1818,
+      "rankLoss": 0.0046,
+      "dominatorLoss": false,
+      "signalLoss": 0.1888,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core",
+    "q4": {
+      "membershipLoss": 0.9091,
+      "rankLoss": 0.8739,
+      "dominatorLoss": true,
+      "signalLoss": 0.6911,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0.8,
+      "rankLoss": 0.7488,
+      "dominatorLoss": true,
+      "signalLoss": 0.5952,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "src/core/analysis",
+    "q4": {
+      "membershipLoss": 0.1818,
+      "rankLoss": 0.0806,
+      "dominatorLoss": false,
+      "signalLoss": 0.0958,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0813,
+      "dominatorLoss": false,
+      "signalLoss": 0.1328,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/analysis/aggregation",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/analysis/analyzers",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0002,
+      "dominatorLoss": false,
+      "signalLoss": 0.0119,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0028,
+      "dominatorLoss": false,
+      "signalLoss": 0.0551,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/analysis/ast",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/analysis/intent",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0014,
+      "dominatorLoss": false,
+      "signalLoss": 0.0153,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/analysis/patterns",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0049,
+      "dominatorLoss": false,
+      "signalLoss": 0.017,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0542,
+      "dominatorLoss": false,
+      "signalLoss": 0.0328,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/analysis/pipeline",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/analysis/reasoning",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.026,
+      "dominatorLoss": false,
+      "signalLoss": 0.0504,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/analysis/semantic",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/benchmark",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0445,
+      "dominatorLoss": false,
+      "signalLoss": 0.0301,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/canvas-engine",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0087,
+      "dominatorLoss": false,
+      "signalLoss": 0.0349,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/collaboration",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0021,
+      "dominatorLoss": false,
+      "signalLoss": 0.022,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0033,
+      "dominatorLoss": false,
+      "signalLoss": 0.0793,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/ir",
+    "q4": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0468,
+      "dominatorLoss": false,
+      "signalLoss": 0.0341,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0493,
+      "dominatorLoss": false,
+      "signalLoss": 0.0328,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/ir/evaluators",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0022,
+      "dominatorLoss": false,
+      "signalLoss": 0.0323,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/ir/generators",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0022,
+      "dominatorLoss": false,
+      "signalLoss": 0.0323,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/ir/models",
+    "q4": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0437,
+      "dominatorLoss": false,
+      "signalLoss": 0.0439,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/ir/promoters",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/metrology",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0018,
+      "dominatorLoss": false,
+      "signalLoss": 0.0244,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/metrology/__tests__",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/metrology/Reengineering",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/metrology/Verification",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/projection",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning",
+    "q4": {
+      "membershipLoss": 0.3333,
+      "rankLoss": 0.3117,
+      "dominatorLoss": false,
+      "signalLoss": 0.215,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.2353,
+      "rankLoss": 0.1833,
+      "dominatorLoss": true,
+      "signalLoss": 0.153,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/analysis",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0021,
+      "dominatorLoss": false,
+      "signalLoss": 0.022,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0033,
+      "dominatorLoss": false,
+      "signalLoss": 0.0722,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/analyzers",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0024,
+      "dominatorLoss": false,
+      "signalLoss": 0.035,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/answers",
+    "q4": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0215,
+      "dominatorLoss": false,
+      "signalLoss": 0.0307,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0874,
+      "dominatorLoss": true,
+      "signalLoss": 0.071,
+      "verdict": "Q5-unsafe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/builder",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/builders",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0218,
+      "dominatorLoss": false,
+      "signalLoss": 0.0219,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/evidence",
+    "q4": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.1107,
+      "dominatorLoss": false,
+      "signalLoss": 0.0811,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/model",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/ontology",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/pipeline",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/rules",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0697,
+      "dominatorLoss": false,
+      "signalLoss": 0.0512,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0596,
+      "dominatorLoss": false,
+      "signalLoss": 0.0739,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/signal",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0021,
+      "dominatorLoss": false,
+      "signalLoss": 0.022,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reasoning/snapshot",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0811,
+      "dominatorLoss": false,
+      "signalLoss": 0.0614,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/reporting",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0085,
+      "dominatorLoss": false,
+      "signalLoss": 0.027,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0419,
+      "dominatorLoss": false,
+      "signalLoss": 0.0888,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/resolvers",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/simulation",
+    "q4": {
+      "membershipLoss": 0.2353,
+      "rankLoss": 0.1304,
+      "dominatorLoss": false,
+      "signalLoss": 0.0853,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.3784,
+      "rankLoss": 0.1697,
+      "dominatorLoss": false,
+      "signalLoss": 0.1612,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/simulation/evidence",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/simulation/propagation",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.2857,
+      "rankLoss": 0.1208,
+      "dominatorLoss": false,
+      "signalLoss": 0.161,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/simulation/scenario",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0196,
+      "dominatorLoss": false,
+      "signalLoss": 0.027,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0286,
+      "dominatorLoss": false,
+      "signalLoss": 0.0437,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/simulation/state",
+    "q4": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.0424,
+      "dominatorLoss": false,
+      "signalLoss": 0.0424,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/transaction",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/core/validation",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0642,
+      "dominatorLoss": false,
+      "signalLoss": 0.0524,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0033,
+      "dominatorLoss": false,
+      "signalLoss": 0.0297,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/explorer",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/rust_checker",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/server",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0641,
+      "dominatorLoss": false,
+      "signalLoss": 0.0569,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/types",
+    "q4": {
+      "membershipLoss": 0.125,
+      "rankLoss": 0.1062,
+      "dominatorLoss": true,
+      "signalLoss": 0.2142,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/utils",
+    "q4": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0872,
+      "dominatorLoss": true,
+      "signalLoss": 0.0794,
+      "verdict": "Q4-unsafe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/editor",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/editor/browser",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/editor/common",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/editor/contrib",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/platform",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/platform/agentHost",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/platform/menubar",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/server",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/server/node",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/sessions",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/sessions/contrib",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/workbench",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/workbench/api",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/workbench/browser",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/workbench/contrib",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/vs/workbench/services",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "src/webview",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0.0645,
+      "rankLoss": 0.0811,
+      "dominatorLoss": false,
+      "signalLoss": 0.071,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "tools",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "tools/include",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "tools/include/uapi",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "tools/include/uapi/asm",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  },
+  {
+    "directory": "ui",
+    "q4": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q4-safe"
+    },
+    "q5": {
+      "membershipLoss": 0,
+      "rankLoss": 0,
+      "dominatorLoss": false,
+      "signalLoss": 0,
+      "verdict": "Q5-safe"
+    }
+  }
+]

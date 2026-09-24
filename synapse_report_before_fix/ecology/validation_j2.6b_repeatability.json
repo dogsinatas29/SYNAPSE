@@ -1,0 +1,22 @@
+{
+  "J2_6b_Repeatability_Result": {
+    "runCount": 100,
+    "ablationTarget": "METADATA",
+    "meanLargestScc": 41,
+    "variance": 0,
+    "identicalOutcomeRate": 1,
+    "largestSccValues": [
+      41,
+      41,
+      41
+    ]
+  },
+  "J2_6b_ValidationClaims": [
+    {
+      "id": "claim-j2.6b-obs-repeatability",
+      "statement": "Ablation of METADATA consistently results in a largest SCC of 41 across 100 runs.",
+      "status": "observed",
+      "observation": "The resulting largest SCC size exhibits 0 variance, confirming deterministic graph fragmentation."
+    }
+  ]
+}

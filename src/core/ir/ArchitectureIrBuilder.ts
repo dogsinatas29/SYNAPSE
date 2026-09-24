@@ -195,10 +195,21 @@ export class ArchitectureIrBuilder {
                         audit.promotedByType[fact.factType] =
                             (audit.promotedByType[fact.factType] || 0) + 1;
 
-                        const targetNode = (rawGraph as any)['nodes']?.get(fact.nodeId);
+                        let targetNode = (rawGraph as any)['nodes']?.get(fact.nodeId);
                         if (targetNode) {
+                            // If the node itself is not extensible/frozen, we must clone it and put it back in the map.
+                            if (!Object.isExtensible(targetNode)) {
+                                targetNode = { ...targetNode };
+                                (rawGraph as any)['nodes'].set(fact.nodeId, targetNode);
+                            }
+
                             if (!targetNode.data) {
                                 targetNode.data = {};
+                            }
+                            
+                            // Prevent object is not extensible error
+                            if (!Object.isExtensible(targetNode.data)) {
+                                targetNode.data = { ...targetNode.data };
                             }
 
                             if (!targetNode.data.semanticFacts) {

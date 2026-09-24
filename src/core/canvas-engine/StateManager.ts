@@ -71,16 +71,7 @@ export class StateManager {
     if (!p) return "";
     const cached = this._normalizeCache.get(p);
     if (cached !== undefined) return cached;
-    let normalized = p.replace(/\\/g, '/').trim();
-    const parts = normalized.split('/').filter(x => x.length > 0);
-    let result: string;
-    if (parts.length >= 2) {
-        result = parts.slice(-2).join('/');
-    } else if (parts.length === 1) {
-        result = parts[0];
-    } else {
-        result = normalized;
-    }
+    const result = p.replace(/\\/g, '/').trim();
     this._normalizeCache.set(p, result);
     return result;
   }
@@ -468,9 +459,11 @@ export class StateManager {
         const resolvedId = (pathRef && pathToIdMap.get(pathRef)) || n.id;
         
         // [v0.3.13 Emergency Purge] Clean up nodes from ignored paths (node_modules, dist, etc.)
+        
         const ruleEngine = RuleEngine.getInstance();
         const fullRelPath = getEffectivePath(n);
         if (fullRelPath) {
+
             const pathParts = fullRelPath.split(/[\\/]/);
             const isIgnored = ruleEngine.shouldIgnoreFile(fullRelPath) || 
                               pathParts.some(part => ruleEngine.shouldIgnoreFolder(part));
@@ -663,18 +656,6 @@ export class StateManager {
         // [v0.3.21.2] SSoT Preservation: System clusters (buffer, reserved, ghosts, doc_shelf)
         if (c.id.startsWith('sys_') || c.id === 'cluster_ghosts' || c.id === 'doc_shelf') {
             return true;
-        }
-        
-        // PROBE: survival path for empty ancestor chain
-        if (
-            c.id.includes('folder_app_src_main_java_de_danoeh') ||
-            c.id.includes('folder_app_src_main_java_de')
-        ) {
-            console.log('[KEEP_CLUSTER]', c.id, {
-                directNodes: nodesWithClusters.has(c.id),
-                parentCluster: parentClusters.has(c.id),
-                subtreeHasNodes: subtreeHasNodes.has(c.id)
-            });
         }
 
         // Prune empty folder clusters — keep if cluster (or any descendant) has direct nodes

@@ -1,0 +1,127 @@
+{
+  "part_A_provenance_distribution": {
+    "total_edges": 2756,
+    "CALL_percent": 39.33236574746009,
+    "REGISTRATION_percent": 19.085631349782293,
+    "METADATA_percent": 34.39767779390421,
+    "CONTROL_percent": 0,
+    "UNKNOWN_percent": 7.184325108853411,
+    "counts": {
+      "CALL": 1084,
+      "REGISTRATION": 526,
+      "METADATA": 948,
+      "UNKNOWN": 198,
+      "CONTROL": 0,
+      "STRUCTURE": 0
+    }
+  },
+  "part_B_secondary_ablation": {
+    "baseline_without_struct": {
+      "largest_scc": 712,
+      "top10_scc_sum": 750,
+      "secondary_scc_count": 9,
+      "total_scc_count": 36,
+      "nodes_in_scc": 804
+    },
+    "without_CALL": {
+      "largest_scc": 122,
+      "top10_scc_sum": 153,
+      "secondary_scc_count": 9,
+      "total_scc_count": 11,
+      "nodes_in_scc": 155
+    },
+    "without_METADATA": {
+      "largest_scc": 507,
+      "top10_scc_sum": 547,
+      "secondary_scc_count": 9,
+      "total_scc_count": 37,
+      "nodes_in_scc": 602
+    },
+    "without_REGISTRATION": {
+      "largest_scc": 430,
+      "top10_scc_sum": 455,
+      "secondary_scc_count": 9,
+      "total_scc_count": 28,
+      "nodes_in_scc": 491
+    },
+    "without_UNKNOWN": {
+      "largest_scc": 347,
+      "top10_scc_sum": 381,
+      "secondary_scc_count": 9,
+      "total_scc_count": 23,
+      "nodes_in_scc": 407
+    }
+  },
+  "part_C_cluster_composition": {
+    "subsystems": {
+      "src/vs/base": 38,
+      "src/vs/platform": 113,
+      "src/vs/workbench": 65,
+      "src/vs/editor": 44,
+      "extensions": 441,
+      "others": 11
+    },
+    "top_clusters": [
+      {
+        "cluster": "extensions/copilot/src/extension/chatSessions/vscode-node",
+        "count": 28
+      },
+      {
+        "cluster": "src/vs/platform/userDataSync/common",
+        "count": 21
+      },
+      {
+        "cluster": "extensions/copilot/src/extension/prompts/node/panel",
+        "count": 21
+      },
+      {
+        "cluster": "src/vs/platform/extensionManagement/common",
+        "count": 10
+      },
+      {
+        "cluster": "extensions/copilot/src/extension/chatSessions/copilotcli/node",
+        "count": 10
+      },
+      {
+        "cluster": "extensions/git/src",
+        "count": 10
+      },
+      {
+        "cluster": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src",
+        "count": 9
+      },
+      {
+        "cluster": "extensions/copilot/test/base",
+        "count": 9
+      },
+      {
+        "cluster": "extensions/copilot/src/extension/prompt/node",
+        "count": 9
+      },
+      {
+        "cluster": "extensions/copilot/src/extension/chatSessions/copilotcli/vscode-node",
+        "count": 9
+      },
+      {
+        "cluster": "src/vs/workbench/contrib/mcp/common",
+        "count": 9
+      },
+      {
+        "cluster": "extensions/copilot/src/platform/chat/common",
+        "count": 8
+      },
+      {
+        "cluster": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/ghostText",
+        "count": 8
+      },
+      {
+        "cluster": "extensions/copilot/src/extension/prompts/node/agent",
+        "count": 8
+      },
+      {
+        "cluster": "src/vs/workbench/browser/parts/editor",
+        "count": 7
+      }
+    ]
+  }
+}

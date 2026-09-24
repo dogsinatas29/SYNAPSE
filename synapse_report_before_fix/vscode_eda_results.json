@@ -1,0 +1,58 @@
+{
+  "Q4": {
+    "safeCount": 137,
+    "unsafeCount": 5,
+    "safeAverages": {
+      "childCount": 86.0876,
+      "depth": 3.9635,
+      "avgFanIn": 26.1491,
+      "avgFanOut": 9.3672,
+      "maxFanIn": 145.146,
+      "maxFanOut": 34.0511,
+      "internalEdgeRatio": 0.0723,
+      "externalEdgeRatio": 0.9204,
+      "signalConcentrationQ4": 0.0041,
+      "signalConcentrationQ5": 0.0124
+    },
+    "unsafeAverages": {
+      "childCount": 1899.8,
+      "depth": 3.2,
+      "avgFanIn": 100.3726,
+      "avgFanOut": 5.5139,
+      "maxFanIn": 2455.2,
+      "maxFanOut": 215.4,
+      "internalEdgeRatio": 0.2674,
+      "externalEdgeRatio": 0.7326,
+      "signalConcentrationQ4": 0.4733,
+      "signalConcentrationQ5": 0.22
+    }
+  },
+  "Q5": {
+    "safeCount": 138,
+    "unsafeCount": 4,
+    "safeAverages": {
+      "childCount": 58.2826,
+      "depth": 3.9565,
+      "avgFanIn": 29.3976,
+      "avgFanOut": 9.0284,
+      "maxFanIn": 206.1812,
+      "maxFanOut": 33.971,
+      "internalEdgeRatio": 0.0694,
+      "externalEdgeRatio": 0.9233,
+      "signalConcentrationQ4": 0.0138,
+      "signalConcentrationQ5": 0.0053
+    },
+    "unsafeAverages": {
+      "childCount": 3312.5,
+      "depth": 3.25,
+      "avgFanIn": 6.8544,
+      "avgFanOut": 16.2368,
+      "maxFanIn": 927,
+      "maxFanOut": 263.5,
+      "internalEdgeRatio": 0.4173,
+      "externalEdgeRatio": 0.5827,
+      "signalConcentrationQ4": 0.2583,
+      "signalConcentrationQ5": 0.5167
+    }
+  }
+}

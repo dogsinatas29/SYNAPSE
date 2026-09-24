@@ -1,0 +1,355 @@
+{
+  "experiment": "bridge_nodes",
+  "results": [
+    {
+      "nodeId": "extensions/copilot/src/util/vs/base/common/lifecycle.ts",
+      "path": "extensions/copilot/src/util/vs/base/common/lifecycle.ts",
+      "internalEdges": 13,
+      "boundaryEdges": 3341,
+      "boundaryRatio": 0.9961
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts",
+      "path": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/uri.ts",
+      "internalEdges": 24,
+      "boundaryEdges": 2598,
+      "boundaryRatio": 0.9908
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/platform/instantiation/common/instantiation.ts",
+      "path": "extensions/copilot/src/util/vs/platform/instantiation/common/instantiation.ts",
+      "internalEdges": 7,
+      "boundaryEdges": 2173,
+      "boundaryRatio": 0.9968
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts",
+      "path": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/event.ts",
+      "internalEdges": 4,
+      "boundaryEdges": 2003,
+      "boundaryRatio": 0.998
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/nls.ts",
+      "path": "extensions/copilot/src/util/vs/nls.ts",
+      "internalEdges": 3,
+      "boundaryEdges": 1793,
+      "boundaryRatio": 0.9983
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/base/common/assert.ts",
+      "path": "extensions/copilot/src/util/vs/base/common/assert.ts",
+      "internalEdges": 10,
+      "boundaryEdges": 1647,
+      "boundaryRatio": 0.994
+    },
+    {
+      "nodeId": ".eslint-plugin-local/utils.ts",
+      "path": ".eslint-plugin-local/utils.ts",
+      "internalEdges": 36,
+      "boundaryEdges": 1460,
+      "boundaryRatio": 0.9759
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "path": "extensions/copilot/src/util/vs/base/common/cancellation.ts",
+      "internalEdges": 6,
+      "boundaryEdges": 1280,
+      "boundaryRatio": 0.9953
+    },
+    {
+      "nodeId": "extensions/typescript-language-features/src/configuration/configuration.ts",
+      "path": "extensions/typescript-language-features/src/configuration/configuration.ts",
+      "internalEdges": 2,
+      "boundaryEdges": 1124,
+      "boundaryRatio": 0.9982
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/async.ts",
+      "path": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/async.ts",
+      "internalEdges": 10,
+      "boundaryEdges": 1028,
+      "boundaryRatio": 0.9904
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/base/common/platform.ts",
+      "path": "extensions/copilot/src/util/vs/base/common/platform.ts",
+      "internalEdges": 8,
+      "boundaryEdges": 1022,
+      "boundaryRatio": 0.9922
+    },
+    {
+      "nodeId": "src/vs/platform/contextkey/common/contextkey.ts",
+      "path": "src/vs/platform/contextkey/common/contextkey.ts",
+      "internalEdges": 1,
+      "boundaryEdges": 927,
+      "boundaryRatio": 0.9989
+    },
+    {
+      "nodeId": "extensions/markdown-language-features/src/util/dom.ts",
+      "path": "extensions/markdown-language-features/src/util/dom.ts",
+      "internalEdges": 0,
+      "boundaryEdges": 896,
+      "boundaryRatio": 1
+    },
+    {
+      "nodeId": "src/vs/base/common/actions.ts",
+      "path": "src/vs/base/common/actions.ts",
+      "internalEdges": 0,
+      "boundaryEdges": 892,
+      "boundaryRatio": 1
+    },
+    {
+      "nodeId": "src/vs/code/electron-utility/sharedProcess/contrib/extensions.ts",
+      "path": "src/vs/code/electron-utility/sharedProcess/contrib/extensions.ts",
+      "internalEdges": 0,
+      "boundaryEdges": 857,
+      "boundaryRatio": 1
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/agents/node/adapters/types.ts",
+      "path": "extensions/copilot/src/extension/agents/node/adapters/types.ts",
+      "internalEdges": 3,
+      "boundaryEdges": 775,
+      "boundaryRatio": 0.9961
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/testing/common/files.ts",
+      "path": "extensions/copilot/src/extension/testing/common/files.ts",
+      "internalEdges": 1,
+      "boundaryEdges": 738,
+      "boundaryRatio": 0.9986
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/base/common/resources.ts",
+      "path": "extensions/copilot/src/util/vs/base/common/resources.ts",
+      "internalEdges": 8,
+      "boundaryEdges": 730,
+      "boundaryRatio": 0.9892
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/completions-core/vscode-node/extension/src/telemetry.ts",
+      "path": "extensions/copilot/src/extension/completions-core/vscode-node/extension/src/telemetry.ts",
+      "internalEdges": 83,
+      "boundaryEdges": 717,
+      "boundaryRatio": 0.8962
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/common/range.ts",
+      "path": "extensions/copilot/src/util/common/range.ts",
+      "internalEdges": 4,
+      "boundaryEdges": 679,
+      "boundaryRatio": 0.9941
+    },
+    {
+      "nodeId": "extensions/copilot/src/platform/inlineEdits/common/utils/observable.ts",
+      "path": "extensions/copilot/src/platform/inlineEdits/common/utils/observable.ts",
+      "internalEdges": 6,
+      "boundaryEdges": 657,
+      "boundaryRatio": 0.991
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/model.ts",
+      "path": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/openai/model.ts",
+      "internalEdges": 13,
+      "boundaryEdges": 646,
+      "boundaryRatio": 0.9803
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/base/common/codicons.ts",
+      "path": "extensions/copilot/src/util/vs/base/common/codicons.ts",
+      "internalEdges": 4,
+      "boundaryEdges": 639,
+      "boundaryRatio": 0.9938
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/network.ts",
+      "path": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/snippy/network.ts",
+      "internalEdges": 9,
+      "boundaryEdges": 636,
+      "boundaryRatio": 0.986
+    },
+    {
+      "nodeId": "cli/src/util/errors.rs",
+      "path": "cli/src/util/errors.rs",
+      "internalEdges": 0,
+      "boundaryEdges": 616,
+      "boundaryRatio": 1
+    },
+    {
+      "nodeId": "extensions/copilot/test/simulation/workbench/stores/storage.ts",
+      "path": "extensions/copilot/test/simulation/workbench/stores/storage.ts",
+      "internalEdges": 4,
+      "boundaryEdges": 608,
+      "boundaryRatio": 0.9935
+    },
+    {
+      "nodeId": "cli/src/commands.rs",
+      "path": "cli/src/commands.rs",
+      "internalEdges": 1,
+      "boundaryEdges": 573,
+      "boundaryRatio": 0.9983
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/base/common/themables.ts",
+      "path": "extensions/copilot/src/util/vs/base/common/themables.ts",
+      "internalEdges": 4,
+      "boundaryEdges": 520,
+      "boundaryRatio": 0.9924
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/extension/vscode/services.ts",
+      "path": "extensions/copilot/src/extension/extension/vscode/services.ts",
+      "internalEdges": 5,
+      "boundaryEdges": 498,
+      "boundaryRatio": 0.9901
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/common/arrays.ts",
+      "path": "extensions/copilot/src/util/common/arrays.ts",
+      "internalEdges": 5,
+      "boundaryEdges": 484,
+      "boundaryRatio": 0.9898
+    },
+    {
+      "nodeId": "src/vs/workbench/services/editor/browser/editorService.ts",
+      "path": "src/vs/workbench/services/editor/browser/editorService.ts",
+      "internalEdges": 10,
+      "boundaryEdges": 461,
+      "boundaryRatio": 0.9788
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/base/common/buffer.ts",
+      "path": "extensions/copilot/src/util/vs/base/common/buffer.ts",
+      "internalEdges": 2,
+      "boundaryEdges": 451,
+      "boundaryRatio": 0.9956
+    },
+    {
+      "nodeId": "extensions/copilot/src/platform/log/common/logService.ts",
+      "path": "extensions/copilot/src/platform/log/common/logService.ts",
+      "internalEdges": 4,
+      "boundaryEdges": 446,
+      "boundaryRatio": 0.9911
+    },
+    {
+      "nodeId": "src/vs/editor/browser/editorBrowser.ts",
+      "path": "src/vs/editor/browser/editorBrowser.ts",
+      "internalEdges": 6,
+      "boundaryEdges": 427,
+      "boundaryRatio": 0.9861
+    },
+    {
+      "nodeId": "extensions/copilot/test/simulation/fixtures/gen-method-issue-3602/editor.ts",
+      "path": "extensions/copilot/test/simulation/fixtures/gen-method-issue-3602/editor.ts",
+      "internalEdges": 1,
+      "boundaryEdges": 423,
+      "boundaryRatio": 0.9976
+    },
+    {
+      "nodeId": "extensions/markdown-language-features/src/client/workspace.ts",
+      "path": "extensions/markdown-language-features/src/client/workspace.ts",
+      "internalEdges": 2,
+      "boundaryEdges": 423,
+      "boundaryRatio": 0.9953
+    },
+    {
+      "nodeId": "vitest",
+      "path": "external://vitest",
+      "internalEdges": 0,
+      "boundaryEdges": 418,
+      "boundaryRatio": 1
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/languages.ts",
+      "path": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/language/languages.ts",
+      "internalEdges": 3,
+      "boundaryEdges": 418,
+      "boundaryRatio": 0.9929
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/editor/common/core/position.ts",
+      "path": "extensions/copilot/src/util/vs/editor/common/core/position.ts",
+      "internalEdges": 17,
+      "boundaryEdges": 409,
+      "boundaryRatio": 0.9601
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/base/common/htmlContent.ts",
+      "path": "extensions/copilot/src/util/vs/base/common/htmlContent.ts",
+      "internalEdges": 4,
+      "boundaryEdges": 374,
+      "boundaryRatio": 0.9894
+    },
+    {
+      "nodeId": "src/vs/platform/theme/common/themeService.ts",
+      "path": "src/vs/platform/theme/common/themeService.ts",
+      "internalEdges": 6,
+      "boundaryEdges": 367,
+      "boundaryRatio": 0.9839
+    },
+    {
+      "nodeId": "extensions/copilot/src/platform/configuration/common/configurationService.ts",
+      "path": "extensions/copilot/src/platform/configuration/common/configurationService.ts",
+      "internalEdges": 5,
+      "boundaryEdges": 361,
+      "boundaryRatio": 0.9863
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/base/common/strings.ts",
+      "path": "extensions/copilot/src/util/vs/base/common/strings.ts",
+      "internalEdges": 19,
+      "boundaryEdges": 359,
+      "boundaryRatio": 0.9497
+    },
+    {
+      "nodeId": "cli/src/constants.rs",
+      "path": "cli/src/constants.rs",
+      "internalEdges": 1,
+      "boundaryEdges": 358,
+      "boundaryRatio": 0.9972
+    },
+    {
+      "nodeId": "src/vs/base/common/keyCodes.ts",
+      "path": "src/vs/base/common/keyCodes.ts",
+      "internalEdges": 2,
+      "boundaryEdges": 354,
+      "boundaryRatio": 0.9944
+    },
+    {
+      "nodeId": "extensions/copilot/src/util/vs/base/common/uuid.ts",
+      "path": "extensions/copilot/src/util/vs/base/common/uuid.ts",
+      "internalEdges": 1,
+      "boundaryEdges": 351,
+      "boundaryRatio": 0.9972
+    },
+    {
+      "nodeId": "src/vs/editor/common/config/editorOptions.ts",
+      "path": "src/vs/editor/common/config/editorOptions.ts",
+      "internalEdges": 5,
+      "boundaryEdges": 328,
+      "boundaryRatio": 0.985
+    },
+    {
+      "nodeId": "extensions/copilot/src/vscodeTypes.ts",
+      "path": "extensions/copilot/src/vscodeTypes.ts",
+      "internalEdges": 0,
+      "boundaryEdges": 325,
+      "boundaryRatio": 1
+    },
+    {
+      "nodeId": "src/vs/platform/product/common/productService.ts",
+      "path": "src/vs/platform/product/common/productService.ts",
+      "internalEdges": 9,
+      "boundaryEdges": 325,
+      "boundaryRatio": 0.9731
+    },
+    {
+      "nodeId": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/map.ts",
+      "path": "extensions/copilot/src/extension/completions-core/vscode-node/lib/src/util/map.ts",
+      "internalEdges": 1,
+      "boundaryEdges": 321,
+      "boundaryRatio": 0.9969
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "projectName": "antigravity-extension-vis",
+  "analyzedNodes": 407,
+  "reports": {
+    "globalBaseline": {
+      "totalNodes": 407,
+      "avgDegree": 4,
+      "degreeHistogram": {
+        "0~5": 352,
+        "6~20": 44,
+        "21~100": 11,
+        "100+": 0
+      }
+    },
+    "reports": [
+      {
+        "signalId": "dependency_resolution",
+        "nodeCount": 70,
+        "avgNodeDegree": 9.67,
+        "degreeBias": 2.42,
+        "degreeHistogram": {
+          "0~5": 38,
+          "6~20": 25,
+          "21~100": 7,
+          "100+": 0
+        },
+        "coOccurrence": {
+          "_WARNING_INTERPRETATION_FORBIDDEN": "Do NOT interpret meaning from coOccurrence. Might be caused by God Classes.",
+          "state_mutation": 7,
+          "lifecycle_control": 9,
+          "object_creation": 5
+        }
+      },
+      {
+        "signalId": "state_mutation",
+        "nodeCount": 25,
+        "avgNodeDegree": 7.64,
+        "degreeBias": 1.91,
+        "degreeHistogram": {
+          "0~5": 16,
+          "6~20": 7,
+          "21~100": 2,
+          "100+": 0
+        },
+        "coOccurrence": {
+          "_WARNING_INTERPRETATION_FORBIDDEN": "Do NOT interpret meaning from coOccurrence. Might be caused by God Classes.",
+          "dependency_resolution": 7,
+          "object_creation": 9,
+          "lifecycle_control": 2
+        }
+      },
+      {
+        "signalId": "object_creation",
+        "nodeCount": 34,
+        "avgNodeDegree": 4.09,
+        "degreeBias": 1.02,
+        "degreeHistogram": {
+          "0~5": 27,
+          "6~20": 6,
+          "21~100": 1,
+          "100+": 0
+        },
+        "coOccurrence": {
+          "_WARNING_INTERPRETATION_FORBIDDEN": "Do NOT interpret meaning from coOccurrence. Might be caused by God Classes.",
+          "state_mutation": 9,
+          "dependency_resolution": 5
+        }
+      },
+      {
+        "signalId": "lifecycle_control",
+        "nodeCount": 43,
+        "avgNodeDegree": 4.05,
+        "degreeBias": 1.01,
+        "degreeHistogram": {
+          "0~5": 36,
+          "6~20": 6,
+          "21~100": 1,
+          "100+": 0
+        },
+        "coOccurrence": {
+          "_WARNING_INTERPRETATION_FORBIDDEN": "Do NOT interpret meaning from coOccurrence. Might be caused by God Classes.",
+          "dependency_resolution": 9,
+          "state_mutation": 2
+        }
+      }
+    ]
+  }
+}

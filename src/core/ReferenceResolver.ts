@@ -116,23 +116,31 @@ export class ReferenceResolver {
             const originalTarget = targetNodeId;
             let resolutionKind: ResolutionKind = 'direct';
             let fallbackResult = '';
-
+            
             if (!existingNodeIds.has(targetNodeId)) {
-                // Try basename fallback
-                const targetStem = path.basename(targetNodeId, path.extname(targetNodeId)).toLowerCase();
-                const matchedId = stemMap.get(targetStem);
-                
-                // [v0.3.34.48] Disable basename fallback (stemMap) for C/C++ to prevent architecture black holes
-                // [v0.3.34.48] Disable basename fallback (stemMap) for Go to prevent package hijacking and unblock Broadcast
-                const disableStemMap = sourceFilePath.endsWith('.c') || sourceFilePath.endsWith('.h') || 
-                                       sourceFilePath.endsWith('.cpp') || sourceFilePath.endsWith('.hpp') ||
-                                       sourceFilePath.endsWith('.go');
+                // [v0.3.34.51 FIX] 1. Alias Resolver (VSCode 코어 모듈 특화)
+                if (targetNodeId.startsWith('vs/')) {
+                    targetNodeId = 'src/' + targetNodeId;
+                }
 
-                if (matchedId && !disableStemMap) {
-                    targetNodeId = matchedId;
-                    fallbackResult = matchedId;
-                    resolutionKind = 'basename';
+                // [v0.3.34.51 FIX] 2. Extension Probing (확장자 복원 시도)
+                let foundExt = false;
+                if (!existingNodeIds.has(targetNodeId)) {
+                    const exts = ['.ts', '.js', '/index.ts', '/index.js', '.tsx', '.jsx'];
+                    for (const ext of exts) {
+                        if (existingNodeIds.has(targetNodeId + ext)) {
+                            targetNodeId = targetNodeId + ext;
+                            foundExt = true;
+                            break;
+                        }
+                    }
                 } else {
+                    foundExt = true;
+                }
+
+                // [v0.3.34.51 FIX] 3. basenameFallback 영구 폐기
+                // 엉뚱한 파일로 하이재킹하지 않고 깔끔하게 symbolIndex 검색 또는 unresolved로 넘깁니다.
+                if (!foundExt) {
                     // Try symbol index
                     const resolvedPath = symbolIndex.lookupSymbol(targetNodeId);
                     if (resolvedPath) {
@@ -142,27 +150,10 @@ export class ReferenceResolver {
                             auditStats.resolvedBySymbolIndex++;
                             resolvedSymbolsFreq.set(originalTarget, (resolvedSymbolsFreq.get(originalTarget) || 0) + 1);
                         }
+                    } else {
+                        resolutionKind = 'unresolved';
                     }
                 }
-            }
-
-            // [INSTRUMENTATION AUDIT v0.3.34.48]
-            const targetStemLower = path.basename(originalTarget, path.extname(originalTarget)).toLowerCase();
-            const isAuditTarget = ['event', 'nls', 'assert', 'actions', 'utils', 'model'].includes(targetStemLower);
-            if (isAuditTarget && sourceFilePath.endsWith('.ts')) {
-                const normalizedTarget = originalTarget.replace(/\.(ts|js)$/, '');
-                console.warn(JSON.stringify({
-                    _type: 'RESOLVER_AUDIT',
-                    source: sourceFilePath,
-                    importPath: ref.target,
-                    resolvedPath: originalTarget,
-                    normalizedPath: normalizedTarget,
-                    existsBeforeNormalize: existingNodeIds.has(originalTarget),
-                    existsAfterNormalize: existingNodeIds.has(normalizedTarget),
-                    fallbackUsed: resolutionKind === 'basename',
-                    fallbackResult: fallbackResult,
-                    resolutionKind: resolutionKind
-                }));
             }
 
             // Final check if it's actually in nodeIds, otherwise mark unresolved.

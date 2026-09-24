@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+// Deleted: Hardcoded project references
 import * as path from 'path';
 
 export enum ProjectEcosystem {
@@ -37,10 +37,9 @@ export class ProjectContextDetector {
     private static CONFIDENCE_THRESHOLD = 0.5; // 50% threshold
 
     static detect(workspaceRoot: string): ProfileResolutionResult {
+        throw new Error("🔥 [FATAL] ProjectContextDetector.detect() CALLED! 🔥");
+        
         let isVSCode = false;
-        let isLinux = false;
-        let isNestJS = false;
-        let isAntennaPod = false;
         
         let ecosystem = ProjectEcosystem.UNKNOWN;
         let domain = ProjectDomain.UNKNOWN;
@@ -129,16 +128,8 @@ export class ProjectContextDetector {
             
             if (fs.existsSync(coreManifest)) {
                 androidScore += 0.2; androidEvidence.push({ source: 'core/AndroidManifest.xml', score: 0.2 });
-                const content = fs.readFileSync(coreManifest, 'utf8');
-                if (content.includes('de.danoeh.antennapod')) {
-                    androidScore += 0.5; androidEvidence.push({ source: 'de.danoeh.antennapod in core', score: 0.5 });
-                }
             } else if (fs.existsSync(appManifest)) {
                 androidScore += 0.2; androidEvidence.push({ source: 'app/AndroidManifest.xml', score: 0.2 });
-                const content = fs.readFileSync(appManifest, 'utf8');
-                if (content.includes('de.danoeh.antennapod')) {
-                    androidScore += 0.5; androidEvidence.push({ source: 'de.danoeh.antennapod in app', score: 0.5 });
-                }
             }
             
             if (androidScore > confidence) {

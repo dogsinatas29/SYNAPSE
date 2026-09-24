@@ -1,0 +1,155 @@
+{
+  "experiment": "multi_cause",
+  "victims": [
+    {
+      "nodeId": "src/vs/platform/agentHost/node/agentHostTelemetryReporter.ts",
+      "path": "src/vs/platform/agentHost/node/agentHostTelemetryReporter.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/platform/agentHost/node/shared/editSurvivalReporter.ts",
+      "path": "src/vs/platform/agentHost/node/shared/editSurvivalReporter.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/editTelemetry/browser/telemetry/arcTelemetryReporter.ts",
+      "path": "src/vs/workbench/contrib/editTelemetry/browser/telemetry/arcTelemetryReporter.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/extensions/common/reportExtensionIssueAction.ts",
+      "path": "src/vs/workbench/contrib/extensions/common/reportExtensionIssueAction.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/browser/baseIssueReporterService.ts",
+      "path": "src/vs/workbench/contrib/issue/browser/baseIssueReporterService.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/browser/issueReporterEditorInput.ts",
+      "path": "src/vs/workbench/contrib/issue/browser/issueReporterEditorInput.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/browser/issueReporterModel.ts",
+      "path": "src/vs/workbench/contrib/issue/browser/issueReporterModel.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/browser/issueReporterOverlay.ts",
+      "path": "src/vs/workbench/contrib/issue/browser/issueReporterOverlay.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/browser/issueReporterService.ts",
+      "path": "src/vs/workbench/contrib/issue/browser/issueReporterService.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/electron-browser/issueReporterEditorPane.ts",
+      "path": "src/vs/workbench/contrib/issue/electron-browser/issueReporterEditorPane.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/electron-browser/issueReporterKeybindings.ts",
+      "path": "src/vs/workbench/contrib/issue/electron-browser/issueReporterKeybindings.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/workbench/contrib/issue/electron-browser/issueReporterService.ts",
+      "path": "src/vs/workbench/contrib/issue/electron-browser/issueReporterService.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/broadcast.ts",
+      "path": "src/vs/base/browser/broadcast.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/browser.ts",
+      "path": "src/vs/base/browser/browser.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/canIUse.ts",
+      "path": "src/vs/base/browser/canIUse.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/contextmenu.ts",
+      "path": "src/vs/base/browser/contextmenu.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/dnd.ts",
+      "path": "src/vs/base/browser/dnd.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/dom.ts",
+      "path": "src/vs/base/browser/dom.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/domStylesheets.ts",
+      "path": "src/vs/base/browser/domStylesheets.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/fonts.ts",
+      "path": "src/vs/base/browser/fonts.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/formattedTextRenderer.ts",
+      "path": "src/vs/base/browser/formattedTextRenderer.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/markdownRenderer.ts",
+      "path": "src/vs/base/browser/markdownRenderer.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/mouseEvent.ts",
+      "path": "src/vs/base/browser/mouseEvent.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/touch.ts",
+      "path": "src/vs/base/browser/touch.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/window.ts",
+      "path": "src/vs/base/browser/window.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/ui/actionbar/actionViewItems.ts",
+      "path": "src/vs/base/browser/ui/actionbar/actionViewItems.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/ui/actionbar/actionbar.ts",
+      "path": "src/vs/base/browser/ui/actionbar/actionbar.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/ui/breadcrumbs/breadcrumbsWidget.ts",
+      "path": "src/vs/base/browser/ui/breadcrumbs/breadcrumbsWidget.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/ui/button/button.ts",
+      "path": "src/vs/base/browser/ui/button/button.ts",
+      "peakRegistryCount": 5
+    },
+    {
+      "nodeId": "src/vs/base/browser/ui/centered/centeredViewLayout.ts",
+      "path": "src/vs/base/browser/ui/centered/centeredViewLayout.ts",
+      "peakRegistryCount": 5
+    }
+  ]
+}

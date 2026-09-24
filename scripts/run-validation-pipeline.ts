@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { ValidationStudy } from './src/core/reporting/types';
+import { ValidationStudy } from '../src/core/reporting/types';
 
 const ECOLOGY_DIR = './synapse_report/ecology';
 const SURGERY_DIR = './synapse_report/surgery';

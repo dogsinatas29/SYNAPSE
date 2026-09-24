@@ -2,7 +2,557 @@
 Node = file
 cluster = folder
 
+## Validation Method & Evidence Protocol
+코드 리뷰, grep, 로그 분석만으로 Root Cause를 확정하지 않는다.
+Root Cause는 반드시 SYNAPSE Pipeline Differential Validation(Level 3)을 통과해야 한다.
 
+Purpose
+
+SYNAPSE는 대규모 코드베이스의 아키텍처를 분석하는 범용 엔진이다.
+
+분석 결과의 신뢰성은 코드 수정 여부가 아니라 실제 파이프라인 실행 결과로 증명되어야 한다.
+
+본 문서는 다음을 방지하기 위해 존재한다.
+
+코드 리뷰만으로 "수정 완료" 선언
+단순 grep 결과를 근거로 한 결론
+외부 스크립트 결과만으로 엔진 동작을 추정
+가설(Hypothesis)을 사실(Fact)로 보고
+특정 프로젝트에서만 통하는 우연한 성공
+Core Principle
+Rule 0 — No Assumption
+
+다음은 증거가 아니다.
+
+Code Inspection
+grep
+regex search
+file search
+string compare
+mock data
+manual reasoning
+
+위 항목들은 모두 참고자료일 뿐이다.
+
+최종 판정은 반드시:
+
+BootstrapEngine
+→ DataPipeline
+→ GraphModel
+→ Snapshot
+
+을 통과한 실제 런타임 결과로 수행한다.
+
+Evidence Levels
+Level 1 — Code Evidence
+
+증거:
+
+실제 코드 위치
+
+예:
+
+ReferenceResolver.ts:133
+StateManager.ts:77
+
+목적:
+
+문제가 존재하는가?
+
+판정:
+
+가능성(Hypothesis)
+Level 2 — Runtime Evidence
+
+증거:
+
+실제 파이프라인 실행 로그
+
+예:
+
+NODE_COUNT
+EDGE_COUNT
+GHOST_COUNT
+CLUSTER_COUNT
+
+목적:
+
+문제가 실제 발생하는가?
+
+판정:
+
+강한 증거
+Level 3 — Graph Evidence
+
+증거:
+
+실제 Graph State
+
+예:
+
+Node
+Edge
+Hub
+Ghost
+Authority
+
+목적:
+
+그래프가 실제 어떻게 왜곡되었는가?
+
+판정:
+
+사실(Fact)
+Level 4 — Semantic Evidence
+
+증거:
+
+실제 사례 샘플
+
+예:
+
+Source File
+Import
+Original Target
+Resolved Target
+
+목적:
+
+왜 이런 결과가 나왔는가?
+
+판정:
+
+최종 확정(Fact)
+Validation Pipeline
+
+모든 수정은 반드시 아래 순서를 따른다.
+
+1. Unit Validation
+
+2. Pipeline Validation
+
+3. Structural Validation
+
+4. Semantic Validation
+
+5. Conclusion
+
+단계 생략 금지.
+
+Step 1 — Unit Validation
+
+목적:
+
+개별 함수 검증
+
+예:
+
+normalizePath()
+
+resolveImport()
+
+scanImports()
+
+확인:
+
+Input
+Output
+Expected
+Actual
+Step 2 — Pipeline Validation
+
+목적:
+
+전체 파이프라인 생존 여부
+
+반드시 확인:
+
+NODE_COUNT
+
+EDGE_COUNT
+
+CLUSTER_COUNT
+
+ROOT_CLUSTER_COUNT
+
+GHOST_COUNT
+
+Before / After 비교 필수.
+
+Step 3 — Structural Validation
+
+목적:
+
+그래프 건강성 확인
+
+반드시 측정:
+
+Graph Health
+Ghost Ratio
+
+Fallback Ratio
+
+Unresolved Import Ratio
+
+Duplicate Node Ratio
+
+Collision Count
+Distribution
+Top Hub
+
+Top Authority
+
+Top Ghost
+
+Top Cluster
+Step 4 — Semantic Validation
+
+가장 중요함.
+
+금지된 검증
+event.ts
+InDegree=2043
+
+→ 허브
+
+이것만으로 결론 금지.
+
+허용된 검증
+
+반드시 샘플 제시:
+
+Source
+
+Import
+
+Original Target
+
+Resolved Target
+
+예:
+
+Source:
+chatDebugFileLoggerService.ts
+
+Import:
+vs/base/common/event
+
+Resolved:
+extensions/copilot/.../event.ts
+Extraordinary Claim Rule
+
+아래와 같은 주장은 반드시 런타임 증거 필요.
+
+18316 divergence 해결
+
+425 node 복구
+
+2043 edge hijack
+
+96% fallback
+
+10000 ghost node 생성
+
+필수 제출:
+
+Code Evidence
+
+Runtime Evidence
+
+Graph Evidence
+
+Before/After Metrics
+
+없으면 가설 취급.
+
+Fact vs Hypothesis
+
+모든 보고서는 아래 형식을 사용한다.
+
+FACT
+
+조건:
+
+Code Evidence
+
++
+
+Runtime Evidence
+
++
+
+Graph Evidence
+
+충족
+
+표기:
+
+FACT
+HYPOTHESIS
+
+조건:
+
+추론
+
+코드 리뷰
+
+grep 결과
+
+부분 로그
+
+만 존재
+
+표기:
+
+HYPOTHESIS
+PROVEN
+
+조건:
+
+Semantic Validation 완료
+
+표기:
+
+PROVEN
+Project Independence Rule
+
+특정 프로젝트에서 성공했다고 일반화 금지.
+
+다음 프로젝트들은 검증 데이터일 뿐이다.
+
+Linux Kernel
+
+VSCode
+
+AntennaPod
+
+Godot
+
+PostgreSQL
+
+Kubernetes
+
+RustDesk
+
+nowinandroid
+
+어떤 수정도:
+
+특정 프로젝트 성공
+≠
+범용 엔진 성공
+
+으로 간주한다.
+
+Mandatory Sanity Checks
+
+파이프라인 종료 후 자동 실행.
+
+Check 1
+Fallback Ratio > 20%
+
+→ ERROR
+
+Check 2
+Ghost Nodes > Real Nodes
+
+→ ERROR
+
+Check 3
+Duplicate Node Count > 0
+
+→ ERROR
+
+Check 4
+Top Hub InDegree
+
+>
+
+전체 Edge의 10%
+
+→ WARNING
+
+샘플 출력 필수.
+
+Check 5
+Unresolved Import Ratio > 10%
+
+→ WARNING
+
+Final Rule
+
+절대 잊지 말 것.
+
+"코드를 수정했다"
+
+≠
+
+"엔진이 수정되었다"
+"로그가 그럴듯하다"
+
+≠
+
+"그래프가 올바르다"
+"추론상 맞다"
+
+≠
+
+"파이프라인으로 증명되었다"
+
+SYNAPSE의 모든 결론은 실제 Graph Snapshot과 Runtime Evidence를 통해 증명되어야 한다.
+
+---
+
+# Validation Rule: Pipeline Contract Verification
+
+어떤 계층의 버그를 주장할 때는
+반드시 아래 5단계를 동일 샘플로 추적한다.
+
+1. Raw Input
+2. Scanner Output
+3. Resolver Input
+4. Resolver Output
+5. Final Graph State
+
+단계 중 하나라도 생략되면
+원인 규명은 HYPOTHESIS 상태로 유지한다.
+
+"로그상 그럴 것이다"
+"코드를 보니 그럴 것이다"
+
+는 PROVEN이 아니다.
+
+---
+
+# Validation Rule: Report Impact Verification
+
+어떤 엔진 버그를 수정한 경우
+Graph Metrics 변화만으로 성공을 선언하지 않는다.
+
+반드시 동일 프로젝트에 대해:
+
+1. Before Report
+2. After Report
+
+를 생성하고
+다음 항목의 변화를 비교한다.
+
+- Entry Point
+- Authority
+- Core
+- Boundary
+- Blast Radius
+- Simulation Result
+
+Graph가 달라졌더라도
+Report가 동일하면
+사용자 가치 영향은 0으로 판단한다.
+
+Report가 의미 있게 변하면
+Architecture Impact로 기록한다.
+
+---
+
+# Validation Rule: Root Cause Verification
+
+어떤 버그가 발견되더라도
+원인으로 의심되는 모듈을 수정하기 전에
+반드시 다음을 만족해야 한다.
+
+1. Reproduction 가능
+2. Failure Mechanism 설명 가능
+3. Alternative Cause 배제 가능
+
+세 조건이 충족되지 않으면
+ROOT CAUSE로 승격 금지.
+상태는 HYPOTHESIS 유지.
+
+---
+
+# Validation Rule: Authority Verification
+
+Top Authority 또는 Top Hub가 변경된 경우
+순위 변화만으로 성공 판정을 내리지 않는다.
+
+필수 검증:
+
+1. Top Authority 노드 선정
+2. 연결된 Edge 랜덤 100개 추출
+3. 실제 Import/Reference 존재 여부 확인
+4. True Positive 비율 계산
+
+판정 기준:
+
+>=95%
+PROVEN
+
+80~95%
+LIKELY
+
+<80%
+INVALID
+
+Authority 순위 변화만으로
+Architecture Recovery를 선언하는 것을 금지한다.
+
+---
+
+# Validation Rule: Representative Sampling
+
+Top N 샘플만으로 전체 시스템의 원인을 단정하지 않는다.
+
+금지:
+- Top100 중 98% → 전체 98%
+- Top10 중 100% → 시스템 전체 100%
+
+허용:
+- Top100 중 98% → Top100 기준 98%
+
+전체 비율을 주장하려면
+전수조사 또는 통계적 샘플링 필요
+
+---
+
+# Validation Rule: Ranking Verification
+
+Authority/EntryPoint/Core 순위는
+
+1. Edge 존재 여부
+2. Edge 정확성
+3. Ranking 정확성
+
+을 각각 독립 검증한다.
+
+Edge가 진짜라는 사실은
+Ranking이 맞다는 증거가 아니다.
+
+---
+
+# Validation Rule: Report Impact Verification
+
+Graph Metrics improvement does NOT prove report quality improvement.
+
+Every architectural fix must be validated through:
+
+1. Before Report Generation
+2. After Report Generation
+3. Semantic Diff Analysis
+
+Required Reports:
+- Onboarding
+- Architect
+- Virtual Debug
+- Execution
+
+Validation Questions:
+
+- Did Core Nodes change?
+- Did Entry Points change?
+- Did Boundary analysis change?
+- Did Blast Radius change?
+- Did Simulation results change?
+
+A graph fix is considered COMPLETE only if report semantics improve.
 🚀 [LLM 코딩 원칙]
 LLM Coding Principles: 
 1. [Think Before Coding] 코딩 전 사고: 추측하지 마라. 요구사항이 모호하면 즉시 질문하고, 접근 방식과 트레이드오프(장단점)를 먼저 제시하라. 항상 가장 단순한 해결책부터 제안한다.
@@ -1105,6 +1655,24 @@ Never silently continue.
 - Replication completed
 - Dataset scope explicitly defined
 
+---
+
+# Validation Rule: Ranking Correctness
+
+Edge Accuracy ≠ Ranking Correctness
+
+어떤 노드가 상위권(Top N)에 위치하더라도, 다음 검증 단계를 모두 통과하기 전까지 "Ranking 정상화"라는 표현의 사용을 엄격히 금지한다.
+
+검증 단계:
+1. Edge 존재 여부
+2. Edge 정확성
+3. Metric 계산 정확성
+4. Ranking 순서 적절성 (예: 왜 A가 B보다 상위에 있는가? 그 순서가 논리적으로 최적인가?)
+
+4번 단계가 검증되지 않았다면 "Authority Ranking 정상화"가 아니라 "Authority Edge Accuracy 확보 (Ranking은 추가 검증 필요)" 로 명시한다.
+
+---
+
 **Cross-project replication is required before promoting a pattern to a general architectural rule.**
 
 ## Current Validation Level
@@ -1115,3 +1683,23 @@ Not yet:
 - Architectural Decision Engine
 - Automatic Refactoring Engine
 - Universal Pattern Discovery
+
+---
+
+## Pattern 상태 (Pattern Contract Sufficiency Audit)
+
+본 표는 "Graph에서 데이터를 얻을 수 있는가(Data Availability)"와 "그 데이터가 아키텍처 정의를 온전히 증명하는가(Evidence Sufficiency)"를 분리하여 평가한 11개 Pattern의 계약(Contract) 상태입니다.
+
+| Pattern | Definition (아키텍처 정의) | Evidence Sufficiency (현재 증거의 정의 증명 여부) | Status | 사유 (근거) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Root Entry Point** | 시스템 실행과 제어 흐름이 뻗어나가는 최초 런타임 출발지 | ❌ 불충분 (파일명 휴리스틱 + `fanIn=0` 만으로는 런타임 실행 여부를 증명할 수 없음) | 🔴 **E. Dynamic Gap** | "실행(Execution)"되는 최초 지점은 정적 분석이나 이름만으로는 증명할 수 없음. |
+| **System Core** | 비즈니스 로직과 제어 흐름을 중앙에서 관장하는 컨트롤러 | ❌ 불충분 (`fanIn`이나 `authorityReach`는 참조 빈도일 뿐 "제어권(Control)"을 증명하지 못함) | ⚠️ **C. Source-Signal Gap** | 제어 흐름(Call)과 참조(Type)를 분리하는 AST 수준의 시그널 없이는 "Controller"임을 증명할 수 없음. |
+| **Boundary Fortress** | 도메인 간 접근을 엄격히 통제/방어하는 명시적 관문 | ❌ 불충분 (클러스터 교차 트래픽만으로는 "설계된 방어선"인지 증명하지 못함) | ⚠️ **C. Source-Signal Gap** | `export/private` 캡슐화 내역이 Source 단계에서 보존되어야만 "Fortress" 증명 가능. |
+| **Learning Hub** | 개발자가 시스템 구조를 학습하기 좋은 진입 관문 | ❌ 불충분 (Centrality가 높다고 "학습하기 좋다"는 보장이 없음) | 🧩 **D. Definition Gap** | "학습하기 좋다"는 정의 자체가 수학적/구조적으로 아직 Formalize되지 않았음. |
+| **Arch. Chokepoint** | 트래픽이나 의존성이 필수로 통과하는 병목 지점 | ❌ 불충분 (Betweenness Centrality가 높아도 단순 공통 유틸리티일 수 있음) | 🧩 **D. Definition Gap** | "구조적 의존성 교차로"인지 "런타임 트래픽 병목"인지 공식 정의 자체가 구체화되어야 함. |
+| **Peripheral Component** | 시스템과 느슨하게 결합되어 방치된 주변부 모듈 | ❌ 불충분 (단순히 Degree가 낮다고 해서 주변부라고 단정할 수 없음) | 🧩 **D. Definition Gap** | 코어와의 거리 등 "주변부"의 엄밀한 수학적/위치적 정의가 필요함. |
+| **Change Amplifier** | 변경 시 의존성을 타고 구조적 파급력을 증폭시킴 | ✅ 충분 (정적 의존성 트리를 통한 Blast Radius 연산으로 정적 파급력 증명 가능) | 🔄 **B. Evidence-Derivable** | 정적 파급력에 한정한다면 Graph 위상과 도달 가능성(Reachability) 연산만으로 증명 가능. |
+| **Boundary Candidate** | 결합도/응집도 기반으로 도메인 분리가 가능한 후보 | ✅ 충분 (Graph Topology의 군집화 지표로 후보군 도출 증명 가능) | 🔄 **B. Evidence-Derivable** | Modularity 파티셔닝 등 위상(Topology) 정보만으로 증명 가능. |
+| **Weak Boundary** | 경계를 넘어 무분별하게 참조되어 결합도가 과도한 지점 | ✅ 충분 (클러스터 외곽에서의 다중 피참조 횟수로 취약성 증명 가능) | 🔄 **B. Evidence-Derivable** | 클러스터 외곽 트래픽 분석으로 증명 가능. |
+| **Safe Refactoring Zone** | 수정 시 외부에 어떠한 컴파일 악영향도 주지 않는 단말 | ✅ 충분 (`fanIn=0` 이면 나를 의존하는 코드가 없으므로 컴파일 안전함이 입증됨) | 🟢 **A. Evidence-Sufficient** | 수집되는 `fanIn=0` 정보만으로 "컴파일/정적 수준의 안전함"은 증명 가능. |
+| **Cascade Failure Point** | 장애 시 연쇄 마비(Cascade)를 일으킴 | ❌ 불충분 (빌드 실패는 파악 가능하나, 런타임 장애는 정적 시뮬레이션 불가) | 🔴 **E. Dynamic Gap** | "마비"의 기준이 런타임이라면 정적 분석 기반 시뮬레이션으로는 본질적 증명 불가. |

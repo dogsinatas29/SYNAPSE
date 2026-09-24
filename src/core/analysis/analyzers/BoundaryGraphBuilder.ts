@@ -385,15 +385,7 @@ export class BoundaryGraphBuilder {
 
             Logger.info(`[DEBUG_DECISION] path=${candidate.id} | size=${memberIds.length} | internalEdges=${internalEdges} | cohesion=${cohesion.toFixed(3)} | isWrapper=${isWrapper} [${wrapperReason}] | isPromoted=${isPromoted} [${promoteReason}] | resultStatus=${resultStatus}`);
 
-            // Phase 15.4: Dump Sample External Targets to identify abstraction mismatch (Symbol vs File)
-            if (candidate.id === 'app' || candidate.id === 'ui' || candidate.id === 'app/src/main/java/de/danoeh/antennapod') {
-                const sampleTargets = Array.from(structuralExternalTargets.entries())
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 100)
-                    .map(([k, v]) => `${k} (${v})`)
-                    .join('\n  ');
-                Logger.info(`\n[SAMPLE_EXTERNAL_TARGETS] path=${candidate.id}\n  ${sampleTargets}\n`);
-            }
+
 
             const structuralExternalTopClusters = Array.from(clusterCounts.entries())
                 .sort((a, b) => b[1] - a[1])

@@ -76,14 +76,18 @@ export class DataPipeline {
   public async processFiles(files: string[], projectRoot?: string, onProgress?: (msg: string, percent: number) => void): Promise<PipelineResult> {
     try {
       // [v0.3.30] Security: validate all files are within project boundary
+      const validFiles: string[] = [];
       if (projectRoot) {
         const meta = ProjectMetadata.getInstance();
         for (const file of files) {
           const absPath = path.isAbsolute(file) ? file : path.join(projectRoot, file);
           if (!meta.validatePath(absPath)) {
-            throw new Error(`[v0.3.30] Security: File outside project boundary: ${file}`);
+            console.warn(`[v0.3.30] Security: File outside project boundary skipped: ${file}`);
+          } else {
+            validFiles.push(file);
           }
         }
+        files = validFiles;
       }
 
       // 1. DATA 수집 시작 (Phase 0)

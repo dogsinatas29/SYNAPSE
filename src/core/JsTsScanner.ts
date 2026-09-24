@@ -37,19 +37,9 @@ export class JsTsScanner implements LanguageScanner {
                 if (ref) {
                     if (ref.includes('${') || ref.length > 100) continue;
 
-                    // [v0.3.21] Robust path cleaning: extract filename stem for both relative and absolute-style imports
-                    const cleanRef = path.basename(ref, path.extname(ref));
+                    // [v0.3.34.48 - 버그 수정] basename으로 경로를 파괴하지 않고 원본 경로를 보존하되 확장자만 제거
+                    const cleanRef = ref.replace(/\.(ts|js|tsx|jsx)$/, '');
 
-                    // [INSTRUMENTATION AUDIT v0.3.34.48]
-                    const isAuditTarget = ['event', 'nls', 'assert', 'actions', 'utils', 'model'].includes(cleanRef.toLowerCase());
-                    if (isAuditTarget) {
-                        console.warn(JSON.stringify({
-                            _type: 'SCANNER_AUDIT',
-                            scanner: 'JsTsScanner',
-                            rawRef: ref,
-                            cleanRef: cleanRef
-                        }));
-                    }
 
                     if (cleanRef && !['react', 'vscode', 'path', 'fs', 'os', 'child_process'].includes(cleanRef) && !summary.references.some(r => r.target === cleanRef)) {
                         let type = 'dependency';

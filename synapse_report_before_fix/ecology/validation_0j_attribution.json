@@ -1,0 +1,100 @@
+{
+  "J0_Inventory": [
+    {
+      "layer": "CALL",
+      "count": 418
+    },
+    {
+      "layer": "METADATA",
+      "count": 62
+    },
+    {
+      "layer": "REGISTRATION",
+      "count": 11
+    },
+    {
+      "layer": "UNKNOWN",
+      "count": 7
+    }
+  ],
+  "J1_ContributionRanking": [
+    {
+      "provenance": "CALL",
+      "edgeCount": 418,
+      "participatingNodes": 780,
+      "participatingSccNodes": 603,
+      "participatingSccRatio": 0.8469101123595506
+    },
+    {
+      "provenance": "METADATA",
+      "edgeCount": 62,
+      "participatingNodes": 310,
+      "participatingSccNodes": 287,
+      "participatingSccRatio": 0.40308988764044945
+    },
+    {
+      "provenance": "REGISTRATION",
+      "edgeCount": 11,
+      "participatingNodes": 22,
+      "participatingSccNodes": 20,
+      "participatingSccRatio": 0.028089887640449437
+    },
+    {
+      "provenance": "UNKNOWN",
+      "edgeCount": 7,
+      "participatingNodes": 14,
+      "participatingSccNodes": 14,
+      "participatingSccRatio": 0.019662921348314606
+    }
+  ],
+  "J2_AblationResults": {
+    "CALL": {
+      "largestScc": 305,
+      "drop": 407
+    },
+    "METADATA": {
+      "largestScc": 680,
+      "drop": 32
+    },
+    "REGISTRATION": {
+      "largestScc": 712,
+      "drop": 0
+    },
+    "ALL_BOUNDARIES": {
+      "largestScc": 214,
+      "drop": 498
+    }
+  },
+  "J3_ValidationClaims": [
+    {
+      "id": "claim-0j-obs-call",
+      "statement": "Boundary CALL edges account for 83.9% of boundary connectivity.",
+      "status": "observed",
+      "observation": "418 out of 498 total boundary edges are CALL."
+    },
+    {
+      "id": "claim-0j-sup-call",
+      "statement": "Removing boundary CALL edges reduces largest SCC from 712 to 305.",
+      "status": "supported",
+      "observation": "Significant fragmentation occurred, decoupling the Core and Copilot Execution SCCs.",
+      "impactSummary": {
+        "metric": "SCC Size",
+        "before": 712,
+        "after": 305,
+        "deltaPercent": 57.2
+      }
+    },
+    {
+      "id": "claim-0j-rej-reg",
+      "statement": "Removing boundary REGISTRATION edges did not materially reduce SCC size.",
+      "status": "rejected",
+      "observation": "Largest SCC remained at 712."
+    },
+    {
+      "id": "claim-0j-inc-meta",
+      "statement": "Boundary METADATA edges show mixed effects and require additional study.",
+      "status": "inconclusive",
+      "observation": "Removing METADATA edges caused a minor drop from 712 to 680, indicating a secondary coupling mechanism."
+    }
+  ]
+}

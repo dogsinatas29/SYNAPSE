@@ -85,3 +85,4 @@ scripts/verify_anomaly_collector.ts
 graph_*.json
 synapse_report_before_fix/
 synapse_report/
+demo/

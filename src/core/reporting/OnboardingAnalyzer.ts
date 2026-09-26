@@ -2,17 +2,18 @@ import { ValidationContext } from '../validation/ValidationContext';
 import { SimulationContext } from '../../types/schema';
 import { OnboardingPath } from './types';
 import { EntryPointDetector } from '../analysis/patterns/detectors/EntryPointDetector';
+import { OnboardingPatternDetector } from '../analysis/patterns/detectors/OnboardingPatternDetector';
+import { SafeRefactoringZoneDetector } from '../analysis/patterns/detectors/SafeRefactoringZoneDetector';
+import { PatternId } from '../analysis/patterns/PatternId';
+import { traceDetectorExecution } from '../analysis/pipeline/DiagnosticTracer';
 
 export class OnboardingAnalyzer {
-    
     private isRealFile(filePath: string): boolean {
         if (!filePath) return false;
         if (filePath.startsWith('AGGREGATE_') || filePath.startsWith('SYSTEM_') || filePath.includes('UNKNOWN') || filePath.includes('OUT_OF_SCOPE')) {
             return false;
         }
-        // Prevent boundary nodes or directories (which lack extensions) from being selected
         if (!filePath.includes('.')) return false;
-        // Basic check for file extension (typical source files)
         return /\.(ts|js|rs|kt|java|py|cpp|c|h|go|rb)$/i.test(filePath);
     }
 
@@ -65,10 +66,6 @@ export class OnboardingAnalyzer {
         return priorityScore - (depth * 10) - (fanIn * 5) + fanOut;
     }
 
-    /**
-     * Extracts an onboarding reading path by mining the existing validation metrics
-     * and simulation evidence, rather than "detecting" from scratch.
-     */
     public extractPath(context: ValidationContext, simContext?: SimulationContext): OnboardingPath {
         const path: OnboardingPath = {
             entryPoint: 'N/A',
@@ -77,32 +74,28 @@ export class OnboardingAnalyzer {
             readLater: []
         };
 
-        if (!context.metrics) {
-            return path;
-        }
-
-        // 1. Detect True Entry Point using the isolated PatternDetector
-        const entryPointDetector = new EntryPointDetector();
-        const findings = entryPointDetector.detect(context, simContext);
+        const epFindings = traceDetectorExecution(PatternId.ROOT_ENTRY_POINT, 'EntryPointDetector', new EntryPointDetector(), context, simContext);
         
         let trueEntryPoint = 'N/A';
-        if (findings && findings.length > 0) {
-            trueEntryPoint = findings[0].targetId;
+        if (epFindings && epFindings.length > 0) {
+            trueEntryPoint = Array.isArray(epFindings[0].targetId) ? epFindings[0].targetId[0] : epFindings[0].targetId;
         }
         
         path.entryPoint = trueEntryPoint;
 
-        // 2. Extract Core Pipeline (Reading Path)
-        // Filter out Test files from Core Pipeline
-        const pipeline: string[] = [];
-        
-        let topFiles = (context.metrics.topImpactFiles || []).filter(f => {
-            const fPath = f.filePath || '';
-            return this.isRealFile(fPath) && this.getRoleScore(fPath) > -1000;
-        });
+        // 3. Delegate LEARNING_HUB and PERIPHERAL_COMPONENT to OnboardingPatternDetector
+        const onboardingDetector = new OnboardingPatternDetector();
+        const onboardingFindings = traceDetectorExecution(PatternId.LEARNING_HUB, 'OnboardingPatternDetector', onboardingDetector, context, simContext);
 
-        // Fallback: If metrics are missing, mine the most heavily targeted files in evidence
-        if (topFiles.length === 0 && simContext && simContext.evidenceBundle && simContext.evidenceBundle.findings) {
+        const safeZoneDetector = new SafeRefactoringZoneDetector();
+        const safeZoneFindings = traceDetectorExecution(PatternId.SAFE_REFACTORING_ZONE, 'SafeRefactoringZoneDetector', safeZoneDetector, context, simContext);
+
+        path.findings = [...(epFindings || []), ...(onboardingFindings || []), ...(safeZoneFindings || [])];
+
+        // Legacy Pipeline calculation - keeping this logic as is for corePipeline
+        const pipeline: string[] = [];
+        let topFiles: any[] = [];
+        if (simContext && simContext.evidenceBundle && simContext.evidenceBundle.findings) {
             const counts = new Map<string, number>();
             for (const f of simContext.evidenceBundle.findings) {
                 const src = f.sourceId || f.targetId || f.nodeId || '';
@@ -113,24 +106,20 @@ export class OnboardingAnalyzer {
             const sortedCounts = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
             topFiles = sortedCounts.map(entry => ({
                 filePath: entry[0],
-                externalEdges: entry[1] // proxy for centrality based on violations
+                externalEdges: entry[1]
             })) as any[];
         }
         
-        // We will build a logical sequence from the top impact files
         if (topFiles.length > 0) {
-            // Sort top impact files by structural role to enforce Entry -> Domain -> Logic -> Persistence -> UI
             const sortedImpact = [...topFiles].sort((a, b) => {
                 const scoreA = this.getPipelineRoleScore(a.filePath || '') - ((a.externalEdges || 0) * 0.01);
                 const scoreB = this.getPipelineRoleScore(b.filePath || '') - ((b.externalEdges || 0) * 0.01);
                 return scoreB - scoreA;
             });
-            
             if (trueEntryPoint === 'N/A') {
                 trueEntryPoint = sortedImpact[0].filePath || 'N/A';
                 path.entryPoint = trueEntryPoint;
             }
-            
             for (const f of sortedImpact) {
                 const fPath = f.filePath || '';
                 if (fPath !== trueEntryPoint && pipeline.length < 4) {
@@ -141,31 +130,13 @@ export class OnboardingAnalyzer {
         
         path.corePipeline = pipeline;
 
-        // Extract Safe Areas (Low Fan-Out, High Fan-In typically)
-        if (context.metrics.topImpactFiles) {
-             const safe = context.metrics.topImpactFiles
-                 .filter((f: any) => {
-                     const name = f.filePath || '';
-                     return this.isRealFile(name);
-                 })
-                 .sort((a: any, b: any) => (a.externalEdges || 0) - (b.externalEdges || 0));
-             path.safeAreas = safe.slice(0, 3).map((f: any) => f.filePath || '');
-        }
+        const peripherals = onboardingFindings.filter(f => f.patternId === PatternId.PERIPHERAL_COMPONENT);
+        path.safeAreas = peripherals.length > 0 ? peripherals.map(p => p.targetId as string) : ['N/A (No isolated leaf nodes detected)'];
 
-        // Read Later: We pick the highest impact file that is NOT in the core pipeline and NOT entry point
-        if (topFiles.length > 0) {
-             const complex = topFiles.find(f => {
-                 const name = f.filePath || '';
-                 return this.isRealFile(name) && name !== trueEntryPoint && !pipeline.includes(name);
-             });
-             if (complex) {
-                 path.readLater.push(complex.filePath || '');
-             }
-        } 
-        
-        // Fallbacks if extraction was empty
-        if (path.safeAreas.length === 0) path.safeAreas = ['N/A (No isolated leaf nodes detected)'];
-        if (path.readLater.length === 0) path.readLater = ['N/A (No peripheral complexity detected)'];
+        const learningHubs = onboardingFindings.filter(f => f.patternId === PatternId.LEARNING_HUB);
+        path.readLater = learningHubs.length > 0 ? learningHubs.map(l => l.targetId as string) : ['N/A (No peripheral complexity detected)'];
+
+        path.safeRefactoringZones = safeZoneFindings.length > 0 ? safeZoneFindings.map(z => z.targetId as string) : ['N/A (No zero fan-in files detected)'];
 
         return path;
     }

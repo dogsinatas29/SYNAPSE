@@ -7,6 +7,7 @@ import { Logger } from '../../utils/Logger';
 import { OnboardingReportBuilder } from './OnboardingReportBuilder';
 import { ExecutiveReportBuilder } from './ExecutiveReportBuilder';
 import { ValidationRenderer } from './ValidationRenderer';
+import { FindingReportAdapter } from './FindingReportAdapter';
 
 export class ReportBundleGenerator {
     
@@ -168,6 +169,12 @@ export class ReportBundleGenerator {
                 evidence: [],
                 appendix: []
             };
+
+            const adapter = new FindingReportAdapter();
+            if (execInsight.patternFindings && execInsight.patternFindings.length > 0) {
+                execContract.findings.unshift(adapter.buildExecutiveSection(execInsight.patternFindings));
+            }
+
             returnPath = path.join(bundleDir, 'EXECUTIVE_SUMMARY.md');
             fs.writeFileSync(returnPath, insight.renderReportToMarkdown(execContract));
         }
@@ -221,10 +228,16 @@ export class ReportBundleGenerator {
             const cleanEvidence = formattedEvidence.filter((e: any) => !e.title.includes('SCC Validation Evidence'));
             const appendixData = ValidationRenderer.appendix.render(formattedEvidence);
             
+            const findings = onboardBuilder.build(onboardInsight);
+            const adapter = new FindingReportAdapter();
+            if (onboardInsight.findings) {
+                findings.unshift(adapter.buildOnboardingSection(onboardInsight.findings));
+            }
+
             const onboardContract: ReportContract = {
                 header: onboardHeader,
                 summary: 'Guides new developers through entry points and the system heart.',
-                findings: onboardBuilder.build(onboardInsight),
+                findings: findings,
                 evidence: cleanEvidence,
                 appendix: appendixData
             };
@@ -291,6 +304,12 @@ export class ReportBundleGenerator {
                 evidence: cleanEvidence,
                 appendix: appendixData
             };
+            
+            const adapter = new FindingReportAdapter();
+            if (simInsight.patternFindings && simInsight.patternFindings.length > 0) {
+                debugContract.findings.unshift(adapter.buildSimulationSection(simInsight.patternFindings));
+            }
+
             returnPath = path.join(bundleDir, 'SIMULATION_DEBUG.md');
             fs.writeFileSync(returnPath, insight.renderReportToMarkdown(debugContract));
         }

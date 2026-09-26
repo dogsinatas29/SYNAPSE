@@ -4,6 +4,7 @@ import { ValidationEngine } from '../core/validation/ValidationEngine';
 import { GraphSnapshot } from '../core/validation/ValidationContext';
 
 import { ProjectStateSerializer } from '../core/transaction/ProjectStateSerializer';
+import { ValidationReportBuilder } from '../core/validation/ValidationReportBuilder';
 
 export function runB5ValidationLayer(graphFilePath: string, runCount: number): void {
     let data = JSON.parse(fs.readFileSync(graphFilePath, 'utf8'));
@@ -34,6 +35,8 @@ export function runB5ValidationLayer(graphFilePath: string, runCount: number): v
     fs.mkdirSync(path.dirname(reportPath), { recursive: true });
     fs.writeFileSync(reportPath, JSON.stringify(context.metrics, null, 2), 'utf-8');
     console.log(`\n[Validation] JSON report saved: ${reportPath}`);
+
+    ValidationReportBuilder.generateReports(context, 'CLI-AUDIT');
 }
 
 if (require.main === module) {

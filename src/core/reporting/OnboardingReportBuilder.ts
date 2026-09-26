@@ -10,10 +10,14 @@ export class OnboardingReportBuilder {
             ? insight.avoidReadingYet.split(',').map(s => `- ${s}`).join('\n')
             : '- N/A';
 
+        const safeZoneSteps = insight.safeRefactoringZone && insight.safeRefactoringZone.length > 0
+            ? insight.safeRefactoringZone.map(s => `- ${s}`).join('\n')
+            : '- N/A';
+
         return [
             {
                 title: 'Onboarding Guide',
-                content: `### Reading Path\n1. **Entry Point:** ${insight.entryPoint}\n${pipelineSteps}\n\n### Safe Areas (Low Coupling)\n${insight.safeArea.map(s => `- ${s}`).join('\n')}\n\n### Read Later (Structural Complexity)\n${readLaterSteps}\n\n---\n\n### Architecture Reading Notes\n> Runtime relationships alone do not fully explain the architecture. Type/Inheritance relationships are significant contributors to connectivity. Keep this in mind as you explore the codebase.`
+                content: `### Reading Path\n1. **Entry Point:** ${insight.entryPoint}\n${pipelineSteps}\n\n### Safe Areas (Low Coupling)\n${insight.safeArea.map(s => `- ${s}`).join('\n')}\n\n### Read Later (Structural Complexity)\n${readLaterSteps}\n\n### Safe Refactoring Zones (Zero Fan-In)\n${safeZoneSteps}\n\n---\n\n### Architecture Reading Notes\n> Runtime relationships alone do not fully explain the architecture. Type/Inheritance relationships are significant contributors to connectivity. Keep this in mind as you explore the codebase.`
             }
         ];
     }

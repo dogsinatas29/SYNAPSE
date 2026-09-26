@@ -409,6 +409,10 @@ export class ValidationReportBuilder {
         // 04_RAW_DATA
         fs.writeFileSync(path.join(bundleDir, '04_RAW_DATA.json'), JSON.stringify(report, null, 2), 'utf-8');
 
+        // Dump diagnostic trace
+        const { DiagnosticTracer } = require('../analysis/pipeline/DiagnosticTracer');
+        DiagnosticTracer.getInstance().dump(bundleDir);
+
         // Return the summary path as mdPath
         const mdPath = path.join(bundleDir, '00_EXECUTIVE_SUMMARY.md');
         const htmlPath = ''; 

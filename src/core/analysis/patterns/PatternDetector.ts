@@ -1,14 +1,6 @@
-import { ValidationContext } from '../../validation/ValidationContext';
-import { SimulationContext } from '../../../types/schema';
-
-export interface PatternFinding {
-    patternId: string;
-    targetId: string;
-    confidence: number;
-    isCandidate?: boolean;
-    evidence: Record<string, any>;
-}
+import { DetectorContext } from './DetectorContext';
+import { PatternFinding } from './PatternFinding';
 
 export interface PatternDetector {
-    detect(context: ValidationContext, simContext?: SimulationContext): PatternFinding[];
+    detect(context: any, simContext?: any): PatternFinding[];
 }

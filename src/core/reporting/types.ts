@@ -1,9 +1,9 @@
 export enum RiskType {
     STRUCTURAL_DEFECT = 'STRUCTURAL_DEFECT',
     BOUNDARY_ISSUE = 'BOUNDARY_ISSUE',
-    ARCHITECTURAL_HUB = 'ARCHITECTURAL_HUB',
-    INTENDED_HUB = 'INTENDED_HUB',
-    UNKNOWN_HUB = 'UNKNOWN_HUB',
+    CASCADE_FAILURE_POINT = 'CASCADE_FAILURE_POINT',
+    SYSTEM_CORE = 'SYSTEM_CORE',
+    CHANGE_AMPLIFIER = 'CHANGE_AMPLIFIER',
     EXTERNAL_PRESSURE = 'EXTERNAL_PRESSURE',
     NORMAL = 'NORMAL'
 }
@@ -47,6 +47,8 @@ export interface OnboardingPath {
     corePipeline: string[];
     safeAreas: string[];
     readLater: string[];
+    safeRefactoringZones?: string[];
+    findings?: any[];
 }
 
 // v0.3.34.36 Governance Engine
@@ -56,7 +58,7 @@ export interface RiskVector {
     cycle: number;
     coupling: number;
     authority: number;
-    isIntendedHub: boolean;
+    isSystemCore: boolean;
 }
 
 export interface FrontierResult {

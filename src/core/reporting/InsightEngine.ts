@@ -20,6 +20,20 @@ import { RiskClassifier } from './RiskClassifier';
 import { SemanticContext } from '../analysis/SemanticContext';
 import { Logger } from '../../utils/Logger';
 
+import { SystemCoreDetector } from '../analysis/patterns/detectors/SystemCoreDetector';
+import { PatternId } from '../analysis/patterns/PatternId';
+import { traceDetectorExecution } from '../analysis/pipeline/DiagnosticTracer';
+import { ChangeAmplifierDetector } from '../analysis/patterns/detectors/ChangeAmplifierDetector';
+import { CascadeFailureDetector } from '../analysis/patterns/detectors/CascadeFailureDetector';
+import { MetricAccessDetector } from '../analysis/patterns/detectors/MetricAccessDetector';
+import { VocabularyViolationDetector } from '../analysis/patterns/detectors/VocabularyViolationDetector';
+import { BoundaryPatternDetector } from '../analysis/patterns/detectors/BoundaryPatternDetector';
+import { ArchitecturalChokepointDetector } from '../analysis/patterns/detectors/ArchitecturalChokepointDetector';
+
+export interface AuditInsight {
+    patternFindings?: any[];
+}
+
 /**
  * InsightEngine orchestrates the presentation pipeline:
  * RootCauseAggregator -> RiskClassifier -> RiskVectorBuilder -> ParetoFrontier -> FrontierPartitioner -> DTOs
@@ -75,7 +89,7 @@ export class InsightEngine {
             const partitioned = this.partitioner.partition(frontierResult, vectors);
 
             if (partitioned.frontier.length > 0) {
-                health = "CRITICAL (High Coupling Risk)";
+                health = "SEVERE (High Coupling Risk)";
                 const validFrontiers = partitioned.frontier.filter(c => c.sourceGroup.ownerCluster.includes('.'));
                 const topNode = validFrontiers.length > 0 ? validFrontiers[0].sourceGroup.ownerCluster : partitioned.frontier[0].sourceGroup.ownerCluster;
                 
@@ -90,12 +104,20 @@ export class InsightEngine {
             }
         }
         
+        const sysCoreDetector = new SystemCoreDetector();
+        const boundaryDetector = new BoundaryPatternDetector();
+        const patternFindings = [
+            ...traceDetectorExecution(PatternId.SYSTEM_CORE, 'SystemCoreDetector', sysCoreDetector, context, simContext),
+            ...traceDetectorExecution(PatternId.BOUNDARY_CANDIDATE, 'BoundaryPatternDetector', boundaryDetector, context, simContext)
+        ];
+
         return { 
             health, 
             frontierObservation, 
             action, 
             whyItMatters,
-            sources: { frontierObservation: { value: frontierObservation, source: sourceVal } }
+            sources: { frontierObservation: { value: frontierObservation, source: sourceVal } },
+            patternFindings
         };
     }
 
@@ -184,7 +206,7 @@ export class InsightEngine {
                 });
             }
 
-            // Add Info List (INTENDED_HUB)
+            // Add Info List (SYSTEM_CORE)
             for (const i of partitioned.infoList) {
                 const g = i.sourceGroup;
                 if (!isBoundary(g.ownerCluster)) continue;
@@ -243,13 +265,13 @@ export class InsightEngine {
             coreDomain: path.corePipeline.length > 0 ? path.corePipeline.join(',') : 'N/A',
             safeArea: path.safeAreas,
             avoidReadingYet: path.readLater.join(','),
-            sources: {}
+            safeRefactoringZone: path.safeRefactoringZones,
+            sources: {},
+            findings: path.findings
         };
     }
 
     public buildSimulationInsight(context: ValidationContext, simContext?: SimulationContext): SimulationInsight {
-        const files = context.metrics.topImpactFiles || [];
-        
         let immediateImpact: string[] = [];
         let secondaryImpact: string[] = [];
         let blastRadius = 0;
@@ -312,7 +334,7 @@ export class InsightEngine {
             
             secondaryImpact = [
                 `Cascading dependency failures propagating across ${subsystemCount} distinct subsystems.`,
-                `Root cause traced to highly-coupled structural hubs violating module boundaries.`
+                `Root cause traced to system cores violating module boundaries.`
             ];
             
             // Blast Radius Calculation Fix (v0.3.34.46)
@@ -330,27 +352,33 @@ export class InsightEngine {
             
             // Add a modest 10% cascade penalty, since cross-deps were removed from the raw sum.
             blastRadius = Math.ceil(actualAffectedFiles * 1.1);            
-        } else if (files.length > 0) {
-            const consumers = files[0].consumers || [];
-            immediateImpact = consumers.slice(0, 3);
-            if (immediateImpact.length === 0) immediateImpact = [files[0].filePath]; // Fallback to itself if no consumers tracked
-            
-            secondaryImpact = ['Cascading downstream dependencies'];
-            blastRadius = consumers.length > 0 ? consumers.length * 2 : 3;
         } else {
             immediateImpact = ['N/A'];
             secondaryImpact = ['N/A'];
+            blastRadius = 0;
         }
         
         Logger.info("[IMPACT_OUTPUT]", immediateImpact);
+
+        const changeAmpDetector = new ChangeAmplifierDetector();
+        const cascadeDetector = new CascadeFailureDetector();
+        const boundaryDetector = new BoundaryPatternDetector();
+        const chokepointDetector = new ArchitecturalChokepointDetector();
+        const patternFindings = [
+            ...traceDetectorExecution(PatternId.CHANGE_AMPLIFIER, 'ChangeAmplifierDetector', changeAmpDetector, context, simContext),
+            ...traceDetectorExecution(PatternId.CASCADE_FAILURE_POINT, 'CascadeFailureDetector', cascadeDetector, context, simContext),
+            ...traceDetectorExecution(PatternId.BOUNDARY_CANDIDATE, 'BoundaryPatternDetector', boundaryDetector, context, simContext),
+            ...traceDetectorExecution(PatternId.ARCHITECTURAL_CHOKEPOINT, 'ArchitecturalChokepointDetector', chokepointDetector, context, simContext)
+        ];
         
         return { 
             immediateImpact, 
             secondaryImpact, 
             blastRadius,
             sources: {
-                blastRadius: { value: blastRadius, source: 'metrics.topImpactFiles[0].consumers' }
-            }
+                blastRadius: { value: blastRadius, source: 'simContext.evidenceBundle' }
+            },
+            patternFindings
         };
     }
 
@@ -388,5 +416,19 @@ Report Confidence: ${h.reportConfidence}%
         }
 
         return md;
+    }
+
+    public buildAuditInsight(context: ValidationContext, simContext?: SimulationContext): AuditInsight {
+        const metricDetector = new MetricAccessDetector();
+        const vocabDetector = new VocabularyViolationDetector();
+        
+        const patternFindings = [
+            ...traceDetectorExecution(PatternId.METRIC_ACCESS_VIOLATION, 'MetricAccessDetector', metricDetector, context, simContext),
+            ...traceDetectorExecution(PatternId.VOCABULARY_VIOLATION, 'VocabularyViolationDetector', vocabDetector, context, simContext)
+        ];
+        
+        return {
+            patternFindings
+        };
     }
 }

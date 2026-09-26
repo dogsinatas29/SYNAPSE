@@ -1,4 +1,4 @@
-import { PatternFinding } from '../patterns/PatternDetector';
+import { PatternFinding } from '../patterns/PatternFinding';
 
 /**
  * Open IP: User Configurable Questions

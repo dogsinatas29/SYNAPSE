@@ -1,6 +1,8 @@
-import { ValidationContext } from '../../../validation/ValidationContext';
-import { SimulationContext } from '../../../../types/schema';
-import { PatternDetector, PatternFinding } from '../PatternDetector';
+import { DetectorContext } from '../DetectorContext';
+import { PatternDetector } from '../PatternDetector';
+import { PatternFinding } from '../PatternFinding';
+import { PatternId } from '../PatternId';
+import { EvidenceItem } from '../EvidenceItem';
 
 export class EntryPointDetector implements PatternDetector {
     
@@ -39,7 +41,8 @@ export class EntryPointDetector implements PatternDetector {
         return priorityScore - (depth * 10) - (fanIn * 5) + fanOut;
     }
 
-    public detect(context: ValidationContext, simContext?: SimulationContext): PatternFinding[] {
+    // Report 어댑터 적용 전까지 OnboardingAnalyzer 등에서 기존 Context(any)를 넘길 수 있도록 허용
+    public detect(context: any, simContext?: any): PatternFinding[] {
         const findings: PatternFinding[] = [];
         let candidates = (context.metrics?.systemAssemblyPoints || []).filter((c: any) => this.isRealFile(c.filePath || c.id || ''));
         
@@ -49,16 +52,22 @@ export class EntryPointDetector implements PatternDetector {
             const targetId = topCandidate.filePath || topCandidate.id || 'N/A';
             
             if (targetId !== 'N/A') {
+                const evidence: EvidenceItem = {
+                    evidenceId: `E-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                    type: "FILE_NAMING",
+                    sourceId: targetId,
+                    description: `Matched entry point naming convention (Score: ${this.calculateEntryPointScore(topCandidate)})`,
+                    filePath: targetId,
+                    graphNodeId: topCandidate.id
+                };
+
                 findings.push({
-                    patternId: 'root_entry_point',
+                    findingId: `F-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                    patternId: PatternId.ROOT_ENTRY_POINT,
+                    targetScope: 'NODE',
                     targetId: targetId,
                     confidence: 1.0,
-                    evidence: {
-                        score: this.calculateEntryPointScore(topCandidate),
-                        fanIn: topCandidate.fanIn || 0,
-                        fanOut: topCandidate.fanOut || 0,
-                        source: 'metrics'
-                    }
+                    evidence: [evidence]
                 });
                 return findings;
             }
@@ -88,14 +97,22 @@ export class EntryPointDetector implements PatternDetector {
                      return scoreB - scoreA;
                  });
                  
+                 const targetId = sortedSrc[0];
+                 const evidence: EvidenceItem = {
+                     evidenceId: `E-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                     type: "SIMULATION_FALLBACK",
+                     sourceId: targetId,
+                     description: `Derived from simulation semantic boundaries (Score: ${this.getRoleScore(targetId)})`,
+                     filePath: targetId
+                 };
+
                  findings.push({
-                     patternId: 'root_entry_point',
-                     targetId: sortedSrc[0],
+                     findingId: `F-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                     patternId: PatternId.ROOT_ENTRY_POINT,
+                     targetScope: 'NODE',
+                     targetId: targetId,
                      confidence: 0.8,
-                     evidence: {
-                         score: this.getRoleScore(sortedSrc[0]) - (sortedSrc[0].split('/').length * 10),
-                         source: 'simulation_fallback'
-                     }
+                     evidence: [evidence]
                  });
              }
         }

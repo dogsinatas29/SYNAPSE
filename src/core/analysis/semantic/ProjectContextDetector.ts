@@ -1,5 +1,6 @@
 // Deleted: Hardcoded project references
 import * as path from 'path';
+import * as fs from 'fs';
 
 export enum ProjectEcosystem {
     NODE = 'NODE',
@@ -40,6 +41,9 @@ export class ProjectContextDetector {
         throw new Error("🔥 [FATAL] ProjectContextDetector.detect() CALLED! 🔥");
         
         let isVSCode = false;
+        let isLinux = false;
+        let isNestJS = false;
+        let isAntennaPod = false;
         
         let ecosystem = ProjectEcosystem.UNKNOWN;
         let domain = ProjectDomain.UNKNOWN;

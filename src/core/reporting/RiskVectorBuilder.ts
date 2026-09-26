@@ -11,7 +11,7 @@ export class RiskVectorBuilder {
             cycle: g.cycleParticipation,
             coupling: g.fanOut,
             authority: g.blastRadius,
-            isIntendedHub: g.primaryRiskType === RiskType.INTENDED_HUB
+            isSystemCore: g.primaryRiskType === RiskType.SYSTEM_CORE
         }));
 
         Logger.info(`[RISK_VECTOR_BUILDER] end. Vector count: ${vectors.length}`);

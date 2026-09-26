@@ -126,7 +126,9 @@ export class RuleEngine {
             '.idea', '.vscode', '.github', 'target', 'vendor',
             'bin', 'obj', '.synapse_contexts', '.synapse',
             'synapse_report', 'synapse_harvest_output', 'synapse_generated_reports',
-            'synapse_data', 'synapse-test'
+            'synapse_data', 'synapse-test',
+            // [Bootstrap Boundary Principle] 개발 산출물/기록 영역은 기본 제외 (blacklist 몰라도 안전)
+            'mile_stone', 'release_note', 'scratch'
         ]);
         this.blacklistFiles = new Set([
             'package-lock.json',
@@ -136,7 +138,9 @@ export class RuleEngine {
             'webpack.config.js',
             'verify_rules.js',
             'verify_rules_only.js',
-            'test_tree_logic.js'
+            'test_tree_logic.js',
+            // [Bootstrap Boundary Principle] 문서지만 아키텍처 정보가 아닌 소개/이력 문서는 기본 제외
+            'readme.md', 'readme.ko.md', 'changelog.md'
         ]);
         this.binaryExcludes = new Set([
             '.vsix', '.zip', '.tar.gz', '.exe', '.dll', '.so', '.bin', '.js.map',

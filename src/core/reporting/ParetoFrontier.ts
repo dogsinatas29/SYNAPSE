@@ -7,8 +7,8 @@ export class ParetoFrontier {
     public compute(vectors: RiskVector[]): FrontierResult {
         Logger.info(`[PARETO_FRONTIER] start. Vector count: ${vectors.length}`);
         
-        // INTENDED_HUB excluded from frontier computation
-        const eligible = vectors.filter(v => !v.isIntendedHub);
+        // SYSTEM_CORE excluded from frontier computation
+        const eligible = vectors.filter(v => !v.isSystemCore);
         // DO NOT SORT FRONTIER
         // Pareto Frontier is an unordered set.
         // Any ordering implies priority ranking and violates

@@ -17,8 +17,8 @@ export class FrontierPartitioner {
             .filter(v => v.boundary > 0 || v.cycle > 0 || v.coupling > 0 || v.authority > 0)
             .slice(0, 15);
 
-        // InfoList: INTENDED_HUB groups, capped at 20
-        const infoList = allVectors.filter(v => v.isIntendedHub).slice(0, 20);
+        // InfoList: SYSTEM_CORE groups, capped at 20
+        const infoList = allVectors.filter(v => v.isSystemCore).slice(0, 20);
 
         // ExternalPressures: handled separately by category
         const externalPressures: RiskVector[] = [];

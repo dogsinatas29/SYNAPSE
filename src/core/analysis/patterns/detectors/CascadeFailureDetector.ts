@@ -1,10 +1,12 @@
-import { ValidationContext } from '../../../validation/ValidationContext';
-import { SimulationContext } from '../../../../types/schema';
-import { PatternDetector, PatternFinding } from '../PatternDetector';
+import { DetectorContext } from '../DetectorContext';
+import { PatternDetector } from '../PatternDetector';
+import { PatternFinding } from '../PatternFinding';
+import { PatternId } from '../PatternId';
+import { EvidenceItem } from '../EvidenceItem';
 
 export class CascadeFailureDetector implements PatternDetector {
     
-    public detect(context: ValidationContext, simContext?: SimulationContext): PatternFinding[] {
+    public detect(context: any, simContext?: any): PatternFinding[] {
         const findings: PatternFinding[] = [];
         
         let simulationFindings = [];
@@ -36,7 +38,8 @@ export class CascadeFailureDetector implements PatternDetector {
                     propagationDepth,
                     cascadeImpact,
                     failureScore
-                }
+                },
+                graphNodeId: f.nodeId || f.targetId || 'UNKNOWN'
             };
         }).filter((c: any) => c.score > 0); 
 
@@ -51,12 +54,22 @@ export class CascadeFailureDetector implements PatternDetector {
             if (c.score >= medianScore) {
                 const confidence = maxScore > 0 ? Number((c.score / maxScore).toFixed(2)) : 1.0;
                 
+                const evidenceItem: EvidenceItem = {
+                    evidenceId: `E-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                    type: "SIMULATION_IMPACT",
+                    sourceId: c.targetId,
+                    description: `Cascade Impact (Nodes: ${c.evidence.affectedNodeCount}, Depth: ${c.evidence.propagationDepth}, Score: ${c.score})`,
+                    filePath: c.targetId,
+                    graphNodeId: c.graphNodeId
+                };
+
                 findings.push({
-                    patternId: 'cascade_failure_point',
+                    findingId: `F-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                    patternId: PatternId.CASCADE_FAILURE_POINT,
+                    targetScope: 'NODE',
                     targetId: c.targetId,
                     confidence,
-                    isCandidate: true,
-                    evidence: c.evidence
+                    evidence: [evidenceItem]
                 });
             }
         }

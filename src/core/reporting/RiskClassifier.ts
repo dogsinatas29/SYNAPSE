@@ -2,6 +2,9 @@ import { ProblemGroup, RiskType, EvidenceType } from './types';
 import { SimulationContext } from '../../types/schema';
 import { SemanticFinding } from '../analysis/types';
 import { Logger } from '../../utils/Logger';
+import { BoundaryPatternDetector } from '../analysis/patterns/detectors/BoundaryPatternDetector';
+import { PatternId } from '../analysis/patterns/PatternId';
+import { traceDetectorExecution } from '../analysis/pipeline/DiagnosticTracer';
 
 export class RiskClassifier {
     public classify(problemGroups: ProblemGroup[], simContext?: SimulationContext, semanticContext?: any): ProblemGroup[] {
@@ -20,50 +23,51 @@ export class RiskClassifier {
                 tags.push(RiskType.BOUNDARY_ISSUE);
             }
             if (group.fanOut > 0) {
-                let isIntendedHub = false;
-                let isUnknownHub = false;
+                let isSystemCore = false;
+                let isChangeAmplifier = false;
 
-                if (semanticContext) {
-                    const keys = semanticContext.getAllBoundaries().map((b: any) => b.id);
-                    Logger.info(`[SEMANTIC_LOOKUP_DUMP] Available boundaries: ${JSON.stringify(keys)}`);
+                if (simContext) {
+                    const boundaryDetector = new BoundaryPatternDetector();
+                    const boundaryFindings = traceDetectorExecution(PatternId.BOUNDARY_CANDIDATE, 'BoundaryPatternDetector', boundaryDetector, {} as any, simContext);
                     
-                    const boundary = semanticContext.getBoundaryForNode(group.id);
-                    Logger.info(`[SEMANTIC_LOOKUP] ${group.id} => ${boundary?.id ?? 'MISS'}`);
+                    const matchingBoundary = boundaryFindings.find(f => {
+                        const members = f.context?.members as string[] | undefined;
+                        return members && members.includes(group.id);
+                    });
                     
-                    if (boundary) {
-                        const strength = boundary.strength;
+                    if (matchingBoundary) {
+                        const patternId = matchingBoundary.patternId;
+                        let strength = 'Weak';
+                        if (patternId === PatternId.BOUNDARY_FORTRESS) strength = 'Strong';
+                        else if (patternId === PatternId.BOUNDARY_CANDIDATE) strength = 'Moderate';
                         
+                        const members = matchingBoundary.context?.members as string[] || [];
                         group.boundaryContext = {
-                            id: boundary.id,
+                            id: matchingBoundary.targetId as string,
                             strength: strength,
-                            size: boundary.size,
-                            internalEdges: (boundary as any).internalEdges,
-                            externalEdges: (boundary as any).externalEdges,
-                            inboundEdges: (boundary as any).inboundEdges,
-                            cohesion: (boundary as any).cohesion
+                            size: members.length,
+                            internalEdges: 0,
+                            externalEdges: 0,
+                            inboundEdges: 0,
+                            cohesion: 0
                         };
 
-                        if (process.env.SC_AUDIT) {
-                            console.log(`[SC_AUDIT] Classifier: ${group.id} => boundaryContext={id:${boundary.id}, strength:${strength}}`);
-                        }
-
-                        if (strength === 'Strong' || strength === 'Moderate') {
-                            isIntendedHub = true;
+                        if (patternId === PatternId.BOUNDARY_FORTRESS || patternId === PatternId.BOUNDARY_CANDIDATE) {
+                            isSystemCore = true;
+                        } else {
+                            isChangeAmplifier = true;
                         }
                     } else {
-                        if (process.env.SC_AUDIT) {
-                            console.log(`[SC_AUDIT] Classifier: ${group.id} => boundaryContext=NULL`);
-                        }
-                        isUnknownHub = true;
+                        isChangeAmplifier = true;
                     }
                 }
 
-                if (isIntendedHub) {
-                    tags.push(RiskType.INTENDED_HUB);
-                } else if (isUnknownHub) {
-                    tags.push(RiskType.UNKNOWN_HUB);
+                if (isSystemCore) {
+                    tags.push(RiskType.SYSTEM_CORE);
+                } else if (isChangeAmplifier) {
+                    tags.push(RiskType.CHANGE_AMPLIFIER);
                 } else {
-                    tags.push(RiskType.ARCHITECTURAL_HUB);
+                    tags.push(RiskType.CASCADE_FAILURE_POINT);
                 }
             }
 
@@ -72,16 +76,16 @@ export class RiskClassifier {
             }
 
             // The primary risk type is the most severe defect present, prioritizing in order of severity
-            if (tags.includes(RiskType.INTENDED_HUB)) {
-                group.primaryRiskType = RiskType.INTENDED_HUB;
-            } else if (tags.includes(RiskType.UNKNOWN_HUB)) {
-                group.primaryRiskType = RiskType.UNKNOWN_HUB;
+            if (tags.includes(RiskType.SYSTEM_CORE)) {
+                group.primaryRiskType = RiskType.SYSTEM_CORE;
+            } else if (tags.includes(RiskType.CHANGE_AMPLIFIER)) {
+                group.primaryRiskType = RiskType.CHANGE_AMPLIFIER;
             } else if (tags.includes(RiskType.STRUCTURAL_DEFECT)) {
                 group.primaryRiskType = RiskType.STRUCTURAL_DEFECT;
             } else if (tags.includes(RiskType.BOUNDARY_ISSUE)) {
                 group.primaryRiskType = RiskType.BOUNDARY_ISSUE;
-            } else if (tags.includes(RiskType.ARCHITECTURAL_HUB)) {
-                group.primaryRiskType = RiskType.ARCHITECTURAL_HUB;
+            } else if (tags.includes(RiskType.CASCADE_FAILURE_POINT)) {
+                group.primaryRiskType = RiskType.CASCADE_FAILURE_POINT;
             } else if (tags.includes(RiskType.EXTERNAL_PRESSURE)) {
                 group.primaryRiskType = RiskType.EXTERNAL_PRESSURE;
             } else {

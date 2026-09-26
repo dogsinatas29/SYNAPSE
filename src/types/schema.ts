@@ -713,6 +713,7 @@ export interface OnboardingReport {
     doNotTouch: string[];
 }
 
+
 export interface ExecutiveReport {
     systemSnapshot: {
         totalNodes: number;
@@ -814,6 +815,7 @@ export interface ExecutiveInsight {
     action: string;
     whyItMatters: string;
     sources?: Record<string, InsightSource>;
+    patternFindings?: any[];
 }
 
 export interface ArchitectReportFinding {
@@ -827,6 +829,7 @@ export interface ArchitectReportFinding {
 export interface ArchitectInsight {
     findings: ArchitectReportFinding[];
     sources?: Record<string, InsightSource>;
+    patternFindings?: any[];
 }
 
 export interface OnboardingInsight {
@@ -834,7 +837,9 @@ export interface OnboardingInsight {
     coreDomain: string;
     safeArea: string[];
     avoidReadingYet: string;
+    safeRefactoringZone?: string[];
     sources?: Record<string, InsightSource>;
+    findings?: any[];
 }
 
 export interface SimulationInsight {
@@ -842,4 +847,5 @@ export interface SimulationInsight {
     secondaryImpact: string[];
     blastRadius: number;
     sources?: Record<string, InsightSource>;
+    patternFindings?: any[];
 }

@@ -1,10 +1,12 @@
-import { ValidationContext } from '../../../validation/ValidationContext';
-import { SimulationContext } from '../../../../types/schema';
-import { PatternDetector, PatternFinding } from '../PatternDetector';
+import { DetectorContext } from '../DetectorContext';
+import { PatternDetector } from '../PatternDetector';
+import { PatternFinding } from '../PatternFinding';
+import { PatternId } from '../PatternId';
+import { EvidenceItem } from '../EvidenceItem';
 
 export class SystemCoreDetector implements PatternDetector {
     
-    public detect(context: ValidationContext, simContext?: SimulationContext): PatternFinding[] {
+    public detect(context: any, simContext?: any): PatternFinding[] {
         const findings: PatternFinding[] = [];
         
         // Semantic Boundary Nodes are the primary source for System Core detection
@@ -19,9 +21,10 @@ export class SystemCoreDetector implements PatternDetector {
 
         // Calculate control scores based on new semantic metrics
         const scoredCandidates = semanticFindings.map((f: any) => {
-            const fanIn = f.metadata?.fanIn || 0;
-            const fanOut = f.metadata?.fanOut || 0;
-            const blastRadius = f.metadata?.blastRadius || 0;
+            const fanIn = f.metadata?.inboundEdges || 0;
+            const fanOut = f.metadata?.externalEdges || 0;
+            const size = f.metadata?.size || 0;
+            const blastRadius = fanOut * size; // Estimated blast radius
             const authorityReach = f.metadata?.authorityReach || 0.0;
             
             // Score weight: FanIn heavily dictates Core nature. Blast Radius adds impact. Authority Reach adds network centrality.
@@ -36,7 +39,8 @@ export class SystemCoreDetector implements PatternDetector {
                     blastRadius,
                     authorityReach,
                     controlScore
-                }
+                },
+                graphNodeId: f.nodeId || f.targetId
             };
         }).filter((c: any) => c.score > 0); // Must have at least some score
 
@@ -54,12 +58,22 @@ export class SystemCoreDetector implements PatternDetector {
                 // Normalize confidence between 0.0 and 1.0 relative to max score
                 const confidence = maxScore > 0 ? Number((c.score / maxScore).toFixed(2)) : 1.0;
                 
+                const evidenceItem: EvidenceItem = {
+                    evidenceId: `E-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                    type: "SEMANTIC_METRICS",
+                    sourceId: c.targetId,
+                    description: `Core traits (FanIn: ${c.evidence.fanIn}, BlastRadius: ${c.evidence.blastRadius}) -> Control Score: ${c.evidence.controlScore}`,
+                    filePath: c.targetId,
+                    graphNodeId: c.graphNodeId
+                };
+
                 findings.push({
-                    patternId: 'system_core',
+                    findingId: `F-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                    patternId: PatternId.SYSTEM_CORE,
+                    targetScope: 'NODE',
                     targetId: c.targetId,
                     confidence,
-                    isCandidate: true,
-                    evidence: c.evidence
+                    evidence: [evidenceItem]
                 });
             }
         }

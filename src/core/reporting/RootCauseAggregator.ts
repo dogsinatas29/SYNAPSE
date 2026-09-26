@@ -113,7 +113,7 @@ export class RootCauseAggregator {
             
             // Blast radius is ideally extracted from the finding's impact or pre-calculated metrics.
             // If the finding has a specific metric, we add it. Otherwise, we assume 1 file = 1 impact.
-            // In a real scenario, this would use context.metrics.
+            // In a real scenario, this would use internal metrics or evidence directly.
             group.blastRadius += 1;
         }
         

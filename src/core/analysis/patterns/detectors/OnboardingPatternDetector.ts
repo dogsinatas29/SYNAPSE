@@ -52,6 +52,7 @@ export class OnboardingPatternDetector implements PatternDetector {
         let topFiles: any[] = [];
         
         if (simContext && simContext.evidenceBundle && simContext.evidenceBundle.findings) {
+            console.log(`[ONBOARDING_DETECTOR_INPUT] Total findings received: ${simContext.evidenceBundle.findings.length}`);
             const counts = new Map<string, number>();
             for (const f of simContext.evidenceBundle.findings) {
                 const src = f.sourceId || f.targetId || f.nodeId || '';

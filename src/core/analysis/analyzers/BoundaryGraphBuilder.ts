@@ -601,6 +601,8 @@ final=${cohesionNew.toFixed(3)}\n`);
             }
         }
 
+        console.log(`[DT-3] BoundaryGraphBuilder: promoted=${boundaryNodes.size}`);
+
         return {
             nodes: Array.from(boundaryNodes.values()),
             edges: Array.from(boundaryEdgesMap.values()),

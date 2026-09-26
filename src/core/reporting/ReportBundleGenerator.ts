@@ -34,6 +34,7 @@ export class ReportBundleGenerator {
         
         const simulationContextStr = fs.readFileSync(simContextPath, 'utf-8');
         const simulationContext = JSON.parse(simulationContextStr);
+        console.log(`[DATA_TRACE] ReportBundleGenerator after read: findings=${simulationContext.evidenceBundle?.findings?.length}, path=${simContextPath}`);
         
         let evidenceCount = context.nodeStats?.length || 0;
         let formattedEvidence: any[] = [];
@@ -307,11 +308,18 @@ export class ReportBundleGenerator {
             
             const adapter = new FindingReportAdapter();
             if (simInsight.patternFindings && simInsight.patternFindings.length > 0) {
-                debugContract.findings.unshift(adapter.buildSimulationSection(simInsight.patternFindings));
+                const inputBoundary = simInsight.patternFindings.filter((f: any) => f.patternId === 'BOUNDARY_CANDIDATE').length;
+                const simSection = adapter.buildSimulationSection(simInsight.patternFindings);
+                debugContract.findings.unshift(simSection);
+                console.log(`[DT-A3] ReportBundleGenerator:\n  inputBoundary=${inputBoundary}\n  reportSections=${debugContract.findings.length}\n  consumedBoundary=0`);
             }
 
             returnPath = path.join(bundleDir, 'SIMULATION_DEBUG.md');
-            fs.writeFileSync(returnPath, insight.renderReportToMarkdown(debugContract));
+            const md = insight.renderReportToMarkdown(debugContract);
+            const sectionExists = md.includes('Impact Propagation (Pattern-based)');
+            const renderedBoundaryItems = (md.match(/BOUNDARY/g) || []).length;
+            console.log(`[DT-A4] Markdown:\n  reportSectionInputBoundary=0\n  section exists=${sectionExists}\n  renderedBoundaryItems=${renderedBoundaryItems}`);
+            fs.writeFileSync(returnPath, md);
         }
 
         return returnPath;

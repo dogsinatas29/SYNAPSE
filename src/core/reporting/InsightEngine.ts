@@ -74,6 +74,7 @@ export class InsightEngine {
     }
 
     public buildExecutiveInsight(context: ValidationContext, simContext?: SimulationContext): ExecutiveInsight {
+        console.log(`[DATA_TRACE] InsightEngine input: findings=${simContext?.evidenceBundle?.findings?.length}`);
         let health = "STABLE";
         let frontierObservation = "No frontier nodes detected";
         let action = "Continue normal operations";
@@ -370,6 +371,10 @@ export class InsightEngine {
             ...traceDetectorExecution(PatternId.BOUNDARY_CANDIDATE, 'BoundaryPatternDetector', boundaryDetector, context, simContext),
             ...traceDetectorExecution(PatternId.ARCHITECTURAL_CHOKEPOINT, 'ArchitecturalChokepointDetector', chokepointDetector, context, simContext)
         ];
+
+        const boundaryFindings = patternFindings.filter(f => f.patternId === PatternId.BOUNDARY_CANDIDATE);
+        console.log(`[DT-A1] InsightEngine:\n  totalFindings=${simContext?.evidenceBundle?.findings?.length || 0}\n  totalPatternFindings=${patternFindings.length}\n  boundaryPatternFindings=${boundaryFindings.length}\n  patternIds={ ${Array.from(new Set(patternFindings.map(f => f.patternId))).join(', ')} }`);
+
         
         return { 
             immediateImpact, 

@@ -45,7 +45,10 @@ export class FindingReportAdapter {
     public buildSimulationSection(findings: PatternFinding[]): ReportSection {
         const changeAmps = findings.filter(f => f.patternId === PatternId.CHANGE_AMPLIFIER);
         const cascadeFails = findings.filter(f => f.patternId === PatternId.CASCADE_FAILURE_POINT);
+        const boundaryCandidates = findings.filter(f => f.patternId === PatternId.BOUNDARY_CANDIDATE);
         
+        console.log(`[DT-A2] FindingReportAdapter.buildSimulationSection:\n  inputBoundary=${boundaryCandidates.length}\n  outputBoundary=0\n  dropped=${boundaryCandidates.length} (Filter condition: only change_amp, cascade_fail, chokepoint are processed)`);
+
         let content = "### Change Amplifiers\n";
         content += changeAmps.length > 0 
             ? changeAmps.map(f => {

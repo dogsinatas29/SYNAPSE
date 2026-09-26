@@ -145,6 +145,9 @@ export class VirtualDebugger {
         console.log("[AUDIT] state.clusters", state.clusters?.length || 0);
 
         const allClusters = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {});
+        
+        console.log(`[DT-1] Webview input: nodes=${state.nodes?.length ?? Object.keys(state.nodes || {}).length}, edges=${state.edges?.length ?? Object.keys(state.edges || {}).length}, visibleClusterIds=${visibleClusterIds?.length ?? 'none'}`);
+
         const _collapsedCount = allClusters.filter((c: any) => c.collapsed === true).length;
         console.log(`[VD_COLLAPSE_CHECK] total=${allClusters.length} collapsed=${_collapsedCount}`);
         console.log(`[VD_CLUSTER_SAMPLE]`, allClusters.filter((c: any) => c.collapsed === true).slice(0, 5).map((c: any) => c.id));
@@ -216,6 +219,8 @@ export class VirtualDebugger {
                     }
                     return false;
                 });
+                
+                console.log(`[DT-2] After VirtualDebugger filtering: nodes=${targetNodes.length}, edges=${targetEdges.length}`);
 
                 const targetNodeIds = new Set(targetNodes.map((n: any) => n.id));
                 
@@ -447,6 +452,17 @@ export class VirtualDebugger {
             fracture: evidenceBundle.findings.filter((f: any) => f.type === 'fracture').length,
             cycle: evidenceBundle.findings.filter((f: any) => f.type === 'cycle').length
         });
+
+        // DT-B1: Evidence Generation Phase
+        const simEvidenceGen = evidenceBundle.findings.filter((f: any) => f.type === 'SIMULATION' || f.evidenceType === 'SIMULATION');
+        const propEvidenceGen = evidenceBundle.findings.filter((f: any) => f.type === 'PROPAGATION' || f.evidenceType === 'PROPAGATION');
+        const cascadeEvidenceGen = evidenceBundle.findings.filter((f: any) => f.type === 'CASCADE' || f.evidenceType === 'CASCADE');
+        
+        console.log(`[DT-B1] VirtualDebug Evidence Gen:\n  SIMULATION=${simEvidenceGen.length}\n  PROPAGATION=${propEvidenceGen.length}\n  CASCADE=${cascadeEvidenceGen.length}`);
+        
+        if (simEvidenceGen.length === 0) {
+            console.log(`[DT-B1.5] Samples of other evidence types:\n`, JSON.stringify(evidenceBundle.findings.slice(0, 5).map((f: any) => ({type: f.type, evidenceType: f.evidenceType, semanticType: f.semanticType})), null, 2));
+        }
         Logger.info(`[CHECKPOINT-A1] findings=${evidenceBundle.findings.length}`);
         
         const simContextPath = require('path').join(workspaceRoot, 'synapse_report', 'surgery', 'simulation_evidence.json');
@@ -461,6 +477,8 @@ export class VirtualDebugger {
             findings: evidenceBundle?.findings?.length ?? 0,
             clusters: visibleClusterIds?.length ?? 0
         });
+        
+        console.log(`[DATA_TRACE] VirtualDebugger before write: findings=${simulationContext.evidenceBundle?.findings?.length}, path=${simContextPath}`);
         
         require('fs').writeFileSync(simContextPath, JSON.stringify(simulationContext, null, 2), 'utf-8');
 

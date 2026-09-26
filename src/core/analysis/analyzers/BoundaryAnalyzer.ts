@@ -94,6 +94,7 @@ export class BoundaryAnalyzer implements ArchitectureAnalyzer {
             }
         }
 
+        console.log(`[DT-4] BoundaryAnalyzer: findings=${findings.length}`);
         return { findings };
     }
 }

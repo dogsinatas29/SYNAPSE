@@ -28,6 +28,7 @@ import { CascadeFailureDetector } from '../analysis/patterns/detectors/CascadeFa
 import { MetricAccessDetector } from '../analysis/patterns/detectors/MetricAccessDetector';
 import { VocabularyViolationDetector } from '../analysis/patterns/detectors/VocabularyViolationDetector';
 import { BoundaryPatternDetector } from '../analysis/patterns/detectors/BoundaryPatternDetector';
+import { CrossBoundaryReferenceDetector } from '../analysis/patterns/detectors/CrossBoundaryReferenceDetector';
 import { ArchitecturalChokepointDetector } from '../analysis/patterns/detectors/ArchitecturalChokepointDetector';
 
 export interface AuditInsight {
@@ -107,9 +108,11 @@ export class InsightEngine {
         
         const sysCoreDetector = new SystemCoreDetector();
         const boundaryDetector = new BoundaryPatternDetector();
+        const crossBoundaryRefDetector = new CrossBoundaryReferenceDetector();
         const patternFindings = [
             ...traceDetectorExecution(PatternId.SYSTEM_CORE, 'SystemCoreDetector', sysCoreDetector, context, simContext),
-            ...traceDetectorExecution(PatternId.BOUNDARY_CANDIDATE, 'BoundaryPatternDetector', boundaryDetector, context, simContext)
+            ...traceDetectorExecution(PatternId.BOUNDARY_CANDIDATE, 'BoundaryPatternDetector', boundaryDetector, context, simContext),
+            ...traceDetectorExecution(PatternId.CROSS_BOUNDARY_REFERENCE, 'CrossBoundaryReferenceDetector', crossBoundaryRefDetector, context, simContext)
         ];
 
         return { 
@@ -365,11 +368,13 @@ export class InsightEngine {
         const cascadeDetector = new CascadeFailureDetector();
         const boundaryDetector = new BoundaryPatternDetector();
         const chokepointDetector = new ArchitecturalChokepointDetector();
+        const crossBoundaryRefDetector = new CrossBoundaryReferenceDetector();
         const patternFindings = [
             ...traceDetectorExecution(PatternId.CHANGE_AMPLIFIER, 'ChangeAmplifierDetector', changeAmpDetector, context, simContext),
             ...traceDetectorExecution(PatternId.CASCADE_FAILURE_POINT, 'CascadeFailureDetector', cascadeDetector, context, simContext),
             ...traceDetectorExecution(PatternId.BOUNDARY_CANDIDATE, 'BoundaryPatternDetector', boundaryDetector, context, simContext),
-            ...traceDetectorExecution(PatternId.ARCHITECTURAL_CHOKEPOINT, 'ArchitecturalChokepointDetector', chokepointDetector, context, simContext)
+            ...traceDetectorExecution(PatternId.ARCHITECTURAL_CHOKEPOINT, 'ArchitecturalChokepointDetector', chokepointDetector, context, simContext),
+            ...traceDetectorExecution(PatternId.CROSS_BOUNDARY_REFERENCE, 'CrossBoundaryReferenceDetector', crossBoundaryRefDetector, context, simContext)
         ];
 
         const boundaryFindings = patternFindings.filter(f => f.patternId === PatternId.BOUNDARY_CANDIDATE);

@@ -787,8 +787,6 @@ export interface ReportHeader {
     selectionSource: SelectionSource;
     reason: string;
     generatedBy: string;
-    evidenceCount: number;
-    reportConfidence: number;
 }
 
 export interface ReportSection {

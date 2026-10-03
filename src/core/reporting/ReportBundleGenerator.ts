@@ -65,8 +65,8 @@ export class ReportBundleGenerator {
                 const controlScore = Math.floor(inboundEdges * 10 + (size * externalDensity));
                 
                 let tier = 'Tier 3 (Implementation Module)';
-                if (complexityScore >= 5000 || size >= 800) tier = 'Tier 1 (Architecture Level)';
-                else if (complexityScore >= 1000 || size >= 100) tier = 'Tier 2 (Subsystem Level)';
+                if (complexityScore >= 5000 || size >= 800) tier = 'Tier 1 (High Structural Mass)';
+                else if (complexityScore >= 1000 || size >= 100) tier = 'Tier 2 (Moderate Structural Mass)';
                 
                 return { ...f, complexityScore, controlScore, tier };
             });
@@ -79,22 +79,22 @@ export class ReportBundleGenerator {
             const cTier3 = complexityRanked.filter((f: any) => f.tier.includes('Tier 3'));
             
             let contentA = '';
-            if (cTier1.length > 0) contentA += `#### Tier 1 (Architecture Level)\n` + cTier1.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n\n`;
-            if (cTier2.length > 0) contentA += `#### Tier 2 (Subsystem Level)\n` + cTier2.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n\n`;
-            if (cTier3.length > 0) contentA += `<details>\n<summary>Tier 3 (Micro Boundaries) - Click to expand</summary>\n\n` + cTier3.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n</details>\n`;
+            if (cTier1.length > 0) contentA += `#### Tier 1 (High Structural Mass)\n` + cTier1.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n\n`;
+            if (cTier2.length > 0) contentA += `#### Tier 2 (Moderate Structural Mass)\n` + cTier2.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n\n`;
+            if (cTier3.length > 0) contentA += `<details>\n<summary>Tier 3 (Implementation Module) - Click to expand</summary>\n\n` + cTier3.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n</details>\n`;
 
-            // --- Report B: Architectural Control Ranking (System Dominators) ---
+            // --- Report B: Dependency Concentration Ranking ---
             const controlRanked = [...scoredFindings].sort((a: any, b: any) => b.controlScore - a.controlScore).slice(0, 50);
             
             let contentB = controlRanked.map((f: any, i: number) => `${i+1}. **[Control Score: ${f.controlScore}]** Node: \`${f.targetId}\` (Fan-In: ${f.metadata?.inboundEdges || 0}, Size: ${f.metadata?.size || 0})`).join('\n');
 
             formattedEvidence = [
                 {
-                    title: 'Report A: Architectural Complexity Ranking (Top 50)',
+                    title: 'Report A: Structural Complexity Ranking (Top 50)',
                     content: contentA || 'No Boundary Nodes found.'
                 },
                 {
-                    title: 'Report B: Architectural Control Ranking (System Dominators)',
+                    title: 'Report B: Dependency Concentration Ranking (Top 50)',
                     content: contentB || 'No Boundary Nodes found.'
                 }
             ];
@@ -138,7 +138,7 @@ export class ReportBundleGenerator {
         let returnPath = '';
         
         if (message.command === 'fetchExecutiveReport') {
-            const execHeader = insight.generateHeader('EXECUTIVE', 'ARCHITECTURAL_SCAN', context, evidenceCount);
+            const execHeader = insight.generateHeader('EXECUTIVE', 'ARCHITECTURAL_SCAN', context);
             
             let execFindings: any[] = [];
             
@@ -165,16 +165,13 @@ export class ReportBundleGenerator {
 
             const execContract: ReportContract = {
                 header: execHeader,
-                summary: 'Executive Summary focusing on validated system health and architectural discoveries.',
+                summary: 'Executive Summary',
                 findings: execFindings,
                 evidence: [],
                 appendix: []
             };
 
-            const adapter = new FindingReportAdapter();
-            if (execInsight.patternFindings && execInsight.patternFindings.length > 0) {
-                execContract.findings.unshift(adapter.buildExecutiveSection(execInsight.patternFindings));
-            }
+            // SCORCHED EARTH: Removed independent System Cores generation from Executive.
 
             returnPath = path.join(bundleDir, 'EXECUTIVE_SUMMARY.md');
             fs.writeFileSync(returnPath, insight.renderReportToMarkdown(execContract));
@@ -204,7 +201,7 @@ export class ReportBundleGenerator {
                 archContent = valSection + `### Original Architectural Observations\n\n` + archContent;
             }
 
-            const archHeader = insight.generateHeader('ARCHITECT', 'ARCHITECTURAL_SCAN', context, evidenceCount);
+            const archHeader = insight.generateHeader('ARCHITECT', 'ARCHITECTURAL_SCAN', context);
             
             const cleanEvidence = formattedEvidence.filter((e: any) => !e.title.includes('SCC Validation Evidence'));
             const appendixData = ValidationRenderer.appendix.render(formattedEvidence);
@@ -230,10 +227,11 @@ export class ReportBundleGenerator {
         }
 
         if (message.command === 'fetchOnboardingReport') {
-            const onboardHeader = insight.generateHeader('ONBOARDING', 'ARCHITECTURAL_SCAN', context, evidenceCount);
+            const onboardHeader = insight.generateHeader('ONBOARDING', 'ARCHITECTURAL_SCAN', context);
             const onboardBuilder = new OnboardingReportBuilder();
-            const cleanEvidence = formattedEvidence.filter((e: any) => !e.title.includes('SCC Validation Evidence'));
-            const appendixData = ValidationRenderer.appendix.render(formattedEvidence);
+            // P0 Constraint: Do not dump Report A/B into Onboarding report.
+            const cleanEvidence: any[] = [];
+            const appendixData: any[] = [];
             
             const findings = onboardBuilder.build(onboardInsight);
             const adapter = new FindingReportAdapter();
@@ -243,7 +241,7 @@ export class ReportBundleGenerator {
 
             const onboardContract: ReportContract = {
                 header: onboardHeader,
-                summary: 'Guides new developers through entry points and the system heart.',
+                summary: 'Onboarding Report',
                 findings: findings,
                 evidence: cleanEvidence,
                 appendix: appendixData
@@ -255,12 +253,9 @@ export class ReportBundleGenerator {
         // 03_SIMULATION_DEBUG is written during Virtual Debug itself, but we can write it if needed.
         // If someone directly wants a bundle that wasn't specific to the 3 above, we can just return SIMULATION_DEBUG
         if (!returnPath) {
-            const debugHeader = insight.generateHeader('SIMULATION_DEBUG', 'EXECUTION_TRACE', context, evidenceCount);
+            const debugHeader = insight.generateHeader('SIMULATION_DEBUG', 'EXECUTION_TRACE', context);
             
-            let debugFindings = [{
-                title: 'Impact Analysis',
-                content: `**Immediate Impact:**\n${simInsight.immediateImpact.map(i => `- ${i}`).join('\n')}\n\n**Secondary Impact:**\n${simInsight.secondaryImpact.map(i => `- ${i}`).join('\n')}\n\n**Estimated Blast Radius:** ${simInsight.blastRadius} files`
-            }];
+            let debugFindings: any[] = [];
             
             const valEv: ValidationEvidence = simulationContext.validationEvidence;
             if (valEv && valEv.studies && valEv.studies.length > 0) {
@@ -301,12 +296,13 @@ export class ReportBundleGenerator {
                 });
             }
 
-            const cleanEvidence = formattedEvidence.filter((e: any) => !e.title.includes('SCC Validation Evidence'));
+            // P0 Constraint: Do not include Report A/B structural dumps in Simulation report.
+            const cleanEvidence = formattedEvidence.filter((e: any) => e.title.includes('SCC Validation'));
             const appendixData = ValidationRenderer.appendix.render(formattedEvidence);
 
             const debugContract: ReportContract = {
                 header: debugHeader,
-                summary: 'Analyzes blast radius and failure propagation of changes.',
+                summary: 'Simulation Debug Report',
                 findings: debugFindings,
                 evidence: cleanEvidence,
                 appendix: appendixData

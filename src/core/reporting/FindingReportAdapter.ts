@@ -56,14 +56,6 @@ export class FindingReportAdapter {
                 return `- ${f.targetId}`;
             }).join('\n')
             : '- N/A';
-            
-        content += "\n\n### Cascade Failure Points\n";
-        content += cascadeFails.length > 0 
-            ? cascadeFails.map(f => {
-                if (f.findingId) traceReportConsume(f.findingId, 'SIMULATION_DEBUG', 'simulation.cascade_failure_points');
-                return `- ${f.targetId}`;
-            }).join('\n')
-            : '- N/A';
 
         const chokepoints = findings.filter(f => f.patternId === PatternId.ARCHITECTURAL_CHOKEPOINT);
         content += "\n\n### Architectural Chokepoints (Cluster-Level Bridges)\n";

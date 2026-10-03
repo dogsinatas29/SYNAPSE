@@ -219,6 +219,12 @@ export class ReportBundleGenerator {
                 evidence: cleanEvidence,
                 appendix: appendixData
             };
+            
+            const adapter = new FindingReportAdapter();
+            if (archInsight.patternFindings && archInsight.patternFindings.length > 0) {
+                archContract.findings.unshift(adapter.buildArchitectSection(archInsight.patternFindings));
+            }
+
             returnPath = path.join(bundleDir, 'ARCHITECT_REPORT.md');
             fs.writeFileSync(returnPath, insight.renderReportToMarkdown(archContract));
         }

@@ -128,6 +128,11 @@ export class InsightEngine {
     public buildArchitectInsight(context: ValidationContext, simInsight?: SimulationInsight, simContext?: SimulationContext): ArchitectInsight {
         const findings: any[] = [];
         
+        const crossBoundaryRefDetector = new CrossBoundaryReferenceDetector();
+        const patternFindings = [
+            ...traceDetectorExecution(PatternId.CROSS_BOUNDARY_REFERENCE, 'CrossBoundaryReferenceDetector', crossBoundaryRefDetector, context, simContext)
+        ];
+        
         if (simContext && simContext.evidenceBundle) {
             const semanticContext = new SemanticContext(simContext);
             const groups = this.aggregator.aggregate(simContext, semanticContext);
@@ -258,7 +263,7 @@ export class InsightEngine {
             // For now, no ignored noise tracking in new pipeline
         }
         
-        return { findings, sources: {} };
+        return { findings, sources: {}, patternFindings };
     }
 
     public buildOnboardingInsight(context: ValidationContext, simContext?: SimulationContext): OnboardingInsight {
@@ -368,13 +373,11 @@ export class InsightEngine {
         const cascadeDetector = new CascadeFailureDetector();
         const boundaryDetector = new BoundaryPatternDetector();
         const chokepointDetector = new ArchitecturalChokepointDetector();
-        const crossBoundaryRefDetector = new CrossBoundaryReferenceDetector();
         const patternFindings = [
             ...traceDetectorExecution(PatternId.CHANGE_AMPLIFIER, 'ChangeAmplifierDetector', changeAmpDetector, context, simContext),
             ...traceDetectorExecution(PatternId.CASCADE_FAILURE_POINT, 'CascadeFailureDetector', cascadeDetector, context, simContext),
             ...traceDetectorExecution(PatternId.BOUNDARY_CANDIDATE, 'BoundaryPatternDetector', boundaryDetector, context, simContext),
-            ...traceDetectorExecution(PatternId.ARCHITECTURAL_CHOKEPOINT, 'ArchitecturalChokepointDetector', chokepointDetector, context, simContext),
-            ...traceDetectorExecution(PatternId.CROSS_BOUNDARY_REFERENCE, 'CrossBoundaryReferenceDetector', crossBoundaryRefDetector, context, simContext)
+            ...traceDetectorExecution(PatternId.ARCHITECTURAL_CHOKEPOINT, 'ArchitecturalChokepointDetector', chokepointDetector, context, simContext)
         ];
 
         const boundaryFindings = patternFindings.filter(f => f.patternId === PatternId.BOUNDARY_CANDIDATE);

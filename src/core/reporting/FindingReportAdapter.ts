@@ -92,7 +92,9 @@ export class FindingReportAdapter {
             ? crossBoundaries.map(f => {
                 if (f.findingId) traceReportConsume(f.findingId, 'ARCHITECT_REPORT', 'architect.cross_boundary_references');
                 const dependencyCount = f.evidence?.[0]?.metadata?.dependencyCount || 0;
-                return `- Boundary \`${f.sourceId}\` ─(${dependencyCount} edges)─▶ Boundary \`${f.targetId}\` (Count: ${dependencyCount})`;
+                const source = f.evidence?.[0]?.metadata?.source || '?';
+                const target = f.evidence?.[0]?.metadata?.target || '?';
+                return `- Boundary \`${source}\` ─(${dependencyCount} edges)─▶ Boundary \`${target}\` (Count: ${dependencyCount})`;
             }).join('\n')
             : '- N/A';
 

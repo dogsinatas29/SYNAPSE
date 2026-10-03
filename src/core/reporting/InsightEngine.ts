@@ -91,6 +91,8 @@ export class InsightEngine {
             const partitioned = this.partitioner.partition(frontierResult, vectors);
 
             if (partitioned.frontier.length > 0) {
+                // SCORCHED EARTH MUTATION: Remove unverified SEVERE claim generation
+                /*
                 health = "SEVERE (High Coupling Risk)";
                 const validFrontiers = partitioned.frontier.filter(c => c.sourceGroup.ownerCluster.includes('.'));
                 const topNode = validFrontiers.length > 0 ? validFrontiers[0].sourceGroup.ownerCluster : partitioned.frontier[0].sourceGroup.ownerCluster;
@@ -103,6 +105,7 @@ export class InsightEngine {
                 action = `Immediate architectural decoupling required for ${partitioned.frontier.length} frontier nodes to prevent cascading failures.`;
                 whyItMatters = `Systemic risk detected. Centralized dependencies around '${topNode}' are eroding module boundaries and threatening maintainability and build times.\n\n**근거 (Evidence):**\n- Frontier Nodes: ${partitioned.frontier.length}개\n- 최대 Fan-In: ${maxFanIn}\n- 최대 Boundary Crossing: ${maxBoundaryCrossings}\n- 최대 SCC Participation: ${maxScc}`;
                 sourceVal = "ParetoFrontier (non-dominated set)";
+                */
             }
         }
         
@@ -154,110 +157,30 @@ export class InsightEngine {
             });
 
             // Add Frontier nodes (non-dominated set)
+            // SCORCHED EARTH MUTATION: Remove unverified FRONTIER claims
+            /*
             let validFrontierCount = 0;
-            for (const c of partitioned.frontier) {
-                const g = c.sourceGroup;
-                if (!isBoundary(g.ownerCluster)) continue;
-                validFrontierCount++;
-                
-                const subsystemId = g.boundaryContext?.id;
-                
-                if (process.env.SC_AUDIT) {
-                    console.log(`[SC_AUDIT] InsightEngine FRONTIER: ${g.ownerCluster} => boundaryContext=${subsystemId ?? 'NULL'}`);
-                }
-                
-                findings.push({
-                    filePath: g.ownerCluster,
-                    observation: `Classification: FRONTIER\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${subsystemId || 'None / Unbounded'}\nBoundary Strength: ${g.boundaryContext?.strength || 'None'}\nCoupling: ${c.coupling}\nCycle Participation: ${c.cycle}\nBoundary Crossings: ${c.boundary}\nAuthority Reach: ${c.authority}`,
-                    evidence: `- Internal Edges: ${g.boundaryContext?.internalEdges !== undefined ? g.boundaryContext.internalEdges : 'N/A'}\n- External Edges: ${g.boundaryContext?.externalEdges !== undefined ? g.boundaryContext.externalEdges : 'N/A'}\n- Cohesion: ${g.boundaryContext?.cohesion !== undefined ? g.boundaryContext.cohesion.toFixed(3) : 'N/A'}\n- Fan-In: ${g.boundaryContext?.inboundEdges !== undefined ? g.boundaryContext.inboundEdges : 'N/A'}\n- Boundary Crossings: ${c.boundary}\n- Outbound Coupling: ${c.coupling}\n- SCC Participation: ${c.cycle}\n- Authority Reach: ${c.authority}`,
-                    interpretation: subsystemId
-                        ? `This node is located on the Pareto Frontier.\nThe node belongs to the '${subsystemId}' subsystem.\nIt remains non-dominated across all observed dimensions.`
-                        : `This node is located on the Pareto Frontier.\nNo enclosing boundary was detected.`,
-                    recommendation: `Review boundary ownership and dependency propagation.`
-                });
-            }
+            for (const c of partitioned.frontier) { ... }
             Logger.info('[FRONTIER_OUTPUT]', { frontierCount: validFrontierCount });
+            */
 
             // Add Watch List (non-frontier with signals)
-            for (const w of partitioned.watchList) {
-                const g = w.sourceGroup;
-                if (!isBoundary(g.ownerCluster)) continue;
-                
-                const subsystemId = g.boundaryContext?.id;
-                const couplingVal = w.coupling;
-                
-                if (process.env.SC_AUDIT) {
-                    console.log(`[SC_AUDIT] InsightEngine WATCH: ${g.ownerCluster} => boundaryContext=${subsystemId ?? 'NULL'}, coupling=${couplingVal}`);
-                }
-                
-                let interpretationText: string;
-                if (couplingVal === 0) {
-                    interpretationText = `No outbound coupling detected.`;
-                } else {
-                    interpretationText = `This node has ${couplingVal} outbound connection${couplingVal === 1 ? '' : 's'}.`;
-                }
-                
-                if (subsystemId) {
-                    interpretationText += `\nIt belongs to the '${subsystemId}' subsystem.`;
-                    if (w.boundary > 0) {
-                        interpretationText += `\nOutbound connections cross the subsystem boundary.`;
-                    }
-                } else {
-                    interpretationText += `\nNo subsystem classification was available.`;
-                }
-                
-                findings.push({
-                    filePath: g.ownerCluster,
-                    observation: `Classification: WATCH\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${subsystemId || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Weak'}\nCoupling: ${couplingVal}`,
-                    evidence: `- Internal Edges: ${g.boundaryContext?.internalEdges !== undefined ? g.boundaryContext.internalEdges : 'N/A'}\n- External Edges: ${g.boundaryContext?.externalEdges !== undefined ? g.boundaryContext.externalEdges : 'N/A'}\n- Cohesion: ${g.boundaryContext?.cohesion !== undefined ? g.boundaryContext.cohesion.toFixed(3) : 'N/A'}\n- Fan-In: ${g.boundaryContext?.inboundEdges !== undefined ? g.boundaryContext.inboundEdges : 'N/A'}\n- Boundary Crossings: ${w.boundary}\n- Outbound Coupling: ${couplingVal}`,
-                    interpretation: interpretationText,
-                    recommendation: `Review subsystem isolation and external coupling.`
-                });
-            }
+            // SCORCHED EARTH MUTATION: Remove unverified WATCH claims
+            /*
+            for (const w of partitioned.watchList) { ... }
+            */
 
             // Add Info List (SYSTEM_CORE)
-            for (const i of partitioned.infoList) {
-                const g = i.sourceGroup;
-                if (!isBoundary(g.ownerCluster)) continue;
-                
-                const subsystemId = g.boundaryContext?.id;
-                const couplingVal = i.coupling;
-                
-                if (process.env.SC_AUDIT) {
-                    console.log(`[SC_AUDIT] InsightEngine INTENDED: ${g.ownerCluster} => boundaryContext=${subsystemId ?? 'NULL'}, coupling=${couplingVal}`);
-                }
-                
-                let interpretationText: string;
-                interpretationText = `This node has ${couplingVal} outbound connection${couplingVal === 1 ? '' : 's'}.`;
-                
-                if (subsystemId) {
-                    interpretationText += `\nIt belongs to the '${subsystemId}' subsystem.`;
-                    if (g.boundaryContext?.strength) {
-                        interpretationText += `\nThe Semantic Context indicates the boundary strength is '${g.boundaryContext.strength}'.`;
-                    }
-                } else {
-                    interpretationText += `\nNo subsystem classification was available.`;
-                }
-                
-                findings.push({
-                    filePath: g.ownerCluster,
-                    observation: `Classification: INTENDED\nTopology Type: ${g.primaryRiskType}\nSubsystem: ${subsystemId || 'Unknown'}\nBoundary Strength: ${g.boundaryContext?.strength || 'Strong'}\nCoupling: ${couplingVal}`,
-                    evidence: `- Internal Edges: ${g.boundaryContext?.internalEdges !== undefined ? g.boundaryContext.internalEdges : 'N/A'}\n- External Edges: ${g.boundaryContext?.externalEdges !== undefined ? g.boundaryContext.externalEdges : 'N/A'}\n- Cohesion: ${g.boundaryContext?.cohesion !== undefined ? g.boundaryContext.cohesion.toFixed(3) : 'N/A'}\n- Fan-In: ${g.boundaryContext?.inboundEdges !== undefined ? g.boundaryContext.inboundEdges : 'N/A'}\n- Outbound Coupling: ${couplingVal}`,
-                    interpretation: interpretationText,
-                    recommendation: `Monitor for Ownership/Authority violations.`
-                });
-            }
+            // SCORCHED EARTH MUTATION: Remove unverified INTENDED claims
+            /*
+            for (const i of partitioned.infoList) { ... }
+            */
 
             // Append External Pressures
-            if (partitioned.externalPressures.length > 0) {
-                const topExternal = partitioned.externalPressures.slice(0, 5).map(e => `- ${e.sourceGroup.ownerCluster} (${e.authority} refs)`).join('\n');
-                findings.push({
-                    filePath: "External Dependency Pressures",
-                    observation: `Classification: EXTERNAL\nExternal References:\n${topExternal}`,
-                    interpretation: `These nodes are external or platform dependencies.\nThey are not considered internal structural risks.`,
-                    recommendation: `Monitor external dependency updates.`
-                });
-            }
+            // SCORCHED EARTH MUTATION: Remove unverified EXTERNAL claims
+            /*
+            if (partitioned.externalPressures.length > 0) { ... }
+            */
             
             // Note: We'll pass ignored noise count via the first finding's recommendation or via ReportBundleGenerator
             // For now, no ignored noise tracking in new pipeline
@@ -271,10 +194,11 @@ export class InsightEngine {
 
         return {
             entryPoint: path.entryPoint,
-            coreDomain: path.corePipeline.length > 0 ? path.corePipeline.join(',') : 'N/A',
-            safeArea: path.safeAreas,
-            avoidReadingYet: path.readLater.join(','),
-            safeRefactoringZone: path.safeRefactoringZones,
+            // SCORCHED EARTH MUTATION: Remove unverified Reading Path, Safe Areas, etc.
+            coreDomain: 'N/A',
+            safeArea: [],
+            avoidReadingYet: 'N/A',
+            safeRefactoringZone: [],
             sources: {},
             findings: path.findings
         };

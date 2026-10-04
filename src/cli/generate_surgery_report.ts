@@ -10,8 +10,19 @@ export function runSurgeryReportGeneration(reportPath: string, evId: string): vo
     // Note: To extract top files, we would need the GraphSnapshot, but since this is just
     // a thin wrapper for legacy CLI execution, we'll pass an empty snapshot.
     // The metrics might already have `topImpactFiles` if they were included.
+    const projectStatePath = path.join(process.env.SYNAPSE_WORKSPACE_ROOT || path.resolve(path.dirname(reportPath), '..'), 'synapse_data', 'project_state.json');
+    let snapshot = { nodes: [], edges: [], clusters: [] };
+    if (fs.existsSync(projectStatePath)) {
+        const stateData = JSON.parse(fs.readFileSync(projectStatePath, 'utf8'));
+        snapshot = {
+            nodes: stateData.nodes || (stateData.graph && stateData.graph.nodes) || [],
+            edges: stateData.edges || (stateData.graph && stateData.graph.edges) || [],
+            clusters: stateData.clusters || []
+        };
+    }
+
     const context: ValidationContext = {
-        snapshot: { nodes: [], edges: [], clusters: [] },
+        snapshot,
         metrics,
         workspaceRoot: process.env.SYNAPSE_WORKSPACE_ROOT || path.resolve(path.dirname(reportPath), '..')
     };

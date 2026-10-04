@@ -74,7 +74,7 @@ export class OnboardingAnalyzer {
             readLater: []
         };
 
-        const epFindings = traceDetectorExecution(PatternId.ROOT_ENTRY_POINT, 'EntryPointDetector', new EntryPointDetector(), context, simContext);
+        const epFindings = traceDetectorExecution(PatternId.DEPENDENCY_ROOT, 'EntryPointDetector', new EntryPointDetector(), context, simContext);
         
         let trueEntryPoint = 'N/A';
         if (epFindings && epFindings.length > 0) {
@@ -83,14 +83,10 @@ export class OnboardingAnalyzer {
         
         path.entryPoint = trueEntryPoint;
 
-        // 3. Delegate LEARNING_HUB and PERIPHERAL_COMPONENT to OnboardingPatternDetector
-        const onboardingDetector = new OnboardingPatternDetector();
-        const onboardingFindings = traceDetectorExecution(PatternId.LEARNING_HUB, 'OnboardingPatternDetector', onboardingDetector, context, simContext);
-
         const safeZoneDetector = new SafeRefactoringZoneDetector();
         const safeZoneFindings = traceDetectorExecution(PatternId.SAFE_REFACTORING_ZONE, 'SafeRefactoringZoneDetector', safeZoneDetector, context, simContext);
 
-        path.findings = [...(epFindings || []), ...(onboardingFindings || []), ...(safeZoneFindings || [])];
+        path.findings = [...(epFindings || []), ...(safeZoneFindings || [])];
 
         // Legacy Pipeline calculation - keeping this logic as is for corePipeline
         const pipeline: string[] = [];
@@ -130,10 +126,10 @@ export class OnboardingAnalyzer {
         
         path.corePipeline = pipeline;
 
-        const peripherals = onboardingFindings.filter(f => f.patternId === PatternId.PERIPHERAL_COMPONENT);
+        const peripherals = (path.findings || []).filter(f => f.patternId === PatternId.PERIPHERAL_COMPONENT);
         path.safeAreas = peripherals.length > 0 ? peripherals.map(p => p.targetId as string) : ['N/A (No isolated leaf nodes detected)'];
 
-        const learningHubs = onboardingFindings.filter(f => f.patternId === PatternId.LEARNING_HUB);
+        const learningHubs = (path.findings || []).filter(f => f.patternId === PatternId.LEARNING_HUB);
         path.readLater = learningHubs.length > 0 ? learningHubs.map(l => l.targetId as string) : ['N/A (No peripheral complexity detected)'];
 
         path.safeRefactoringZones = safeZoneFindings.length > 0 ? safeZoneFindings.map(z => z.targetId as string) : ['N/A (No zero fan-in files detected)'];

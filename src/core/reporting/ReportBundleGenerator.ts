@@ -80,12 +80,6 @@ export class ReportBundleGenerator {
         }
         
         Logger.info('[REPORT] start');
-        
-        // 1. Build Insights using SimulationContext as Source of Truth
-        Logger.info('[REPORT] executive start');
-        const execInsight = insight.buildExecutiveInsight(context, simulationContext);
-        Logger.info('[REPORT] executive end');
-        
         Logger.info('[REPORT] onboarding start');
         const onboardInsight = insight.buildOnboardingInsight(context, simulationContext);
         Logger.info('[REPORT] onboarding end');
@@ -167,11 +161,11 @@ export class ReportBundleGenerator {
 
         // --- Step 4-A: Separate HTML generation ---
         const allFindings = [
-            ...(execInsight.patternFindings || []),
             ...(onboardInsight.findings || []),
             ...(simInsight.patternFindings || []),
             ...(archInsight.patternFindings || [])
         ];
+        fs.writeFileSync(path.join(bundleDir, 'allFindings.json'), JSON.stringify(allFindings, null, 2));
         const evidenceHtml = EvidenceViewerBuilder.buildHtml(allFindings, bundleDir);
         fs.writeFileSync(path.join(bundleDir, 'EVIDENCE_VIEWER.html'), evidenceHtml);
 

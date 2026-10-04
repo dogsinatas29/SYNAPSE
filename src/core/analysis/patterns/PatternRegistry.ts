@@ -13,8 +13,8 @@ export interface PatternDefinition {
 
 // [2026-09-25] P0-13 재검증을 위해 13개 PatternId 전체를 등재 (기존 6개 → 13개, 실제 코드 구현 여부 반영)
 export const PatternRegistry: Map<PatternId, PatternDefinition> = new Map([
-    [PatternId.ROOT_ENTRY_POINT, {
-        patternId: PatternId.ROOT_ENTRY_POINT,
+    [PatternId.DEPENDENCY_ROOT, {
+        patternId: PatternId.DEPENDENCY_ROOT,
         displayName: 'Root Entry Point',
         domain: 'ENTRY',
         status: 'IMPLEMENTED',
@@ -31,8 +31,8 @@ export const PatternRegistry: Map<PatternId, PatternDefinition> = new Map([
         targetScope: 'NODE',
         hasDetector: true
     }],
-    [PatternId.BOUNDARY_FORTRESS, {
-        patternId: PatternId.BOUNDARY_FORTRESS,
+    [PatternId.HIGH_ISOLATION_BOUNDARY, {
+        patternId: PatternId.HIGH_ISOLATION_BOUNDARY,
         displayName: 'Boundary Fortress',
         domain: 'BOUNDARY',
         status: 'IMPLEMENTED',
@@ -49,8 +49,8 @@ export const PatternRegistry: Map<PatternId, PatternDefinition> = new Map([
         targetScope: 'CLUSTER',
         hasDetector: true
     }],
-    [PatternId.WEAK_BOUNDARY, {
-        patternId: PatternId.WEAK_BOUNDARY,
+    [PatternId.LOW_ISOLATION_BOUNDARY, {
+        patternId: PatternId.LOW_ISOLATION_BOUNDARY,
         displayName: 'Weak Boundary',
         domain: 'BOUNDARY',
         status: 'IMPLEMENTED',

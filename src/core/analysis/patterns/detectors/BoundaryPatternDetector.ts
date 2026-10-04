@@ -50,16 +50,16 @@ export class BoundaryPatternDetector implements PatternDetector {
             let title = '';
             
             if (strength === 'Strong') {
-                patternId = PatternId.BOUNDARY_FORTRESS;
-                title = 'Strong Boundary Fortress';
+                patternId = PatternId.HIGH_ISOLATION_BOUNDARY;
+                title = 'High Isolation Boundary';
                 outputStats.Strong++;
             } else if (strength === 'Moderate') {
                 patternId = PatternId.BOUNDARY_CANDIDATE;
                 title = 'Moderate Boundary Candidate';
                 outputStats.Moderate++;
             } else if (strength === 'Weak') {
-                patternId = PatternId.WEAK_BOUNDARY;
-                title = 'Weak Boundary';
+                patternId = PatternId.LOW_ISOLATION_BOUNDARY;
+                title = 'Low Isolation Boundary';
                 outputStats.Weak++;
             }
 

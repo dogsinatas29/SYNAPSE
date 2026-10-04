@@ -1,9 +1,22 @@
-import { ReportBundleGenerator } from './src/core/reporting/ReportBundleGenerator';
+import { ReportBundleGenerator } from '../src/core/reporting/ReportBundleGenerator';
+
+import * as fs from 'fs';
+import * as path from 'path';
 
 async function main() {
-    const root = __dirname;
+    const root = process.env.SYNAPSE_WORKSPACE_ROOT || path.resolve(__dirname, '..');
+    const projectStatePath = path.join(root, 'synapse_data', 'project_state.json');
+    let snapshot = { nodes: [], edges: [], clusters: [] };
+    if (fs.existsSync(projectStatePath)) {
+        const data = JSON.parse(fs.readFileSync(projectStatePath, 'utf8'));
+        snapshot = {
+            nodes: data.nodes || (data.graph && data.graph.nodes) || [],
+            edges: data.edges || (data.graph && data.graph.edges) || [],
+            clusters: data.clusters || []
+        };
+    }
     const context = {
-        snapshot: { nodes: [], edges: [], clusters: [] },
+        snapshot,
         metrics: { topImpactFiles: [], systemAssemblyPoints: [] }
     };
     

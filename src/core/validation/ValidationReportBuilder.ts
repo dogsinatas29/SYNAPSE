@@ -360,18 +360,7 @@ export class ValidationReportBuilder {
         
         const evidenceCount = ctx.snapshot?.nodes?.length || 0;
         
-        // 00_EXECUTIVE_SUMMARY
-        const execHeader = insight.generateHeader('EXECUTIVE', 'ARCHITECTURAL_SCAN', ctx, evidenceCount);
-        const execInsight = insight.buildExecutiveInsight(ctx);
-        const execSummaryStr = `**Health**: ${execInsight.health}\n\n**Frontier Observation**: ${execInsight.frontierObservation}\n\n**Action**: ${execInsight.action}\n\n**Why It Matters**: ${execInsight.whyItMatters}`;
-        const execContract = {
-            header: execHeader,
-            summary: execSummaryStr,
-            findings: [{ title: 'Overview', content: 'See Executive Summary for high-level health.' }],
-            evidence: [],
-            appendix: []
-        };
-        fs.writeFileSync(path.join(bundleDir, '00_EXECUTIVE_SUMMARY.md'), insight.renderReportToMarkdown(execContract));
+        // EXECUTIVE_SUMMARY removed per user request
         
         // 01_ARCHITECT_REPORT
         const archHeader = insight.generateHeader('ARCHITECT', 'ARCHITECTURAL_SCAN', ctx, evidenceCount);

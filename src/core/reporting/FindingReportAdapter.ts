@@ -14,6 +14,9 @@ export class FindingReportAdapter {
         
         let contentO2 = `Question:\n${contractO2.question}\n\n`;
         contentO2 += `Vocabulary:\n${contractO2.vocabulary.join(', ')}\n\n`;
+        if (contractO2.interpretationGuide) {
+            contentO2 += `Interpretation Guide:\n${contractO2.interpretationGuide}\n\n`;
+        }
         
         if (o2Findings.length > 0) {
             contentO2 += `Finding:\n${o2Findings.length} root entry points observed.\n\n`;
@@ -58,6 +61,9 @@ export class FindingReportAdapter {
         
         let contentE2 = `Question:\n${contractE2.question}\n\n`;
         contentE2 += `Vocabulary:\n${contractE2.vocabulary.join(', ')}\n\n`;
+        if (contractE2.interpretationGuide) {
+            contentE2 += `Interpretation Guide:\n${contractE2.interpretationGuide}\n\n`;
+        }
         
         if (e2Findings.length > 0) {
             contentE2 += `Finding:\n${e2Findings.length} change propagation amplifiers observed.\n\n`;
@@ -87,6 +93,9 @@ export class FindingReportAdapter {
         
         let contentA1 = `Question:\n${contractA1.question}\n\n`;
         contentA1 += `Vocabulary:\n${contractA1.vocabulary.join(', ')}\n\n`;
+        if (contractA1.interpretationGuide) {
+            contentA1 += `Interpretation Guide:\n${contractA1.interpretationGuide}\n\n`;
+        }
         
         if (a1Findings.length > 0) {
             contentA1 += `Finding:\n${a1Findings.length} system cores observed.\n\n`;
@@ -104,12 +113,41 @@ export class FindingReportAdapter {
             content: contentA1
         });
 
+        // --- A2: Observation Question ---
+        const contractA2 = QUESTION_DICTIONARY["A2"];
+        const a2Findings = findings.filter(f => contractA2.supportingPatterns.includes(f.patternId));
+        
+        let contentA2 = `Question:\n${contractA2.question}\n\n`;
+        contentA2 += `Vocabulary:\n${contractA2.vocabulary.join(', ')}\n\n`;
+        if (contractA2.interpretationGuide) {
+            contentA2 += `Interpretation Guide:\n${contractA2.interpretationGuide}\n\n`;
+        }
+        
+        if (a2Findings.length > 0) {
+            contentA2 += `Finding:\n${a2Findings.length} module contact points observed.\n\n`;
+            contentA2 += `[View Evidence](EVIDENCE_VIEWER.html#A2)\n`;
+            a2Findings.forEach(f => {
+                if (f.findingId) traceReportConsume(f.findingId, 'ARCHITECT_REPORT', 'architect.module_contact_points');
+            });
+        } else {
+            contentA2 += `Finding:\nNo verified finding emitted.\n\n`;
+            contentA2 += `[View Evidence](EVIDENCE_VIEWER.html#A2)\n`;
+        }
+
+        sections.push({
+            title: "A2 — Module Contact Points",
+            content: contentA2
+        });
+
         // --- A3: Observation Question ---
         const contractA3 = QUESTION_DICTIONARY["A3"];
         const boundaryFindings = findings.filter(f => contractA3.supportingPatterns.includes(f.patternId));
         
         let contentA3 = `Question:\n${contractA3.question}\n\n`;
         contentA3 += `Vocabulary:\n${contractA3.vocabulary.join(', ')}\n\n`;
+        if (contractA3.interpretationGuide) {
+            contentA3 += `Interpretation Guide:\n${contractA3.interpretationGuide}\n\n`;
+        }
         
         if (boundaryFindings.length > 0) {
             contentA3 += `Finding:\n${boundaryFindings.length} structural boundaries observed.\n\n`;
@@ -137,6 +175,9 @@ export class FindingReportAdapter {
         
         let contentA5 = `Question:\n${contractA5.question}\n\n`;
         contentA5 += `Vocabulary:\n${contractA5.vocabulary.join(', ')}\n\n`;
+        if (contractA5.interpretationGuide) {
+            contentA5 += `Interpretation Guide:\n${contractA5.interpretationGuide}\n\n`;
+        }
         
         if (a5Findings.length > 0) {
             contentA5 += `Finding:\n${a5Findings.length} structural control chokepoints observed.\n\n`;

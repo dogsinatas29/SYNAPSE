@@ -38,7 +38,7 @@ export class RiskClassifier {
                     if (matchingBoundary) {
                         const patternId = matchingBoundary.patternId;
                         let strength = 'Weak';
-                        if (patternId === PatternId.BOUNDARY_FORTRESS) strength = 'Strong';
+                        if (patternId === PatternId.HIGH_ISOLATION_BOUNDARY) strength = 'Strong';
                         else if (patternId === PatternId.BOUNDARY_CANDIDATE) strength = 'Moderate';
                         
                         const members = matchingBoundary.context?.members as string[] || [];
@@ -52,7 +52,7 @@ export class RiskClassifier {
                             cohesion: 0
                         };
 
-                        if (patternId === PatternId.BOUNDARY_FORTRESS || patternId === PatternId.BOUNDARY_CANDIDATE) {
+                        if (patternId === PatternId.HIGH_ISOLATION_BOUNDARY || patternId === PatternId.BOUNDARY_CANDIDATE) {
                             isSystemCore = true;
                         } else {
                             isChangeAmplifier = true;

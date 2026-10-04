@@ -15004,20 +15004,6 @@ function initCanvas() {
         }
     });
 
-    document.getElementById('btn-report-exec')?.addEventListener('click', () => {
-        if (typeof vscode !== 'undefined') {
-            const hasCluster = !!window.engine?.selectedCluster;
-            vscode.postMessage({ 
-                command: 'fetchExecutiveReport',
-                scope: hasCluster ? 'SELECTED_CLUSTER' : 'FULL_PROJECT',
-                target: hasCluster ? window.engine.selectedCluster.label : 'Project Root',
-                selectionSource: 'USER_SELECTED'
-            });
-        } else {
-            alert('Available only in VS Code mode.');
-        }
-    });
-
     document.getElementById('report-panel-close')?.addEventListener('click', () => {
         document.getElementById('report-panel')?.classList.remove('visible');
     });

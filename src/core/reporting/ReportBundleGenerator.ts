@@ -99,46 +99,6 @@ export class ReportBundleGenerator {
 
         let returnPath = '';
         
-        if (message.command === 'fetchExecutiveReport') {
-            const execHeader = insight.generateHeader('EXECUTIVE', 'ARCHITECTURAL_SCAN', context);
-            
-            let execFindings: any[] = [];
-            
-            const valEv: ValidationEvidence = simulationContext.validationEvidence;
-            if (valEv && valEv.studies) {
-                const supportedClaims = valEv.studies.flatMap(s => s.claims || []).filter(c => c.status === 'supported');
-                
-                let valContent = '';
-                if (supportedClaims.length > 0) {
-                    supportedClaims.forEach(c => {
-                        valContent += ValidationRenderer.claim.render(c, valEv.studies);
-                        valContent += `\n---\n\n`;
-                    });
-                }
-                
-                execFindings = [{
-                    title: 'Validated Architectural Discoveries',
-                    content: valContent || 'No validated claims found.'
-                }];
-            } else {
-                const execBuilder = new ExecutiveReportBuilder();
-                execFindings = execBuilder.build(execInsight);
-            }
-
-            const execContract: ReportContract = {
-                header: execHeader,
-                summary: 'Executive Summary',
-                findings: execFindings,
-                evidence: [],
-                appendix: []
-            };
-
-            // SCORCHED EARTH: Removed independent System Cores generation from Executive.
-
-            returnPath = path.join(bundleDir, 'EXECUTIVE_SUMMARY.md');
-            fs.writeFileSync(returnPath, insight.renderReportToMarkdown(execContract));
-        }
-
         if (message.command === 'fetchArchitectureReport') {
             const archHeader = insight.generateHeader('ARCHITECT', 'ARCHITECTURAL_SCAN', context);
             const cleanEvidence: any[] = [];

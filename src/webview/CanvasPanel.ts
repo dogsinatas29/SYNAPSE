@@ -336,9 +336,7 @@ export class CanvasPanel {
         await this.handleUnifiedReportGeneration(message);
     }
 
-    private async handleFetchExecutiveReport(message: any) {
-        await this.handleUnifiedReportGeneration(message);
-    }
+
 
     private async handleFetchArchitectureReport(message: any) {
         await this.handleUnifiedReportGeneration(message);
@@ -471,9 +469,7 @@ export class CanvasPanel {
             case 'fetchOnboardingReport':
                 await this.handleFetchOnboardingReport(message);
                 return;
-            case 'fetchExecutiveReport':
-                await this.handleFetchExecutiveReport(message);
-                return;
+
             case 'fetchArchitectureReport':
                 await this.handleFetchArchitectureReport(message);
                 return;

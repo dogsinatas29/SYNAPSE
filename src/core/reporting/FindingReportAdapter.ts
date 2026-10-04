@@ -2,29 +2,36 @@ import { PatternFinding } from '../analysis/patterns/PatternFinding';
 import { PatternId } from '../analysis/patterns/PatternId';
 import { ReportSection } from '../../types/schema';
 import { traceReportConsume } from '../analysis/pipeline/DiagnosticTracer';
+import { QUESTION_DICTIONARY } from './ReportContract';
 
 export class FindingReportAdapter {
-    public buildOnboardingSection(findings: PatternFinding[]): ReportSection {
-        const rootEntryPoints = findings.filter(f => f.patternId === PatternId.ROOT_ENTRY_POINT);
-        const content = rootEntryPoints.length > 0 
-            ? rootEntryPoints.map(f => {
-                if (f.findingId) {
-                    traceReportConsume(f.findingId, 'ONBOARDING_REPORT', 'onboarding.entry_points');
-                }
-                const targetStr = Array.isArray(f.targetId) ? f.targetId.join(', ') : f.targetId;
-                return `- ${targetStr}`;
-            }).join('\n')
-            : '- N/A';
+    public buildOnboardingSections(findings: PatternFinding[]): ReportSection[] {
+        const sections: ReportSection[] = [];
 
-        const safeZones = findings.filter(f => f.patternId === PatternId.SAFE_REFACTORING_ZONE);
-        safeZones.forEach(f => {
-            if (f.findingId) traceReportConsume(f.findingId, 'ONBOARDING_REPORT', 'onboarding.safe_refactoring_zones');
+        // --- O2: Observation Question ---
+        const contractO2 = QUESTION_DICTIONARY["O2"];
+        const o2Findings = findings.filter(f => contractO2.supportingPatterns.includes(f.patternId));
+        
+        let contentO2 = `Question:\n${contractO2.question}\n\n`;
+        contentO2 += `Vocabulary:\n${contractO2.vocabulary.join(', ')}\n\n`;
+        
+        if (o2Findings.length > 0) {
+            contentO2 += `Finding:\n${o2Findings.length} root entry points observed.\n\n`;
+            contentO2 += `[View Evidence](EVIDENCE_VIEWER.html#O2)\n`;
+            o2Findings.forEach(f => {
+                if (f.findingId) traceReportConsume(f.findingId, 'ONBOARDING_REPORT', 'onboarding.entry_points');
+            });
+        } else {
+            contentO2 += `Finding:\nNo verified finding emitted.\n\n`;
+            contentO2 += `[View Evidence](EVIDENCE_VIEWER.html#O2)\n`;
+        }
+        
+        sections.push({
+            title: "O2 — Root Entry Point Observation",
+            content: contentO2
         });
 
-        return {
-            title: "Entry Points (Pattern-based)",
-            content: `Entry Point:\n${content}`
-        };
+        return sections;
     }
 
     public buildExecutiveSection(findings: PatternFinding[]): ReportSection {
@@ -42,57 +49,111 @@ export class FindingReportAdapter {
         };
     }
 
-    public buildSimulationSection(findings: PatternFinding[]): ReportSection {
-        const changeAmps = findings.filter(f => f.patternId === PatternId.CHANGE_AMPLIFIER);
-        const cascadeFails = findings.filter(f => f.patternId === PatternId.CASCADE_FAILURE_POINT);
-        const boundaryCandidates = findings.filter(f => f.patternId === PatternId.BOUNDARY_CANDIDATE);
+    public buildExecutionSections(findings: PatternFinding[]): ReportSection[] {
+        const sections: ReportSection[] = [];
+
+        // --- E2: Validation Question ---
+        const contractE2 = QUESTION_DICTIONARY["E2"];
+        const e2Findings = findings.filter(f => contractE2.supportingPatterns.includes(f.patternId));
         
-        console.log(`[DT-A2] FindingReportAdapter.buildSimulationSection:\n  inputBoundary=${boundaryCandidates.length}\n  outputBoundary=0\n  dropped=${boundaryCandidates.length} (Filter condition: only change_amp, cascade_fail, chokepoint are processed)`);
-
-        let content = "### Change Amplifiers\n";
-        content += changeAmps.length > 0 
-            ? changeAmps.map(f => {
+        let contentE2 = `Question:\n${contractE2.question}\n\n`;
+        contentE2 += `Vocabulary:\n${contractE2.vocabulary.join(', ')}\n\n`;
+        
+        if (e2Findings.length > 0) {
+            contentE2 += `Finding:\n${e2Findings.length} change propagation amplifiers observed.\n\n`;
+            contentE2 += `[View Evidence](EVIDENCE_VIEWER.html#E2)\n`;
+            e2Findings.forEach(f => {
                 if (f.findingId) traceReportConsume(f.findingId, 'SIMULATION_DEBUG', 'simulation.change_amplifiers');
-                return `- ${f.targetId}`;
-            }).join('\n')
-            : '- N/A';
+            });
+        } else {
+            contentE2 += `Finding:\nNo verified finding emitted.\n\n`;
+            contentE2 += `[View Evidence](EVIDENCE_VIEWER.html#E2)\n`;
+        }
 
-        const chokepoints = findings.filter(f => f.patternId === PatternId.ARCHITECTURAL_CHOKEPOINT);
-        content += "\n\n### Architectural Chokepoints (Cluster-Level Bridges)\n";
-        content += chokepoints.length > 0
-            ? chokepoints.map(f => {
-                if (f.findingId) traceReportConsume(f.findingId, 'SIMULATION_DEBUG', 'simulation.architectural_chokepoints');
-                
-                const score = f.evidence?.[0]?.metadata?.clusterScore?.toFixed(2) || 'N/A';
-                const contributors = f.evidence?.[0]?.metadata?.topContributors?.join(', ') || 'N/A';
-                
-                return `- **Cluster**: \`${f.targetId}\` (Score: ${score})\n  - Top Contributors: ${contributors}`;
-            }).join('\n')
-            : '- N/A';
+        sections.push({
+            title: "E2 — Change Propagation Amplifier",
+            content: contentE2
+        });
 
-        return {
-            title: "Impact Propagation (Pattern-based)",
-            content: content
-        };
+        return sections;
     }
 
-    public buildArchitectSection(findings: PatternFinding[]): ReportSection {
-        const crossBoundaries = findings.filter(f => f.patternId === PatternId.CROSS_BOUNDARY_REFERENCE);
-        
-        let content = "### Cross-Boundary References\n";
-        content += crossBoundaries.length > 0
-            ? crossBoundaries.map(f => {
-                if (f.findingId) traceReportConsume(f.findingId, 'ARCHITECT_REPORT', 'architect.cross_boundary_references');
-                const dependencyCount = f.evidence?.[0]?.metadata?.dependencyCount || 0;
-                const source = f.evidence?.[0]?.metadata?.source || '?';
-                const target = f.evidence?.[0]?.metadata?.target || '?';
-                return `- Boundary \`${source}\` ─(${dependencyCount} edges)─▶ Boundary \`${target}\` (Count: ${dependencyCount})`;
-            }).join('\n')
-            : '- N/A';
+    public buildArchitectSections(findings: PatternFinding[]): ReportSection[] {
+        const sections: ReportSection[] = [];
 
-        return {
-            title: "Architectural Patterns (Pattern-based)",
-            content: content
-        };
+        // --- A1: Validation Question ---
+        const contractA1 = QUESTION_DICTIONARY["A1"];
+        const a1Findings = findings.filter(f => contractA1.supportingPatterns.includes(f.patternId));
+        
+        let contentA1 = `Question:\n${contractA1.question}\n\n`;
+        contentA1 += `Vocabulary:\n${contractA1.vocabulary.join(', ')}\n\n`;
+        
+        if (a1Findings.length > 0) {
+            contentA1 += `Finding:\n${a1Findings.length} system cores observed.\n\n`;
+            contentA1 += `[View Evidence](EVIDENCE_VIEWER.html#A1)\n`;
+            a1Findings.forEach(f => {
+                if (f.findingId) traceReportConsume(f.findingId, 'ARCHITECT_REPORT', 'architect.system_cores');
+            });
+        } else {
+            contentA1 += `Finding:\nNo verified finding emitted.\n\n`;
+            contentA1 += `[View Evidence](EVIDENCE_VIEWER.html#A1)\n`;
+        }
+
+        sections.push({
+            title: "A1 — System Core Validation",
+            content: contentA1
+        });
+
+        // --- A3: Observation Question ---
+        const contractA3 = QUESTION_DICTIONARY["A3"];
+        const boundaryFindings = findings.filter(f => contractA3.supportingPatterns.includes(f.patternId));
+        
+        let contentA3 = `Question:\n${contractA3.question}\n\n`;
+        contentA3 += `Vocabulary:\n${contractA3.vocabulary.join(', ')}\n\n`;
+        
+        if (boundaryFindings.length > 0) {
+            contentA3 += `Finding:\n${boundaryFindings.length} structural boundaries observed.\n\n`;
+            contentA3 += `[View Evidence](EVIDENCE_VIEWER.html#A3)\n`;
+            boundaryFindings.forEach(f => {
+                if (f.findingId) traceReportConsume(f.findingId, 'ARCHITECT_REPORT', 'architect.structural_boundaries');
+            });
+        } else {
+            contentA3 += `Finding:\nNo verified finding emitted.\n\n`;
+            contentA3 += `[View Evidence](EVIDENCE_VIEWER.html#A3)\n`;
+        }
+
+        sections.push({
+            title: "A3 — Structural Boundaries",
+            content: contentA3
+        });
+
+        // --- A5: Validation Question ---
+        const contractA5 = QUESTION_DICTIONARY["A5"];
+        const a5Findings = findings.filter(f => contractA5.supportingPatterns.includes(f.patternId));
+        
+        console.log(`[DEBUG-A5] buildArchitectSections: total findings=${findings.length}`);
+        console.log(`[DEBUG-A5] buildArchitectSections: a5Findings=${a5Findings.length}`);
+        console.log(`[DEBUG-A5] buildArchitectSections: first 5 patternIds=${findings.slice(0, 5).map(f => f.patternId).join(', ')}`);
+        
+        let contentA5 = `Question:\n${contractA5.question}\n\n`;
+        contentA5 += `Vocabulary:\n${contractA5.vocabulary.join(', ')}\n\n`;
+        
+        if (a5Findings.length > 0) {
+            contentA5 += `Finding:\n${a5Findings.length} structural control chokepoints observed.\n\n`;
+            contentA5 += `[View Evidence](EVIDENCE_VIEWER.html#A5)\n`;
+            a5Findings.forEach(f => {
+                if (f.findingId) traceReportConsume(f.findingId, 'ARCHITECT_REPORT', 'architect.chokepoints');
+            });
+        } else {
+            contentA5 += `Finding:\nNo verified finding emitted.\n\n`;
+            contentA5 += `[View Evidence](EVIDENCE_VIEWER.html#A5)\n`;
+        }
+
+        sections.push({
+            title: "A5 — Structural Control Chokepoints",
+            content: contentA5
+        });
+
+        return sections;
     }
 }

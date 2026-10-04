@@ -13,7 +13,7 @@ export function runSurgeryReportGeneration(reportPath: string, evId: string): vo
     const context: ValidationContext = {
         snapshot: { nodes: [], edges: [], clusters: [] },
         metrics,
-        workspaceRoot: process.env.SYNAPSE_WORKSPACE_ROOT || path.resolve(path.dirname(reportPath), '../..')
+        workspaceRoot: process.env.SYNAPSE_WORKSPACE_ROOT || path.resolve(path.dirname(reportPath), '..')
     };
 
     ValidationReportBuilder.generateReports(context, evId);

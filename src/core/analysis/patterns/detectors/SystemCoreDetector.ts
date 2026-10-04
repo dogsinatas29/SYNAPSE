@@ -64,7 +64,13 @@ export class SystemCoreDetector implements PatternDetector {
                     sourceId: c.targetId,
                     description: `Core traits (FanIn: ${c.evidence.fanIn}, BlastRadius: ${c.evidence.blastRadius}) -> Control Score: ${c.evidence.controlScore}`,
                     filePath: c.targetId,
-                    graphNodeId: c.graphNodeId
+                    graphNodeId: c.graphNodeId,
+                    metadata: {
+                        controlScore: c.evidence.controlScore,
+                        fanIn: c.evidence.fanIn,
+                        blastRadius: c.evidence.blastRadius,
+                        authorityReach: c.evidence.authorityReach
+                    }
                 };
 
                 findings.push({

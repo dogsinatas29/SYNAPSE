@@ -58,7 +58,11 @@ export class EntryPointDetector implements PatternDetector {
                     sourceId: targetId,
                     description: `Matched entry point naming convention (Score: ${this.calculateEntryPointScore(topCandidate)})`,
                     filePath: targetId,
-                    graphNodeId: topCandidate.id
+                    graphNodeId: topCandidate.id,
+                    metadata: {
+                        inDegree: topCandidate.fanIn || 0,
+                        outDegree: topCandidate.fanOut || 0
+                    }
                 };
 
                 findings.push({
@@ -103,7 +107,11 @@ export class EntryPointDetector implements PatternDetector {
                      type: "SIMULATION_FALLBACK",
                      sourceId: targetId,
                      description: `Derived from simulation semantic boundaries (Score: ${this.getRoleScore(targetId)})`,
-                     filePath: targetId
+                     filePath: targetId,
+                     metadata: {
+                         inDegree: 0,
+                         outDegree: 0
+                     }
                  };
 
                  findings.push({

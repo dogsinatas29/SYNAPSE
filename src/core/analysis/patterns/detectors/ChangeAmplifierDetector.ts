@@ -60,7 +60,11 @@ export class ChangeAmplifierDetector implements PatternDetector {
                     sourceId: c.targetId,
                     description: `Change Amplifier (Complexity: ${c.evidence.complexityScore}, BlastRadius: ${c.evidence.blastRadius})`,
                     filePath: c.targetId,
-                    graphNodeId: c.graphNodeId
+                    graphNodeId: c.graphNodeId,
+                    metadata: {
+                        blastRadius: c.evidence.blastRadius,
+                        propagationReach: c.evidence.complexityScore // Mapping complexityScore to propagationReach for display
+                    }
                 };
 
                 findings.push({

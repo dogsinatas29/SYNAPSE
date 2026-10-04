@@ -8,6 +8,7 @@ import { OnboardingReportBuilder } from './OnboardingReportBuilder';
 import { ExecutiveReportBuilder } from './ExecutiveReportBuilder';
 import { ValidationRenderer } from './ValidationRenderer';
 import { FindingReportAdapter } from './FindingReportAdapter';
+import { EvidenceViewerBuilder } from './EvidenceViewerBuilder';
 
 export class ReportBundleGenerator {
     
@@ -56,48 +57,9 @@ export class ReportBundleGenerator {
                 
                 const internalDensity = size > 0 ? internalEdges / size : 0;
                 const externalDensity = size > 0 ? externalEdges / size : 0;
-                
-                // Report A: Complexity (Size * InternalDensity^2 * ExternalDensity)
-                const complexityScore = Math.floor(size * internalDensity * internalDensity * externalDensity);
-                
-                // Report B: Control (Fan-In * Blast Radius)
-                // A module with high Fan-In affects many other modules if it dies. 
-                const controlScore = Math.floor(inboundEdges * 10 + (size * externalDensity));
-                
-                let tier = 'Tier 3 (Implementation Module)';
-                if (complexityScore >= 5000 || size >= 800) tier = 'Tier 1 (High Structural Mass)';
-                else if (complexityScore >= 1000 || size >= 100) tier = 'Tier 2 (Moderate Structural Mass)';
-                
-                return { ...f, complexityScore, controlScore, tier };
+                return { ...f };
             });
-
-            // --- Report A: Architectural Complexity Ranking ---
-            const complexityRanked = [...scoredFindings].sort((a: any, b: any) => b.complexityScore - a.complexityScore).slice(0, 50);
-            
-            const cTier1 = complexityRanked.filter((f: any) => f.tier.includes('Tier 1'));
-            const cTier2 = complexityRanked.filter((f: any) => f.tier.includes('Tier 2'));
-            const cTier3 = complexityRanked.filter((f: any) => f.tier.includes('Tier 3'));
-            
-            let contentA = '';
-            if (cTier1.length > 0) contentA += `#### Tier 1 (High Structural Mass)\n` + cTier1.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n\n`;
-            if (cTier2.length > 0) contentA += `#### Tier 2 (Moderate Structural Mass)\n` + cTier2.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n\n`;
-            if (cTier3.length > 0) contentA += `<details>\n<summary>Tier 3 (Implementation Module) - Click to expand</summary>\n\n` + cTier3.map((f: any) => `- **[Score: ${f.complexityScore}]** Node: \`${f.targetId}\` | ${f.message}`).join('\n') + `\n</details>\n`;
-
-            // --- Report B: Dependency Concentration Ranking ---
-            const controlRanked = [...scoredFindings].sort((a: any, b: any) => b.controlScore - a.controlScore).slice(0, 50);
-            
-            let contentB = controlRanked.map((f: any, i: number) => `${i+1}. **[Control Score: ${f.controlScore}]** Node: \`${f.targetId}\` (Fan-In: ${f.metadata?.inboundEdges || 0}, Size: ${f.metadata?.size || 0})`).join('\n');
-
-            formattedEvidence = [
-                {
-                    title: 'Report A: Structural Complexity Ranking (Top 50)',
-                    content: contentA || 'No Boundary Nodes found.'
-                },
-                {
-                    title: 'Report B: Dependency Concentration Ranking (Top 50)',
-                    content: contentB || 'No Boundary Nodes found.'
-                }
-            ];
+            formattedEvidence = [];
 
             // Add Validation Study Raw Data to Evidence
             if (simulationContext.validationEvidence && simulationContext.validationEvidence.studies) {
@@ -178,49 +140,20 @@ export class ReportBundleGenerator {
         }
 
         if (message.command === 'fetchArchitectureReport') {
-            let archContent = archInsight.findings.length > 0 ? archInsight.findings.map(f => `### ${f.filePath}\n\n## Observation\n${f.observation}\n\n## Evidence\n${f.evidence || 'No specific evidence available.'}\n\n## Interpretation\n${f.interpretation}\n\n## Recommendation\n${f.recommendation}`).join('\n\n---\n\n') : 'No architectural findings in this scope.';
-            
-            const valEv: ValidationEvidence = simulationContext.validationEvidence;
-            if (valEv && valEv.studies) {
-                let valSection = '';
-                
-                const studies = valEv.studies;
-                const { mockCount, simCount, measCount, totalReps, quality } = ValidationRenderer.evidence.calculateQualityAndStrength(studies);
-                
-                const allClaims = studies.flatMap(s => s.claims || []);
-                const supportedClaims = allClaims.filter(c => c.status === 'supported');
-                
-                if (supportedClaims.length > 0) {
-                    supportedClaims.forEach((claim, idx) => {
-                        valSection += `### Finding #${idx + 1}\n\n`;
-                        valSection += ValidationRenderer.claim.render(claim, studies);
-                        valSection += ValidationRenderer.evidence.renderChain(studies);
-                    });
-                }
-                
-                archContent = valSection + `### Original Architectural Observations\n\n` + archContent;
-            }
-
             const archHeader = insight.generateHeader('ARCHITECT', 'ARCHITECTURAL_SCAN', context);
+            const cleanEvidence: any[] = [];
+            const appendixData: any[] = [];
             
-            const cleanEvidence = formattedEvidence.filter((e: any) => !e.title.includes('SCC Validation Evidence'));
-            const appendixData = ValidationRenderer.appendix.render(formattedEvidence);
-            
+            const adapter = new FindingReportAdapter();
+            const sections = adapter.buildArchitectSections(archInsight.patternFindings || []);
+
             const archContract: ReportContract = {
                 header: archHeader,
                 summary: 'Observation-based structural analysis with rigorous validation provenance.',
-                findings: [{
-                    title: 'Architectural Findings',
-                    content: archContent
-                }],
+                findings: sections,
                 evidence: cleanEvidence,
                 appendix: appendixData
             };
-            
-            const adapter = new FindingReportAdapter();
-            if (archInsight.patternFindings && archInsight.patternFindings.length > 0) {
-                archContract.findings.unshift(adapter.buildArchitectSection(archInsight.patternFindings));
-            }
 
             returnPath = path.join(bundleDir, 'ARCHITECT_REPORT.md');
             fs.writeFileSync(returnPath, insight.renderReportToMarkdown(archContract));
@@ -228,21 +161,16 @@ export class ReportBundleGenerator {
 
         if (message.command === 'fetchOnboardingReport') {
             const onboardHeader = insight.generateHeader('ONBOARDING', 'ARCHITECTURAL_SCAN', context);
-            const onboardBuilder = new OnboardingReportBuilder();
-            // P0 Constraint: Do not dump Report A/B into Onboarding report.
             const cleanEvidence: any[] = [];
             const appendixData: any[] = [];
             
-            const findings = onboardBuilder.build(onboardInsight);
             const adapter = new FindingReportAdapter();
-            if (onboardInsight.findings) {
-                findings.unshift(adapter.buildOnboardingSection(onboardInsight.findings));
-            }
+            const onboardSections = adapter.buildOnboardingSections((onboardInsight as any).patternFindings || onboardInsight.findings || []);
 
             const onboardContract: ReportContract = {
                 header: onboardHeader,
                 summary: 'Onboarding Report',
-                findings: findings,
+                findings: onboardSections,
                 evidence: cleanEvidence,
                 appendix: appendixData
             };
@@ -255,66 +183,19 @@ export class ReportBundleGenerator {
         if (!returnPath) {
             const debugHeader = insight.generateHeader('SIMULATION_DEBUG', 'EXECUTION_TRACE', context);
             
-            let debugFindings: any[] = [];
-            
-            const valEv: ValidationEvidence = simulationContext.validationEvidence;
-            if (valEv && valEv.studies && valEv.studies.length > 0) {
-                const allClaims = valEv.studies.flatMap(s => s.claims || []);
-                const supported = allClaims.filter(c => c.status === 'supported');
-                const rejected = allClaims.filter(c => c.status === 'rejected');
-                const observed = allClaims.filter(c => c.status === 'observed');
-                const inconclusive = allClaims.filter(c => c.status === 'inconclusive');
-                
-                const { mockCount, simCount, measCount, totalReps, quality } = ValidationRenderer.evidence.calculateQualityAndStrength(valEv.studies);
-                
-                let valContent = ``;
-                if (supported.length > 0) {
-                    valContent += `### Supported\n---\n`;
-                    supported.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies));
-                }
-                if (rejected.length > 0) {
-                    valContent += `### Rejected\n---\n`;
-                    rejected.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies));
-                }
-                if (observed.length > 0) {
-                    valContent += `### Observed\n---\n`;
-                    observed.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies));
-                }
-                if (inconclusive.length > 0) {
-                    valContent += `### Inconclusive\n---\n`;
-                    inconclusive.forEach(c => valContent += ValidationRenderer.claim.render(c, valEv.studies));
-                }
+            const cleanEvidence: any[] = [];
+            const appendixData: any[] = [];
 
-                formattedEvidence.push({
-                    title: 'SCC Validation Claims',
-                    content: valContent || 'No validation claims found.'
-                });
-            } else {
-                formattedEvidence.push({
-                    title: 'SCC Validation Claims',
-                    content: 'No validation studies found.'
-                });
-            }
-
-            // P0 Constraint: Do not include Report A/B structural dumps in Simulation report.
-            const cleanEvidence = formattedEvidence.filter((e: any) => e.title.includes('SCC Validation'));
-            const appendixData = ValidationRenderer.appendix.render(formattedEvidence);
+            const adapter = new FindingReportAdapter();
+            const simSections = adapter.buildExecutionSections(simInsight.patternFindings || []);
 
             const debugContract: ReportContract = {
                 header: debugHeader,
                 summary: 'Simulation Debug Report',
-                findings: debugFindings,
+                findings: simSections,
                 evidence: cleanEvidence,
                 appendix: appendixData
             };
-            
-            const adapter = new FindingReportAdapter();
-            if (simInsight.patternFindings && simInsight.patternFindings.length > 0) {
-                const inputBoundary = simInsight.patternFindings.filter((f: any) => f.patternId === 'BOUNDARY_CANDIDATE').length;
-                const simSection = adapter.buildSimulationSection(simInsight.patternFindings);
-                debugContract.findings.unshift(simSection);
-                console.log(`[DT-A3] ReportBundleGenerator:\n  inputBoundary=${inputBoundary}\n  reportSections=${debugContract.findings.length}\n  consumedBoundary=0`);
-            }
 
             returnPath = path.join(bundleDir, 'SIMULATION_DEBUG.md');
             const md = insight.renderReportToMarkdown(debugContract);
@@ -323,6 +204,16 @@ export class ReportBundleGenerator {
             console.log(`[DT-A4] Markdown:\n  reportSectionInputBoundary=0\n  section exists=${sectionExists}\n  renderedBoundaryItems=${renderedBoundaryItems}`);
             fs.writeFileSync(returnPath, md);
         }
+
+        // --- Step 4-A: Separate HTML generation ---
+        const allFindings = [
+            ...(execInsight.patternFindings || []),
+            ...(onboardInsight.findings || []),
+            ...(simInsight.patternFindings || []),
+            ...(archInsight.patternFindings || [])
+        ];
+        const evidenceHtml = EvidenceViewerBuilder.buildHtml(allFindings, bundleDir);
+        fs.writeFileSync(path.join(bundleDir, 'EVIDENCE_VIEWER.html'), evidenceHtml);
 
         return returnPath;
     }

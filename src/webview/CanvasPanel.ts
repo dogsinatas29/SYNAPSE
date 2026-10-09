@@ -180,10 +180,10 @@ export class CanvasPanel {
     }
 
     public static revive(panel: vscode.WebviewPanel, context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
-        CanvasPanel.currentPanel = new CanvasPanel(panel, context, workspaceFolder);
+        CanvasPanel.currentPanel = new CanvasPanel(panel, context, workspaceFolder, true);
     }
 
-    private constructor(panel: vscode.WebviewPanel, context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
+    private constructor(panel: vscode.WebviewPanel, context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder, isRevive: boolean = false) {
         this._panel = panel;
         this._extensionUri = context.extensionUri;
         this._context = context;
@@ -191,10 +191,14 @@ export class CanvasPanel {
 
         Logger.info(`[CanvasPanel] 🏗️ CONSTRUCTOR CALLED. Assigned ID: ${this._panelId}`);
 
-        // [Ponytail] Call _update synchronously. Delaying this causes ServiceWorker InvalidStateError during revive.
+        // [Ponytail] Unconditionally delay _update() by 500ms. 
+        // Synchronously assigning this._panel.webview.html interrupts VSCode's internal ServiceWorker registration,
+        // causing 'InvalidStateError: The document is in an invalid state' on both new panels and revives.
         if (this._panel && this._panel.webview) {
-            Logger.info(`[CanvasPanel] Performing initial update...`);
-            this._update();
+            Logger.info(`[CanvasPanel] Scheduling delayed HTML update (bypassing VSCode SW crash)...`);
+            setTimeout(() => {
+                this._update();
+            }, 500);
         }
 
         // Listen for when the panel is disposed

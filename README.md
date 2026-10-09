@@ -440,6 +440,14 @@ SYNAPSE distinguishes observed structure from interpretation. When evidence is i
 
 Reports present validated results from the analysis pipeline. Detailed evidence should remain available for inspection so that readers can trace a reported conclusion back to its supporting observations and metrics.
 
+### 📝 Report Samples (v0.3.34.73)
+
+| Project | Architect Report | Onboarding Report | Simulation Debug | Evidence Viewer |
+|---------|------------------|-------------------|------------------|-----------------|
+| **Godot** | [Link](./assets/v0.3.34.73/godot/ARCHITECT_REPORT.md) | [Link](./assets/v0.3.34.73/godot/ONBOARDING_REPORT.md) | [Link](./assets/v0.3.34.73/godot/SIMULATION_DEBUG.md) | [Link](./assets/v0.3.34.73/godot/EVIDENCE_VIEWER.html) |
+| **AntennaPod** | [Link](./assets/v0.3.34.73/antenapod/ARCHITECT_REPORT.md) | [Link](./assets/v0.3.34.73/antenapod/ONBOARDING_REPORT.md) | [Link](./assets/v0.3.34.73/antenapod/SIMULATION_DEBUG.md) | [Link](./assets/v0.3.34.73/antenapod/EVIDENCE_VIEWER.html) |
+| **VSCode** | [Link](./assets/v0.3.34.73/vscode/ARCHITECT_REPORT.md) | [Link](./assets/v0.3.34.73/vscode/ONBOARDING_REPORT.md) | [Link](./assets/v0.3.34.73/vscode/SIMULATION_DEBUG.md) | [Link](./assets/v0.3.34.73/vscode/EVIDENCE_VIEWER.html) |
+
 #### 🧹 Clear Debug
 Removes all debug visual states from the canvas and resets nodes to their default rendering state. Does not affect actual graph data.
 

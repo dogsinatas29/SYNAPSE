@@ -476,6 +476,14 @@ SYNAPSE는 관찰된 구조와 해석을 명확히 구분합니다. 증거가 �
 
 보고서는 분석 파이프라인에서 검증된 결과만을 제시합니다. 독자가 보고된 결론을 뒷받침하는 관찰 및 메트릭으로 다시 추적할 수 있도록 상세 증거는 항상 검사 가능한 상태로 유지되어야 합니다.
 
+### 📝 보고서 샘플 (v0.3.34.73)
+
+| 프로젝트 | Architect Report | Onboarding Report | Simulation Debug | Evidence Viewer |
+|---------|------------------|-------------------|------------------|-----------------|
+| **Godot** | [링크](./assets/v0.3.34.73/godot/ARCHITECT_REPORT.md) | [링크](./assets/v0.3.34.73/godot/ONBOARDING_REPORT.md) | [링크](./assets/v0.3.34.73/godot/SIMULATION_DEBUG.md) | [링크](./assets/v0.3.34.73/godot/EVIDENCE_VIEWER.html) |
+| **AntennaPod** | [링크](./assets/v0.3.34.73/antenapod/ARCHITECT_REPORT.md) | [링크](./assets/v0.3.34.73/antenapod/ONBOARDING_REPORT.md) | [링크](./assets/v0.3.34.73/antenapod/SIMULATION_DEBUG.md) | [링크](./assets/v0.3.34.73/antenapod/EVIDENCE_VIEWER.html) |
+| **VSCode** | [링크](./assets/v0.3.34.73/vscode/ARCHITECT_REPORT.md) | [링크](./assets/v0.3.34.73/vscode/ONBOARDING_REPORT.md) | [링크](./assets/v0.3.34.73/vscode/SIMULATION_DEBUG.md) | [링크](./assets/v0.3.34.73/vscode/EVIDENCE_VIEWER.html) |
+
 #### 🧹 Clear Debug — 디버그 초기화
 캔버스에서 모든 디버그 시각 상태를 제거하고 노드를 기본 렌더링 상태로 초기화합니다. 실제 그래프 데이터에는 영향을 주지 않습니다.
 

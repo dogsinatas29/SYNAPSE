@@ -154,19 +154,23 @@ export async function activate(context: vscode.ExtensionContext) {
         */
 
         console.log('[SYNAPSE] Registering WebviewPanelSerializer...');
+        // [Ponytail] Disabling WebviewPanelSerializer entirely.
+        // Reviving a webview with a ServiceWorker causes unpreventable InvalidStateError or OverlayWebview crashes in VSCode.
+        // It is safer to let the panel be destroyed on restart and require the user to open a fresh canvas.
+        /*
         if (vscode.window.registerWebviewPanelSerializer) {
             vscode.window.registerWebviewPanelSerializer('synapseCanvas', {
                 async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-                    console.log(`[SYNAPSE] Reviving webview panel`);
-                    // [Ponytail] The revived panel has a doomed ServiceWorker in many VS Code versions (InvalidStateError).
-                    // We completely bypass this by disposing the broken revived panel and opening a fresh one.
-                    webviewPanel.dispose();
-                    setTimeout(() => {
-                        vscode.commands.executeCommand('synapse.openCanvas');
-                    }, 100);
+                    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                    if (workspaceFolder) {
+                        CanvasPanel.revive(webviewPanel, context, workspaceFolder);
+                    } else {
+                        webviewPanel.dispose();
+                    }
                 }
             });
         }
+        */
         console.log('[SYNAPSE] WebviewPanelSerializer registered');
 
 

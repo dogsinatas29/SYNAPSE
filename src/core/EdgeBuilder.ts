@@ -15,7 +15,7 @@ export interface EdgeBuilderResult {
 }
 
 export class EdgeBuilder {
-    public static build(expandedReferences: ExpandedReference[]): EdgeBuilderResult {
+    public static async build(expandedReferences: ExpandedReference[]): Promise<EdgeBuilderResult> {
         console.log('[EDGE_BUILDER_ENTER]');
         console.error(
             '[EDGE_BUILDER_INPUT]',
@@ -29,10 +29,16 @@ export class EdgeBuilder {
 
         console.error("[EDGE_STAGE] START");
         let processedEdges = 0;
-        for (const ref of expandedReferences) {
+        for (let i = 0; i < expandedReferences.length; i++) {
+            const ref = expandedReferences[i];
+            expandedReferences[i] = null as any; // Free memory immediately
+            
             processedEdges++;
-            if (processedEdges % 1000000 === 0) {
-                console.error("[EDGE_STAGE]", processedEdges);
+            if (processedEdges % 100000 === 0) {
+                const heapUsedMB = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
+                console.error(`[EDGE_STAGE] ${processedEdges} heap=${heapUsedMB}MB edgeMap=${edgeMap.size}`);
+                // Chunking: Yield to event loop to allow V8 GC to clean up temporary strings and prevent OOM
+                await new Promise(resolve => setImmediate(resolve));
             }
             const mappedType = EdgeBuilder.mapEdgeType(ref.referenceType);
             const edgeKey = `${ref.sourceId}::${ref.targetId}::${mappedType}`;
@@ -70,6 +76,24 @@ export class EdgeBuilder {
                (edgeTypeCount.get(mappedType) || 0) + 1
             );
             edgeMap.set(edgeKey, newEdge);
+
+            // Streaming Prune: If the map grows too large, sort and keep top 200k
+            if (edgeMap.size >= 300000) {
+                console.warn(`[EDGE_LIMIT] Pruning edgeMap at ${edgeMap.size} to prevent OOM...`);
+                let tempEdges = Array.from(edgeMap.values());
+                tempEdges.sort((a, b) => {
+                    if (a.type === 'INCLUDE' && b.type !== 'INCLUDE') return -1;
+                    if (b.type === 'INCLUDE' && a.type !== 'INCLUDE') return 1;
+                    return b.weight - a.weight;
+                });
+                tempEdges = tempEdges.slice(0, 200000);
+                edgeMap.clear();
+                for (let j = 0; j < tempEdges.length; j++) {
+                    const e = tempEdges[j];
+                    edgeMap.set(`${e.from}::${e.to}::${e.type}`, e);
+                }
+                await new Promise(resolve => setImmediate(resolve));
+            }
         }
         
         console.error("[EDGE_STAGE] COMPLETE", edgeMap.size);

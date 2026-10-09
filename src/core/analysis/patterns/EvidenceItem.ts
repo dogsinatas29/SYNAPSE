@@ -8,4 +8,15 @@ export interface EvidenceItem {
     graphNodeId?: string;
     filePath?: string;
     metadata?: any;
+
+    // Selection Provenance
+    predicate?: {
+        condition: string;
+        metric?: string;
+        operator?: string;
+        cutoff?: number | string;
+        actualValue?: number | string;
+        rank?: number;
+    } | string;
+    selectionBasis?: string;
 }

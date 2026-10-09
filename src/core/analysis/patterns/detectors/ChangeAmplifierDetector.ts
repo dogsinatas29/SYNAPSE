@@ -64,7 +64,15 @@ export class ChangeAmplifierDetector implements PatternDetector {
                     metadata: {
                         blastRadius: c.evidence.blastRadius,
                         propagationReach: c.evidence.complexityScore // Mapping complexityScore to propagationReach for display
-                    }
+                    },
+                    predicate: {
+                        condition: "P50_CUTOFF",
+                        metric: "propagationReach",
+                        operator: ">=",
+                        cutoff: medianScore,
+                        actualValue: c.evidence.complexityScore
+                    },
+                    selectionBasis: `propagationReach (${c.evidence.complexityScore}) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: ${medianScore}).`
                 };
 
                 findings.push({

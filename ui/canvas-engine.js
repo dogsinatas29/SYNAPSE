@@ -2592,10 +2592,14 @@ class CanvasEngine {
             if (dragging === 'v') {
                 const dy = e.clientY - dragStartY;
                 const viewHeight = container.clientHeight;
-                // Max content height estimate
-                const maxY = this.nodes.length > 0
-                    ? Math.max(...this.nodes.map(n => n.position.y + 60)) : viewHeight * 2;
-                const contentHeight = Math.max(viewHeight * 2, maxY * zoom);
+                    let maxY = viewHeight * 2;
+                    if (this.nodes.length > 0) {
+                        for (let i = 0, len = this.nodes.length; i < len; i++) {
+                            const n = this.nodes[i];
+                            if (n.position && typeof n.position.y === 'number' && n.position.y + 60 > maxY) maxY = n.position.y + 60;
+                        }
+                    }
+                    const contentHeight = Math.max(viewHeight * 2, maxY * zoom);
                 // Map thumb pixel drag to world offset change
                 const worldDelta = (dy / viewHeight) * contentHeight / zoom;
                 this.transform.offsetY = startOffsetY - worldDelta * zoom;
@@ -2603,8 +2607,13 @@ class CanvasEngine {
             } else if (dragging === 'h') {
                 const dx = e.clientX - dragStartX;
                 const viewWidth = container.clientWidth;
-                const maxX = this.nodes.length > 0
-                    ? Math.max(...this.nodes.map(n => n.position.x + 120)) : viewWidth * 2;
+                let maxX = viewWidth * 2;
+                if (this.nodes.length > 0) {
+                    for (let i = 0, len = this.nodes.length; i < len; i++) {
+                        const n = this.nodes[i];
+                        if (n.position && typeof n.position.x === 'number' && n.position.x + 120 > maxX) maxX = n.position.x + 120;
+                    }
+                }
                 const contentWidth = Math.max(viewWidth * 2, maxX * zoom);
                 const worldDelta = (dx / viewWidth) * contentWidth / zoom;
                 this.transform.offsetX = startOffsetX - worldDelta * zoom;
@@ -4155,6 +4164,7 @@ class CanvasEngine {
     zoom(wheelDelta, centerX, centerY) {
 
         const oldZoom = this.transform.zoom;
+        const oldIsSatellite = oldZoom < 0.4;
         // [v0.3.33.9] Fix: Truly smooth exponential zooming for trackpads
         // Math.exp allows continuous scaling without massive jumps at tiny zoom levels
         let wDelta = wheelDelta;
@@ -4171,6 +4181,12 @@ class CanvasEngine {
         const zoomRatio = this.transform.zoom / oldZoom;
         this.transform.offsetX = centerX - (centerX - this.transform.offsetX) * zoomRatio;
         this.transform.offsetY = centerY - (centerY - this.transform.offsetY) * zoomRatio;
+
+        const newIsSatellite = this.transform.zoom < 0.4;
+        if (oldIsSatellite !== newIsSatellite) {
+            this.isGraphDataDirty = true;
+            console.trace('[DIRTY_SOURCE_ZOOM_CROSS]');
+        }
 
         this.updateZoomDisplay();
         this.wakeUp();
@@ -4210,7 +4226,9 @@ class CanvasEngine {
         }
 
         // [v0.3.33] Phase 3A: rbush Node Spatial Index Hit Test
-        const PADDING = 15; // Max padding
+        // [v0.3.36] Fix: Scale PADDING with zoom so that at Satellite View (0.003 zoom), 
+        // the spatial query box is large enough in world coordinates to capture a screen-space pixel click.
+        const PADDING = 15 + Math.max(0, 15 / this.transform.zoom); // Max padding + screen scale
         let searchNodes = [];
         if (this.spatialIndex && !this.spatialIndex.fallbackMode) {
             const queryRes = this.spatialIndex.queryViewport(worldX - PADDING, worldY - PADDING, worldX + PADDING, worldY + PADDING, 'nodes');
@@ -4226,7 +4244,10 @@ class CanvasEngine {
             const nodeWidth = node._width || 120;
             const nodeHeight = 60;
             const isSelected = this.selectedNodes.has(node);
-            const HIT_PADDING = isSelected ? 15 : 0; // [v0.2.32] Extra 15px grab area for selected nodes
+            
+            // [v0.3.36] Fix Satellite View Hover: Add screen-space dynamic padding so nodes remain pickable
+            const dynamicHitPadding = Math.max(0, (10 / this.transform.zoom) - Math.min(nodeWidth, nodeHeight) / 2);
+            const HIT_PADDING = (isSelected ? 15 : 0) + dynamicHitPadding;
 
             // Check if node is hidden (collapsed || forcedCollapsed, or ancestor) [v0.3.34.20]
             if (node.cluster_id) {
@@ -4265,10 +4286,21 @@ class CanvasEngine {
     getClusterAt(worldX, worldY) {
         if (!this.clusters) return null;
 
-        // 역순으로 검사 (위에 그려진 클러스터 우선)
-        for (let i = this.clusters.length - 1; i >= 0; i--) {
-            const cluster = this.clusters[i];
+        // [Ponytail] Fix: Ensure deepest clusters (children) are checked FIRST for hit-testing
+        // Previously, random array order caused parents to intercept clicks meant for children,
+        // or children overlapping parent headers intercepted parent clicks.
+        const getDepth = (c) => {
+            let depth = 0;
+            let curr = c;
+            while (curr && curr.parent_id) {
+                depth++;
+                curr = this._clusterMap ? this._clusterMap.get(curr.parent_id) : this.clusters.find(p => p.id === curr.parent_id);
+            }
+            return depth;
+        };
+        const sorted = [...this.clusters].sort((a, b) => getDepth(b) - getDepth(a));
 
+        for (const cluster of sorted) {
             // [v0.3.33] Phase 5: Cluster Render Eligibility
             if (!this._canRenderCluster(cluster)) continue;
 
@@ -4279,28 +4311,19 @@ class CanvasEngine {
                     worldY >= b.y && worldY <= b.y + b.height + (cluster.collapsed ? 0 : cluster._bodyHeight || 0)) {
                     return cluster;
                 }
-                continue; // [v0.3.34.41] Senior's Brake: DO NOT fall through to O(N) node scan!
+            } else if (cluster.bounds) {
+                // [v0.3.34] Fallback to Layout bounds if no render bounds
+                const b = cluster.bounds;
+                if (worldX >= b.minX && worldX <= b.maxX &&
+                    worldY >= b.minY && worldY <= b.maxY) {
+                    return cluster;
+                }
             }
+            
+            // [v0.3.34.41] Senior's Brake FIX: NEVER fall through to O(N) node scan!
+            // Previously, the 'continue' was inside the if block, so missing bounds triggered a 47-second CPU lockup via `this.nodes.filter()`.
+            continue;
 
-            const clusterNodes = this.nodes.filter(n => n.cluster_id === cluster.id);
-            if (clusterNodes.length === 0) continue;
-
-            let minX = Infinity, minY = Infinity;
-            let maxX = -Infinity, maxY = -Infinity;
-            const padding = 20;
-
-            for (const node of clusterNodes) {
-                minX = Math.min(minX, node.position.x);
-                minY = Math.min(minY, node.position.y);
-                maxX = Math.max(maxX, node.position.x + 120);
-                maxY = Math.max(maxY, node.position.y + 60);
-            }
-
-            // 클러스터 박스 영역 (배경 또는 라벨 영역)
-            if (worldX >= minX - padding && worldX <= maxX + padding &&
-                worldY >= minY - padding - 30 && worldY <= maxY + padding) {
-                return cluster;
-            }
         }
         return null;
     }
@@ -6538,15 +6561,26 @@ class CanvasEngine {
     initLODState() {
         if (!this.clusterHierarchy) return;
         this.expandedClusters = new Set();
+        let totalCollapsed = 0;
         if (this.clusters) {
+            // [v0.3.34.75] Ensure deepest clusters are checked FIRST by getClusterAt and drawn ON TOP of parents.
+            this.clusters.sort((a, b) => {
+                const depthA = this.clusterHierarchy.getDepth(a.id);
+                const depthB = this.clusterHierarchy.getDepth(b.id);
+                return depthA - depthB; // Ascending: parents (0) first, then children (1, 2, ...). Children drawn last = on top.
+            });
+
             // [v0.3.33.4 Fix] Unify expandedClusters with c.collapsed for all clusters
             // System A (c.collapsed) and System B (expandedClusters) must be strictly synchronized
             for (const c of this.clusters) {
                 if (!c.collapsed) {
                     this.expandedClusters.add(c.id);
+                } else {
+                    totalCollapsed++;
                 }
             }
         }
+        console.error(`[LOD_INIT]\nclusters=${this.clusters ? this.clusters.length : 0}\ncollapsed=${totalCollapsed}\nexpanded=${this.expandedClusters.size}`);
         // [ARCH_TRACE 3/4] EXPANDED — check expandedClusters after init
         {
             const _archTargets = ['folder_root', 'folder_arch', 'folder_arch_alpha', 'folder_arch_alpha_include', 'folder_arch_alpha_include_asm', 'folder_arch_arc'];
@@ -7036,8 +7070,8 @@ class CanvasEngine {
                     const layer = c.layer || (c.data && c.data.layer) || (c.id === 'cluster_ghosts' ? 'external' : c.id.startsWith('sys_') ? 'ai' : 'user');
                     const clientLayer = c.clientLayer || (c.data && c.data.clientLayer);
 
-                    // [v0.3.34] Default collapsed to false to ensure initLODState captures them
-                    return { ...c, layer, clientLayer, collapsed: false };
+                    // [v0.3.34] Default collapsed to true reverted
+                    return { ...c, layer, clientLayer };
                 });
             // [ARCH_TRACE 1/4] LOAD — check cluster existence after assignment
             {
@@ -7184,21 +7218,15 @@ class CanvasEngine {
             }
 
             // [v0.2.24 New Rule] Documentation Shelf is collapsed by default
-            // [v0.3.34.20] User Request: Expand ALL clusters by default on initial load
+            // [v0.3.34.73] User Request: Expand ALL clusters by default on initial load (force override saved state)
             this.clusters.forEach(cluster => {
                 if (cluster.id === 'doc_shelf') {
-                    if (cluster.collapsed === undefined) {
-                        cluster.collapsed = true;
-                    }
+                    cluster.collapsed = true;
                 } else if (cluster.id.startsWith('sys_cluster_')) {
-                    if (cluster.collapsed === undefined) {
-                        cluster.collapsed = false; // System clusters are expanded by default
-                    }
+                    cluster.collapsed = false; // System clusters are expanded by default
                 } else {
-                    if (cluster.collapsed === undefined) {
-                        // User request: Everything is expanded (false) initially
-                        cluster.collapsed = false;
-                    }
+                    // User request: Everything is expanded (false) initially, override saved true
+                    cluster.collapsed = false;
                 }
             });
             
@@ -8379,7 +8407,33 @@ class CanvasEngine {
                 this.updateZoomDisplay();
             }
 
-            const frameState = this.buildFrameState(contextSnapshot);
+            const currentSelectionHash = Array.from(this.selectedNodes).map(n => n.id).sort().join(',') + (this.selectedEdge?.id || '');
+            if (this._lastSelectionHash !== currentSelectionHash) {
+                this.isGraphDataDirty = true;
+                this._lastSelectionHash = currentSelectionHash;
+            }
+
+            const layerCacheKey = `${this.showBaseLayer}|${this.showUserLayer}|${this.showExternalLayer}|${Object.keys(this.clientLayers).map(k=>`${k}:${this.clientLayers[k].visible}`).join(',')}`;
+            if (this._lastLayerCacheKey !== layerCacheKey) {
+                this.isGraphDataDirty = true;
+                this._lastLayerCacheKey = layerCacheKey;
+            }
+
+            let frameState;
+            let isDataDirty = false;
+            
+            if (!this._cachedFrameState || this.isGraphDataDirty) {
+                console.time('[PERF] buildFrameState');
+                frameState = this.buildFrameState(contextSnapshot);
+                console.timeEnd('[PERF] buildFrameState');
+                
+                this._cachedFrameState = frameState;
+                this.isGraphDataDirty = false;
+                isDataDirty = true;
+            } else {
+                frameState = this._cachedFrameState;
+                frameState.context = contextSnapshot; // Update camera/context
+            }
             this.lastFrameState = frameState; // Save for hit testing
 
 
@@ -8415,7 +8469,7 @@ class CanvasEngine {
 
             // 3D Redraw (Atomic update)
             if (this.webglRenderer && this.webglEnabled) {
-                this.webglRenderer.renderFromState(frameState);
+                this.webglRenderer.renderFromState(frameState, isDataDirty);
             }
             return;
         }
@@ -8521,7 +8575,7 @@ class CanvasEngine {
 
         // [v0.2.32] Power-Saving (Sleeping) Logic: Move ABOVE clear to prevent screen flickering/disappearance
         // If not dirty and not animating, NO NEED to clear or redraw.
-        if (!this.isDirty && !this.isAnimating && !this._isInteracting && !this.isDragging) {
+        if (!this.isDirty && !this.isGraphDataDirty && !this.isNodeBufferDirty && !this.isEdgeDirty && !this.isTextDirty && !this.isAnimating && !this._isInteracting && !this.isDragging) {
             console.timeEnd('render-frame');
             return;
         }
@@ -8755,6 +8809,8 @@ class CanvasEngine {
                     const preCapCandidateCount = candidateNodes.length;
                     // Removed 1000 hard cap: it breaks edge from/to matching and WebGL can handle 150k now.
 
+                    const collapseMemo = new Map();
+
                     this._visibleNodesCache = candidateNodes.filter(n => {
                         _currentNodeForReject = n;
                         const isUser = isUserLogic(n);
@@ -8794,54 +8850,45 @@ class CanvasEngine {
                             }
                         }
 
-                        // [v0.3.33 Phase 4-D-1] LOD Dematerialization: Telescope LOD (System B) Hierarchy Check
-                        let isTelescopeCollapsed = false;
-                        if (this.clusterHierarchy && this.expandedClusters) {
-                            let currNode = this.clusterHierarchy.get(clusterId);
-                            let hDepth = 0;
-                            while (currNode && hDepth < 100) {
-                                // If the node itself is the cluster we are checking, its own collapsed state doesn't hide itself.
-                                // Its collapsed state only hides its children.
-                                if (currNode.id !== n.id) {
-                                    const hasChildren = currNode.children && currNode.children.length > 0;
-                                    if (hasChildren && !this.expandedClusters.has(currNode.id)) {
-                                        isTelescopeCollapsed = true;
-                                        break;
-                                    }
-                                }
-                                currNode = currNode.parentId ? this.clusterHierarchy.get(currNode.parentId) : null;
-                                hDepth++;
-                            }
-                        }
 
-                        if (isTelescopeCollapsed) {
-                            if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=lod_dematerialized');
-                            markReject('lodDematerialized');
-                            return false;
-                        }
 
                         // [v0.2.27] Sync: Skip nodes in collapsed clusters (matches 2D behavior - System A)
                         if (clusterId && this.clusterHierarchy) {
-                            let curId = clusterId;
-                            let limit = 0;
-                            while (curId && limit++ < 100) {
-                                if (curId !== n.id) {
-                                    const hNode = this.clusterHierarchy.get(curId);
-                                    if (hNode && hNode.cluster && (hNode.cluster.collapsed || hNode.cluster.forcedCollapsed)) { 
-                                        if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=collapsed_sys_a'); 
-                                        markReject('collapsedSystemA');
-                                        return false; 
+                            let isHidden = false;
+                            if (collapseMemo.has(clusterId)) {
+                                isHidden = collapseMemo.get(clusterId);
+                            } else {
+                                let curId = clusterId;
+                                let limit = 0;
+                                while (curId && limit++ < 100) {
+                                    if (curId !== n.id) {
+                                        const hNode = this.clusterHierarchy.get(curId);
+                                        if (hNode && hNode.cluster && (hNode.cluster.collapsed || hNode.cluster.forcedCollapsed)) { 
+                                            isHidden = true;
+                                            break;
+                                        }
                                     }
+                                    const hNode = this.clusterHierarchy.get(curId);
+                                    curId = hNode ? hNode.parentId : null;
                                 }
-                                const hNode = this.clusterHierarchy.get(curId);
-                                curId = hNode ? hNode.parentId : null;
+                                collapseMemo.set(clusterId, isHidden);
+                            }
+                            
+                            if (isHidden) {
+                                if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=collapsed_sys_a'); 
+                                markReject('collapsedSystemA');
+                                return false; 
                             }
                         }
+
                         if (isActivity) console.log('[ACTIVITY_REJECT]', n.id, 'reason=PASS');
                         lodFilterStats.pass++;
                         return true;
                     });
                     console.error('[LOD_REJECT_STATS]', JSON.stringify(lodFilterStats));
+                    
+                    console.error(`[LOD_RESULT]\ncandidateNodes=${preCapCandidateCount}\nvisibleNodes=${this._visibleNodesCache.length}\nrenderNodes=${this._visibleNodesCache.length}`);
+                    
                     console.timeEnd('visibleNodeFilter');
                     this._recordPerfMetric('visibleNodeFilter', performance.now() - _tVisibleNodeFilterStart);
                     console.timeEnd('LOD:visibleNodes');
@@ -8909,7 +8956,7 @@ class CanvasEngine {
                     this._visibleEdgesCache = [];
                     let spaghettiBefore = 0;
                     let spaghettiDropped = 0;
-                    const DISABLE_SPAGHETTI_FILTER = true; // [USER DIAGNOSTIC]
+                    const DISABLE_SPAGHETTI_FILTER = true; // [v0.3.35 Fix] Disabled: LOD must not remove actual edge data, otherwise metaEdges disappear entirely.
 
                     if (this._visibleGraphClusterIds && this._clusterEdgeMap) {
                         // [v0.3.33.1_fix3] O(Visible Clusters * Edges) Edge Virtualization
@@ -8925,11 +8972,8 @@ class CanvasEngine {
                                 // [v0.3.34.40] Ponytail Policy
                                 if (window.engine && window.engine.lastState && window.engine.lastState._ponytailHideCalls && e.type === 'CALL') continue;
 
-                                // [Ponytail] Spaghetti Protection: Drop cross-cluster edges if graph is huge
-                                spaghettiBefore++;
-                                const isSpaghetti = false; // [v0.3.34.40] Disabled spaghetti filter to prevent cross-cluster edges from dropping
-                                if (isSpaghetti) spaghettiDropped++;
-                                if (!DISABLE_SPAGHETTI_FILTER && isSpaghetti) continue;
+                                // [Ponytail] Spaghetti Protection removed as per user request (edges were disappearing)
+                                // const isSpaghetti = (this.transform.zoom < 0.4) && (e._fromCluster !== e._toCluster);
 
                                 if (!visibleNodeIds.has(e.from) || !visibleNodeIds.has(e.to)) continue;
                                 const tc = e._toCluster;
@@ -8943,11 +8987,8 @@ class CanvasEngine {
                         this._visibleEdgesCache = this.edges.filter(e => {
                             if (window.engine && window.engine.lastState && window.engine.lastState._ponytailHideCalls && e.type === 'CALL') return false;
                             
-                            // [Ponytail] Spaghetti Protection: Drop cross-cluster edges if graph is huge
-                            spaghettiBefore++;
-                            const isSpaghetti = false; // [v0.3.34.40] Disabled spaghetti filter to prevent cross-cluster edges from dropping
-                            if (isSpaghetti) spaghettiDropped++;
-                            if (!DISABLE_SPAGHETTI_FILTER && isSpaghetti) return false;
+                            // [Ponytail] Spaghetti Protection removed as per user request (edges were disappearing)
+                            // const isSpaghetti = (this.transform.zoom < 0.4) && (e._fromCluster !== e._toCluster);
 
                             if (!visibleNodeIds.has(e.from) || !visibleNodeIds.has(e.to)) return false;
                             if (this._visibleGraphClusterIds) {
@@ -9349,8 +9390,8 @@ class CanvasEngine {
                                     : this._visibleNodesCache;
                             }
 
-                            this._currentViewportNodeCount = viewportNodes.length; // [Ponytail] Density LOD tracking
-
+                            // [v0.3.34.73] Removed dynamic viewport count tracking for LOD to prevent LOD jumping during panning
+                            // this._currentViewportNodeCount = viewportNodes.length;
                             for (const node of viewportNodes) {
                                 const pos = projectedPosMap.get(node.id);
                                 if (pos) {
@@ -9615,8 +9656,9 @@ class CanvasEngine {
         const cMaxY = maxY + buffer;
 
         // Step 3: Draw the edges
-        const targetEdges = (this.spatialIndex ? this.spatialIndex.queryViewport(cMinX, cMinY, cMaxX, cMaxY, 'edges') : null) || this._visibleEdgesCache || [];
-        const targetEdgesCount = targetEdges instanceof Set ? targetEdges.size : targetEdges.length;
+        // [Ponytail] Viewport culling removed as requested by user ("LOD 범위 문제 복구")
+        const targetEdges = this._visibleEdgesCache || [];
+        const targetEdgesCount = targetEdges.length;
 
         if (this._frameCounter < 3 || this._frameCounter % 60 === 0) {
             console.log(`[CULLING]\nTotal Nodes: ${this.nodes ? this.nodes.length : 0}\nVisible Nodes: ${this._lastCulledNodesCount || 0}\nTotal Edges: ${this.edges ? this.edges.length : 0}\nVisible Edges: ${targetEdgesCount}`);
@@ -9819,9 +9861,8 @@ class CanvasEngine {
         const cMaxY = maxY + bufferY;
         const viewportBBox = { minX: cMinX, minY: cMinY, maxX: cMaxX, maxY: cMaxY };
 
-        let targetNodes = this.spatialIndex 
-            ? this.spatialIndex.queryViewport(cMinX, cMinY, cMaxX, cMaxY, 'nodes') 
-            : this._visibleNodesCache;
+        // [Ponytail] Viewport culling disabled for nodes to allow overall view
+        let targetNodes = this._visibleNodesCache || this.nodes;
 
         const targetLength = targetNodes ? (targetNodes instanceof Set ? targetNodes.size : targetNodes.length) : 0;
         this._lastCulledNodesCount = targetLength;
@@ -10362,7 +10403,9 @@ class CanvasEngine {
         });
         
         console.log('[TOGGLE_CHECK]', this.clusters.filter(c => c.collapsed === true).length);
-        
+        this.selectedClusterId = null;
+        this.selectedNodes.clear();
+        this._onNodeSelected(null);
         this.isGraphDataDirty = true; console.trace('[DIRTY_SOURCE]');
         this.render();
         this.saveState();
@@ -10898,8 +10941,12 @@ class CanvasEngine {
             // Estimate content height based on max Y of nodes, or a large multiple of viewHeight
             let maxY = 0;
             if (this.nodes.length > 0) {
-                const positionedNodes = this.nodes.filter(n => n.position && typeof n.position.y === 'number');
-                maxY = positionedNodes.length > 0 ? Math.max(...positionedNodes.map(n => n.position.y + 60)) : 0;
+                for (let i = 0, len = this.nodes.length; i < len; i++) {
+                    const n = this.nodes[i];
+                    if (n.position && typeof n.position.y === 'number' && n.position.y + 60 > maxY) {
+                        maxY = n.position.y + 60;
+                    }
+                }
             }
             const contentHeight = Math.max(viewHeight * 2, maxY * zoom); // At least 2x viewHeight, or based on content
 
@@ -10933,8 +10980,12 @@ class CanvasEngine {
             // Estimate content width
             let maxX = 0;
             if (this.nodes.length > 0) {
-                const positionedNodes = this.nodes.filter(n => n.position && typeof n.position.x === 'number');
-                maxX = positionedNodes.length > 0 ? Math.max(...positionedNodes.map(n => n.position.x + 120)) : 0;
+                for (let i = 0, len = this.nodes.length; i < len; i++) {
+                    const n = this.nodes[i];
+                    if (n.position && typeof n.position.x === 'number' && n.position.x + 120 > maxX) {
+                        maxX = n.position.x + 120;
+                    }
+                }
             }
             const contentWidth = Math.max(viewWidth * 2, maxX * zoom);
 
@@ -11575,20 +11626,23 @@ class CanvasEngine {
             cluster.color = this.clusterColors[colorIndex];
 
             const { minX, minY, maxX, maxY } = b;
-            const padding = 20;
+            // [v0.3.34.73] Ponytail: Prevent Mother/Child header overlap when they share the same topmost nodes.
+            // Higher depth (children) get less padding so they physically nest inside the parent's padding.
+            const depth = getDepth(cluster);
+            const padding = 20 + Math.max(0, 5 - depth) * 10;
 
             // 클러스터 박스 그리기
             let _dt = performance.now();
             this.ctx.beginPath();
 
             if (cluster.collapsed) {
-                const headerHeight = 30;
+                const headerHeight = Math.max(30, 20 / this.transform.zoom);
                 this.ctx.fillStyle = cluster.color || (theme ? theme.COLORS.INFO : '#458588');
                 this.ctx.fillRect(minX - padding, minY - padding - headerHeight, (maxX - minX) + padding * 2, headerHeight);
                 t_boxes += performance.now() - _dt; _dt = performance.now();
 
                 this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.BG_DARK : '#282828';
-                const fontSize = Math.min(14 / this.transform.zoom, 1000);
+                const fontSize = Math.max(14 / this.transform.zoom, 30);
                 this.ctx.font = `bold ${fontSize}px Inter, sans-serif`;
                 this.ctx.textAlign = 'left';
                 this.ctx.textBaseline = 'middle';
@@ -11596,7 +11650,7 @@ class CanvasEngine {
                 t_labels += performance.now() - _dt;
             } else {
                 // Expanded
-                const headerHeight = 30;
+                const headerHeight = Math.max(30, 20 / this.transform.zoom);
                 const baseColor = cluster.color || (theme ? theme.COLORS.HIGHLIGHT : '#458588');
 
                 // Header
@@ -11616,7 +11670,7 @@ class CanvasEngine {
 
                 // Label
                 this.ctx.fillStyle = (theme && theme.COLORS) ? theme.COLORS.BG_DARK : '#282828';
-                const fontSize = Math.min(14 / this.transform.zoom, 1000);
+                const fontSize = Math.max(14 / this.transform.zoom, 30);
                 this.ctx.font = `bold ${fontSize}px Inter, sans-serif`;
                 this.ctx.textAlign = 'left';
                 this.ctx.textBaseline = 'middle';
@@ -11893,9 +11947,8 @@ class CanvasEngine {
         const nodeHeight = 60;
 
         // Level 1: Satellite View (Lowered from 0.4 to 0.2 for shape persistence, or dynamically forced by LOD)
-        // [Ponytail] Density LOD: If there are too many nodes in the viewport, force LOD regardless of zoom level.
-        const densityLOD = (this._currentViewportNodeCount && this._currentViewportNodeCount > 5000);
-        const isDynamicLOD = (this.nodes.length > 5000 && zoom < 0.3) || densityLOD;
+        // [v0.3.34.73] Removed viewport-based Density LOD to fix flickering. LOD now strictly depends on stable zoom and total nodes.
+        const isDynamicLOD = (this.nodes.length > 5000 && zoom < 0.3);
         if (zoom < 0.2 || isDynamicLOD) {
             let satColor = node.data.color || SYNAPSE_THEME.STATUS.ACTIVE.color;
             if (node.status === 'ghost' || node.state === 'pending') {
@@ -14976,13 +15029,55 @@ function initCanvas() {
     });
     */
 
+    
+    function getReportScopeAndTarget(engine) {
+        let scope = 'FULL_PROJECT';
+        let target = 'Project Root';
+        const selectedClusters = new Set();
+        
+        if (engine?.selectedClusterId) {
+            const c = engine.clusters.find(x => x.id === engine.selectedClusterId);
+            if (c) selectedClusters.add(c.label || c.id);
+        }
+        if (engine?.selectedNodes && engine.selectedNodes.size > 0) {
+            for (const nId of engine.selectedNodes) {
+                // [v0.3.34.75 Fix] nId is a string, we need to fetch the actual node object
+                const nodeObj = engine.nodes.find(n => n.id === nId);
+                if (nodeObj && nodeObj.cluster_id) {
+                    const c = engine.clusters.find(x => x.id === nodeObj.cluster_id);
+                    if (c && c.label) selectedClusters.add(c.label);
+                    else if (c) selectedClusters.add(c.id);
+                }
+            }
+        }
+        
+        // If no explicit node/cluster click selection, check visibility panel (not collapsed)
+        if (selectedClusters.size === 0 && engine?.clusters) {
+            const visibleClusters = engine.clusters.filter(c => c.collapsed === false);
+            if (visibleClusters.length > 0 && visibleClusters.length < engine.clusters.length) {
+                for (const c of visibleClusters) {
+                    if (c.id !== 'folder_root' && c.id !== '__unclustered__') {
+                        selectedClusters.add(c.label || c.id);
+                    }
+                }
+            }
+        }
+
+        if (selectedClusters.size > 0) {
+            scope = selectedClusters.size === 1 ? 'SELECTED_CLUSTER' : 'SELECTED_CLUSTERS';
+            target = '\n  ' + Array.from(selectedClusters).join('\n  ');
+        }
+        
+        return { scope, target };
+    }
+
     document.getElementById('btn-report-arch')?.addEventListener('click', () => {
         if (typeof vscode !== 'undefined') {
-            const hasCluster = !!window.engine?.selectedCluster;
+            const { scope, target } = getReportScopeAndTarget(window.engine);
             vscode.postMessage({ 
                 command: 'fetchArchitectureReport',
-                scope: hasCluster ? 'SELECTED_CLUSTER' : 'FULL_PROJECT',
-                target: hasCluster ? window.engine.selectedCluster.label : 'Project Root',
+                scope: scope,
+                target: target,
                 selectionSource: 'USER_SELECTED'
             });
         } else {
@@ -14992,11 +15087,11 @@ function initCanvas() {
 
     document.getElementById('btn-report-onboard')?.addEventListener('click', () => {
         if (typeof vscode !== 'undefined') {
-            const hasCluster = !!window.engine?.selectedCluster;
+            const { scope, target } = getReportScopeAndTarget(window.engine);
             vscode.postMessage({ 
                 command: 'fetchOnboardingReport',
-                scope: hasCluster ? 'SELECTED_CLUSTER' : 'FULL_PROJECT',
-                target: hasCluster ? window.engine.selectedCluster.label : 'Project Root',
+                scope: scope,
+                target: target,
                 selectionSource: 'USER_SELECTED'
             });
         } else {
@@ -15058,7 +15153,8 @@ function initCanvas() {
         console.log("[SIM_DEBUG_STATE]", engine.nodes?.length, engine.edges?.length, engine._visibleNodesCache?.length, engine._visibleGraphClusters?.length);
         
         if (typeof vscode !== 'undefined') {
-            const payload = { command: 'virtualDebug', timestamp: Date.now(), panelId: window.__PANEL_ID__ };
+            const { scope, target } = getReportScopeAndTarget(window.engine);
+            const payload = { command: 'virtualDebug', timestamp: Date.now(), panelId: window.__PANEL_ID__, scope: scope, target: target, selectionSource: 'USER_SELECTED' };
             
             console.log('[SIM_DEBUG_VSCODE_CHECK] Is vscode.postMessage valid?:', typeof vscode.postMessage === 'function');
             

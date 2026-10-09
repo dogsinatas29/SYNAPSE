@@ -158,18 +158,12 @@ export async function activate(context: vscode.ExtensionContext) {
             vscode.window.registerWebviewPanelSerializer('synapseCanvas', {
                 async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
                     console.log(`[SYNAPSE] Reviving webview panel`);
-                    // Reset the webview options so we use latest uri for `localResourceRoots`.
-                    webviewPanel.webview.options = {
-                        enableScripts: true,
-                        localResourceRoots: [
-                            vscode.Uri.joinPath(context.extensionUri, 'ui'),
-                            vscode.Uri.joinPath(context.extensionUri, 'synapse_data')
-                        ]
-                    };
-                    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-                    if (workspaceFolder) {
-                        CanvasPanel.revive(webviewPanel, context, workspaceFolder);
-                    }
+                    // [Ponytail] The revived panel has a doomed ServiceWorker in many VS Code versions (InvalidStateError).
+                    // We completely bypass this by disposing the broken revived panel and opening a fresh one.
+                    webviewPanel.dispose();
+                    setTimeout(() => {
+                        vscode.commands.executeCommand('synapse.openCanvas');
+                    }, 100);
                 }
             });
         }

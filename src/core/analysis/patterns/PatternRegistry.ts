@@ -15,7 +15,7 @@ export interface PatternDefinition {
 export const PatternRegistry: Map<PatternId, PatternDefinition> = new Map([
     [PatternId.DEPENDENCY_ROOT, {
         patternId: PatternId.DEPENDENCY_ROOT,
-        displayName: 'Root Entry Point',
+        displayName: 'Dependency Root',
         domain: 'ENTRY',
         status: 'IMPLEMENTED',
         gapType: 'E',
@@ -67,9 +67,9 @@ export const PatternRegistry: Map<PatternId, PatternDefinition> = new Map([
         targetScope: 'CLUSTER',
         hasDetector: true
     }],
-    [PatternId.ARCHITECTURAL_CHOKEPOINT, {
-        patternId: PatternId.ARCHITECTURAL_CHOKEPOINT,
-        displayName: 'Architectural Chokepoint',
+    [PatternId.CONTROL_BRIDGE, {
+        patternId: PatternId.CONTROL_BRIDGE,
+        displayName: 'Structural Control Bridge',
         domain: 'BLAST',
         status: 'IMPLEMENTED',
         gapType: 'B',

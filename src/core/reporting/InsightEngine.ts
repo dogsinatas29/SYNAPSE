@@ -2,7 +2,6 @@ import {
     ReportScope, 
     SelectionSource, 
     ReportHeader,
-    ExecutiveInsight,
     ArchitectInsight,
     OnboardingInsight,
     SimulationInsight,
@@ -81,7 +80,7 @@ export class InsightEngine {
             ...traceDetectorExecution(PatternId.CROSS_BOUNDARY_REFERENCE, 'CrossBoundaryReferenceDetector', crossBoundaryRefDetector, context, simContext),
             ...traceDetectorExecution(PatternId.BOUNDARY_CANDIDATE, 'BoundaryPatternDetector', boundaryDetector, context, simContext),
             ...traceDetectorExecution(PatternId.SYSTEM_CORE, 'SystemCoreDetector', sysCoreDetector, context, simContext),
-            ...traceDetectorExecution(PatternId.ARCHITECTURAL_CHOKEPOINT, 'ArchitecturalChokepointDetector', chokepointDetector, context, simContext)
+            ...traceDetectorExecution(PatternId.CONTROL_BRIDGE, 'ArchitecturalChokepointDetector', chokepointDetector, context, simContext)
         ];
         
         if (simContext && simContext.evidenceBundle) {
@@ -244,10 +243,13 @@ export class InsightEngine {
         const changeAmpDetector = new ChangeAmplifierDetector();
         const boundaryDetector = new BoundaryPatternDetector();
         const chokepointDetector = new ArchitecturalChokepointDetector();
+        
+        console.log('AAE_INPUT_FINDINGS', simContext?.evidenceBundle?.findings?.length || 0);
+
         const patternFindings = [
             ...traceDetectorExecution(PatternId.CHANGE_AMPLIFIER, 'ChangeAmplifierDetector', changeAmpDetector, context, simContext),
             ...traceDetectorExecution(PatternId.BOUNDARY_CANDIDATE, 'BoundaryPatternDetector', boundaryDetector, context, simContext),
-            ...traceDetectorExecution(PatternId.ARCHITECTURAL_CHOKEPOINT, 'ArchitecturalChokepointDetector', chokepointDetector, context, simContext)
+            ...traceDetectorExecution(PatternId.CONTROL_BRIDGE, 'ArchitecturalChokepointDetector', chokepointDetector, context, simContext)
         ];
 
         const boundaryFindings = patternFindings.filter(f => f.patternId === PatternId.BOUNDARY_CANDIDATE);
@@ -293,30 +295,6 @@ export class InsightEngine {
         }
         for (const section of contract.evidence) {
             md += `### ${section.title}\n\n${section.content}\n\n`;
-        }
-
-        md += `## Appendix\n\n`;
-        for (const section of contract.appendix) {
-            let isJson = false;
-            let formattedContent = section.content;
-            if (typeof section.content === 'string') {
-                const trimmed = section.content.trim();
-                if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
-                    try {
-                        JSON.parse(trimmed);
-                        isJson = true;
-                    } catch (e) {}
-                }
-            } else {
-                isJson = true;
-                formattedContent = JSON.stringify(section.content, null, 2);
-            }
-            
-            if (isJson) {
-                md += `<details>\n<summary>${section.title}</summary>\n\n\`\`\`json\n${formattedContent}\n\`\`\`\n</details>\n\n`;
-            } else {
-                md += `<details>\n<summary>${section.title}</summary>\n\n${formattedContent}\n\n</details>\n\n`;
-            }
         }
 
         return md;

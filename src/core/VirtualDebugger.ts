@@ -101,7 +101,7 @@ export class VirtualDebugger {
     /**
      * Harvests diagnostics from VS Code and maps them to the current project state.
      */
-    public async performVirtualDebug(state: ProjectState, workspaceRoot: string, visibleClusterIds?: string[]): Promise<{ evidence: any, reports: any[], analyzedNodeCount: number, surgeryReportUri?: any }> {
+    public async performVirtualDebug(state: ProjectState, workspaceRoot: string, visibleClusterIds?: string[], reportScope?: string, reportTarget?: string, selectionSource?: string): Promise<{ evidence: any, reports: any[], analyzedNodeCount: number, surgeryReportUri?: any }> {
         console.log("[STEP-1] VirtualDebug start");
         Logger.info('[VirtualDebugger] Starting Virtual Debug (AAE Facade)...');
         
@@ -115,6 +115,8 @@ export class VirtualDebugger {
             const fullNode = (allNodesMap.get(n.id) || {}) as any;
             return { ...fullNode, ...n, data: { ...(fullNode.data || {}), ...(n.data || {}) } };
         });
+        
+        console.log('VD_INPUT_NODES', targetNodes.length);
 
         // [v0.3.34.40] 노이즈 소스 추적: 3계층 동시 검증
         const suspiciousIds = [
@@ -452,6 +454,8 @@ export class VirtualDebugger {
             fracture: evidenceBundle.findings.filter((f: any) => f.type === 'fracture').length,
             cycle: evidenceBundle.findings.filter((f: any) => f.type === 'cycle').length
         });
+        
+        console.log('VD_OUTPUT_FINDINGS', evidenceBundle.findings.length);
 
         // DT-B1: Evidence Generation Phase
         const simEvidenceGen = evidenceBundle.findings.filter((f: any) => f.type === 'SIMULATION' || f.evidenceType === 'SIMULATION');
@@ -479,9 +483,8 @@ export class VirtualDebugger {
         });
         
         console.log(`[DATA_TRACE] VirtualDebugger before write: findings=${simulationContext.evidenceBundle?.findings?.length}, path=${simContextPath}`);
-        
-        require('fs').writeFileSync(simContextPath, JSON.stringify(simulationContext, null, 2), 'utf-8');
-
+        // [Ponytail] Avoid Invalid string length error on large graphs (e.g. Chromium) by removing pretty-print
+        require('fs').writeFileSync(simContextPath, JSON.stringify(simulationContext), 'utf-8');
         // [v0.3.34.31] Dump Boundary Analysis Report for Semantic Discovery Verification
         try {
             const { BoundaryAnalysisReportBuilder } = require('./reporting/BoundaryAnalysisReportBuilder');
@@ -531,7 +534,7 @@ export class VirtualDebugger {
             if (process.env.SYNAPSE_DEBUG_DUMP === 'true') {
                 const tempStatePath = path.join(workspaceRoot, 'synapse_report', 'temp_target_state.json');
                 fs.mkdirSync(path.join(workspaceRoot, 'synapse_report'), { recursive: true });
-                fs.writeFileSync(tempStatePath, JSON.stringify(targetState, null, 2), 'utf8');
+                fs.writeFileSync(tempStatePath, JSON.stringify(targetState), 'utf8');
                 console.log("[ASR] temp dump ok");
             }
 
@@ -596,6 +599,9 @@ export class VirtualDebugger {
                 });
 
                 const context = ValidationEngine.analyzeState(snapshot, 1, workspaceRoot, intentEdges);
+                (context as any).reportScope = reportScope || 'FULL_PROJECT';
+                (context as any).reportTarget = reportTarget || 'Project Root';
+                (context as any).selectionSource = selectionSource || 'USER_SELECTED';
                 console.log("[ASR] validation exit 0");
 
                 try {
@@ -630,7 +636,7 @@ export class VirtualDebugger {
                 console.log("[ASR] surgery start");
                 
                 const { ReportBundleGenerator } = require('./reporting/ReportBundleGenerator');
-                const mdPath = await ReportBundleGenerator.generateBundle(context, workspaceRoot, { command: 'fetchSimulationDebug' });
+                const mdPath = await ReportBundleGenerator.generateBundle(context, workspaceRoot, { command: 'fetchSimulationDebug', scope: (context as any).reportScope, target: (context as any).reportTarget, selectionSource: (context as any).selectionSource });
                 console.log("[ASR] surgery exit 0");
                 
                 surgeryReportUri = vscode.Uri.file(mdPath);

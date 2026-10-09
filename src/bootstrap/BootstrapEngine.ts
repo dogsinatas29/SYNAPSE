@@ -197,7 +197,7 @@ export class BootstrapEngine {
             }
 
             try {
-                fs.writeFileSync(statePath, ProjectStateSerializer.serialize(projectState), 'utf-8');
+                await ProjectStateSerializer.serializeToFileAsync(projectState, statePath);
                 console.log(`[STATE_SAVE_COMPLETE] project_state.json successfully written.`);
             } catch (err) {
                 console.error(`[STATE_SAVE_ERROR] Failed to write project_state.json:`, err);
@@ -319,18 +319,26 @@ export class BootstrapEngine {
                     if (manualEdges.length > 0) edges = [...edges, ...manualEdges] as any;
 
                     // 3. Preserve Manual Clusters
+                    let preservedClusters: any[] = [];
                     if (existingData.clusters && Array.isArray(existingData.clusters)) {
                         const currentClusterIds = new Set(graphModel.createSnapshot().clusters.map(c => c.id));
-                        const missingClusters = existingData.clusters.filter((c: any) => !currentClusterIds.has(c.id));
-                        if (missingClusters.length > 0) {
-                            // We will append these when creating the ProjectState object below
-                            existingData._preservedClusters = missingClusters;
-                        }
+                        preservedClusters = existingData.clusters.filter((c: any) => !currentClusterIds.has(c.id));
                     }
+                    
+                    const deletedNodeIds = existingData.deletedNodeIds || [];
+                    const deletedPaths = existingData.deletedPaths || [];
+
+                    // [MEMORY OPTIMIZATION] Completely release the 1.5GB parsed JSON object!
+                    existingData = {
+                        _preservedClusters: preservedClusters,
+                        deletedNodeIds,
+                        deletedPaths
+                    };
 
                     Logger.info(`[SYNAPSE] Merged ${manualNodes.length} manual nodes & restored layout from existing state.`);
                 } catch (e) {
                     Logger.warn('[SYNAPSE] Failed to merge previous manual state', e);
+                    existingData = null;
                 }
             }
 
@@ -362,10 +370,14 @@ export class BootstrapEngine {
                 fs.mkdirSync(stateDir, { recursive: true });
             }
             console.log('[JSON_STRINGIFY_START]', projectState.nodes!.length, projectState.edges!.length, projectState.clusters!.length);
-            const json = ProjectStateSerializer.serialize(projectState);
-            console.log('[JSON_STRINGIFY_DONE]', json.length);
-            console.log('[WRITE_FILE]', statePath);
-            fs.writeFileSync(statePath, json, 'utf-8');
+            
+            console.log('[STATE_BEFORE_SERIALIZE]');
+            console.log('nodes=' + (projectState.nodes ? projectState.nodes.length : 0));
+            console.log('edges=' + (projectState.edges ? projectState.edges.length : 0));
+            console.log('clusters=' + (projectState.clusters ? projectState.clusters.length : 0));
+            console.log('cluster_flows=' + (projectState.cluster_flows ? projectState.cluster_flows.length : 0));
+
+            await ProjectStateSerializer.serializeToFileAsync(projectState, statePath);
             console.log('[WRITE_SUCCESS]', fs.statSync(statePath).size);
 
             // [v0.3.10] Final Phase Advance: Hand over control to USER

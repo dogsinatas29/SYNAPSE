@@ -57,7 +57,15 @@ export class MetricAccessDetector implements PatternDetector {
                                 sourceId: relPath,
                                 description: `Direct Metric Access Violation: found '${m}' at line ${idx + 1}`,
                                 filePath: relPath,
-                                graphNodeId: relPath
+                                graphNodeId: relPath,
+                                predicate: {
+                                    condition: "REGEX_MATCH",
+                                    metric: "source_code_line",
+                                    operator: "contains",
+                                    cutoff: rule.regex.source,
+                                    actualValue: m
+                                },
+                                selectionBasis: `Matched restricted metric access pattern /${rule.regex.source}/ at line ${idx + 1}.`
                             };
                             
                             findings.push({

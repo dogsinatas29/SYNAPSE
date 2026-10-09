@@ -105,7 +105,7 @@ export class BenchmarkHarness {
 
         // Build
         const tBuildStart = process.hrtime.bigint();
-        const edgeBuilderResult = EdgeBuilder.build(expansionResult.expandedReferences);
+        const edgeBuilderResult = await EdgeBuilder.build(expansionResult.expandedReferences);
         backendProfile.buildMs = Number(process.hrtime.bigint() - tBuildStart) / 1e6;
 
         // Analyze

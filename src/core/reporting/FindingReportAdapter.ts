@@ -5,6 +5,37 @@ import { traceReportConsume } from '../analysis/pipeline/DiagnosticTracer';
 import { QUESTION_DICTIONARY } from './ReportContract';
 
 export class FindingReportAdapter {
+    private formatDetailedFindings(uniqueFindings: Map<string, any>, count: number, section: string, allowedMetrics: string[]): string {
+        let content = '';
+        const displayFindings = Array.from(uniqueFindings.values()).slice(0, 5);
+        for (const f of displayFindings) {
+            const targetName = Array.isArray(f.targetId) ? f.targetId.join(', ') : String(f.targetId);
+            let evidenceStr = '';
+            
+            if (f.evidence && f.evidence.length > 0) {
+                const ev = f.evidence[0];
+                let metrics = 'N/A';
+                if (ev.metadata) {
+                    const filtered = Object.entries(ev.metadata).filter(([k]) => allowedMetrics.includes(k));
+                    if (filtered.length > 0) {
+                        metrics = filtered.map(([k,v]) => `${k}=${v}`).join(', ');
+                    }
+                }
+                const basis = ev.selectionBasis || (typeof ev.predicate === 'string' ? ev.predicate : JSON.stringify(ev.predicate)) || 'No selection basis provided by detector';
+                evidenceStr = `\n  - Observed: ${metrics}\n  - Selection Basis: ${basis}`;
+            }
+            
+            content += `- **Target**: \`${targetName}\`${evidenceStr}\n`;
+        }
+        if (count > 5) {
+            content += `- ... and ${count - 5} more.\n\n`;
+        } else {
+            content += `\n`;
+        }
+        content += `[View All Detailed Evidence](EVIDENCE_VIEWER.html#${section})\n`;
+        return content;
+    }
+
     public buildOnboardingSections(findings: PatternFinding[]): ReportSection[] {
         const sections: ReportSection[] = [];
 
@@ -18,38 +49,31 @@ export class FindingReportAdapter {
             contentO2 += `Interpretation Guide:\n${contractO2.interpretationGuide}\n\n`;
         }
         
-        if (o2Findings.length > 0) {
-            contentO2 += `Finding:\n${o2Findings.length} root entry points observed.\n\n`;
-            contentO2 += `[View Evidence](EVIDENCE_VIEWER.html#O2)\n`;
+        const uniqueO2 = new Map<string, any>();
+        for (const f of o2Findings) {
+            const key = Array.isArray(f.targetId) ? f.targetId.join(', ') : String(f.targetId);
+            uniqueO2.set(key, f);
+        }
+        const o2Count = uniqueO2.size;
+        
+        if (o2Count > 0) {
+            contentO2 += `Finding:\n${o2Count} dependency roots observed.\n\n`;
+            contentO2 += this.formatDetailedFindings(uniqueO2, o2Count, "O2", ['inDegree', 'outDegree']);
+            
             o2Findings.forEach(f => {
                 if (f.findingId) traceReportConsume(f.findingId, 'ONBOARDING_REPORT', 'onboarding.entry_points');
             });
         } else {
             contentO2 += `Finding:\nNo verified finding emitted.\n\n`;
-            contentO2 += `[View Evidence](EVIDENCE_VIEWER.html#O2)\n`;
+            contentO2 += `[View All Detailed Evidence](EVIDENCE_VIEWER.html#O2)\n`;
         }
         
         sections.push({
-            title: "O2 — Root Entry Point Observation",
+            title: "O2 — Dependency Root Observation",
             content: contentO2
         });
 
         return sections;
-    }
-
-    public buildExecutiveSection(findings: PatternFinding[]): ReportSection {
-        const sysCores = findings.filter(f => f.patternId === PatternId.SYSTEM_CORE);
-        const content = sysCores.length > 0
-            ? sysCores.map(f => {
-                if (f.findingId) traceReportConsume(f.findingId, 'EXECUTIVE_REPORT', 'executive.system_cores');
-                return `- ${f.targetId}`;
-            }).join('\n')
-            : '- N/A';
-
-        return {
-            title: "System Cores (Pattern-based)",
-            content: `System Cores:\n${content}`
-        };
     }
 
     public buildExecutionSections(findings: PatternFinding[]): ReportSection[] {
@@ -65,15 +89,23 @@ export class FindingReportAdapter {
             contentE2 += `Interpretation Guide:\n${contractE2.interpretationGuide}\n\n`;
         }
         
-        if (e2Findings.length > 0) {
-            contentE2 += `Finding:\n${e2Findings.length} change propagation amplifiers observed.\n\n`;
-            contentE2 += `[View Evidence](EVIDENCE_VIEWER.html#E2)\n`;
+        const uniqueE2 = new Map<string, any>();
+        for (const f of e2Findings) {
+            const key = Array.isArray(f.targetId) ? f.targetId.join(', ') : String(f.targetId);
+            uniqueE2.set(key, f);
+        }
+        const e2Count = uniqueE2.size;
+        
+        if (e2Count > 0) {
+            contentE2 += `Finding:\n${e2Count} change propagation amplifiers observed.\n\n`;
+            contentE2 += this.formatDetailedFindings(uniqueE2, e2Count, "E2", ['blastRadius', 'propagationReach']);
+            
             e2Findings.forEach(f => {
                 if (f.findingId) traceReportConsume(f.findingId, 'SIMULATION_DEBUG', 'simulation.change_amplifiers');
             });
         } else {
             contentE2 += `Finding:\nNo verified finding emitted.\n\n`;
-            contentE2 += `[View Evidence](EVIDENCE_VIEWER.html#E2)\n`;
+            contentE2 += `[View All Detailed Evidence](EVIDENCE_VIEWER.html#E2)\n`;
         }
 
         sections.push({
@@ -97,15 +129,23 @@ export class FindingReportAdapter {
             contentA1 += `Interpretation Guide:\n${contractA1.interpretationGuide}\n\n`;
         }
         
-        if (a1Findings.length > 0) {
-            contentA1 += `Finding:\n${a1Findings.length} system cores observed.\n\n`;
-            contentA1 += `[View Evidence](EVIDENCE_VIEWER.html#A1)\n`;
+        const uniqueA1 = new Map<string, any>();
+        for (const f of a1Findings) {
+            const key = Array.isArray(f.targetId) ? f.targetId.join(', ') : String(f.targetId);
+            uniqueA1.set(key, f);
+        }
+        const a1Count = uniqueA1.size;
+        
+        if (a1Count > 0) {
+            contentA1 += `Finding:\n${a1Count} system cores observed.\n\n`;
+            contentA1 += this.formatDetailedFindings(uniqueA1, a1Count, "A1", ['controlScore', 'fanIn', 'blastRadius']);
+            
             a1Findings.forEach(f => {
                 if (f.findingId) traceReportConsume(f.findingId, 'ARCHITECT_REPORT', 'architect.system_cores');
             });
         } else {
             contentA1 += `Finding:\nNo verified finding emitted.\n\n`;
-            contentA1 += `[View Evidence](EVIDENCE_VIEWER.html#A1)\n`;
+            contentA1 += `[View All Detailed Evidence](EVIDENCE_VIEWER.html#A1)\n`;
         }
 
         sections.push({
@@ -123,15 +163,23 @@ export class FindingReportAdapter {
             contentA2 += `Interpretation Guide:\n${contractA2.interpretationGuide}\n\n`;
         }
         
-        if (a2Findings.length > 0) {
-            contentA2 += `Finding:\n${a2Findings.length} module contact points observed.\n\n`;
-            contentA2 += `[View Evidence](EVIDENCE_VIEWER.html#A2)\n`;
+        const uniqueA2 = new Map<string, any>();
+        for (const f of a2Findings) {
+            const key = Array.isArray(f.targetId) ? f.targetId.join(', ') : String(f.targetId);
+            uniqueA2.set(key, f);
+        }
+        const a2Count = uniqueA2.size;
+        
+        if (a2Count > 0) {
+            contentA2 += `Finding:\n${a2Count} module contact points observed.\n\n`;
+            contentA2 += this.formatDetailedFindings(uniqueA2, a2Count, "A2", ['dependencyCount']);
+            
             a2Findings.forEach(f => {
                 if (f.findingId) traceReportConsume(f.findingId, 'ARCHITECT_REPORT', 'architect.module_contact_points');
             });
         } else {
             contentA2 += `Finding:\nNo verified finding emitted.\n\n`;
-            contentA2 += `[View Evidence](EVIDENCE_VIEWER.html#A2)\n`;
+            contentA2 += `[View All Detailed Evidence](EVIDENCE_VIEWER.html#A2)\n`;
         }
 
         sections.push({
@@ -149,15 +197,23 @@ export class FindingReportAdapter {
             contentA3 += `Interpretation Guide:\n${contractA3.interpretationGuide}\n\n`;
         }
         
-        if (boundaryFindings.length > 0) {
-            contentA3 += `Finding:\n${boundaryFindings.length} structural boundaries observed.\n\n`;
-            contentA3 += `[View Evidence](EVIDENCE_VIEWER.html#A3)\n`;
+        const uniqueA3 = new Map<string, any>();
+        for (const f of boundaryFindings) {
+            const key = Array.isArray(f.targetId) ? f.targetId.join(', ') : String(f.targetId);
+            uniqueA3.set(key, f);
+        }
+        const a3Count = uniqueA3.size;
+        
+        if (a3Count > 0) {
+            contentA3 += `Finding:\n${a3Count} structural boundaries observed.\n\n`;
+            contentA3 += this.formatDetailedFindings(uniqueA3, a3Count, "A3", ['strength', 'cohesion', 'internalEdges', 'externalEdges', 'members']);
+            
             boundaryFindings.forEach(f => {
                 if (f.findingId) traceReportConsume(f.findingId, 'ARCHITECT_REPORT', 'architect.structural_boundaries');
             });
         } else {
             contentA3 += `Finding:\nNo verified finding emitted.\n\n`;
-            contentA3 += `[View Evidence](EVIDENCE_VIEWER.html#A3)\n`;
+            contentA3 += `[View All Detailed Evidence](EVIDENCE_VIEWER.html#A3)\n`;
         }
 
         sections.push({
@@ -169,25 +225,29 @@ export class FindingReportAdapter {
         const contractA5 = QUESTION_DICTIONARY["A5"];
         const a5Findings = findings.filter(f => contractA5.supportingPatterns.includes(f.patternId));
         
-        console.log(`[DEBUG-A5] buildArchitectSections: total findings=${findings.length}`);
-        console.log(`[DEBUG-A5] buildArchitectSections: a5Findings=${a5Findings.length}`);
-        console.log(`[DEBUG-A5] buildArchitectSections: first 5 patternIds=${findings.slice(0, 5).map(f => f.patternId).join(', ')}`);
-        
         let contentA5 = `Question:\n${contractA5.question}\n\n`;
         contentA5 += `Vocabulary:\n${contractA5.vocabulary.join(', ')}\n\n`;
         if (contractA5.interpretationGuide) {
             contentA5 += `Interpretation Guide:\n${contractA5.interpretationGuide}\n\n`;
         }
         
-        if (a5Findings.length > 0) {
-            contentA5 += `Finding:\n${a5Findings.length} structural control chokepoints observed.\n\n`;
-            contentA5 += `[View Evidence](EVIDENCE_VIEWER.html#A5)\n`;
+        const uniqueA5 = new Map<string, any>();
+        for (const f of a5Findings) {
+            const key = Array.isArray(f.targetId) ? f.targetId.join(', ') : String(f.targetId);
+            uniqueA5.set(key, f);
+        }
+        const a5Count = uniqueA5.size;
+        
+        if (a5Count > 0) {
+            contentA5 += `Finding:\n${a5Count} structural control chokepoints observed.\n\n`;
+            contentA5 += this.formatDetailedFindings(uniqueA5, a5Count, "A5", ['rawBetweennessSum', 'topNodeContribution', 'clusterScore', 'aggregationMethod']);
+            
             a5Findings.forEach(f => {
                 if (f.findingId) traceReportConsume(f.findingId, 'ARCHITECT_REPORT', 'architect.chokepoints');
             });
         } else {
             contentA5 += `Finding:\nNo verified finding emitted.\n\n`;
-            contentA5 += `[View Evidence](EVIDENCE_VIEWER.html#A5)\n`;
+            contentA5 += `[View All Detailed Evidence](EVIDENCE_VIEWER.html#A5)\n`;
         }
 
         sections.push({

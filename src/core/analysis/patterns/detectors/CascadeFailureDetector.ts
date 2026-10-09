@@ -60,7 +60,20 @@ export class CascadeFailureDetector implements PatternDetector {
                     sourceId: c.targetId,
                     description: `Cascade Impact (Nodes: ${c.evidence.affectedNodeCount}, Depth: ${c.evidence.propagationDepth}, Score: ${c.score})`,
                     filePath: c.targetId,
-                    graphNodeId: c.graphNodeId
+                    graphNodeId: c.graphNodeId,
+                    metadata: {
+                        failureScore: c.score,
+                        affectedNodeCount: c.evidence.affectedNodeCount,
+                        propagationDepth: c.evidence.propagationDepth
+                    },
+                    predicate: {
+                        condition: "P50_CUTOFF",
+                        metric: "failureScore",
+                        operator: ">=",
+                        cutoff: medianScore,
+                        actualValue: c.score
+                    },
+                    selectionBasis: `failureScore (${c.score}) satisfied the CASCADE_FAILURE_POINT selection criterion (>= P50 median: ${medianScore}).`
                 };
 
                 findings.push({

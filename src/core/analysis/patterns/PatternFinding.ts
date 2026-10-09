@@ -11,6 +11,7 @@ export interface PatternFinding {
     targetId: string | string[];
 
     confidence: number;
+    selectionBasis?: string;
 
     evidence: EvidenceItem[];
 

@@ -90,14 +90,23 @@ export class EvidenceViewerBuilder {
                         content += `<p><strong>Target:</strong> <code>${f.targetId}</code></p>`;
                         if (f.evidence && f.evidence.length > 0) {
                             for (const ev of f.evidence) {
+                                content += `<div style="margin-top: 10px;">`;
+                                content += `<div><strong>Observed:</strong></div>`;
                                 if (ev.metadata) {
                                     for (const [k, v] of Object.entries(ev.metadata)) {
                                         if (contract.allowedEvidence && contract.allowedEvidence.includes(k)) {
                                             const displayValue = typeof v === 'string' ? v : JSON.stringify(v);
-                                            content += `<div><strong>${k}:</strong> ${displayValue}</div>`;
+                                            content += `<div style="margin-left: 10px;">- <strong>${k}:</strong> ${displayValue}</div>`;
                                         }
                                     }
                                 }
+                                if ((ev as any).selectionBasis) {
+                                    content += `<div style="margin-top: 8px;"><strong>Selection Basis:</strong> ${(ev as any).selectionBasis}</div>`;
+                                } else if ((ev as any).predicate) {
+                                    const predStr = typeof (ev as any).predicate === 'string' ? (ev as any).predicate : JSON.stringify((ev as any).predicate);
+                                    content += `<div style="margin-top: 8px;"><strong>Selection Basis:</strong> ${predStr}</div>`;
+                                }
+                                content += `</div>`;
                             }
                         } else {
                             content += `<p><em>No detailed evidence items attached.</em></p>`;

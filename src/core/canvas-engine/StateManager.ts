@@ -879,6 +879,7 @@ export class StateManager {
 
     const nodes = Array.isArray(state.nodes) ? state.nodes : Object.values(state.nodes || {});
     nodes.forEach((n: any) => {
+        if (!n) return;
         const path = n.filePath || (n.data && (n.data.filePath || n.data.file));
         const resolvedPath = this.normalizePath(path);
         if (this.deletedNodeIds.has(n.id) || (resolvedPath && this.deletedPaths.has(resolvedPath))) return;
@@ -887,12 +888,14 @@ export class StateManager {
 
     const edges = Array.isArray(state.edges) ? state.edges : Object.values(state.edges || {});
     edges.forEach((e: any) => {
+        if (!e) return;
         const id = e.id || `${e.from}->${e.to}`;
         this.bufferEdges.set(id, { ...e });
     });
 
     const clusters = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {});
     clusters.forEach((c: any) => {
+        if (!c) return;
         if (c.id !== 'sys_cluster_root') this.bufferClusters.set(c.id, { ...c });
     });
   }

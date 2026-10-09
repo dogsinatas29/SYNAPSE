@@ -584,14 +584,15 @@ class WebGLRenderer {
         this.textInstanceBuffer = this.gl.createBuffer();
         
         // [v0.2.24-Final] Pre-allocate large buffers once to avoid gl.bufferData stalls
-        // [v0.3.34] Expanded limits to support large projects like vscode-main
-        // [v0.3.34] Expanded limits to support large projects like vscode-main
-        const maxNodes = 150000;
+        // [v0.3.34] Expanded limits to support large projects like vscode-main and linux kernel
+        const maxNodes = 500000;
         const maxEdges = 1000000; // Increased to 1M to support VSCode-main
-        const maxChars = 150000;
+        const maxChars = 300000;
 
-        // Save maxEdges for bounds checking
+        // Save limits for bounds checking
+        this.maxNodes = maxNodes;
         this.maxEdges = maxEdges;
+        this.maxChars = maxChars;
 
         this._nodePosArr = new Float32Array(maxNodes * 2);
         this._nodeColorArr = new Float32Array(maxNodes * 3);
@@ -732,7 +733,10 @@ class WebGLRenderer {
             return;
         }
 
-        this.nodeCount = nodes.length;
+        this.nodeCount = Math.min(nodes.length, this.maxNodes);
+        if (nodes.length > this.maxNodes) {
+            console.warn(`[WebGL] Exceeded maximum node limit of ${this.maxNodes}. Truncating.`);
+        }
         console.error("[NODE_BUFFER]", this.nodeCount);
 
         // Use pre-allocated buffers
@@ -748,7 +752,7 @@ class WebGLRenderer {
 
         if (!posArr) return; 
 
-        for (let i = 0; i < nodes.length; i++) {
+        for (let i = 0; i < this.nodeCount; i++) {
             const n = nodes[i];
             const p = n.position || { x: 0, y: 0 };
             const nodeWidth = 120;
@@ -801,30 +805,31 @@ class WebGLRenderer {
 
         // Buffer upload
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.posBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, posArr.subarray(0, nodes.length * 2));
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, posArr.subarray(0, this.nodeCount * 2));
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, colorArr.subarray(0, nodes.length * 3));
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, colorArr.subarray(0, this.nodeCount * 3));
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.borderColorBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, borderArr.subarray(0, nodes.length * 3));
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, borderArr.subarray(0, this.nodeCount * 3));
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sizeBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, sizeArr.subarray(0, nodes.length * 2));
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, sizeArr.subarray(0, this.nodeCount * 2));
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.selectBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, selectArr.subarray(0, nodes.length));
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, selectArr.subarray(0, this.nodeCount));
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.alphaBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, alphaArr.subarray(0, nodes.length));
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, alphaArr.subarray(0, this.nodeCount));
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeShapeBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, shapeArr.subarray(0, nodes.length));
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, shapeArr.subarray(0, this.nodeCount));
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeStatusBuffer);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, statusArr.subarray(0, nodes.length));
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, statusArr.subarray(0, this.nodeCount));
 
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, dtrArr.subarray(0, nodes.length));
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.nodeDtrBuffer);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, 0, dtrArr.subarray(0, this.nodeCount));
     }
 
     updateEdgeData(edges, nodeMap, selectedNodeIds) {
@@ -941,7 +946,8 @@ class WebGLRenderer {
                 } else if (isPathSelected) {
                     highVal = 1.0; // Normal highlighted
                 } else if (src && tgt && src.cluster_id && tgt.cluster_id && src.cluster_id !== tgt.cluster_id) {
-                    highVal = 3.0; // Stratification: External Edge
+                    // [v0.3.34.73] Ponytail: If user explicitly requested FULL edge visibility, do not brutally stratify external edges to 0.15 opacity.
+                    highVal = window.edgeVisibilityMode === 'FULL' ? 0.0 : 3.0; // Stratification: External Edge
                 }
                 this._edgeHighArr[highCnt++] = highVal;
 
@@ -1017,47 +1023,37 @@ class WebGLRenderer {
         }
 
         const t0 = performance.now();
-
-        // 1️⃣ Node Labels & Status Icons & LOD Details
         const currentZoom = window.engine?.transform?.zoom || 1.0;
-        
+        const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
+        const tmpNodeLayout = new Float32Array(4096); // Reusable buffer for one node
+        let totalChars = 0;
+
+        // 1️⃣ Node Labels & Status Icons & LOD Details (Zero-Allocation Layout Cache)
         nodes.forEach(n => {
             const label = n.data?.label || n.id || "";
-            const type = (n.type || "").toLowerCase();
-            const lowLabel = label.toLowerCase();
-            
-            // [v0.3.22] Synchronized Semantic Icon Detection (Parity with 2D getNodeStyle)
-            const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
             const stats = window.engine?.nodeStatsMap?.get(n.id);
             const style = theme ? (theme.getFullNodeStyle ? theme.getFullNodeStyle(n, stats) : null) : null;
-            
-            // [v0.3.22] Priority Fix: Use theme-calculated icon (style.icon) over raw data to ensure 2D/3D parity
             let icon = (style && style.icon) ? style.icon : (n.data?.icon || '📄');
-
             const summary = n.data?.summary || {};
             const statusDetail = (n.status === 'proposed' || n.state === 'pending') ? `${theme ? theme.STATUS.APPROVAL.icon : '⚡'} Awaiting Approval` : "";
             
-            // Build key for layout caching (include zoom/LOD info)
             const lodLevel = currentZoom > 1.5 ? 2 : (currentZoom > 0.8 ? 1 : 0);
             const cacheKey = `${label}_${icon}_${statusDetail}_${JSON.stringify(summary)}_${lodLevel}`;
             
             if (!n._textLayout || n._textLayoutKey !== cacheKey) {
-                const items = [];
+                let idx = 0;
                 
-                // A. Type Icon (Top-Left: 5, 5) - Parity with 2D line 5978
                 if (currentZoom > 1.2) {
                     this.textAtlas.addText(icon);
                     const gIcon = this.textAtlas.glyphMap.get(icon);
                     if (gIcon) {
-                        items.push({
-                            dx: 5, dy: 5,
-                            w: gIcon.w, h: gIcon.h,
-                            u0: gIcon.u0, v0: gIcon.v0, u1: gIcon.u1, v1: gIcon.v1
-                        });
+                        tmpNodeLayout[idx++] = 5; tmpNodeLayout[idx++] = 5;
+                        tmpNodeLayout[idx++] = gIcon.w; tmpNodeLayout[idx++] = gIcon.h;
+                        tmpNodeLayout[idx++] = gIcon.u0; tmpNodeLayout[idx++] = gIcon.v0;
+                        tmpNodeLayout[idx++] = gIcon.u1; tmpNodeLayout[idx++] = gIcon.v1;
                     }
                 }
 
-                // B. Main Label (Centered)
                 this.textAtlas.addText(label);
                 let labelW = 0;
                 for (const ch of label) {
@@ -1066,20 +1062,17 @@ class WebGLRenderer {
                 }
                 
                 let curX = 60 - labelW / 2;
-                let curY = (lodLevel === 2) ? 15 : 35; // Shift up if deep LOD shown
-                
+                let curY = (lodLevel === 2) ? 15 : 35;
                 for (const ch of label) {
                     const g = this.textAtlas.glyphMap.get(ch);
                     if (!g) continue;
-                    items.push({
-                        dx: curX, dy: curY,
-                        w: g.w, h: g.h,
-                        u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
-                    });
+                    tmpNodeLayout[idx++] = curX; tmpNodeLayout[idx++] = curY;
+                    tmpNodeLayout[idx++] = g.w; tmpNodeLayout[idx++] = g.h;
+                    tmpNodeLayout[idx++] = g.u0; tmpNodeLayout[idx++] = g.v0;
+                    tmpNodeLayout[idx++] = g.u1; tmpNodeLayout[idx++] = g.v1;
                     curX += g.w;
                 }
 
-                // C. Status Detail (Awaiting Approval etc.)
                 if (statusDetail && currentZoom > 1.2) {
                     this.textAtlas.addText(statusDetail);
                     let sW = 0;
@@ -1092,18 +1085,14 @@ class WebGLRenderer {
                     for (const ch of statusDetail) {
                         const g = this.textAtlas.glyphMap.get(ch);
                         if (!g) continue;
-                        items.push({
-                            dx: curX, dy: sY,
-                            w: g.w, h: g.h,
-                            u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
-                        });
+                        tmpNodeLayout[idx++] = curX; tmpNodeLayout[idx++] = sY;
+                        tmpNodeLayout[idx++] = g.w; tmpNodeLayout[idx++] = g.h;
+                        tmpNodeLayout[idx++] = g.u0; tmpNodeLayout[idx++] = g.v0;
+                        tmpNodeLayout[idx++] = g.u1; tmpNodeLayout[idx++] = g.v1;
                         curX += g.w;
                     }
                 }
 
-
-
-                // D. Deep LOD (Functions/Classes) - Parity with 2D lines 6031-6074
                 if (lodLevel === 2) {
                     const detailLines = [];
                     if (summary.classes) summary.classes.slice(0, 2).forEach(c => detailLines.push(`• ${c}`));
@@ -1111,151 +1100,135 @@ class WebGLRenderer {
                     if (summary.tables) summary.tables.slice(0, 2).forEach(t => detailLines.push(`◆ ${t}`));
                     
                     let detailY = 35;
-                    detailLines.forEach(line => {
+                    for (const line of detailLines) {
                         this.textAtlas.addText(line);
                         let detailX = 10;
                         for (const ch of line) {
                             const g = this.textAtlas.glyphMap.get(ch);
                             if (!g) continue;
-                            items.push({
-                                dx: detailX, dy: detailY,
-                                w: g.w, h: g.h,
-                                u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
-                            });
+                            tmpNodeLayout[idx++] = detailX; tmpNodeLayout[idx++] = detailY;
+                            tmpNodeLayout[idx++] = g.w; tmpNodeLayout[idx++] = g.h;
+                            tmpNodeLayout[idx++] = g.u0; tmpNodeLayout[idx++] = g.v0;
+                            tmpNodeLayout[idx++] = g.u1; tmpNodeLayout[idx++] = g.v1;
                             detailX += g.w;
                         }
                         detailY += 10;
-                    });
+                    }
                 }
                 
-                n._textLayout = items;
+                n._textLayout = new Float32Array(tmpNodeLayout.buffer, 0, idx).slice(); // Must copy slice!
                 n._textLayoutKey = cacheKey;
             }
+            if (n._textLayout) totalChars += n._textLayout.length / 8;
         });
 
-        // 2️⃣ Edge Badges (Type Icons, Validation Icons, Status Icons)
-        const badgeItems = [];
+        // 2️⃣ Edge Badges Memory Pre-Flight
+        let edgeBadgeChars = 0;
         const isBadgeHidden = window.edgeVisibilityMode === 'NO_BADGES' || window.edgeVisibilityMode === 'NONE' || window.edgeVisibilityMode === 'NO_EDGES' || window.edgeVisibilityMode === 'CLUSTER';
-        // [v0.3.22.4] Always draw badges in WebGL for consistent parity across zoom levels
-        const skipGpuBadges = false; 
+        const isEditMode = window.engine?.isEditMode;
 
-        if (edges && edges.length > 0 && !isBadgeHidden && !skipGpuBadges) {
-            const isEditMode = window.engine?.isEditMode;
-            // [v0.3.3 Fix] Build nodeMap locally if not passed (to avoid undefined crash)
-            const map = new Map();
-            for (const n of nodes) map.set(n.id, n);
-
-            // [v0.4.0] Standard Edge Type Icons (Unicode Escapes for build stability)
-            // [v0.3.22] Synchronized Edge Icons via Theme
-            const theme = (typeof SYNAPSE_THEME !== 'undefined') ? SYNAPSE_THEME : (window.SYNAPSE_THEME || null);
-
-            edges.forEach(e => {
-                const src = e.srcNode || (map ? map.get(e.from) : null);
-                const tgt = e.tgtNode || (map ? map.get(e.to) : null);
-                if (!src?.position || !tgt?.position) return;
-
-                const nodeWidth = 120;
-                const nodeHeight = 60;
-                let srcClientLayer = src.clientLayer || (src.data && src.data.clientLayer) || null;
-                let srcYOffset = srcClientLayer && window.engine ? window.engine.getClientLayerOffset(srcClientLayer) : 0;
-                let tgtClientLayer = tgt.clientLayer || (tgt.data && tgt.data.clientLayer) || null;
-                let tgtYOffset = tgtClientLayer && window.engine ? window.engine.getClientLayerOffset(tgtClientLayer) : 0;
-
-                const x1 = src.position.x + (nodeWidth / 2);
-                const y1 = src.position.y + srcYOffset + (nodeHeight / 2);
-                const x2 = tgt.position.x + (nodeWidth / 2);
-                const y2 = tgt.position.y + tgtYOffset + (nodeHeight / 2);
-                
-                const midX = (x1 + x2) / 2;
-                const midY = (y1 + y2) / 2;
-
-                // [v0.3.22.8] Arrow is now drawn separately or omitted to match 2D parity and architecture specs
-                /* Arrow logic removed from badge capsule */
-
-                // [v0.3.22] Synchronized High-Density Edge Badges via Theme (Full Parity)
+        if (edges && edges.length > 0 && !isBadgeHidden) {
+            for (let i = 0; i < edges.length; i++) {
+                const e = edges[i];
                 const badgeStyle = theme ? (theme.getEdgeBadgeStyle ? theme.getEdgeBadgeStyle(e) : null) : null;
                 const valText = badgeStyle ? badgeStyle.text : "";
-
                 if (valText) {
-                        let cx = midX - 10;
-                        for (const ch of valText) {
-                            if (ch === ' ') { cx += 10; continue; } 
-                            this.textAtlas.addText(ch);
-                            const g = this.textAtlas.glyphMap.get(ch);
-                            if (g) {
-                                badgeItems.push({
-                                    x: cx, y: midY - 35, // [v0.3.22.7] Lifted slightly higher for better line clearance
-                                    w: g.w * 1.5, h: g.h * 1.5, // [v0.3.22.7] 1.5x Scaling for visibility
-                                    u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
-                                });
-                                cx += (g.w * 1.5 + 4); 
-                            }
-                        }
-                    }
-                
-                // [v0.3.22] High-Density badges (including status) are now handled by the unified valText block above.
-
-                if (isEditMode) {
-                    const char = '❌';
-                    this.textAtlas.addText(char);
-                    const g = this.textAtlas.glyphMap.get(char);
-                    if (g) {
-                        badgeItems.push({
-                            x: midX + 30, y: midY + 10,
-                            w: g.w, h: g.h,
-                            u0: g.u0, v0: g.v0, u1: g.u1, v1: g.v1
-                        });
+                    for(const ch of valText) {
+                        if (ch !== ' ') edgeBadgeChars++;
                     }
                 }
-            });
+                if (isEditMode) edgeBadgeChars++;
+            }
         }
-
-        // 3️⃣ Calculate Total Buffer Size
-        let totalChars = badgeItems.length;
-        for (const n of nodes) {
-            if (n._textLayout) totalChars += n._textLayout.length;
-        }
+        
+        totalChars += edgeBadgeChars;
 
         if (totalChars === 0) {
             this.charCount = 0;
             return;
         }
 
+        // 3️⃣ Single Flat Buffer Allocation
         if (!this._textData || this._textData.length !== totalChars * 8) {
             this._textData = new Float32Array(totalChars * 8);
         }
         const data = this._textData;
 
-        // 4️⃣ Fast Fill
-        let idx = 0;
-        // Nodes
-        for (let i = 0; i < nodes.length; i++) {
+        // 4️⃣ Fast Direct Write (Nodes)
+        let dataIdx = 0;
+        for (let i = 0; i < this.nodeCount; i++) {
             const n = nodes[i];
             if (!n.position || !n._textLayout) continue;
             const px = n.position.x;
             const py = n.position.y;
             const layout = n._textLayout;
-            for (let j = 0; j < layout.length; j++) {
-                const l = layout[j];
-                data[idx++] = px + l.dx;
-                data[idx++] = py + l.dy;
-                data[idx++] = l.w; data[idx++] = l.h;
-                data[idx++] = l.u0; data[idx++] = l.v0;
-                data[idx++] = l.u1; data[idx++] = l.v1;
+            for (let j = 0; j < layout.length; j += 8) {
+                if (dataIdx >= this.maxChars * 8) break;
+                data[dataIdx++] = px + layout[j];
+                data[dataIdx++] = py + layout[j+1];
+                data[dataIdx++] = layout[j+2]; data[dataIdx++] = layout[j+3];
+                data[dataIdx++] = layout[j+4]; data[dataIdx++] = layout[j+5];
+                data[dataIdx++] = layout[j+6]; data[dataIdx++] = layout[j+7];
             }
         }
-        // Edges
-        for (let i = 0; i < badgeItems.length; i++) {
-            const b = badgeItems[i];
-            data[idx++] = b.x; data[idx++] = b.y;
-            data[idx++] = b.w; data[idx++] = b.h;
-            data[idx++] = b.u0; data[idx++] = b.v0;
-            data[idx++] = b.u1; data[idx++] = b.v1;
+
+        // 5️⃣ Fast Direct Write (Edges)
+        if (edges && edges.length > 0 && !isBadgeHidden) {
+            const map = new Map();
+            for (const n of nodes) map.set(n.id, n);
+
+            for (let i = 0; i < edges.length; i++) {
+                const e = edges[i];
+                const src = e.srcNode || map.get(e.from);
+                const tgt = e.tgtNode || map.get(e.to);
+                if (!src?.position || !tgt?.position) continue;
+
+                let srcClientLayer = src.clientLayer || (src.data && src.data.clientLayer) || null;
+                let srcYOffset = srcClientLayer && window.engine ? window.engine.getClientLayerOffset(srcClientLayer) : 0;
+                let tgtClientLayer = tgt.clientLayer || (tgt.data && tgt.data.clientLayer) || null;
+                let tgtYOffset = tgtClientLayer && window.engine ? window.engine.getClientLayerOffset(tgtClientLayer) : 0;
+
+                const midX = (src.position.x + tgt.position.x + 120) / 2;
+                const midY = (src.position.y + srcYOffset + tgt.position.y + tgtYOffset + 120) / 2;
+
+                const badgeStyle = theme ? (theme.getEdgeBadgeStyle ? theme.getEdgeBadgeStyle(e) : null) : null;
+                const valText = badgeStyle ? badgeStyle.text : "";
+
+                if (valText) {
+                    let cx = midX - 10;
+                    for (const ch of valText) {
+                        if (dataIdx >= this.maxChars * 8) break;
+                        if (ch === ' ') { cx += 10; continue; } 
+                        this.textAtlas.addText(ch);
+                        const g = this.textAtlas.glyphMap.get(ch);
+                        if (g) {
+                            data[dataIdx++] = cx; data[dataIdx++] = midY - 35;
+                            data[dataIdx++] = g.w * 1.5; data[dataIdx++] = g.h * 1.5;
+                            data[dataIdx++] = g.u0; data[dataIdx++] = g.v0;
+                            data[dataIdx++] = g.u1; data[dataIdx++] = g.v1;
+                            cx += (g.w * 1.5 + 4); 
+                        }
+                    }
+                }
+
+                if (isEditMode) {
+                    if (dataIdx >= this.maxChars * 8) continue;
+                    const char = '❌';
+                    this.textAtlas.addText(char);
+                    const g = this.textAtlas.glyphMap.get(char);
+                    if (g) {
+                        data[dataIdx++] = midX + 30; data[dataIdx++] = midY + 10;
+                        data[dataIdx++] = g.w; data[dataIdx++] = g.h;
+                        data[dataIdx++] = g.u0; data[dataIdx++] = g.v0;
+                        data[dataIdx++] = g.u1; data[dataIdx++] = g.v1;
+                    }
+                }
+            }
         }
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.textInstanceBuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, data, this.gl.DYNAMIC_DRAW);
-        this.charCount = totalChars;
+        this.charCount = dataIdx / 8;
         this.textAtlas.upload();
     }
 

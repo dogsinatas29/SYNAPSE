@@ -72,6 +72,13 @@ export class EntryPointDetector implements PatternDetector {
                     metadata: {
                         inDegree: topExec.fanIn || 0,
                         outDegree: topExec.fanOut || 0
+                    },
+                    predicate: {
+                        condition: topExec.fanIn === 0 ? "STRICT_ROOT" : "FALLBACK_ROOT",
+                        metric: "inDegree/outDegree",
+                        operator: "==/>",
+                        cutoff: topExec.fanIn === 0 ? "0/>0" : "X/>0",
+                        actualValue: `${topExec.fanIn || 0}/${topExec.fanOut || 0}`
                     }
                 };
 
@@ -81,6 +88,7 @@ export class EntryPointDetector implements PatternDetector {
                     targetScope: 'NODE',
                     targetId: targetId,
                     confidence: 1.0,
+                    selectionBasis: `Observed graph dependency root (inDegree=${topExec.fanIn || 0}, outDegree=${topExec.fanOut || 0})`,
                     evidence: [evidence]
                 });
             }

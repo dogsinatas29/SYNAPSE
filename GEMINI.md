@@ -918,322 +918,412 @@ actual hierarchy
 
 ## ROOT Structure
 프로젝트 주요 디렉터리 구조 및 소스코드 현황입니다. (Active/Orphaned/Legacy 상태 포함, 마일스톤/릴리즈 노트 제외)
-*Last Updated: v0.3.34.47 (2026-09-20)*
+*Last Updated: v0.3.34.72 (2026-10-09)*
 
 ### 📂 Directory Tree
 ```text
 .
-├── package.json                          # VS Code 확장 메타데이터 및 의존성 관리
-├── webpack.config.js                     # Webpack 빌드 설정
-├── tsconfig.json                         # TypeScript 컴파일러 설정
-├── build-guard.js                        # 마일스톤/릴리즈 노트 검증 및 배포 통제
-├── RULES.md                              # 프로젝트 코딩 규칙
-├── AGENTS.md                             # AI 에이전트 작업 제약
-├── GEMINI.md                             # Gemini LLM 성능 제약 및 원칙
-├── synapse.config.json                   # SYNAPSE 아키텍처 규칙 설정
-├── .synapseignore                        # Gitignore-style 제외 패턴
-├── .vscodeignore                         # VSIX 패키징 제외 패턴
-├── README.md                             # 영어 프로젝트 문서
-├── README.ko.md                          # 한국어 프로젝트 문서
-├── LICENSE                               # 라이선스
-├── .github/                              # GitHub 워크플로우
-├── .vscode/                              # VS Code 설정
-├── .backup/                              # 백업 파일
-├── mile_stone/                           # 버전별 마일스톤 및 작업 계획 로그
-├── release_note/                         # 버전별 릴리즈 노트
-├── scratch/                              # 임시 스크립트 및 테스트 파일
-├── synapse_data/                         # 스캔된 프로젝트 데이터셋 (project_state.json 등)
-├── synapse_report/                       # 분석 리포트 및 검증 결과 출력
-├── scripts/
-│   ├── run-validation-pipeline.ts        # 검증 파이프라인 실행 스크립트
-│   ├── create-account.js                 # 계정 생성 스크립트
-│   └── ...                               # 기타 유틸리티 스크립트
-├── ui/
-│   ├── index.html                        # 캔버스 웹뷰 마크업
-│   ├── synapse-theme.js                  # 웹뷰 테마 컬러/스타일
-│   ├── i18n.js                           # 🟢 다국어 지원 (data-i18n)
-│   ├── canvas-engine.js                  # 🟡 O(N) 순회 제거, RBush 최적화 (v0.3.33.1_fix2)
-│   ├── webgl-renderer.js                 # 60FPS GPU 렌더러
-│   ├── cluster-hierarchy.js              # 🟢 클러스터 계층/바운딩 연산 (v0.3.33)
-│   ├── rbush.js                          # 🟢 2D 공간 인덱싱 (v0.3.33)
-│   └── engine-core.js                    # 캔버스+WebGL 공통 코어
-├── demo/
-│   ├── index.html                        # 데모 페이지
-│   ├── synapse-theme.js                  # 데모 테마
-│   ├── canvas-engine.js                  # 데모 캔버스 엔진
-│   ├── webgl-renderer.js                 # 데모 WebGL 렌더러
-│   ├── engine-core.js                    # 데모 코어
-│   └── data/                             # 데모 데이터
-│       ├── accounts.json
-│       ├── project_metadata.json
-│       ├── project_state.json
-│       ├── synapse_history.json
-│       └── .server_info
-├── assets/                               # 정적 리소스
-├── dist/                                 # 빌드 출력
-├── docs/                                 # 문서
-├── resources/                            # 추가 리소스
-├── src/
-│   ├── extension.ts                      # VS Code Extension 진입점
-│   ├── main.ts                           # 🟢 메인 진입점 (v0.3.34+)
-│   ├── cli.ts                            # CLI 제어 인터페이스
-│   ├── client.ts                         # 외부 클라이언트 연동
-│   ├── test-webview.ts                   # 🟢 웹뷰 테스트 스크립트
-│   ├── verify_v0.3.10.ts                 # v0.3.10 규격 검증
-│   ├── types/
-│   │   └── schema.ts                     # 노드/엣지/클러스터 타입 정의
-│   ├── core/
-│   │   ├── analysis/                     # 🟢 분석 엔진 (v0.3.34+)
-│   │   │   ├── aggregation/              # 데이터 집계
-│   │   │   ├── analyzers/                # 분석기 (BoundaryAnalyzer 등)
-│   │   │   ├── ast/                      # AST 처리
-│   │   │   ├── intent/                   # 인텐트 분석
-│   │   │   ├── reasoning/                # 추론 엔진
-│   │   │   ├── ArchitectureAnalysisEngine.ts  # 아키텍처 분석 엔진
-│   │   │   ├── ArchitectureHeaderPolicy.ts    # 헤더 정책
-│   │   │   ├── ClusterBridgeAnalyzer.ts       # 클러스터 브릿지 분석
-│   │   │   ├── ContractHeaderPolicy.ts        # 계약 헤더 정책
-│   │   │   ├── GraphViewBuilder.ts            # 그래프 뷰 빌더
-│   │   │   ├── InterventionSimulator.ts       # 개입 시뮬레이터
-│   │   │   ├── PlatformHeaderPolicy.ts        # 플랫폼 헤더 정책
-│   │   │   ├── ReportExporter.ts              # 리포트 내보내기
-│   │   │   ├── SemanticContext.ts             # 🟢 시맨틱 컨텍스트 (v0.3.34.38)
-│   │   │   ├── TargetSelector.ts              # 타겟 선택기
-│   │   │   └── types.ts                       # 분석 타입 정의
-│   │   ├── ir/                           # 🟢 Intermediate Representation (v0.3.34+)
-│   │   │   ├── evaluators/               # IR 평가기
-│   │   │   ├── generators/               # IR 생성기 (BoundaryCandidateGenerator 등)
-│   │   │   ├── models/                   # IR 모델 (GeneratorInterfaces, SemanticTypes)
-│   │   │   ├── promoters/                # IR 승격 로직
-│   │   │   └── ArchitectureIrBuilder.ts  # 아키텍처 IR 빌더
-│   │   ├── reasoning/                    # 🟢 추론 파이프라인 (v0.3.34+)
-│   │   │   ├── analysis/                 # 추론 분석
-│   │   │   ├── analyzers/                # 추론 분석기
-│   │   │   ├── answers/                  # 답변 생성기 (Q6BoundaryAggregator 등)
-│   │   │   ├── builder/                  # 빌더
-│   │   │   ├── builders/                 # 다중 빌더
-│   │   │   ├── evidence/                 # 증거 처리
-│   │   │   ├── model/                    # 추론 모델
-│   │   │   ├── ontology/                 # 온톨로지
-│   │   │   ├── pipeline/                 # 파이프라인
-│   │   │   ├── rules/                    # 규칙 (boundary/ 등)
-│   │   │   ├── signal/                   # 시그널 처리
-│   │   │   ├── snapshot/                 # 스냅샷
-│   │   │   └── ReasoningPipelineRunner.ts # 추론 파이프라인 실행기
-│   │   ├── metrology/                    # 🟢 측정/메트릭 (v0.3.34+)
-│   │   │   ├── __tests__/                # 메트로로지 테스트
-│   │   │   ├── Reengineering/            # 리엔지니어링 메트릭
-│   │   │   ├── Verification/             # 검증 메트릭
-│   │   │   ├── AgreementMatrixBuilder.ts # 합의 행렬 빌더
-│   │   │   ├── AmplificationTracker.ts   # 증폭 추적기
-│   │   │   ├── BenchmarkSnapshotter.ts   # 벤치마크 스냅샷
-│   │   │   ├── BlindSpotMapper.ts        # 블라인드 스팟 매퍼
-│   │   │   ├── CostProfiler.ts           # 비용 프로파일러
-│   │   │   ├── PropertyRegistry.ts       # 속성 레지스트리
-│   │   │   └── index.ts                  # 메트로로지 진입점
-│   │   ├── validation/                   # 🟢 검증 엔진 (v0.3.34+)
-│   │   │   ├── ArchitectureAuditor.ts    # 아키텍처 감사
-│   │   │   ├── ValidationContext.ts      # 검증 컨텍스트
-│   │   │   ├── ValidationEngine.ts       # 검증 엔진
-│   │   │   └── ValidationReportBuilder.ts # 검증 리포트 빌더
-│   │   ├── resolvers/                    # 🟢 언어별 리졸버 (v0.3.34+)
-│   │   │   ├── LanguageResolver.ts       # 언어 리졸버 인터페이스
-│   │   │   └── TypeScriptResolver.ts     # TypeScript 리졸버
-│   │   ├── canvas-engine/                # 캔버스 구동 도메인
-│   │   │   ├── CanvasEngine.ts           # 캔버스 엔진
-│   │   │   ├── Intent.ts                 # 인텐트
-│   │   │   ├── PhaseGate.ts              # 페이즈 게이트
-│   │   │   ├── RenderProtocol.ts         # 렌더 프로토콜
-│   │   │   ├── RuleEngine.ts             # 규칙 엔진
-│   │   │   ├── ScenarioRunner.ts         # 시나리오 실행기
-│   │   │   ├── SpatialRuleBook.ts        # 공간 규칙
-│   │   │   ├── StateManager.ts           # 상태 관리
-│   │   │   ├── ValidationHarness.ts      # 검증 하네스
-│   │   │   └── VisualRuleBook.ts         # 시각 규칙
-│   │   ├── transaction/                  # 트랜잭션 무결성
-│   │   │   ├── CommitManager.ts          # 커밋 관리
-│   │   │   ├── ExecutionLayer.ts         # 실행 레이어
-│   │   │   └── VerificationLayer.ts      # 검증 레이어
-│   │   ├── projection/                   # 설계 규칙 투영
-│   │   │   ├── ProjectionLayer.ts        # 투영 레이어
-│   │   │   └── RuleStore.ts              # 규칙 저장소
-│   │   ├── collaboration/                # 🔵 협업 시스템 (v0.3.30+)
-│   │   │   ├── IdentityManager.ts        # ID/Role/Permission 관리
-│   │   │   ├── SessionManager.ts         # 세션 생명주기
-│   │   │   ├── RuntimeInitializer.ts     # 4단계 런타임 초기화
-│   │   │   ├── CompareEngine.ts          # Harvest 비교 엔진
-│   │   │   ├── HarvestSessionManager.ts  # Harvest 세션/락 관리
-│   │   │   ├── RemoteLayerProjector.ts   # 무상태 프로젝터
-│   │   │   ├── ArchitectureIndexBuilder.ts # 아키텍처 인덱스 빌더
-│   │   │   ├── ReferenceVerifier.ts      # 참조 검증 (100+ 외부 라이브러리)
-│   │   │   ├── HarvestEngine.ts          # Master Layer Materialization
-│   │   │   ├── BoundaryGuard.ts          # 중앙 경계 보안
-│   │   │   ├── MountManager.ts           # SSH 마운트 관리
-│   │   │   ├── AccountManager.ts         # 계정 CRUD
-│   │   │   ├── CollaborationTransport.ts # 전송 계층 인터페이스
-│   │   │   └── RestCollaborationTransport.ts # REST 전송 구현
-│   │   ├── reporting/                    # 🟢 리포트 파이프라인 (v0.3.34.38+)
-│   │   │   ├── ArchitectReportBuilder.ts      # 아키텍트 리포트 빌더
-│   │   │   ├── BoundaryAnalysisReportBuilder.ts # 🟢 바운더리 분석 리포트 (v0.3.34.39)
-│   │   │   ├── ExecutiveReportBuilder.ts      # 경영진 리포트 빌더
-│   │   │   ├── FrontierPartitioner.ts         # 프론티어 파티셔너
-│   │   │   ├── InsightEngine.ts               # 🟢 인사이트 엔진 (v0.3.34.38 수정)
-│   │   │   ├── OnboardingAnalyzer.ts          # 온보딩 분석기
-│   │   │   ├── OnboardingReportBuilder.ts     # 온보딩 리포트 빌더
-│   │   │   ├── ParetoFrontier.ts              # 파레토 프론티어 계산
-│   │   │   ├── ReportBundleGenerator.ts       # 리포트 번들 생성
-│   │   │   ├── RiskClassifier.ts              # 🟢 리스크 분류기 (v0.3.34.38 수정)
-│   │   │   ├── RiskVectorBuilder.ts           # 리스크 벡터 빌더
-│   │   │   ├── RootCauseAggregator.ts         # 🟢 루트cause 집계기 (v0.3.34.38 수정)
-│   │   │   └── types.ts                       # 리포트 타입 정의
-│   │   ├── simulation/                   # 🟢 What-if 시뮬레이터 (v0.3.34.30)
-│   │   │   ├── ExecutiveReportDiffBuilder.ts  # 경영진 리포트 Diff
-│   │   │   ├── SimulationSession.ts         # 시뮬레이션 세션
-│   │   │   ├── SimulationTargetSelector.ts  # 시뮬레이션 타겟 선택
-│   │   │   ├── TopologyMutator.ts           # 토폴로지 변이
-│   │   │   └── TopologyOverlay.ts           # 토폴로지 오버레이
-│   │   ├── benchmark/                    # 🟢 벤치마크 하네스
-│   │   │   └── BenchmarkHarness.ts
-│   │   ├── (Active) StateAuditPipeline.ts     # 오디트 파이프라인
-│   │   ├── (Active) AnomalyCollector.ts       # 이상 징후 수집
-│   │   ├── (Active) TransitionGrammar.ts      # 전이 문법
-│   │   ├── (Active) FailurePropagator.ts      # 고장 전파 계산
-│   │   ├── (Active) ProjectMetadata.ts        # 프로젝트 메타데이터
-│   │   ├── (Active) SymbolIndex.ts            # Cross-file 레지스트리
-│   │   ├── (Active) DataPipeline.ts           # 파일 스캔 → 그래프 추출
-│   │   ├── ReferenceResolver.ts               # 🟢 STDLIB/Broadcast 해상도 결정기 (v0.3.34.47)
-│   │   ├── GhostExpander.ts                   # 🟢 미해결 참조 고스트 변환기
-│   │   ├── GhostPolicy.ts                     # 🟢 고스트/외부 참조 필터 및 분류
-│   │   └── EdgeBuilder.ts                     # 🟢 최종 엣지 팩토리 (Provenance 검증)
-│   │   ├── (Active) RendererCore.ts           # 렌더러 생명주기
-│   │   ├── (Active) RuleEngine.ts             # 핵심 규칙 검증
-│   │   ├── (Active) GraphModel.ts             # 그래프 데이터 모델
-│   │   ├── (Active) LayoutEngine.ts           # 🟡 레이아웃 엔진 (v0.3.33)
-│   │   ├── (Active) BlacklistOrchestrator.ts  # 블랙리스트 필터
-│   │   ├── (Active) FileScanner.ts            # 단일 파일 분석
-│   │   ├── (Active) FlowScanner.ts            # 데이터 흐름 분석
-│   │   ├── (Active) FlowchartGenerator.ts     # 플로우차트 생성
-│   │   ├── (Active) LogicAnalyzer.ts          # 🟡 스키마 무결성 검증
-│   │   ├── (Active) GeminiParser.ts           # 대화 데이터 파싱
-│   │   ├── (Active) graphBuilder.ts           # 그래프 구조화
-│   │   ├── (Active) DatabaseEngine.ts         # KV 스토리지
-│   │   ├── (Active) PromptLogger.ts           # 세션 로그
-│   │   ├── (Active) DebuggerSystem.ts         # 디버깅 트리거
-│   │   ├── (Active) ControlSystem.ts          # 시스템 제어
-│   │   ├── (Active) AiOrchestrator.ts         # AI 오케스트레이션
-│   │   ├── (Active) PhaseManager.ts           # 페이즈 관리
-│   │   ├── (Active) SnapshotSystem.ts         # 스냅샷 저장/복원
-│   │   ├── (Active) GridSystem.ts             # 그리드 시스템
-│   │   ├── (Active) VirtualDebugger.ts        # 🟡 가상 디버거
-│   │   ├── (Active) EdgeCodeRefactorer.ts     # 엣지 코드 리팩터링
-│   │   ├── (Active) PbSessionWatcher.ts       # Protobuf 세션 감시
-│   │   ├── (Active) filterSnapshot.ts         # 스냅샷 필터링
-│   │   ├── (Active) JVMAuditor.ts             # Java/Kotlin 분석
-│   │   ├── (Active) ReportExporter.ts         # 🟡 리포트 내보내기
-│   │   ├── (Active) VscdbAdapter.ts           # VS Code DB 어댑터
-│   │   ├── (Active) SynapseIgnore.ts          # .synapseignore 파서
-│   │   ├── (Active) ClusterBuilder.ts         # 클러스터 생성
-│   │   ├── (Active) ClusterHierarchy.ts       # 클러스터 계층
-│   │   ├── (Active) NodeBuilder.ts            # 노드 생성
-│   │   ├── (Active) EdgeBuilder.ts            # 엣지 생성
-│   │   ├── (Active) GraphAnalyzer.ts          # 그래프 분석
-│   │   ├── (Active) CommunityDetector.ts      # 커뮤니티 감지
-│   │   ├── (Active) DirectoryTreeBuilder.ts   # 디렉토리 트리
-│   │   ├── (Active) ReferenceResolver.ts      # 참조 해결
-│   │   ├── (Active) VisibleGraphResolver.ts   # 가시 그래프 해결
-│   │   ├── (Active) GhostExpander.ts          # 고스트 확장
-│   │   ├── (Active) GhostClassifier.ts        # 고스트 분류
-│   │   ├── (Active) GhostPolicy.ts            # 고스트 정책
-│   │   ├── (Active) ExternalReferenceSemantics.ts # 외부 참조 시맨틱
-│   │   ├── (Active) ScannerRegistry.ts        # 스캐너 레지스트리
-│   │   ├── (Active) CppScanner.ts             # C++ 스캐너
-│   │   ├── (Active) JavaScanner.ts            # Java 스캐너
-│   │   ├── (Active) KotlinScanner.ts          # Kotlin 스캐너
-│   │   ├── (Active) PythonScanner.ts          # Python 스캐너
-│   │   ├── (Active) RustScanner.ts            # Rust 스캐너
-│   │   ├── (Active) JsTsScanner.ts            # JS/TS 스캐너
-│   │   ├── (Active) MarkdownScanner.ts        # Markdown 스캐너
-│   │   ├── (Active) ShellScanner.ts           # Shell 스캐너
-│   │   ├── (Active) SqlScanner.ts             # SQL 스캐너
-│   │   ├── (Active) ConfigScanner.ts          # Config 스캐너
-│   │   ├── (Active) DiagnosticReporter.ts     # 진단 리포터
-│   │   ├── (Active) BoundsDiagnosticReporter.ts # 바운즈 진단
-│   │   ├── (Active) LayoutDiagnosticReporter.ts # 레이아웃 진단
-│   │   ├── (Legacy) BillingManager.ts         # 과금 뼈대 (Lock)
-│   │   ├── (Orphaned) WebviewInterceptor.ts   # 웹뷰 입출력 요격 (미사용)
-│   │   ├── (Orphaned) CommandInterceptor.ts   # 명령어 요격 (미사용)
-│   │   ├── (Orphaned) CDPManager.ts           # Chrome DevTools (미사용)
-│   │   ├── (Orphaned) DirectChatScraper.ts    # 채팅 스크래퍼 (미사용)
-│   │   └── (Orphaned) ArchitectureDSL.ts      # YAML DSL (미사용)
-│   ├── cli/                              # 🟢 CLI 도구 모음 (v0.3.34+)
-│   │   ├── ast_verification_engine.ts    # AST 검증 엔진
-│   │   ├── audit_evidence.ts             # 감사 증거
-│   │   ├── audit_gate_*.ts               # 감사 게이트 (G, I, J, K, L, M, N, O)
-│   │   ├── audit_phase_*.ts              # Phase 12 감사 시리즈
-│   │   ├── audit_pipeline.ts             # 감사 파이프라인
-│   │   ├── b5_validation_layer.ts        # 🟢 B5 검증 레이어 (v0.3.34.39)
-│   │   ├── BatchRunner.ts                # 배치 실행기
-│   │   ├── community_edge_audit.ts       # 커뮤니티 엣지 감사
-│   │   ├── core_metrics_lab.ts           # 핵심 메트릭 실험실
-│   │   ├── generate_drift_report.ts      # 드리프트 리포트 생성
-│   │   ├── generate_surgery_report.ts    # 🟢 수술 리포트 생성 (v0.3.34.39)
-│   │   ├── ProjectAnalyzer.ts            # 프로젝트 분석기
-│   │   ├── ReportVerifier.ts             # 리포트 검증기
-│   │   ├── run_b5_bundle.ts              # B5 번들 실행
-│   │   ├── run_census.ts                 # 센서스 실행
-│   │   ├── run_placement_analysis.ts     # 배치 분석 실행
-│   │   ├── run_signal_census.ts          # 시그널 센서스
-│   │   ├── run_stability_report.ts       # 안정성 리포트
-│   │   ├── run_synapse_actual_census.ts  # SYNAPSE 실제 센서스
-│   │   ├── signal_laboratory.ts          # 시그널 실험실
-│   │   ├── stage_a5_validator.ts         # A5 단계 검증기
-│   │   ├── SummaryGenerator.ts           # 요약 생성기
-│   │   └── verify_determinism.ts         # 결정론 검증
-│   ├── vs/                               # 🟢 VS Code 호환 레이어 (v0.3.34+)
-│   │   ├── editor/                       # 에디터 호환
-│   │   ├── platform/                     # 플랫폼 호환
-│   │   ├── server/                       # 서버 호환
-│   │   ├── sessions/                     # 세션 호환
-│   │   └── workbench/                    # 워크벤치 호환
-│   ├── test/                             # 🔵 테스트 스위트 (v0.3.30+)
-│   │   ├── __mocks__/
-│   │   │   └── vscode.ts                 # VS Code API Mock
-│   │   ├── phase1_validation.test.ts     # Phase 1 검증 (10 tests)
-│   │   ├── phase2_validation.test.ts     # Phase 2 검증 (14 tests)
-│   │   ├── security_integration.test.ts  # 보안 통합 테스트
-│   │   └── security_regression.test.ts   # 보안 회귀 테스트
-│   ├── analysis/
-│   │   └── hintEngine.ts                 # 실시간 아키텍처 힌트
-│   ├── bootstrap/
-│   │   └── BootstrapEngine.ts            # 초기 로드 및 그래프 구성
-│   ├── rust_checker/                     # Rust 프로젝트 분석
-│   │   ├── mod.rs
-│   │   ├── reporter.rs
-│   │   └── state_checker.rs
-│   ├── explorer/
-│   │   └── ArchitectureExplorer.ts       # 아키텍처 탐색기
-│   ├── server/
-│   │   ├── server.ts                     # LSP 서버 메인
-│   │   ├── standalone.ts                 # 독립 실행 모드
-│   │   ├── vscode.ts                     # VS Code API mock
-│   │   └── register-vscode-mock.ts       # vscode 모듈 전역 등록
-│   ├── utils/
-│   │   ├── ChatExtractor.ts              # 채팅 데이터 추출
-│   │   ├── Logger.ts                     # 시스템 로깅
-│   │   ├── SensitiveInfoMasker.ts        # 민감 정보 마스킹
-│   │   ├── exclusionRules.ts             # 제외 규칙
-│   │   └── visualHints.ts                # 시각 힌트
-│   └── webview/
-│       └── CanvasPanel.ts                # 🟡 웹뷰 캔버스 패널
-├── mile_stone/                           # 마일스톤 문서
-│   ├── v0.2.xx.md ~ v0.3.34.39.md        # 버전별 마일스톤
-│   └── *_log.md                          # 작업 로그
-├── release_note/                         # 릴리즈 노트
-│   └── v*_release_notes.md
-└── tools/                                # 보조 스크립트
-    ├── compare.js
-    ├── config-generator.js
-    └── log-analyzer.js
+├── Directory
+├── demo
+│   └── canvas-engine.js
+├── scripts
+│   ├── debug
+│   │   └── debug_entrypoint_detector.ts
+│   ├── src
+│   │   └── core
+│   │       └── reporting
+│   ├── validation
+│   │   └── resolver_trace_audit.ts
+│   ├── validations
+│   │   ├── append_milestone.js
+│   │   ├── append_milestone_2.js
+│   │   ├── append_milestone_3.js
+│   │   ├── cluster_analysis.js
+│   │   ├── cross_project_correlation.js
+│   │   ├── dump_top100_csv.js
+│   │   ├── metric_correlation.js
+│   │   ├── scatter_analysis.js
+│   │   ├── test_cascade_failure_detector.ts
+│   │   ├── test_change_amplifier_detector.ts
+│   │   ├── test_detector.ts
+│   │   ├── test_determinism.ts
+│   │   ├── test_diagnostic_pipeline.ts
+│   │   ├── test_entry_point_detector.ts
+│   │   ├── test_semantic_precision.ts
+│   │   ├── test_system_core_detector.ts
+│   │   ├── top100_evidence.csv
+│   │   ├── top100_semantic_precision.json
+│   │   ├── ts_ast_extractor.js
+│   │   ├── ts_ast_extractor_debug.js
+│   │   └── ts_ast_extractor_debug2.js
+│   ├── audit_extension_clusters.ts
+│   ├── create-account.js
+│   ├── extension_discovery_audit.ts
+│   ├── run-validation-pipeline.ts
+│   ├── run_reasoning_on_real_graph.ts
+│   ├── test_architecture_dependency_audit.ts
+│   ├── test_architecture_verification_26.ts
+│   ├── test_architecture_verification_27.ts
+│   ├── test_architecture_verification_28_29.ts
+│   ├── test_architecture_verification_30.ts
+│   ├── test_generate.ts
+│   ├── update_project_state.ts
+│   └── verify_anomaly_collector.ts
+├── src
+│   ├── analysis
+│   │   └── hintEngine.ts
+│   ├── bootstrap
+│   │   └── BootstrapEngine.ts
+│   ├── cli
+│   │   ├── BatchRunner.ts
+│   │   ├── ProjectAnalyzer.ts
+│   │   ├── ReportVerifier.ts
+│   │   ├── SummaryGenerator.ts
+│   │   ├── ast_verification_engine.ts
+│   │   ├── audit_evidence.ts
+│   │   ├── audit_gate_g.ts
+│   │   ├── audit_gate_i.ts
+│   │   ├── audit_gate_j.ts
+│   │   ├── audit_gate_k.ts
+│   │   ├── audit_gate_l.ts
+│   │   ├── audit_gate_m.ts
+│   │   ├── audit_gate_n_series.ts
+│   │   ├── audit_gate_o_series.ts
+│   │   ├── audit_phase_12_2_5_coordination_audit.ts
+│   │   ├── audit_phase_12_2_6_5_service_investigation.ts
+│   │   ├── audit_phase_12_2_6_revalidation.ts
+│   │   ├── audit_phase_12_3_determinism_and_regression.ts
+│   │   ├── audit_phase_12_4_5_dossier.ts
+│   │   ├── audit_phase_12_4_falsification.ts
+│   │   ├── audit_phase_12_5_final_report.ts
+│   │   ├── audit_phase_12_7_generalization.ts
+│   │   ├── audit_phase_12_7_v2_discovery.ts
+│   │   ├── audit_phase_12_7_v3_minimal_search.ts
+│   │   ├── audit_phase_12_7_v4_hub_vs_authority.ts
+│   │   ├── audit_phase_12_7_v5_essence.ts
+│   │   ├── audit_phase_12_7_v6_constraint_falsification.ts
+│   │   ├── audit_phase_12_7_v7_constraint_taxonomy.ts
+│   │   ├── audit_phase_12_adversarial.ts
+│   │   ├── audit_phase_12_known_truth.ts
+│   │   ├── audit_phase_12_known_truth_vscode.ts
+│   │   ├── audit_pipeline.ts
+│   │   ├── b5_validation_layer.ts
+│   │   ├── community_edge_audit.ts
+│   │   ├── core_metrics_lab.ts
+│   │   ├── generate_drift_report.ts
+│   │   ├── generate_surgery_report.ts
+│   │   ├── run_b5_bundle.ts
+│   │   ├── run_census.ts
+│   │   ├── run_placement_analysis.ts
+│   │   ├── run_signal_census.ts
+│   │   ├── run_stability_report.ts
+│   │   ├── run_synapse_actual_census.ts
+│   │   ├── signal_laboratory.ts
+│   │   ├── stage_a5_validator.ts
+│   │   ├── test_bundle_generator.ts
+│   │   ├── test_entry_point.ts
+│   │   ├── test_o2_generation.ts
+│   │   ├── test_o2_lineage.ts
+│   │   └── verify_determinism.ts
+│   ├── core
+│   │   ├── analysis
+│   │   │   ├── aggregation
+│   │   │   ├── analyzers
+│   │   │   ├── ast
+│   │   │   ├── intent
+│   │   │   ├── patterns
+│   │   │   ├── pipeline
+│   │   │   ├── providers
+│   │   │   ├── reasoning
+│   │   │   ├── semantic
+│   │   │   ├── ArchitectureAnalysisEngine.ts
+│   │   │   ├── ArchitectureHeaderPolicy.ts
+│   │   │   ├── ClusterBridgeAnalyzer.ts
+│   │   │   ├── ContractHeaderPolicy.ts
+│   │   │   ├── GraphViewBuilder.ts
+│   │   │   ├── InterventionSimulator.ts
+│   │   │   ├── PlatformHeaderPolicy.ts
+│   │   │   ├── ReportExporter.ts
+│   │   │   ├── SemanticContext.ts
+│   │   │   ├── TargetSelector.ts
+│   │   │   └── types.ts
+│   │   ├── benchmark
+│   │   │   ├── BenchmarkGraphGenerator.ts
+│   │   │   └── BenchmarkHarness.ts
+│   │   ├── canvas-engine
+│   │   │   ├── CanvasEngine.ts
+│   │   │   ├── Intent.ts
+│   │   │   ├── PhaseGate.ts
+│   │   │   ├── RenderProtocol.ts
+│   │   │   ├── RuleEngine.ts
+│   │   │   ├── ScenarioRunner.ts
+│   │   │   ├── SpatialRuleBook.ts
+│   │   │   ├── StateManager.ts
+│   │   │   ├── ValidationHarness.ts
+│   │   │   └── VisualRuleBook.ts
+│   │   ├── collaboration
+│   │   │   ├── AccountManager.ts
+│   │   │   ├── ArchitectureIndexBuilder.ts
+│   │   │   ├── BoundaryGuard.ts
+│   │   │   ├── CollaborationTransport.ts
+│   │   │   ├── CompareEngine.ts
+│   │   │   ├── CompareProjection.ts
+│   │   │   ├── EdgeGenerator.ts
+│   │   │   ├── HarvestEngine.ts
+│   │   │   ├── HarvestProjection.ts
+│   │   │   ├── HarvestSessionManager.ts
+│   │   │   ├── IdentityManager.ts
+│   │   │   ├── MountManager.ts
+│   │   │   ├── ReferenceVerifier.ts
+│   │   │   ├── RemoteLayerProjector.ts
+│   │   │   ├── RestCollaborationTransport.ts
+│   │   │   ├── RuntimeInitializer.ts
+│   │   │   └── SessionManager.ts
+│   │   ├── ir
+│   │   │   ├── evaluators
+│   │   │   ├── generators
+│   │   │   ├── models
+│   │   │   ├── promoters
+│   │   │   └── ArchitectureIrBuilder.ts
+│   │   ├── metrology
+│   │   │   ├── Reengineering
+│   │   │   ├── Verification
+│   │   │   ├── __tests__
+│   │   │   ├── AgreementMatrixBuilder.ts
+│   │   │   ├── AmplificationTracker.ts
+│   │   │   ├── BenchmarkSnapshotter.ts
+│   │   │   ├── BlindSpotMapper.ts
+│   │   │   ├── CostProfiler.ts
+│   │   │   ├── PropertyRegistry.ts
+│   │   │   └── index.ts
+│   │   ├── projection
+│   │   │   ├── ProjectionLayer.ts
+│   │   │   └── RuleStore.ts
+│   │   ├── reasoning
+│   │   │   ├── analysis
+│   │   │   ├── analyzers
+│   │   │   ├── answers
+│   │   │   ├── builder
+│   │   │   ├── builders
+│   │   │   ├── evidence
+│   │   │   ├── model
+│   │   │   ├── ontology
+│   │   │   ├── pipeline
+│   │   │   ├── rules
+│   │   │   ├── signal
+│   │   │   ├── snapshot
+│   │   │   └── ReasoningPipelineRunner.ts
+│   │   ├── reporting
+│   │   │   ├── ArchitectReportBuilder.ts
+│   │   │   ├── BoundaryAnalysisReportBuilder.ts
+│   │   │   ├── EvidenceViewerBuilder.ts
+│   │   │   ├── FindingReportAdapter.ts
+│   │   │   ├── FrontierPartitioner.ts
+│   │   │   ├── InsightEngine.ts
+│   │   │   ├── OnboardingAnalyzer.ts
+│   │   │   ├── OnboardingReportBuilder.ts
+│   │   │   ├── ParetoFrontier.ts
+│   │   │   ├── ReportBundleGenerator.ts
+│   │   │   ├── ReportContract.ts
+│   │   │   ├── RiskClassifier.ts
+│   │   │   ├── RiskVectorBuilder.ts
+│   │   │   ├── RootCauseAggregator.ts
+│   │   │   ├── RootCauseAggregator.ts.patch
+│   │   │   ├── ValidationRenderer.ts
+│   │   │   └── types.ts
+│   │   ├── resolvers
+│   │   │   ├── LanguageResolver.ts
+│   │   │   ├── TypeScriptResolver.ts
+│   │   │   └── foo
+│   │   ├── simulation
+│   │   │   ├── evidence
+│   │   │   ├── propagation
+│   │   │   ├── scenario
+│   │   │   ├── state
+│   │   │   ├── SimulationBoundaryResolver.ts
+│   │   │   ├── SimulationProjectionBuilder.ts
+│   │   │   ├── SimulationScopeResolver.ts
+│   │   │   ├── SimulationSession.ts
+│   │   │   ├── SimulationSnapshot.ts
+│   │   │   ├── SimulationTargetSelector.ts
+│   │   │   ├── TopologyMutator.ts
+│   │   │   └── TopologyOverlay.ts
+│   │   ├── transaction
+│   │   │   ├── CommitManager.ts
+│   │   │   ├── ExecutionLayer.ts
+│   │   │   ├── ProjectStateSerializer.ts
+│   │   │   └── VerificationLayer.ts
+│   │   ├── validation
+│   │   │   ├── AccuracyBenchmark.ts
+│   │   │   ├── ArchitectureAuditor.ts
+│   │   │   ├── BaselineTruthDataset.ts
+│   │   │   ├── ValidationContext.ts
+│   │   │   ├── ValidationEngine.ts
+│   │   │   └── ValidationReportBuilder.ts
+│   │   ├── AiOrchestrator.ts
+│   │   ├── AnomalyCollector.ts
+│   │   ├── ArchitectureDSL.ts
+│   │   ├── BillingManager.ts
+│   │   ├── BlacklistOrchestrator.ts
+│   │   ├── BoundsDiagnosticReporter.ts
+│   │   ├── CDPManager.ts
+│   │   ├── ClusterBuilder.ts
+│   │   ├── ClusterHierarchy.ts
+│   │   ├── CommandInterceptor.ts
+│   │   ├── CommunityDetector.ts
+│   │   ├── ConfigScanner.ts
+│   │   ├── ControlSystem.ts
+│   │   ├── CppScanner.ts
+│   │   ├── DataPipeline.ts
+│   │   ├── DatabaseEngine.ts
+│   │   ├── DebuggerSystem.ts
+│   │   ├── DiagnosticReporter.ts
+│   │   ├── DirectChatScraper.ts
+│   │   ├── DirectoryTreeBuilder.ts
+│   │   ├── EdgeBuilder.ts
+│   │   ├── EdgeCodeRefactorer.ts
+│   │   ├── ExternalReferenceSemantics.ts
+│   │   ├── FailurePropagator.ts
+│   │   ├── FileScanner.ts
+│   │   ├── FlowScanner.ts
+│   │   ├── FlowchartGenerator.ts
+│   │   ├── GeminiParser.ts
+│   │   ├── GhostClassifier.ts
+│   │   ├── GhostExpander.ts
+│   │   ├── GhostPolicy.ts
+│   │   ├── GoScanner.ts
+│   │   ├── GraphAnalyzer.ts
+│   │   ├── GraphModel.ts
+│   │   ├── GridSystem.ts
+│   │   ├── JVMAuditor.ts
+│   │   ├── JavaScanner.ts
+│   │   ├── JsTsScanner.ts
+│   │   ├── KotlinScanner.ts
+│   │   ├── LayoutDiagnosticReporter.ts
+│   │   ├── LayoutEngine.ts
+│   │   ├── LogicAnalyzer.ts
+│   │   ├── MarkdownScanner.ts
+│   │   ├── NodeBuilder.ts
+│   │   ├── PbSessionWatcher.ts
+│   │   ├── PhaseManager.ts
+│   │   ├── ProjectMetadata.ts
+│   │   ├── PromptLogger.ts
+│   │   ├── PythonScanner.ts
+│   │   ├── ReferenceResolver.ts
+│   │   ├── RendererCore.ts
+│   │   ├── ReportExporter.ts
+│   │   ├── RuleEngine.ts
+│   │   ├── RustScanner.ts
+│   │   ├── ScannerRegistry.ts
+│   │   ├── ShellScanner.ts
+│   │   ├── SnapshotSystem.ts
+│   │   ├── SqlScanner.ts
+│   │   ├── StateAuditPipeline.ts
+│   │   ├── SymbolIndex.ts
+│   │   ├── SynapseIgnore
+│   │   ├── SynapseIgnore.ts
+│   │   ├── TransitionGrammar.ts
+│   │   ├── VirtualDebugger.ts
+│   │   ├── VisibleGraphResolver.ts
+│   │   ├── VscdbAdapter.ts
+│   │   ├── WebviewInterceptor.ts
+│   │   ├── filterSnapshot.ts
+│   │   └── graphBuilder.ts
+│   ├── explorer
+│   │   └── ArchitectureExplorer.ts
+│   ├── rust_checker
+│   │   ├── mod.rs
+│   │   ├── reporter.rs
+│   │   └── state_checker.rs
+│   ├── server
+│   │   ├── register-vscode-mock.ts
+│   │   ├── server.ts
+│   │   ├── standalone.ts
+│   │   └── vscode.ts
+│   ├── test
+│   │   ├── __mocks__
+│   │   │   └── vscode.ts
+│   │   ├── intervention_stability.test.ts
+│   │   ├── phase1_validation.test.ts
+│   │   ├── phase2_validation.test.ts
+│   │   ├── security_integration.test.ts
+│   │   └── security_regression.test.ts
+│   ├── types
+│   │   ├── metrology.ts
+│   │   └── schema.ts
+│   ├── utils
+│   │   ├── ChatExtractor.ts
+│   │   ├── Logger.ts
+│   │   ├── SensitiveInfoMasker.ts
+│   │   ├── determinism.ts
+│   │   ├── exclusionRules.ts
+│   │   ├── hash_utils.ts
+│   │   └── visualHints.ts
+│   ├── vs
+│   │   ├── base
+│   │   │   └── common
+│   │   ├── editor
+│   │   │   ├── browser
+│   │   │   ├── common
+│   │   │   └── contrib
+│   │   ├── platform
+│   │   │   ├── agentHost
+│   │   │   ├── menubar
+│   │   │   └── registry.ts
+│   │   ├── server
+│   │   │   └── node
+│   │   ├── sessions
+│   │   │   └── contrib
+│   │   └── workbench
+│   │       ├── api
+│   │       ├── browser
+│   │       ├── contrib
+│   │       ├── services
+│   │       ├── api.ts
+│   │       ├── workbench.common.main.ts
+│   │       └── workbench.web.main.ts
+│   ├── webview
+│   │   └── CanvasPanel.ts
+│   ├── cli.ts
+│   ├── client.ts
+│   ├── extension.ts
+│   ├── main.ts
+│   ├── test-webview.ts
+│   └── verify_v0.3.10.ts
+├── ui
+│   ├── canvas-engine.js
+│   ├── canvas-engine.js.orig
+│   ├── canvas-engine.js.patch
+│   ├── canvas-engine.js.rej
+│   ├── cluster-hierarchy.js
+│   ├── engine-core.js
+│   ├── i18n.js
+│   ├── index.html
+│   ├── rbush.js
+│   ├── synapse-theme.js
+│   └── webgl-renderer.js
+├── AGENTS.md
+├── GEMINI.md
+├── LICENSE
+├── README.ko.md
+├── README.md
+├── REVISION_HISTORY.md
+├── RULES.md
+├── build-guard.js
+├── diagnostic_log.txt
+├── package-lock.json
+├── package.json
+├── robots.txt
+├── scratch_EntryPointDetector.ts
+├── synapse-visual-architecture-v0.3.34.72.vsix
+├── synapse.config.json
+├── test.js
+├── test2.js
+├── tsconfig.json
+└── webpack.config.js
+
+88 directories, 311 files
+
 ```
 
 ### 🧪 TESTED Section (Generated Artifacts & Garbage)
@@ -1249,6 +1339,10 @@ actual hierarchy
 
 | 파일/폴더 경로 | 상태 | 주요 역할 및 기능 설명 |
 | :--- | :--- | :--- |
+| `src/core/analysis/patterns/` | 🟢 Active (v0.3.34.72) | `BoundaryPatternDetector.ts`, `EntryPointDetector.ts` 등 계약(Contract) 기반 증거(Evidence) 패턴 스캐너 |
+| `src/core/reporting/FindingReportAdapter.ts` | 🟢 Active (v0.3.34.72) | `E2, O2, A1~A5` 등 정규 리포트 본문에 구조적 타겟과 관측 지표(Metrics), 선정 근거(Basis)를 동적 렌더링하는 핵심 어댑터 |
+| `src/core/reporting/ReportContract.ts` | 🟢 Active | A1~O2 리포트에 대한 지원 패턴(supportingPatterns) 및 허용 증거(allowedEvidence) 명세 |
+| `src/core/reporting/BoundaryAnalysisReportBuilder.ts` | 🟡 Diagnostic | 정규 계약을 우회하는 디버그/진단용 덤프 빌더 (`REJECTED_CANDIDATE` 기록 용도) |
 | `package.json` | 유지 | VS Code 확장 프로그램 메타데이터(기여 지점, 명령어 바인딩) 정의 및 패키지 관리 |
 | `build-guard.js` | 유지 | 마일스톤 및 릴리즈 노트 유효성 자동 검증 배포 통제 스크립트 |
 | `RULES.md` | 유지 | 프로젝트 코딩 규칙 및 아키텍처 제약 문서 |

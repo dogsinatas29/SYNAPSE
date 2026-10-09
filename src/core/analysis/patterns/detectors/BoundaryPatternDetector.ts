@@ -70,8 +70,35 @@ export class BoundaryPatternDetector implements PatternDetector {
                     description: `Strength: ${strength}, Cohesion: ${semantic.metadata?.cohesion || 0}, Size: ${semantic.metadata?.size || 0}`,
                     sourceId: targetId,
                     filePath: targetId,
-                    graphNodeId: targetId
+                    graphNodeId: targetId,
+                    metadata: {
+                        strength: strength,
+                        cohesion: semantic.metadata?.cohesion,
+                        size: semantic.metadata?.size,
+                        internalEdges: semantic.metadata?.internalEdges,
+                        externalEdges: semantic.metadata?.externalEdges,
+                        members: semantic.metadata?.members?.length // too large to show array, show length
+                    },
+                    predicate: {
+                        condition: "ISOLATION_CLASSIFICATION",
+                        metric: "strength",
+                        operator: "===",
+                        cutoff: strength,
+                        actualValue: strength
+                    }
                 };
+
+                let basisStr = `Classified as ${title} because its isolation strength was evaluated as '${strength}'.`;
+                const inbound = semantic.metadata?.inboundEdges || 0;
+                const cohesionVal = semantic.metadata?.cohesion || 0;
+                
+                if (strength === 'Strong') {
+                    if (inbound >= 100) basisStr = `Classified as ${title} ('Strong') primarily due to massive Fan-In (inboundEdges=${inbound} >= 100).`;
+                    else basisStr = `Classified as ${title} ('Strong') due to high cohesion (${cohesionVal} >= 0.75) or massive internal structure.`;
+                } else if (strength === 'Moderate') {
+                    if (inbound >= 30) basisStr = `Classified as ${title} ('Moderate') due to high Fan-In (inboundEdges=${inbound} >= 30).`;
+                    else basisStr = `Classified as ${title} ('Moderate') due to moderate cohesion (${cohesionVal} >= 0.45).`;
+                }
 
                 findings.push({
                     findingId: `F-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
@@ -79,6 +106,7 @@ export class BoundaryPatternDetector implements PatternDetector {
                     targetScope: 'CLUSTER',
                     targetId: targetId,
                     confidence: 1.0,
+                    selectionBasis: basisStr,
                     evidence: [evidenceItem],
                     context: { members: members }
                 });

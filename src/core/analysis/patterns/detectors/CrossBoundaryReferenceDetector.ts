@@ -43,6 +43,7 @@ export class CrossBoundaryReferenceDetector implements PatternDetector {
                     targetScope: 'EDGE',
                     targetId: `${source}->${target}`, // Compound ID for the relation
                     confidence: 1.0, // This is an absolute fact, not a heuristic
+                    selectionBasis: `Valid edge between promoted boundaries (${depCount} dependencies)`,
                     evidence,
                     context: {
                         description: `현재 분석 범위에서 Boundary ${source}와(과) Boundary ${target} 사이에 ${depCount}개의 실제 구조적 의존성 Edge가 관측된다.`

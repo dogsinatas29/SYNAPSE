@@ -5,10 +5,10 @@ import { ReportScope, SelectionSource, ReportContract } from '../../types/schema
 import { ValidationEvidence } from './types';
 import { Logger } from '../../utils/Logger';
 import { OnboardingReportBuilder } from './OnboardingReportBuilder';
-import { ExecutiveReportBuilder } from './ExecutiveReportBuilder';
 import { ValidationRenderer } from './ValidationRenderer';
 import { FindingReportAdapter } from './FindingReportAdapter';
 import { EvidenceViewerBuilder } from './EvidenceViewerBuilder';
+import { DiagnosticTracer } from '../analysis/pipeline/DiagnosticTracer';
 
 export class ReportBundleGenerator {
     
@@ -35,6 +35,7 @@ export class ReportBundleGenerator {
         
         const simulationContextStr = fs.readFileSync(simContextPath, 'utf-8');
         const simulationContext = JSON.parse(simulationContextStr);
+        console.log('RBG_INPUT_FINDINGS', simulationContext?.evidenceBundle?.findings?.length || 0);
         console.log(`[DATA_TRACE] ReportBundleGenerator after read: findings=${simulationContext.evidenceBundle?.findings?.length}, path=${simContextPath}`);
         
         let evidenceCount = context.nodeStats?.length || 0;
@@ -168,6 +169,9 @@ export class ReportBundleGenerator {
         fs.writeFileSync(path.join(bundleDir, 'allFindings.json'), JSON.stringify(allFindings, null, 2));
         const evidenceHtml = EvidenceViewerBuilder.buildHtml(allFindings, bundleDir);
         fs.writeFileSync(path.join(bundleDir, 'EVIDENCE_VIEWER.html'), evidenceHtml);
+
+        // Add DiagnosticTracer dump so we can debug why findings are empty
+        DiagnosticTracer.getInstance().dump(bundleDir);
 
         return returnPath;
     }

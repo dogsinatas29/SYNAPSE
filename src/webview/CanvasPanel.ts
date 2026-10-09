@@ -36,7 +36,6 @@ import { SynapseIgnore } from '../core/SynapseIgnore';
 import { RuleEngine } from '../core/RuleEngine';
 import { StateAuditPipeline } from '../core/StateAuditPipeline';
 import { OnboardingReportBuilder } from '../core/reporting/OnboardingReportBuilder';
-import { ExecutiveReportBuilder } from '../core/reporting/ExecutiveReportBuilder';
 import { ReportContext, ReportConfig } from '../types/schema';
 // [v0.3.1 Bootstrap Locked] Core Systems
 import { phaseManager, Phase } from '../core/PhaseManager';
@@ -192,17 +191,11 @@ export class CanvasPanel {
 
         Logger.info(`[CanvasPanel] 🏗️ CONSTRUCTOR CALLED. Assigned ID: ${this._panelId}`);
 
-        // [v0.2.17 Fix] Delay initial update to allow Webview host to stabilize
-        // This addresses "ServiceWorker: InvalidStateError" in certain environments
-        setTimeout(() => {
-            if (this._panel && this._panel.webview) {
-                Logger.info(`[CanvasPanel] Performing initial update...`);
-                // ─────────────────────────────────────────────────────────────────────────────
-                // v0.3.34.28/29 Report Handlers
-                // ─────────────────────────────────────────────────────────────────────────────
-                this._update();
-            }
-        }, 100);
+        // [Ponytail] Call _update synchronously. Delaying this causes ServiceWorker InvalidStateError during revive.
+        if (this._panel && this._panel.webview) {
+            Logger.info(`[CanvasPanel] Performing initial update...`);
+            this._update();
+        }
 
         // Listen for when the panel is disposed
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
@@ -307,10 +300,13 @@ export class CanvasPanel {
             const root = workspaceFolders[0].uri.fsPath;
             
             const { ValidationEngine } = require('../core/validation/ValidationEngine');
+            const stateFile = path.join(root, 'synapse_data', 'project_state.json');
+            let state: any = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+            if (typeof state === 'string') state = JSON.parse(state);
             const snapshot = {
-                nodes: this.projectState?.nodes || [],
-                edges: this.projectState?.edges || [],
-                clusters: this.projectState?.clusters || []
+                nodes: state.nodes || [],
+                edges: state.edges || [],
+                clusters: state.clusters || []
             };
             Logger.info(`[REPORT] START: ${message.command}`);
             
@@ -325,7 +321,7 @@ export class CanvasPanel {
             const summaryPath = await ReportBundleGenerator.generateBundle(context, root, message);
             Logger.info(`[REPORT] generateBundle FINISHED: ${summaryPath}`);
             
-            await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(summaryPath), vscode.ViewColumn.Beside);
+            await vscode.commands.executeCommand('markdown.showPreview', vscode.Uri.file(summaryPath));
         } catch (e: any) {
             Logger.error(`[CanvasPanel] Error generating unified reports: ${e.message}`);
             vscode.window.showErrorMessage(`Failed to generate reports: ${e.message}`);
@@ -563,7 +559,7 @@ export class CanvasPanel {
                 break;
             case 'virtualDebug':
                 console.log("[VD_RECEIVED] entering handleVirtualDebug");
-                await this.handleVirtualDebug();
+                await this.handleVirtualDebug(message);
                 break;
             case 'triggerLogPrompt':
                 await vscode.commands.executeCommand('synapse.logPrompt');
@@ -3112,7 +3108,7 @@ export class CanvasPanel {
     /**
      * [v0.2.20] Virtual Debugging: Static Analysis visualization
      */
-    private async handleVirtualDebug() {
+    private async handleVirtualDebug(message?: any) {
         console.log("[VD-4]", Date.now());
         console.log("[VD_ENTRY] handleVirtualDebug started!");
         console.log("[VD_STEP_1]");
@@ -3205,7 +3201,7 @@ export class CanvasPanel {
 
             // 2. Perform Virtual Debug scan (Architecture Surgery Pipeline)
             const vDebugger = new VirtualDebugger();
-            const { evidence, reports, analyzedNodeCount, surgeryReportUri } = await vDebugger.performVirtualDebug(state, workspaceFolder.uri.fsPath, visibleClusterIds);
+            const { evidence, reports, analyzedNodeCount, surgeryReportUri } = await vDebugger.performVirtualDebug(state, workspaceFolder.uri.fsPath, visibleClusterIds, message?.scope, message?.target, message?.selectionSource);
 
             console.log("[VD_STEP_4]");
 
@@ -3661,7 +3657,7 @@ export class CanvasPanel {
             projectState.deletedNodeIds = rawSnap.deletedNodeIds || [];
             projectState.deletedPaths = rawSnap.deletedPaths || [];
             
-            const finalNormalizedJson = JSON.stringify(projectState, null, 2);
+            const finalNormalizedJson = JSON.stringify(projectState); // [Ponytail] Avoid string length limit
             await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(finalNormalizedJson, 'utf8'));
 
             // 3. Cascading Cleanup & Physical Deletion (Keep existing UI logic)
@@ -4973,8 +4969,8 @@ export class CanvasPanel {
                 edges: snapshot.data.edges,
                 clusters: snapshot.data.clusters
             };
-
-            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(JSON.stringify(newState, null, 2), 'utf8'));
+            // [Ponytail] Avoid string length limit
+            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(JSON.stringify(newState), 'utf8'));
 
             // [v0.3.11 HARD SSOT] Sync BACKEND ENGINE immediately
             // This prevents the engine from overwriting the disk with old state on next interaction
@@ -5213,12 +5209,7 @@ export class CanvasPanel {
                     entry.count++;
                     entry.ids.push(c.id);
                 }
-                console.log("[SAVE_A] Starting save logic...");
-                console.log("[SAVE_B] Normalizing state...");
-                const normalizedJson = this.normalizeProjectState(engineSnap);
-                console.log("[SAVE_C] Writing file...");
-                await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
-                console.log("[SAVE_D] File written!");
+                console.log("[SAVE_A] (SKIPPED) Save logic removed to prevent overwriting with empty state.");
                 
                 const duplicatePaths = Array.from(byLabel.values()).filter(e => e.count > 1).length;
                 const collidedCount = Array.from(byLabel.values()).reduce((s, e) => s + (e.count > 1 ? e.count - 1 : 0), 0);
@@ -5295,12 +5286,27 @@ export class CanvasPanel {
                                 const CHUNK_SIZE = 5000;
                                 console.log('[POST_MESSAGE_AUTODISCOVER] nodes=%d edges=%d', projectState.nodes.length, projectState.edges.length);
                                 this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
+                                
+                                const logHeap = (stage: string, chunkIdx: number) => {
+                                    const heapMB = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
+                                    console.log(`[AUTODISCOVER] ${stage} chunk=${chunkIdx} heap=${heapMB}MB`);
+                                };
+
                                 for (let i = 0; i < projectState.nodes.length; i += CHUNK_SIZE) {
-                                    this._panel.webview.postMessage({ command: 'projectStateNodesChunk', data: projectState.nodes.slice(i, i + CHUNK_SIZE) });
+                                    this._panel.webview.postMessage({ command: 'projectStateNodesChunk', data: projectState.nodes.slice(i, i + CHUNK_SIZE).filter(Boolean) });
+                                    if ((i / CHUNK_SIZE) % 5 === 0) {
+                                        logHeap('nodes', i / CHUNK_SIZE);
+                                        await new Promise(resolve => setImmediate(resolve));
+                                    }
                                 }
                                 for (let i = 0; i < projectState.edges.length; i += CHUNK_SIZE) {
-                                    this._panel.webview.postMessage({ command: 'projectStateEdgesChunk', data: projectState.edges.slice(i, i + CHUNK_SIZE) });
+                                    this._panel.webview.postMessage({ command: 'projectStateEdgesChunk', data: projectState.edges.slice(i, i + CHUNK_SIZE).filter(Boolean) });
+                                    if ((i / CHUNK_SIZE) % 5 === 0) {
+                                        logHeap('edges', i / CHUNK_SIZE);
+                                        await new Promise(resolve => setImmediate(resolve));
+                                    }
                                 }
+                                logHeap('COMPLETE', -1);
                                 const finalPayloadAsync: any = { ...projectState, _ipcTimestamp: Date.now() };
                                 delete finalPayloadAsync.nodes;
                                 delete finalPayloadAsync.edges;
@@ -5388,6 +5394,14 @@ export class CanvasPanel {
 
             // [v0.3.34] Robust Chunking to bypass VS Code IPC size limits
             const CHUNK_SIZE = isHugeGraphState ? 2500 : 1000;
+            
+            // 🔥 [v0.3.34.61a] OOM/Freeze Protection: Force complete rebuild (skip merge) for huge graphs
+            if (isHugeGraphState) {
+                forceReset = true;
+                isAuthoritative = true;
+                Logger.info(`[CanvasPanel] isHugeGraphState=true. Forcing forceReset=true and isAuthoritative=true to prevent UI freeze.`);
+            }
+
             console.log('[POST_MESSAGE_SEND] nodes=%d edges=%d clusters=%d', projectState.nodes.length, projectState.edges.length, projectState.clusters.length);
             console.time('webview-postmessage');
             try {
@@ -5396,24 +5410,32 @@ export class CanvasPanel {
                 logHostGraphShape('before-postmessage-chunks', projectState);
                 await this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
                 
+                const logHeapSend = (stage: string, chunkIdx: number) => {
+                    const heapMB = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
+                    console.log(`[SEND_PROJECT_STATE] ${stage} chunk=${chunkIdx} heap=${heapMB}MB`);
+                };
+
                 for (let i = 0; i < projectState.nodes.length; i += CHUNK_SIZE) {
                     await this._panel.webview.postMessage({ 
                         command: 'projectStateNodesChunk', 
-                        data: projectState.nodes.slice(i, i + CHUNK_SIZE).map(stripNode)
+                        data: projectState.nodes.slice(i, i + CHUNK_SIZE).filter(Boolean).map(stripNode)
                     });
-                    if (i % (CHUNK_SIZE * 4) === 0) {
-                        await new Promise(resolve => setTimeout(resolve, 0)); // Yield to prevent Host unresponsive
+                    if ((i / CHUNK_SIZE) % 3 === 0) {
+                        logHeapSend('nodes', i / CHUNK_SIZE);
+                        await new Promise(resolve => setTimeout(resolve, 5)); // Yield properly to prevent IPC flood and Host unresponsive
                     }
                 }
                 for (let i = 0; i < projectState.edges.length; i += CHUNK_SIZE) {
                     await this._panel.webview.postMessage({ 
                         command: 'projectStateEdgesChunk', 
-                        data: projectState.edges.slice(i, i + CHUNK_SIZE).map(stripEdge)
+                        data: projectState.edges.slice(i, i + CHUNK_SIZE).filter(Boolean).map(stripEdge)
                     });
-                    if (i % (CHUNK_SIZE * 4) === 0) {
-                        await new Promise(resolve => setTimeout(resolve, 0)); // Yield to prevent Host unresponsive
+                    if ((i / CHUNK_SIZE) % 3 === 0) {
+                        logHeapSend('edges', i / CHUNK_SIZE);
+                        await new Promise(resolve => setTimeout(resolve, 5)); // Yield properly to prevent IPC flood and Host unresponsive
                     }
                 }
+                logHeapSend('COMPLETE', -1);
                 
                 const finalPayload: any = { ...projectState, _ipcTimestamp: Date.now() };
                 delete finalPayload.nodes;
@@ -5576,7 +5598,8 @@ export class CanvasPanel {
             html = html.replace(
                 '<script src="rbush.js"></script>',
                 `<script nonce="${nonce}">
-console.log('[RBUSH_INJECT] wrapper start');
+// [Ponytail] CommonJS to Window global injection shim for RBush
+(function(module, exports) {
 console.log('[RBUSH_INJECT] rbushScript length:', ${rbushScript.length});
 try {
     var _rbush_module = { exports: {} };
@@ -5586,12 +5609,11 @@ ${rbushScript}
     })(_rbush_module, _rbush_exports);
     console.log('[RBUSH_INJECT] exports type:', typeof _rbush_module.exports);
     window.RBush = _rbush_module.exports || window.RBush;
-    if (window.RBush && window.RBush.default) window.RBush = window.RBush.default;
-    console.log('[RBUSH_INJECT] mounted:', typeof window.RBush, !!window.RBush);
-    console.log('[RBUSH_INJECT] RBush constructor name:', window.RBush ? window.RBush.name : 'N/A');
+    console.log('[RBUSH_INJECT] Success! window.RBush attached.');
 } catch (e) {
-    console.error('[RBUSH_INJECT] failed', e);
+    console.error('[RBUSH_INJECT] Error:', e);
 }
+})(null, null);
 </script>`
             );
         } else {
@@ -5608,9 +5630,7 @@ ${rbushScript}
         if (clusterHierarchyScript) {
             html = html.replace(
                 '<script src="cluster-hierarchy.js"></script>',
-                `<script nonce="${nonce}">
-${clusterHierarchyScript}
-</script>`
+                `<script nonce="${nonce}">\n${clusterHierarchyScript}\n</script>`
             );
         } else {
             html = html.replace('<script src="cluster-hierarchy.js"></script>', '');
@@ -5618,9 +5638,7 @@ ${clusterHierarchyScript}
 
         html = html.replace(
             '<script src="canvas-engine.js"></script>',
-            `<script nonce="${nonce}">
-${canvasEngineScript}
-</script>`
+            `<script nonce="${nonce}">\n${canvasEngineScript}\n</script>`
         );
 
         // Inject actual webgl renderer URI for dynamic loader fallback
@@ -5631,7 +5649,11 @@ ${canvasEngineScript}
 
         // (Nonce was already created above)
 
-        // [v0.3.33 Debug] CSP removed for webview compatibility
+        // [Ponytail] Restore CSP injection. Missing CSP causes ServiceWorker InvalidStateError in strict environments.
+        html = html.replace(
+            '<meta charset="UTF-8">',
+            `<meta charset="UTF-8">\n    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}' 'unsafe-eval'; img-src ${webview.cspSource} https: data:; connect-src ${webview.cspSource} https: wss:;">`
+        );
 
         // Do not blanket replace all scripts with nonce since we already injected nonces for the inlined scripts.
         // The inline scripts above are already nonced.

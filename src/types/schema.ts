@@ -807,15 +807,6 @@ export interface InsightSource {
     source: string;
 }
 
-export interface ExecutiveInsight {
-    health: string;
-    frontierObservation: string;
-    action: string;
-    whyItMatters: string;
-    sources?: Record<string, InsightSource>;
-    patternFindings?: any[];
-}
-
 export interface ArchitectReportFinding {
     filePath: string;
     observation: string;

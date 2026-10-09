@@ -1,3 +1,22 @@
+/**
+ * SYNAPSE Analysis Graph Contract
+ * =================================
+ * 
+ * 1. Selection Scope:
+ *    - The specific nodes/clusters the user explicitly selected for analysis.
+ *    - e.g., `src/platform`, `src/server`
+ * 
+ * 2. Analysis Graph Scope:
+ *    - The expanded structural graph that the backend detectors actually observe.
+ *    - Often larger than the Selection Scope (e.g., A5 Control Bridge calculates shortest paths traversing outside the selection).
+ *    - Detectors MUST NOT artificially truncate this graph if the algorithm requires global context.
+ * 
+ * 3. Report Scope & Claims:
+ *    - The report output that is presented to the user.
+ *    - IMPORTANT: Report Claims MUST NOT exceed the Report Scope. 
+ *    - If a detector (like A5) surfaces a node from outside the Selection Scope, the Interpretation Guide MUST explicitly explain that the finding is derived from the expanded Analysis Graph Scope, not just the user's initial selection.
+ */
+
 export type QuestionType =
     | "OBSERVATION"
     | "PATTERN_DETECTION"
@@ -29,7 +48,7 @@ export const QUESTION_DICTIONARY: Record<string, ReportQuestionContract> = {
         vocabulary: ["SYSTEM_CORE", "STRUCTURAL_CENTRALITY"],
         supportingPatterns: ["SYSTEM_CORE"],
         allowedEvidence: ["controlScore", "fanIn", "blastRadius"],
-        interpretationGuide: "High controlScore indicates components that are heavily depended upon and possess large potential blast radius."
+        interpretationGuide: "Higher controlScore indicates a higher structural centrality score for the component in the observed dependency graph."
     },
     "A2": {
         id: "A2",
@@ -39,7 +58,7 @@ export const QUESTION_DICTIONARY: Record<string, ReportQuestionContract> = {
         vocabulary: ["MODULE_CONTACT_POINT", "CROSS_BOUNDARY_REFERENCE"],
         supportingPatterns: ["CROSS_BOUNDARY_REFERENCE"],
         allowedEvidence: ["source", "target", "dependencyCount"],
-        interpretationGuide: "Contact points show where independent clusters couple. High dependencyCount implies a tight API or potential architectural leakage."
+        interpretationGuide: "Contact points show where independent clusters couple. Higher dependencyCount indicates more observed structural references across the boundary."
     },
     "A3": {
         id: "A3",
@@ -55,10 +74,13 @@ export const QUESTION_DICTIONARY: Record<string, ReportQuestionContract> = {
         allowedEvidence: [
             "size",
             "cohesion",
+            "strength",
+            "internalEdges",
+            "externalEdges",
             "members",
             "crossBoundaryReferences"
         ],
-        interpretationGuide: "Boundaries separate modules. High Isolation indicates tight internal cohesion, while Low Isolation indicates heavy external coupling."
+        interpretationGuide: "Boundaries separate modules. Higher Isolation indicates a larger share of observed references stay inside the boundary; lower Isolation indicates a larger share cross it."
     },
     "A5": {
         id: "A5",
@@ -66,9 +88,9 @@ export const QUESTION_DICTIONARY: Record<string, ReportQuestionContract> = {
         type: "VALIDATION",
         question: "Where are the structural control chokepoints?",
         vocabulary: ["CONTROL_BRIDGE"],
-        supportingPatterns: ["ARCHITECTURAL_CHOKEPOINT"],
+        supportingPatterns: ["CONTROL_BRIDGE"],
         allowedEvidence: ["clusterScore", "rawBetweennessSum", "topNodeContribution"],
-        interpretationGuide: "Chokepoints act as obligatory transit bridges between otherwise independent modules. High scores imply critical routing bottlenecks."
+        interpretationGuide: "Chokepoints are nodes on many observed shortest paths between clusters in the expanded Analysis Graph. They may exist outside your initial Selection Scope if they structurally control communication between your selected subsystems. Higher scores indicate more such paths pass through the node."
     },
     "E2": {
         id: "E2",
@@ -78,7 +100,7 @@ export const QUESTION_DICTIONARY: Record<string, ReportQuestionContract> = {
         vocabulary: ["CHANGE_PROPAGATION"],
         supportingPatterns: ["CHANGE_AMPLIFIER"],
         allowedEvidence: ["blastRadius", "propagationReach"],
-        interpretationGuide: "High propagationReach indicates that a small modification here may force extensive cascading updates downstream."
+        interpretationGuide: "Higher propagationReach indicates more nodes reachable downstream through observed dependencies."
     },
     "O2": {
         id: "O2",
@@ -88,6 +110,6 @@ export const QUESTION_DICTIONARY: Record<string, ReportQuestionContract> = {
         vocabulary: ["DEPENDENCY_ROOT"],
         supportingPatterns: ["DEPENDENCY_ROOT"],
         allowedEvidence: ["inDegree", "outDegree"],
-        interpretationGuide: "Dependency Roots are files that act as absolute structural origins in the dependency graph, importing other modules while never being imported themselves."
+        interpretationGuide: "Dependency roots are files with zero observed incoming dependency edges and at least one observed outgoing dependency edge in the analyzed graph."
     }
 };

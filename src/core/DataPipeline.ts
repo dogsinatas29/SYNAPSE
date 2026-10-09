@@ -366,7 +366,7 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
       // 2. GRAPH 데이터 추출 (Phase 1)
       phaseManager.assertPhase(Phase.GRAPH);
       
-      const result = this.extractGraphElements(summaries, projectRoot);
+      const result = await this.extractGraphElements(summaries, projectRoot);
 
       return result;
     } catch (e: any) {
@@ -375,7 +375,7 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
     }
   }
 
-  private extractGraphElements(summaries: { filePath: string; summary: CodeSummary }[], projectRoot?: string): PipelineResult {
+  private async extractGraphElements(summaries: { filePath: string; summary: CodeSummary }[], projectRoot?: string): Promise<PipelineResult> {
     console.time('[PIPELINE] TOTAL');
     const nodes: Node[] = [];
     const edges: Edge[] = [];
@@ -408,9 +408,16 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
       console.error('[PIPELINE] Starting GhostPolicy.filter, summaries=', summaries.length);
       // [v0.3.32.2] GhostRule System: Early Pruning (Extracted to GhostPolicy)
       const policyResult = GhostPolicy.filter(summaries);
+      
+      // [MEMORY OPTIMIZATION] Free 386,000 CodeSummary objects (~1-2GB heap)
+      // They are no longer needed after extracting validReferences!
+      summaries.length = 0;
 
       // [v0.3.32.3] Reference Resolution (Extracted to ReferenceResolver)
       const resolvedReferences = ReferenceResolver.resolve(policyResult.validReferences, nodeIds, SymbolIndex.getInstance());
+      
+      // [MEMORY OPTIMIZATION] Free policyResult references (~200MB)
+      policyResult.validReferences.length = 0;
       
       const resolutionStats = {
           total: resolvedReferences.length,
@@ -445,6 +452,11 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
         existingNodeIds: nodeIds
       });
       console.timeEnd('ghost-classification');
+      
+      // [MEMORY OPTIMIZATION] Free resolvedReferences (~300MB)
+      // No longer needed after ghost classification!
+      resolvedReferences.length = 0;
+
       Logger.info(`[GHOST_CLASSIFIER_EXIT] total=${ghostReport.total} unknown=${ghostReport.v2Gate.unknownCount} readyForV2B=${ghostReport.v2Gate.readyForV2B}`);
       diagnosticOutput += `\n[GHOST_CLASSIFICATION_SUMMARY] total=${ghostReport.total} unknown=${ghostReport.v2Gate.unknownCount} unknownRatio=${ghostReport.v2Gate.unknownRatio} readyForV2B=${ghostReport.v2Gate.readyForV2B}\n`;
       const externalLayerMode = ghostReport.v2Gate.readyForV2B ? 'DECOMPOSE_READY' : 'SINGLE_EXTERNAL_LAYER';
@@ -461,6 +473,7 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
       const validReferences = expansionResult.expandedReferences.filter(ref => 
           nodeIds.has(ref.targetId) || validGhostNodeIds.has(ref.targetId) || ref.resolutionKind === 'stdlib'
       );
+      expansionResult.expandedReferences = []; // Free the original huge array to allow GC
 
       for (const node of validGhostNodes) nodes.push(node);
       for (const n of validGhostNodes) nodeIds.add(n.id);
@@ -491,7 +504,7 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
 
       // [v0.3.32.5] Edge Materialization (Extracted to EdgeBuilder)
       console.time('[PIPELINE] edgeBuilder');
-      const edgeBuilderResult = EdgeBuilder.build(validReferences);
+      const edgeBuilderResult = await EdgeBuilder.build(validReferences);
       console.timeEnd('[PIPELINE] edgeBuilder');
       for (const edge of edgeBuilderResult.edges) edges.push(edge);
       
@@ -804,7 +817,7 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
 
         c.nodeCount = computed;
         if (Array.isArray(c.nodes)) {
-            c.nodes = actualNodes;
+            c.nodes = actualNodes.map(n => n.id);
         }
     }
     if (normalizeCount > 0) {
@@ -817,18 +830,6 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
     const layoutResult = applyLayout(layoutInput);
     console.timeEnd('[PIPELINE] layout');
 
-    console.log('[ACTIVE_CLUSTERS]', layoutResult.activeClusters.map(c => ({
-        id: c.id,
-        x: c.position?.x,
-        y: c.position?.y,
-        bounds: c.bounds
-    })));
-    console.log('[WORLD_BOUNDS]', layoutResult.worldBounds);
-    console.log('[CLUSTER_BOUNDS_MAP]', layoutResult.clusterBounds);
-    console.log('[ACTIVE_CLUSTER_0]', layoutResult.activeClusters[0]);
-
-    const continentMap = layoutResult.continentMap;
-    const clusterNodes = new Map<string, Node[]>(Array.from(layoutResult.clusterNodes.entries()).map(([k, v]) => [k, [...v]]));
     const activeClusters = layoutResult.activeClusters;
 
     // [v0.3.33 Phase B] Backend coordinate provenance

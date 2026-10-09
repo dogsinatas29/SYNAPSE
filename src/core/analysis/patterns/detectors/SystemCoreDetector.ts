@@ -79,6 +79,7 @@ export class SystemCoreDetector implements PatternDetector {
                     targetScope: 'NODE',
                     targetId: c.targetId,
                     confidence,
+                    selectionBasis: `controlScore (${c.score}) >= P50 median (${medianScore})`,
                     evidence: [evidenceItem]
                 });
             }

@@ -98,13 +98,14 @@ export class ArchitecturalChokepointDetector implements PatternDetector {
         scoredClusters.sort((a, b) => b.alphaScore - a.alphaScore);
 
         const TOP_N = 20;
-        for (const stat of scoredClusters.slice(0, TOP_N)) {
+        const topClusters = scoredClusters.slice(0, TOP_N);
+        topClusters.forEach((stat, index) => {
             const findingId = `F-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
             const evidenceId = `E-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
             
             findings.push({
                 findingId,
-                patternId: PatternId.ARCHITECTURAL_CHOKEPOINT,
+                patternId: PatternId.CONTROL_BRIDGE,
                 targetScope: 'CLUSTER',
                 targetId: stat.clusterId,
                 confidence: 1.0,
@@ -125,12 +126,21 @@ export class ArchitecturalChokepointDetector implements PatternDetector {
                         aggregationAlpha: alpha,
                         clusterScore: stat.alphaScore,
                         topContributors: stat.topContributors
-                    }
+                    },
+                    predicate: {
+                        condition: "TOP_N_RANKING",
+                        metric: "alphaScore",
+                        operator: "<=",
+                        cutoff: TOP_N,
+                        actualValue: stat.alphaScore,
+                        rank: index + 1
+                    },
+                    selectionBasis: `Ranked #${index + 1} (in top ${TOP_N}) by alphaScore (${stat.alphaScore.toFixed(2)}) among all aggregated clusters.`
                 }]
             });
             console.log(`[TRACE] FindingCreated: ${findingId} (Target: ${stat.clusterId})`);
             console.log(`[TRACE] EvidenceCreated: ${evidenceId}`);
-        }
+        });
 
         console.log('[TRACE] DetectorComplete: ArchitecturalChokepointDetector');
         console.log('[TRACE] ReportConsume: ArchitecturalChokepointDetector done');

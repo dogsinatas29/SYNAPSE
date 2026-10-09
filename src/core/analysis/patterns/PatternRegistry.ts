@@ -85,9 +85,9 @@ export const PatternRegistry: Map<PatternId, PatternDefinition> = new Map([
         targetScope: 'NODE',
         hasDetector: true
     }],
-    [PatternId.SAFE_REFACTORING_ZONE, {
-        patternId: PatternId.SAFE_REFACTORING_ZONE,
-        displayName: 'Safe Refactoring Zone',
+    [PatternId.ZERO_IN_DEGREE_NODE, {
+        patternId: PatternId.ZERO_IN_DEGREE_NODE,
+        displayName: 'Zero In-Degree Node',
         domain: 'SIMULATION',
         status: 'IMPLEMENTED',
         gapType: 'A',

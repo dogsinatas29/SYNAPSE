@@ -99,8 +99,8 @@ export const QUESTION_DICTIONARY: Record<string, ReportQuestionContract> = {
         question: "Where does a structural change show amplified propagation?",
         vocabulary: ["CHANGE_PROPAGATION"],
         supportingPatterns: ["CHANGE_AMPLIFIER"],
-        allowedEvidence: ["blastRadius", "propagationReach"],
-        interpretationGuide: "Higher propagationReach indicates more nodes reachable downstream through observed dependencies."
+        allowedEvidence: ["complexityScore", "externalEdges"],
+        interpretationGuide: "Higher complexityScore indicates denser internal and external connections relative to component size. Actual change propagation reach requires separate dynamic tracing."
     },
     "O2": {
         id: "O2",

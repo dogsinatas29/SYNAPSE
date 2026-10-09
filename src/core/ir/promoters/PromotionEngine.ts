@@ -72,6 +72,8 @@ export class PromotionEngine {
                 rejectCategory
             };
 
+            // [Ponytail] Commented out to prevent Extension Host OOM/freezing on large graphs (e.g. Chromium)
+            /*
             console.log('[PROMOTION_REJECT]', {
                 type: 'EDGE',
                 candidateId: candidate.id,
@@ -80,6 +82,7 @@ export class PromotionEngine {
                 threshold,
                 reason: rejectReason
             });
+            */
 
             return { report };
         }
@@ -156,6 +159,8 @@ export class PromotionEngine {
                 rejectCategory
             };
 
+            // [Ponytail] Commented out to prevent Extension Host OOM/freezing on large graphs (e.g. Chromium)
+            /*
             console.log('[PROMOTION_REJECT]', {
                 type: 'FACT',
                 candidateId: candidate.id,
@@ -165,6 +170,7 @@ export class PromotionEngine {
                 threshold,
                 reason: rejectReason
             });
+            */
 
             return { report };
         }

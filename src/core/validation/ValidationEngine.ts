@@ -586,6 +586,8 @@ export class ValidationEngine {
         console.log(`[ValidationEngine] No Semantic Profile found. Running generic analysis (UNKNOWN fallback).`);
         // ----------------------------------------------------
 
+        const perfLog = (global as any).perfLog || ((name: string) => process.stdout.write(`[PERFLOG] ${name} at ${Date.now()}\n`));
+        perfLog("VE Start - runSingle loop");
         const runs: ParsedRun[] = [];
         for (let i = 0; i < runCount; i++) {
             console.log(`[Validation] run ${i + 1}/${runCount} started`);
@@ -593,6 +595,7 @@ export class ValidationEngine {
             runs.push(parsed);
             console.log(`[Validation] run ${i + 1}/${runCount} completed`);
         }
+        perfLog("VE End - runSingle loop");
 
         const stability = toStabilityRows(runs);
         const gate = evaluateStabilityGate(stability);
@@ -648,6 +651,7 @@ export class ValidationEngine {
             id: sampleAssembly.id,
             isAssemblyPoint: (sampleAssembly as any)?.isAssemblyPoint
         } : 'None');
+        perfLog("VE Start - analyzeGraph");
         const { analyzeGraph } = require('../GraphAnalyzer');
         const graphAnalysis = analyzeGraph({
             nodes: snapshot.nodes,
@@ -655,6 +659,7 @@ export class ValidationEngine {
             clusterIds: new Set(snapshot.clusters?.map(c => c.id) || []),
             nodeIds: new Set(snapshot.nodes.map(n => n.id))
         });
+        perfLog("VE End - analyzeGraph");
         
         const anySnapshot = snapshot as any;
         if (!anySnapshot.metadata) {
@@ -746,6 +751,7 @@ export class ValidationEngine {
                 if (!edgeRefTypeMap.has(key)) edgeRefTypeMap.set(key, e.type || 'UNKNOWN');
             }
 
+            perfLog("VE Start - intentEdges loop");
             for (const e of intentEdges) {
                 // [v0.3.34.20b] AGGREGATE_ nodes are collapsed external clusters (extensions/cli/etc).
                 // They are valid as boundary targets in evidence, but must NOT pollute impact ranking.
@@ -786,6 +792,7 @@ export class ValidationEngine {
                     targetData.types.add(refType);
                 }
             }
+            perfLog("VE End - intentEdges loop");
             
             // Calculate Global Averages and Percentiles
             const globalStats = new Map<string, { boundary: number, fanIn: number, fanOut: number }>();
@@ -822,12 +829,39 @@ export class ValidationEngine {
             arrFanIn.sort((a, b) => a - b);
             arrFanOut.sort((a, b) => a - b);
             
+            const binarySearchIndex = (arr: number[], val: number) => {
+                let low = 0;
+                let high = arr.length - 1;
+                let ans = arr.length;
+                while (low <= high) {
+                    const mid = (low + high) >>> 1;
+                    if (arr[mid] >= val) {
+                        ans = mid;
+                        high = mid - 1;
+                    } else {
+                        low = mid + 1;
+                    }
+                }
+                return ans;
+            };
+
             const getPercentile = (sortedArr: number[], val: number) => {
                 if (sortedArr.length === 0) return 0;
-                let idx = sortedArr.findIndex(v => v >= val);
-                if (idx === -1) idx = sortedArr.length;
+                let idx = binarySearchIndex(sortedArr, val);
                 return 100 - ((idx / sortedArr.length) * 100);
             };
+
+            const globalConsumersMap = new Map<string, Set<string>>();
+            for (const e of intentEdges) {
+                if (!e.source?.startsWith('AGGREGATE_')) {
+                    let set = globalConsumersMap.get(e.target);
+                    if (!set) {
+                        set = new Set<string>();
+                        globalConsumersMap.set(e.target, set);
+                    }
+                    set.add(e.source);
+                }
+            }
             
             const fanInTop5 = arrFanIn[Math.floor(arrFanIn.length * 0.95)] || 0;
             const fanOutTop5 = arrFanOut[Math.floor(arrFanOut.length * 0.95)] || 0;
@@ -857,12 +891,7 @@ export class ValidationEngine {
                     const pFanIn = getPercentile(arrFanIn, degree.in);
                     const pFanOut = getPercentile(arrFanOut, degree.out);
 
-                    // consumers = files that import THIS file (fan-in sources from intentEdges)
-                    // Exclude AGGREGATE_ nodes (collapsed external clusters) from consumer list
-                    const consumerSet = new Set<string>();
-                    for (const e of intentEdges) {
-                        if (e.target === filePath && !e.source?.startsWith('AGGREGATE_')) consumerSet.add(e.source);
-                    }
+                    const consumers = Array.from(globalConsumersMap.get(filePath) || []);
                     
                     return { 
                         filePath, 
@@ -871,7 +900,7 @@ export class ValidationEngine {
                         fanIn: degree.in,
                         fanOut: degree.out,
                         reachability: 0,
-                        consumers: Array.from(consumerSet),
+                        consumers: consumers,
                         percentiles: { boundary: pBoundary, fanIn: pFanIn, fanOut: pFanOut },
                         averages: { boundary: avgBoundary, fanIn: avgFanIn, fanOut: avgFanOut },
                         // [v0.3.34.20] 메타데이터 보존: 역할 계층 분리

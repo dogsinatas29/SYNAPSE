@@ -141,8 +141,14 @@ export class ReferenceResolver {
                 // [v0.3.34.51 FIX] 3. basenameFallback 영구 폐기
                 // 엉뚱한 파일로 하이재킹하지 않고 깔끔하게 symbolIndex 검색 또는 unresolved로 넘깁니다.
                 if (!foundExt) {
-                    // Try symbol index
-                    const resolvedPath = symbolIndex.lookupSymbol(targetNodeId);
+                    // Try symbol index (except for JS/TS module imports which are paths, not symbols)
+                    let resolvedPath: string | undefined;
+                    const isModulePath = (sourceFilePath.endsWith('.ts') || sourceFilePath.endsWith('.js') || sourceFilePath.endsWith('.tsx') || sourceFilePath.endsWith('.jsx')) && (ref.type === 'dependency' || ref.type === 'api_call' || ref.type === 'db_query');
+                    
+                    if (!isModulePath) {
+                        resolvedPath = symbolIndex.lookupSymbol(targetNodeId);
+                    }
+                    
                     if (resolvedPath) {
                         targetNodeId = resolvedPath;
                         resolutionKind = 'symbol_index';

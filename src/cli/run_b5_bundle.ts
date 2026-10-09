@@ -6,11 +6,17 @@ import { GraphSnapshot } from '../core/validation/ValidationContext';
 export function runBundle(snapshot: Readonly<GraphSnapshot>, workspaceRoot: string) {
     console.log('=== SYNAPSE Bundle: Edge Audit + Stage B.5 ===');
 
+    const perfLog = (global as any).perfLog || ((name: string) => process.stdout.write(`[PERFLOG] ${name} at ${Date.now()}\n`));
+
     console.log('\n----- [Part 1/2] Community Edge Audit -----');
+    perfLog("Bundle 1 Start - runAudit");
     runAudit(snapshot, workspaceRoot);
+    perfLog("Bundle 1 End - runAudit");
 
     console.log('\n----- [Part 2/2] Stage B.5 Validation -----');
+    perfLog("Bundle 2 Start - runStageB5Validation");
     runStageB5Validation(snapshot, workspaceRoot);
+    perfLog("Bundle 2 End - runStageB5Validation");
 }
 
 if (require.main === module) {

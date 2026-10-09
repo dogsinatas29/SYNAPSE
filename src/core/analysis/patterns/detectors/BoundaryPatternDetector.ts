@@ -64,6 +64,31 @@ export class BoundaryPatternDetector implements PatternDetector {
             }
 
             if (patternId) {
+                let basisStr = `Classified as ${title} because its isolation strength was evaluated as '${strength}'.`;
+                const size = semantic.metadata?.size || 0;
+                const internalEdges = semantic.metadata?.internalEdges || 0;
+                const inbound = semantic.metadata?.inboundEdges || 0;
+                const cohesionVal = semantic.metadata?.cohesion || 0;
+
+                let strengthVal = cohesionVal;
+                let penaltyStr = '';
+                if (size < 5) {
+                    strengthVal -= 0.15;
+                    penaltyStr = ` (applied -0.15 penalty for size < 5, adjusted cohesion=${strengthVal.toFixed(3)})`;
+                }
+                const isMassive = size >= 100 && internalEdges >= 1000;
+
+                if (strength === 'Strong') {
+                    if (isMassive) basisStr = `Classified as ${title} ('Strong') primarily due to massive internal structure (size=${size} >= 100, internalEdges=${internalEdges} >= 1000).`;
+                    else if (inbound >= 100) basisStr = `Classified as ${title} ('Strong') primarily due to massive Fan-In (inboundEdges=${inbound} >= 100).`;
+                    else basisStr = `Classified as ${title} ('Strong') due to high cohesion (cohesion=${cohesionVal.toFixed(3)}${penaltyStr} >= 0.75).`;
+                } else if (strength === 'Moderate') {
+                    if (inbound >= 30) basisStr = `Classified as ${title} ('Moderate') due to high Fan-In (inboundEdges=${inbound} >= 30).`;
+                    else basisStr = `Classified as ${title} ('Moderate') due to moderate cohesion (cohesion=${cohesionVal.toFixed(3)}${penaltyStr} >= 0.45).`;
+                } else if (strength === 'Weak') {
+                    basisStr = `Classified as ${title} ('Weak') because it did not meet Fan-In or cohesion thresholds for promotion (inboundEdges=${inbound} < 30 AND adjusted cohesion=${strengthVal.toFixed(3)} < 0.45).`;
+                }
+
                 const evidenceItem: EvidenceItem = {
                     evidenceId: `E-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
                     type: 'STRUCTURAL_METRIC',
@@ -85,20 +110,9 @@ export class BoundaryPatternDetector implements PatternDetector {
                         operator: "===",
                         cutoff: strength,
                         actualValue: strength
-                    }
+                    },
+                    selectionBasis: basisStr
                 };
-
-                let basisStr = `Classified as ${title} because its isolation strength was evaluated as '${strength}'.`;
-                const inbound = semantic.metadata?.inboundEdges || 0;
-                const cohesionVal = semantic.metadata?.cohesion || 0;
-                
-                if (strength === 'Strong') {
-                    if (inbound >= 100) basisStr = `Classified as ${title} ('Strong') primarily due to massive Fan-In (inboundEdges=${inbound} >= 100).`;
-                    else basisStr = `Classified as ${title} ('Strong') due to high cohesion (${cohesionVal} >= 0.75) or massive internal structure.`;
-                } else if (strength === 'Moderate') {
-                    if (inbound >= 30) basisStr = `Classified as ${title} ('Moderate') due to high Fan-In (inboundEdges=${inbound} >= 30).`;
-                    else basisStr = `Classified as ${title} ('Moderate') due to moderate cohesion (${cohesionVal} >= 0.45).`;
-                }
 
                 findings.push({
                     findingId: `F-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
@@ -106,7 +120,6 @@ export class BoundaryPatternDetector implements PatternDetector {
                     targetScope: 'CLUSTER',
                     targetId: targetId,
                     confidence: 1.0,
-                    selectionBasis: basisStr,
                     evidence: [evidenceItem],
                     context: { members: members }
                 });

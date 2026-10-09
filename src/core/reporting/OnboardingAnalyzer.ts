@@ -84,7 +84,7 @@ export class OnboardingAnalyzer {
         path.entryPoint = trueEntryPoint;
 
         const safeZoneDetector = new SafeRefactoringZoneDetector();
-        const safeZoneFindings = traceDetectorExecution(PatternId.SAFE_REFACTORING_ZONE, 'SafeRefactoringZoneDetector', safeZoneDetector, context, simContext);
+        const safeZoneFindings = traceDetectorExecution(PatternId.ZERO_IN_DEGREE_NODE, 'SafeRefactoringZoneDetector', safeZoneDetector, context, simContext);
 
         path.findings = [...(epFindings || []), ...(safeZoneFindings || [])];
 

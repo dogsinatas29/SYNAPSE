@@ -34,7 +34,7 @@ export class LocalDiagnosticProvider implements DiagnosticProvider {
         Logger.info('[VD-CHECKPOINT-LOCAL-1] vscode.languages.getDiagnostics() called');
         const diagnostics = vscode.languages.getDiagnostics();
         Logger.info(`[VD-CHECKPOINT-LOCAL-2] vscode.languages.getDiagnostics() returned ${diagnostics.length} entries`);
-        
+
         const records: DiagnosticRecord[] = [];
         let totalCount = 0;
         for (const [uri, diagList] of diagnostics) {
@@ -102,9 +102,24 @@ export class VirtualDebugger {
      * Harvests diagnostics from VS Code and maps them to the current project state.
      */
     public async performVirtualDebug(state: ProjectState, workspaceRoot: string, visibleClusterIds?: string[], reportScope?: string, reportTarget?: string, selectionSource?: string): Promise<{ evidence: any, reports: any[], analyzedNodeCount: number, surgeryReportUri?: any }> {
+        const perfLog = (stage: string, context?: any) => {
+            const mem = process.memoryUsage();
+            console.log(`[MEM_TRACE] [${stage}]`, JSON.stringify({
+                heapUsed: Math.round(mem.heapUsed / 1024 / 1024) + 'MB',
+                heapTotal: Math.round(mem.heapTotal / 1024 / 1024) + 'MB',
+                rss: Math.round(mem.rss / 1024 / 1024) + 'MB',
+                external: Math.round(mem.external / 1024 / 1024) + 'MB',
+                arrayBuffers: Math.round(((mem as any).arrayBuffers || 0) / 1024 / 1024) + 'MB',
+                time: Date.now(),
+                ...context
+            }));
+        };
+
+        perfLog('Phase 1 Start - Bootstrap / Graph Load', { inputNodes: state.nodes?.length, inputEdges: state.edges?.length });
+        const phase1Start = Date.now();
         console.log("[STEP-1] VirtualDebug start");
         Logger.info('[VirtualDebugger] Starting Virtual Debug (AAE Facade)...');
-        
+
         // --- [VP-02] State Mutation Check (Before) ---
         const { graphModel } = require('./GraphModel');
 
@@ -115,23 +130,23 @@ export class VirtualDebugger {
             const fullNode = (allNodesMap.get(n.id) || {}) as any;
             return { ...fullNode, ...n, data: { ...(fullNode.data || {}), ...(n.data || {}) } };
         });
-        
+
         console.log('VD_INPUT_NODES', targetNodes.length);
 
         // [v0.3.34.40] 노이즈 소스 추적: 3계층 동시 검증
         const suspiciousIds = [
-          '129',
-          '__future__',
-          '0-only'
+            '129',
+            '__future__',
+            '0-only'
         ];
 
         for (const id of suspiciousIds) {
-          console.log('[NOISE_SOURCE_CHECK]', {
-            id,
-            state: rawStateNodes.some((n: any) => n.id === id),
-            graph: allNodesMap.has(id),
-            target: targetNodes.some((n: any) => n.id === id)
-          });
+            console.log('[NOISE_SOURCE_CHECK]', {
+                id,
+                state: rawStateNodes.some((n: any) => n.id === id),
+                graph: allNodesMap.has(id),
+                target: targetNodes.some((n: any) => n.id === id)
+            });
         }
 
         const allEdgesMap = new Map(((graphModel as any).edges || []).map((e: any) => [e.id, e]));
@@ -140,21 +155,24 @@ export class VirtualDebugger {
             const fullEdge = (allEdgesMap.get(e.id) || {}) as any;
             return { ...fullEdge, ...e };
         });
-        
+
         console.log("[AUDIT] VirtualDebugger Start");
         console.log("[AUDIT] state.nodes", targetNodes.length);
         console.log("[AUDIT] state.edges", targetEdges.length);
         console.log("[AUDIT] state.clusters", state.clusters?.length || 0);
 
+        perfLog('Phase 1 End - Graph Loaded', { durationMs: Date.now() - phase1Start, targetNodes: targetNodes.length, targetEdges: targetEdges.length });
+        const phase2Start = Date.now();
+
         const allClusters = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {});
-        
+
         console.log(`[DT-1] Webview input: nodes=${state.nodes?.length ?? Object.keys(state.nodes || {}).length}, edges=${state.edges?.length ?? Object.keys(state.edges || {}).length}, visibleClusterIds=${visibleClusterIds?.length ?? 'none'}`);
 
         const _collapsedCount = allClusters.filter((c: any) => c.collapsed === true).length;
         console.log(`[VD_COLLAPSE_CHECK] total=${allClusters.length} collapsed=${_collapsedCount}`);
         console.log(`[VD_CLUSTER_SAMPLE]`, allClusters.filter((c: any) => c.collapsed === true).slice(0, 5).map((c: any) => c.id));
         Logger.info(`[VD_SCOPE] Nodes=${targetNodes.length} | Edges=${targetEdges.length} | Clusters=${allClusters.length} | VisibleClusters=${visibleClusterIds?.length || 0} | BridgeGuard=${allClusters.length > 100 ? 'BLOCKED(>100)' : 'PASS'}`);
-        
+
         // [CLUSTER_HIERARCHY_AUDIT]
         const auditTargets = ['trace', 'util', 'sys', 'arch', 'arm64', 'External (trace)', 'External (util)', 'cluster_external'];
         for (const target of auditTargets) {
@@ -168,25 +186,25 @@ export class VirtualDebugger {
                 });
             }
         }
-        
+
         if (visibleClusterIds !== undefined) {
             console.log(
-              '[VD_VISIBLE_INPUT]',
-              {
-                 visibleClusterIds: visibleClusterIds.length,
-                 stateNodes: state.nodes?.length,
-                 stateEdges: state.edges?.length
-              }
+                '[VD_VISIBLE_INPUT]',
+                {
+                    visibleClusterIds: visibleClusterIds.length,
+                    stateNodes: state.nodes?.length,
+                    stateEdges: state.edges?.length
+                }
             );
             Logger.info(`[VirtualDebugger] Note: Frontend sent ${visibleClusterIds.length} visible clusters. Filtering nodes and edges on backend.`);
             if (visibleClusterIds.length > 0) {
                 const visibleSet = new Set(visibleClusterIds);
-                
+
                 // [BOUNDARY_AUDIT]
                 let exp2exp = 0, exp2col = 0, col2col = 0;
                 // Map to build parent relationships
                 const clusterMap = new Map(allClusters.map((c: any) => [c.id, c]));
-                
+
                 // Function to find the lowest visible ancestor (which is the effective cluster for the node)
                 const getVisibleAncestor = (cid: string): string | null => {
                     let current = cid;
@@ -221,11 +239,11 @@ export class VirtualDebugger {
                     }
                     return false;
                 });
-                
+
                 console.log(`[DT-2] After VirtualDebugger filtering: nodes=${targetNodes.length}, edges=${targetEdges.length}`);
 
                 const targetNodeIds = new Set(targetNodes.map((n: any) => n.id));
-                
+
                 // Aggregate Nodes Map: cluster_id -> AggregateNode
                 const aggregateNodes = new Map<string, any>();
 
@@ -235,24 +253,24 @@ export class VirtualDebugger {
                 }).filter((e: any) => {
                     const fromExp = targetNodeIds.has(e.from);
                     const toExp = targetNodeIds.has(e.to);
-                    
+
                     if (fromExp && toExp) return true; // exp2exp (Both ends have visible ancestors)
-                    
+
                     if (fromExp || toExp) { // Boundary to completely invisible cluster
                         const collapsedNodeId = fromExp ? e.to : e.from;
                         // Use original cluster_id for the collapsed node, since getVisibleAncestor is null
-                        const collapsedNode: any = rawStateNodes.find((n:any) => n.id === collapsedNodeId);
+                        const collapsedNode: any = rawStateNodes.find((n: any) => n.id === collapsedNodeId);
                         // nodeFound=false → node in graph but absent from current view scope (OUT_OF_SCOPE)
                         // nodeFound=true but cluster_id missing → UNCLUSTERED (soft bug)
                         const clusterFallback = collapsedNode ? HealthState.UNCLUSTERED : ViewState.OUT_OF_SCOPE;
                         const originalCollapsedCluster = collapsedNode?.cluster_id || clusterFallback;
 
-                        
+
                         const aggId = `AGGREGATE_${originalCollapsedCluster}`;
                         if (!aggregateNodes.has(originalCollapsedCluster)) {
                             const originalClusterInfo = state.clusters?.find((c: any) => c.id === originalCollapsedCluster);
                             const aggContinent = originalClusterInfo?.data?.continent || (originalCollapsedCluster.startsWith('cluster_ghost') ? 'external' : (originalCollapsedCluster.replace('folder_', '').split('_')[0] || UNCHARTED_CONTINENT));
-                            
+
                             aggregateNodes.set(originalCollapsedCluster, {
                                 id: aggId,
                                 cluster_id: originalCollapsedCluster,
@@ -263,7 +281,7 @@ export class VirtualDebugger {
                                 }
                             });
                         }
-                        
+
                         if (fromExp) {
                             e.originalTo = e.to;
                             e.to = aggId;
@@ -271,27 +289,27 @@ export class VirtualDebugger {
                             e.originalFrom = e.from;
                             e.from = aggId;
                         }
-                        
+
                         return true;
                     }
                     return false;
                 });
-                
+
                 // Append aggregate nodes to targetNodes
                 targetNodes.push(...Array.from(aggregateNodes.values()));
             } else {
                 targetNodes = [];
                 targetEdges = [];
             }
-            
+
             console.log(
-              "[VD_VISIBLE_FILTER_RESULT]",
-              targetNodes.length,
-              targetEdges.length,
-              state.clusters?.length
+                "[VD_VISIBLE_FILTER_RESULT]",
+                targetNodes.length,
+                targetEdges.length,
+                state.clusters?.length
             );
         }
-        
+
         // [v0.3.34.9] Pre-Platform Filter Logging (Hub Top 5 Before)
         const rawNodeMap = new Map();
         targetNodes.forEach((n: any) => rawNodeMap.set(n.id, { id: n.id, fanout: 0 }));
@@ -300,7 +318,7 @@ export class VirtualDebugger {
             if (rawNodeMap.has(e.to)) rawNodeMap.get(e.to).fanout++;
         });
         const hubBefore = Array.from(rawNodeMap.values()).sort((a: any, b: any) => b.fanout - a.fanout).slice(0, 5);
-        Logger.info(`[HUB_BEFORE] Top 5:\n${hubBefore.map((h, i) => `  ${i+1}. ${h.id} (fanout=${h.fanout})`).join('\n')}`);
+        Logger.info(`[HUB_BEFORE] Top 5:\n${hubBefore.map((h, i) => `  ${i + 1}. ${h.id} (fanout=${h.fanout})`).join('\n')}`);
 
         // [v0.3.34.9] Platform Header 투명 처리
         const { PlatformHeaderPolicy } = require('./analysis/PlatformHeaderPolicy');
@@ -333,7 +351,7 @@ export class VirtualDebugger {
         Logger.info(`[PLATFORM_FILTER] Contract Headers Retained: ${contractNodeIds.size}`);
         Logger.info(`[PLATFORM_FILTER] Nodes: ${beforeNodeCount} → ${targetNodes.length}`);
         Logger.info(`[PLATFORM_FILTER] Edges: ${beforeEdgeCount} → ${targetEdges.length}`);
-        
+
         // [v0.3.34.9] Compute Hubs After
         const rawNodeMapAfter = new Map();
         targetNodes.forEach((n: any) => rawNodeMapAfter.set(n.id, { id: n.id, fanout: 0 }));
@@ -342,17 +360,19 @@ export class VirtualDebugger {
             if (rawNodeMapAfter.has(e.to)) rawNodeMapAfter.get(e.to).fanout++;
         });
         const hubAfter = Array.from(rawNodeMapAfter.values()).sort((a: any, b: any) => b.fanout - a.fanout).slice(0, 5);
-        Logger.info(`[HUB_AFTER] Top 5:\n${hubAfter.map((h, i) => `  ${i+1}. ${h.id} (fanout=${h.fanout})`).join('\n')}`);
-        
+        Logger.info(`[HUB_AFTER] Top 5:\n${hubAfter.map((h, i) => `  ${i + 1}. ${h.id} (fanout=${h.fanout})`).join('\n')}`);
+
         try {
             const { TarjanSCC } = require('./analysis/reasoning/TarjanSCC');
             const sccBeforeFilter = TarjanSCC.extractFromSubset(Array.from(rawNodeMap.keys()), targetEdgesBefore);
-            const sccBeforeLargest = sccBeforeFilter.length > 0 ? Math.max(...sccBeforeFilter.map((s: any) => s.nodeIds.length)) : 0;
+            let sccBeforeLargest = 0;
+            for (const s of sccBeforeFilter) { if (s.nodeIds.length > sccBeforeLargest) sccBeforeLargest = s.nodeIds.length; }
             const sccBeforeAvg = sccBeforeFilter.length > 0 ? sccBeforeFilter.reduce((sum: number, s: any) => sum + s.nodeIds.length, 0) / sccBeforeFilter.length : 0;
             Logger.info(`[SCC_BEFORE] SCC Count: ${sccBeforeFilter.length}, Largest SCC: ${sccBeforeLargest}, Average SCC: ${sccBeforeAvg.toFixed(1)}`);
 
             const sccAfterFilter = TarjanSCC.extractFromSubset(Array.from(rawNodeMapAfter.keys()), targetEdges);
-            const sccAfterLargest = sccAfterFilter.length > 0 ? Math.max(...sccAfterFilter.map((s: any) => s.nodeIds.length)) : 0;
+            let sccAfterLargest = 0;
+            for (const s of sccAfterFilter) { if (s.nodeIds.length > sccAfterLargest) sccAfterLargest = s.nodeIds.length; }
             const sccAfterAvg = sccAfterFilter.length > 0 ? sccAfterFilter.reduce((sum: number, s: any) => sum + s.nodeIds.length, 0) / sccAfterFilter.length : 0;
             Logger.info(`[SCC_AFTER] SCC Count: ${sccAfterFilter.length}, Largest SCC: ${sccAfterLargest}, Average SCC: ${sccAfterAvg.toFixed(1)}`);
         } catch (e: any) {
@@ -366,24 +386,24 @@ export class VirtualDebugger {
         Logger.info('[VD-CHECKPOINT-1] Creating targetState');
         const targetState = { ...state, nodes: targetNodes, edges: targetEdges };
         console.log(
-          '[VD_SNAPSHOT_BUILD]',
-          {
-             nodes: targetState.nodes?.length,
-             edges: targetState.edges?.length,
-             clusters: targetState.clusters?.length
-          }
+            '[VD_SNAPSHOT_BUILD]',
+            {
+                nodes: targetState.nodes?.length,
+                edges: targetState.edges?.length,
+                clusters: targetState.clusters?.length
+            }
         );
-        
-        const nodesBefore = targetState.nodes;
-        const edgesBefore = targetState.edges;
-        const nodeCountBefore = targetState.nodes?.length || 0;
-        const edgeCountBefore = targetState.edges?.length || 0;
-        
+
+        const nodesBefore = state.nodes;
+        const edgesBefore = state.edges;
+        const nodeCountBefore = state.nodes?.length || 0;
+        const edgeCountBefore = state.edges?.length || 0;
+
         Logger.info('[VD-CHECKPOINT-2] Stringifying hashBefore');
-        const hashBefore = JSON.stringify(targetState.nodes?.map(n => n.status));
-        
+        const hashBefore = JSON.stringify(state.nodes?.map((n: any) => n.status));
+
         Logger.info('[VD-CHECKPOINT-3] Getting diagnostics start');
-        
+
         Logger.info('[VD-CHECKPOINT-3.1] Creating providers');
         const localProvider = new LocalDiagnosticProvider();
         const remoteProvider = new RemoteDiagnosticProvider();
@@ -407,6 +427,9 @@ export class VirtualDebugger {
         Logger.info('[VD-CHECKPOINT-4] Diagnostics ready');
         const allDiags = [...localDiags, ...remoteDiags];
 
+        perfLog('Phase 2 End - VD Preparation', { durationMs: Date.now() - phase2Start, diagnostics: allDiags.length });
+        const phase3Start = Date.now();
+
         Logger.info('[VD-CHECKPOINT-5] Loading analyzers');
         const { ArchitectureAnalysisEngine } = require('./analysis/ArchitectureAnalysisEngine');
         const { NecrosisAnalyzer } = require('./analysis/analyzers/NecrosisAnalyzer');
@@ -420,7 +443,7 @@ export class VirtualDebugger {
         const { IsolatedNodeAnalyzer } = require('./analysis/analyzers/IsolatedNodeAnalyzer');
         const { ReportExporter } = require('./analysis/ReportExporter');
         const { ReportAggregator } = require('./analysis/aggregation/ReportAggregator');
-        
+
         Logger.info('[VD-CHECKPOINT-6] Registering analyzers');
         const engine = new ArchitectureAnalysisEngine();
         engine.registerAnalyzer(new NecrosisAnalyzer());
@@ -447,6 +470,10 @@ export class VirtualDebugger {
             firstEdges: targetState.edges?.slice(0, 5).map((e: any) => `${e.from}->${e.to}`)
         });
         const evidenceBundle = engine.run(targetState, allDiags, workspaceRoot);
+
+        perfLog('Phase 3 End - Analyzer / Aggregation', { durationMs: Date.now() - phase3Start, findings: evidenceBundle.findings.length });
+        const phase4Start = Date.now();
+
         Logger.info(`[CHECKPOINT-A] AAE returned`);
         console.log('[AAE_RESULT]', {
             findings: evidenceBundle.findings.length,
@@ -454,21 +481,21 @@ export class VirtualDebugger {
             fracture: evidenceBundle.findings.filter((f: any) => f.type === 'fracture').length,
             cycle: evidenceBundle.findings.filter((f: any) => f.type === 'cycle').length
         });
-        
+
         console.log('VD_OUTPUT_FINDINGS', evidenceBundle.findings.length);
 
         // DT-B1: Evidence Generation Phase
         const simEvidenceGen = evidenceBundle.findings.filter((f: any) => f.type === 'SIMULATION' || f.evidenceType === 'SIMULATION');
         const propEvidenceGen = evidenceBundle.findings.filter((f: any) => f.type === 'PROPAGATION' || f.evidenceType === 'PROPAGATION');
         const cascadeEvidenceGen = evidenceBundle.findings.filter((f: any) => f.type === 'CASCADE' || f.evidenceType === 'CASCADE');
-        
+
         console.log(`[DT-B1] VirtualDebug Evidence Gen:\n  SIMULATION=${simEvidenceGen.length}\n  PROPAGATION=${propEvidenceGen.length}\n  CASCADE=${cascadeEvidenceGen.length}`);
-        
+
         if (simEvidenceGen.length === 0) {
-            console.log(`[DT-B1.5] Samples of other evidence types:\n`, JSON.stringify(evidenceBundle.findings.slice(0, 5).map((f: any) => ({type: f.type, evidenceType: f.evidenceType, semanticType: f.semanticType})), null, 2));
+            console.log(`[DT-B1.5] Samples of other evidence types:\n`, JSON.stringify(evidenceBundle.findings.slice(0, 5).map((f: any) => ({ type: f.type, evidenceType: f.evidenceType, semanticType: f.semanticType })), null, 2));
         }
         Logger.info(`[CHECKPOINT-A1] findings=${evidenceBundle.findings.length}`);
-        
+
         const simContextPath = require('path').join(workspaceRoot, 'synapse_report', 'surgery', 'simulation_evidence.json');
         require('fs').mkdirSync(require('path').dirname(simContextPath), { recursive: true });
         const simulationContext = {
@@ -476,15 +503,19 @@ export class VirtualDebugger {
             evidenceBundle: evidenceBundle,
             visibleClusterIds: visibleClusterIds
         };
-        
+
         Logger.info('[SIM_CONTEXT]', {
             findings: evidenceBundle?.findings?.length ?? 0,
             clusters: visibleClusterIds?.length ?? 0
         });
-        
+
         console.log(`[DATA_TRACE] VirtualDebugger before write: findings=${simulationContext.evidenceBundle?.findings?.length}, path=${simContextPath}`);
         // [Ponytail] Avoid Invalid string length error on large graphs (e.g. Chromium) by removing pretty-print
         require('fs').writeFileSync(simContextPath, JSON.stringify(simulationContext), 'utf-8');
+
+        perfLog('Phase 4 End - Evidence Serialization / File Write', { durationMs: Date.now() - phase4Start, fileSize: require('fs').statSync(simContextPath).size });
+        const phase5Start = Date.now();
+
         // [v0.3.34.31] Dump Boundary Analysis Report for Semantic Discovery Verification
         try {
             const { BoundaryAnalysisReportBuilder } = require('./reporting/BoundaryAnalysisReportBuilder');
@@ -495,16 +526,20 @@ export class VirtualDebugger {
         } catch (err) {
             Logger.error('[BoundaryGraphBuilder] Failed to build BoundaryAnalysisReport', err);
         }
-        
+
         Logger.info(`[CHECKPOINT-B] before aggregate`);
+        perfLog("Phase 4.2 Start - ReportAggregator");
         const aggregatedBundle = ReportAggregator.aggregate(evidenceBundle, targetState);
+        perfLog("Phase 4.2 End - ReportAggregator");
         Logger.info(`[CHECKPOINT-C] after aggregate`);
-        
+
         const { ReasoningEngine } = require('./analysis/reasoning/ReasoningEngine');
         Logger.info(`[CHECKPOINT-D] before reason`);
+        perfLog("Phase 4.3 Start - ReasoningEngine");
         const reasonedBundle = ReasoningEngine.reason(aggregatedBundle, targetState, visibleClusterIds);
+        perfLog("Phase 4.3 End - ReasoningEngine");
         Logger.info(`[CHECKPOINT-E] after reason`);
-        
+
         // [v0.3.35] Fix empty array fallback bug
         const { ClusterBridgeAnalyzer } = require('./analysis/ClusterBridgeAnalyzer');
         const activeClusterIds = visibleClusterIds !== undefined
@@ -523,13 +558,13 @@ export class VirtualDebugger {
         Logger.info('[POST_AAE_COLLAPSE]', (Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {})).filter((c: any) => c?.collapsed === true).length);
         Logger.info('[POST_AAE_VISIBLE]', visibleClusterIds?.length || 0);
 
-        
+
         let surgeryReportUri: any = null;
         if (workspaceRoot) {
             Logger.info(`[CHECKPOINT-F] before ValidationEngine execution (Surgery Pipeline)`);
             const fs = require('fs');
             const path = require('path');
-            
+
             // Phase 1: Temporary JSON dump for CLI compatibility / debugging
             if (process.env.SYNAPSE_DEBUG_DUMP === 'true') {
                 const tempStatePath = path.join(workspaceRoot, 'synapse_report', 'temp_target_state.json');
@@ -542,7 +577,7 @@ export class VirtualDebugger {
                 // 1. Run Validation Engine directly
                 Logger.info(`[Laboratory] Running Validation Engine in-memory`);
                 console.log("[ASR] validation start");
-                
+
                 // Construct GraphSnapshot from targetState
                 const snapshot: GraphSnapshot = {
                     nodes: targetState.nodes || [],
@@ -551,22 +586,22 @@ export class VirtualDebugger {
                 };
 
                 console.log(
-                  '[ASR_SNAPSHOT]',
-                  {
-                    nodes: snapshot.nodes.length,
-                    edges: snapshot.edges.length,
-                    clusters: snapshot.clusters?.length ?? 0
-                  }
+                    '[ASR_SNAPSHOT]',
+                    {
+                        nodes: snapshot.nodes.length,
+                        edges: snapshot.edges.length,
+                        clusters: snapshot.clusters?.length ?? 0
+                    }
                 );
 
                 console.log(
-                  '[ASR_CLUSTER_SAMPLE]',
-                  snapshot.clusters
-                    ?.slice(0, 20)
-                    .map((c: any) => ({
-                      id: c.id,
-                      collapsed: c.collapsed
-                    }))
+                    '[ASR_CLUSTER_SAMPLE]',
+                    snapshot.clusters
+                        ?.slice(0, 20)
+                        .map((c: any) => ({
+                            id: c.id,
+                            collapsed: c.collapsed
+                        }))
                 );
 
                 // Run Graph Edge Aggregator to generate IntentEdge Cache for ASR Evidence Layer
@@ -591,14 +626,66 @@ export class VirtualDebugger {
                 const visibleClusterCount = visibleClusterIds?.length || (snapshot.clusters?.length ?? 0);
 
                 console.log("[SCOPE_AUDIT]", {
-                  analysisMode,
-                  selectedClusters,
-                  nodeCount,
-                  edgeCount,
-                  visibleClusterCount
+                    analysisMode,
+                    selectedClusters,
+                    nodeCount,
+                    edgeCount,
+                    visibleClusterCount
                 });
 
-                const context = ValidationEngine.analyzeState(snapshot, 1, workspaceRoot, intentEdges);
+                perfLog("Phase 4.4 Start - ValidationEngine");
+                let context: any;
+                try {
+                    context = await new Promise((resolve, reject) => {
+                        const { Worker } = require('worker_threads');
+                        const path = require('path');
+                        const fs = require('fs');
+                        
+                        const tempStatePath = path.join(workspaceRoot, 'synapse_report', 'temp_target_state.json');
+                        fs.mkdirSync(path.dirname(tempStatePath), { recursive: true });
+                        fs.writeFileSync(tempStatePath, JSON.stringify(snapshot));
+                        
+                        const workerCode = `
+                            const { parentPort, workerData } = require('worker_threads');
+                            const fs = require('fs');
+                            const { ValidationEngine } = require(workerData.enginePath);
+                            try {
+                                const data = JSON.parse(fs.readFileSync(workerData.snapshotPath, 'utf8'));
+                                const snapshot = {
+                                    nodes: data.nodes || [],
+                                    edges: data.edges || [],
+                                    clusters: data.clusters || []
+                                };
+                                const context = ValidationEngine.analyzeState(snapshot, 1, workerData.workspaceRoot, workerData.intentEdges);
+                                parentPort.postMessage({ success: true, context });
+                            } catch (err) {
+                                parentPort.postMessage({ success: false, error: err.message, stack: err.stack });
+                            }
+                        `;
+                        const worker = new Worker(workerCode, {
+                            eval: true,
+                            workerData: {
+                                snapshotPath: tempStatePath,
+                                workspaceRoot,
+                                intentEdges,
+                                enginePath: path.join(__dirname, 'validation', 'ValidationEngine.js')
+                            }
+                        });
+                        worker.on('message', (msg: any) => {
+                            if (msg.success) resolve(msg.context);
+                            else reject(new Error(msg.error + "\\n" + msg.stack));
+                        });
+                        worker.on('error', reject);
+                        worker.on('exit', (code: number) => {
+                            if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
+                        });
+                    });
+                } catch (e: any) {
+                    Logger.error(`ValidationEngine Worker failed: ${e.message}`);
+                    console.log("[ASR] Worker failed, falling back to sync", e.message);
+                    context = ValidationEngine.analyzeState(snapshot, 1, workspaceRoot, intentEdges);
+                }
+                perfLog("Phase 4.4 End - ValidationEngine");
                 (context as any).reportScope = reportScope || 'FULL_PROJECT';
                 (context as any).reportTarget = reportTarget || 'Project Root';
                 (context as any).selectionSource = selectionSource || 'USER_SELECTED';
@@ -606,7 +693,9 @@ export class VirtualDebugger {
 
                 try {
                     const { ReasoningPipelineRunner } = require('./reasoning/ReasoningPipelineRunner');
+                    perfLog("Phase 4.5 Start - ReasoningPipelineRunner");
                     const answerBundle = ReasoningPipelineRunner.run(snapshot, context);
+                    perfLog("Phase 4.5 End - ReasoningPipelineRunner");
                     (context as any).answerBundle = answerBundle;
                     console.log("[REASONING] bundle attached");
                     console.log("[REASONING]", answerBundle?.extensionPoints?.length);
@@ -615,30 +704,32 @@ export class VirtualDebugger {
                     console.log("[ASR] reasoning pipeline failed", reasoningErr.message);
                     console.error("[REASONING] failed", reasoningErr);
                 }
-                
+
                 console.log(
-                  '[ASR_CTX]',
-                  {
-                    findings: (context.metrics as any).findings?.length,
-                    communities: (context.metrics as any).communities?.length,
-                    species: (context.metrics as any).species?.length,
-                    diagnostics: (context.metrics as any).diagnostics?.length
-                  }
+                    '[ASR_CTX]',
+                    {
+                        findings: (context.metrics as any).findings?.length,
+                        communities: (context.metrics as any).communities?.length,
+                        species: (context.metrics as any).species?.length,
+                        diagnostics: (context.metrics as any).diagnostics?.length
+                    }
                 );
 
                 console.log(
-                  '[ASR_REPORT_INPUT]',
-                  Object.keys(context.metrics)
+                    '[ASR_REPORT_INPUT]',
+                    Object.keys(context.metrics)
                 );
 
                 // 2. Run generate_surgery_report logic
                 Logger.info(`[Laboratory] Generating Surgery Report (SIMULATION_DEBUG)...`);
                 console.log("[ASR] surgery start");
-                
+
                 const { ReportBundleGenerator } = require('./reporting/ReportBundleGenerator');
+                perfLog("Phase 5.1 Start - ReportBundleGenerator");
                 const mdPath = await ReportBundleGenerator.generateBundle(context, workspaceRoot, { command: 'fetchSimulationDebug', scope: (context as any).reportScope, target: (context as any).reportTarget, selectionSource: (context as any).selectionSource });
                 console.log("[ASR] surgery exit 0");
-                
+                perfLog("Phase 5.1 End - ReportBundleGenerator", { mdSize: require("fs").statSync(mdPath).size });
+
                 surgeryReportUri = vscode.Uri.file(mdPath);
                 console.log("[ASR] report generated", surgeryReportUri.fsPath);
             } catch (err: any) {
@@ -648,7 +739,7 @@ export class VirtualDebugger {
             }
             Logger.info(`[CHECKPOINT-G] after ValidationEngine execution`);
         }
-        
+
         // Extract reports from necrosis findings for the Markdown report
         const reports = evidenceBundle.findings
             .filter((f: any) => f.type === 'necrosis')
@@ -668,12 +759,12 @@ export class VirtualDebugger {
         const legacyAnalyzer = new LogicAnalyzer();
         const legacyAllIssues = legacyAnalyzer.analyze(state);
         const legacyCycles = legacyAllIssues.filter((i: any) => i.type === 'circular');
-        
+
         const newCycles = evidenceBundle.findings.filter((f: any) => f.type === 'cycle');
 
         const legacyCount = legacyCycles.length;
         const newCount = newCycles.length;
-        
+
         const legacyNodesStr = JSON.stringify(legacyCycles.map((c: any) => c.nodeIds).sort());
         const newNodesStr = JSON.stringify(newCycles.map((c: any) => c.nodeIds).sort());
 
@@ -692,13 +783,13 @@ export class VirtualDebugger {
 
         // --- [VP-03] Boundary & Pressure Match Test ---
         const legacyArchViolations = legacyAllIssues.filter((i: any) => i.type === 'architecture-violation');
-        
+
         // Split legacy pressures
         const legacyBottleneck = legacyAllIssues.filter((i: any) => i.type === 'bottleneck' && i.message.includes('병목 지점 의심'));
         const legacyHint = legacyAllIssues.filter((i: any) => (i.type === 'bottleneck' && i.message.includes('[Hint]')) || i.type === 'warning');
-        
+
         const newBoundaries = evidenceBundle.findings.filter((f: any) => f.type === 'boundary');
-        
+
         // Split new pressures
         const newBottleneck = evidenceBundle.findings.filter((f: any) => f.type === 'pressure' && f.pressureType === 'bottleneck');
         const newHint = evidenceBundle.findings.filter((f: any) => f.type === 'pressure' && (f.pressureType === 'warning' || f.pressureType === 'fan-out' || f.pressureType === 'fan-in'));
@@ -726,7 +817,7 @@ export class VirtualDebugger {
             Logger.error(`[VP-04] Schema Match Test: FAIL (Legacy: ${legacySchemas.length}, New: ${newSchemas.length})`);
         }
         // --------------------------------
-        
+
         // --- [VP-05] DeadEnd Match Test ---
         const legacyDeadEnds = legacyAllIssues.filter((i: any) => i.type === 'dead-end');
         const newDeadEnds = evidenceBundle.findings.filter((f: any) => f.type === 'structural' && f.structuralType === 'dead-end');
@@ -751,7 +842,7 @@ export class VirtualDebugger {
         const nodeCountAfter = state.nodes?.length || 0;
         const edgeCountAfter = state.edges?.length || 0;
         const hashAfter = JSON.stringify(state.nodes?.map(n => n.status));
-        
+
         const isNodeRefSame = nodesBefore === state.nodes;
         const isEdgeRefSame = edgesBefore === state.edges;
 
@@ -761,6 +852,8 @@ export class VirtualDebugger {
             Logger.error(`[VP-02] ProjectState Mutation Test: FAIL (State was mutated!)`);
         }
         // --------------------------------------------
+
+        perfLog('Phase 5 End - Post-write / Completion', { durationMs: Date.now() - phase5Start });
 
         return {
             evidence: evidenceBundle,

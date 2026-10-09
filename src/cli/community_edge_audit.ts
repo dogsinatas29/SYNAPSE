@@ -203,9 +203,18 @@ export function runAudit(snapshot: Readonly<GraphSnapshot>, workspaceRoot: strin
     }
     
     const evValues = Array.from(ev.values());
-    console.log(`  Max EV: ${Math.max(...evValues)}`);
-    console.log(`  Min EV: ${Math.min(...evValues)}`);
-    console.log(`  Non-zero EVs (>1e-10): ${evValues.filter(v => v > 1e-10).length} / ${evValues.length}`);
+    let maxEv = -Infinity;
+    let minEv = Infinity;
+    let nonZero = 0;
+    for (let i = 0; i < evValues.length; i++) {
+        const v = evValues[i];
+        if (v > maxEv) maxEv = v;
+        if (v < minEv) minEv = v;
+        if (v > 1e-10) nonZero++;
+    }
+    console.log(`  Max EV: ${maxEv}`);
+    console.log(`  Min EV: ${minEv}`);
+    console.log(`  Non-zero EVs (>1e-10): ${nonZero} / ${evValues.length}`);
 }
 
 if (require.main === module) {

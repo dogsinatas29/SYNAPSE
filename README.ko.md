@@ -447,53 +447,34 @@ Verify는 아키텍처 그래프의 상태를 실시간으로 진단하는 Archi
 
 ### Verify 메뉴 항목
 
-#### 🔬 Simulation Debug (가상 디버그)
-현재 아키텍처 그래프를 기반으로 순환 참조, 결합도 이상, 경계 파손 등을 감지하기 위한 결정론적 시뮬레이션을 실행합니다.
-- **Boundary Discovery (경계 발견)**: 내부 응집도(Cohesion)와 규모(Volume)를 기반으로 시스템 경계와 거대 서브시스템을 능동적으로 탐지합니다.
-- **Semantic Context Generation**: 발견된 경계를 중앙 Semantic Context에 등록하여 단순 토폴로지 수치와 의도된 아키텍처를 구별합니다.
-- 순수 AST 분석 결과를 포함한 핵심 원시 데이터 스냅샷(`synapse_report/surgery/simulation_evidence.json`)을 생성하며, 이는 이후 모든 보고서 생성의 **단일 진실 공급원(Single Source of Truth)** 역할을 합니다.
-- 캔버스 화면에 파손된 엣지(빨간 점선)나 괴사 노드 등 시각적 증거를 렌더링합니다.
-- **필수 선행 작업**: 사람이 읽을 수 있는 모든 종류의 리포트는 이 Simulation Debug가 먼저 실행된 이후에만 생성할 수 있습니다.
+#### 증거 기반 보고서 생성 (Evidence-Backed Report Generation)
 
-#### 📊 Architecture Scan Reports (ASR 3.0) 파이프라인
+SYNAPSE 보고서는 근거 없는 아키텍처적 가정이 아니라, 구조적 관찰과 추적 가능한 증거(Evidence)를 바탕으로 생성됩니다.
 
-godot simulation debug report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/godot_SIMULATION_DEBUG.md<br>
-godot architect report  : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/godot_ARCHITECT_REPORT.md<br>
-<br>
-vscode simulation debug report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/viscode_SIMULATION_DEBUG.md<br>
-vscode architect report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/vsc0de_ARCHITECT_REPORT.md<br>
-<br>
-linux kernel simulation debug report :  https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/linux_SIMULATION_DEBUG.md<br>
-linux kernel architect report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/linux_ARCHITECT_REPORT.md<br>
-<br>
-ASR 3.0은 토폴로지 및 시맨틱 데이터를 수집하는 단일 스캔(Virtual Debug)과 이 데이터를 다각도로 해석하여 아키텍처 서술로 변환하는 파이프라인으로 구성됩니다. 모든 보고서는 **반드시 `simulation_evidence.json`을 단일 진실 공급원(Single Source of Truth)으로 사용**해야만 생성될 수 있습니다.
+보고서 파이프라인은 다음과 같은 명시적인 증거 계약을 따릅니다:
 
-##### Phase 1 - 분석 및 경계 발견 (Virtual Debug)
-- 캔버스에서 **Virtual Debug**를 실행합니다.
-- 시스템이 **Architecture What-if Laboratory**를 수행하여 구조적 결함을 시뮬레이션하고 Semantic Boundary를 발견합니다.
-- **출력물**: 전체 아키텍처 원시 데이터 스냅샷인 `synapse_report/surgery/simulation_evidence.json` 단 하나만 생성합니다.
+**질문(Question) → 필수 용어(Required Vocabulary) → 허용된 증거(Allowed Evidence) → 지원 패턴(Supporting Pattern) → 지원 메트릭(Supporting Metric) → 주장(Claim)**
 
-##### Phase 2 - 원본 보고서 (Simulation Debug)
-- `simulation_evidence.json`이 생성됨과 동시에 내부 로직 검증을 위한 원본 디버그 보고서(`03_SIMULATION_DEBUG.md`)가 생성됩니다.
-- 본 보고서는 결합도와 파손된 엣지 등의 발견 사항(Findings)과 더불어, 발견된 Semantic Boundary에 대한 원시 정보를 담고 있습니다.
+각 단계는 정의된 책임을 갖습니다:
 
-##### Phase 3 - 아키텍트 보고서 (Architecture Report)
-- **입력**: `simulation_evidence.json` + `03_SIMULATION_DEBUG.md`
-- **역할**: 시니어 엔지니어와 아키텍트를 위한 실천 가능한 리팩토링 가이드입니다.
-- **출력물**: 리팩토링 대상 랭킹을 제공합니다. 원시 메트릭(예: fan-out)을 Semantic Context와 교차 검증하여 의미론적 **아키텍처 해석(Architectural Interpretation)**으로 번역합니다. (예: 높은 fan-out을 가진 노드라도 보호받는 경계 내부에 있다면 `INTENDED_HUB`로 분류).
+- **Question:** 조사 중인 아키텍처적 질문을 정의합니다.
+- **Required Vocabulary:** 관찰을 표현하는 데 필요한 개념을 정의합니다.
+- **Allowed Evidence:** 결과를 뒷받침할 수 있는 증거를 제한합니다.
+- **Supporting Pattern:** 평가되는 구조적 패턴을 정의합니다.
+- **Supporting Metric:** 패턴 결과에 대해 측정 가능한 근거를 제공합니다.
+- **Claim:** 가용한 증거에 의해 뒷받침되는 결론만을 제시합니다.
 
-##### Phase 4 - 온보딩 보고서 (Onboarding Report)
-- **입력**: `simulation_evidence.json`
-- **역할**: 프로젝트에 합류한 신규 개발자들을 위한 아키텍처 내비게이션 맵입니다.
-- **출력물**: 시스템의 뼈대를 이루는 진입점(Entry Point), 핵심 도메인(Core Domain), 안전 구역(Safe Area) 등을 파악할 수 있도록 안내하며, 노이즈에 길을 잃지 않도록 Semantic Boundary를 가이드라인으로 활용합니다.
+발견된 구조가 자동으로 아키텍처적 결함을 의미하지는 않습니다. 높은 연결성(Connectivity), 중심성(Centrality), 또는 의존성 집중만으로 해당 컴포넌트가 잘못 설계되었다고 단정할 수 없습니다.
 
-##### Phase 5 - 경영 요약 보고서 (Executive Report)
-- **입력**: `simulation_evidence.json`
-- **역할**: 경영진 및 기술 리더십을 위한 아키텍처 건강 요약서입니다.
-- **출력물**: 명확한 건강 상태(Health), 최고 위험 요소(Top Risk), 그리고 권장 조치(Recommended Action)를 해석된 Semantic Context 기반으로 요약하여 제공합니다.
+SYNAPSE는 관찰된 구조와 해석을 명확히 구분합니다. 증거가 불충분할 경우, 보고서는 의도를 추론하거나 시정 조치를 권고하는 대신 그 한계를 있는 그대로 보존해야 합니다.
 
-> **⚠️ 규칙 (Rule-001)**
-> `simulation_evidence.json`이 존재하지 않으면 Executive, Architect, Onboarding 보고서는 절대 생성될 수 없습니다. (에러 발생: `Run Virtual Debug first.`)
+#### 보고서의 책임 (Report Responsibilities)
+
+- **Virtual Debug:** 구조적 관찰, 검증 결과 및 이를 뒷받침하는 증거를 추적합니다.
+- **Architect:** 숙련된 엔지니어가 시스템 구조, 핵심 노드, 경계 및 의존성 관계를 이해할 수 있도록 돕습니다.
+- **Onboarding:** 새로운 기여자가 가용한 증거의 범위 내에서 진입점과 주요 구조 영역을 탐색할 수 있도록 안내합니다.
+
+보고서는 분석 파이프라인에서 검증된 결과만을 제시합니다. 독자가 보고된 결론을 뒷받침하는 관찰 및 메트릭으로 다시 추적할 수 있도록 상세 증거는 항상 검사 가능한 상태로 유지되어야 합니다.
 
 #### 🧹 Clear Debug — 디버그 초기화
 캔버스에서 모든 디버그 시각 상태를 제거하고 노드를 기본 렌더링 상태로 초기화합니다. 실제 그래프 데이터에는 영향을 주지 않습니다.
@@ -506,16 +487,11 @@ ASR 3.0은 토폴로지 및 시맨틱 데이터를 수집하는 단일 스캔(Vi
 
 ### 인퍼런스 압력 (Inference Pressure)
 
-Verify 시스템은 **인퍼런스 압력**을 보고합니다. 이는 아키텍처 건전성의 정규화된 척도입니다:
+Verify 시스템은 구조적 측정의 기준선으로 **인퍼런스 압력**을 계산합니다:
 
-| 압력 | 상태 | 의미 |
-|---|---|---|
-| 0–10% | 🟢 Stable | 아키텍처가 건강한 상태 |
-| 10–30% | 🟡 Caution | 경미한 문제 감지됨 |
-| 30–60% | 🟠 Warning | 중대한 문제 존재 |
-| 60%+ | 🔥 Critical | 즉각적인 조치 필요 |
+압력 = `criticalIssues / totalAnalyzedNodes × 100`
 
-압력 = `criticalIssues / totalAnalyzedNodes × 100`. 소규모(50노드)와 대규모(5000노드) 프로젝트 모두 동일한 척도로 비교 가능.
+> ℹ️ **검증 범위**: 현재 특정 오픈소스 아키텍처(VSCode, Godot, AntennaPod, Linux Kernel 등 최대 7만 노드)에서만 검증되었습니다. 인퍼런스 압력은 검증된 범위 내에서의 상대적인 계산 지표로 기능할 뿐이며, 모든 생태계에 대한 척도 독립적(scale-invariant)인 건전성 보증을 의미하지 않습니다.
 
 ---
 

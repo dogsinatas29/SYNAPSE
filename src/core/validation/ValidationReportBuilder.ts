@@ -395,8 +395,8 @@ export class ValidationReportBuilder {
         };
         fs.writeFileSync(path.join(bundleDir, '03_SIMULATION_DEBUG.md'), insight.renderReportToMarkdown(debugContract));
 
-        // 04_RAW_DATA
-        fs.writeFileSync(path.join(bundleDir, '04_RAW_DATA.json'), JSON.stringify(report, null, 2), 'utf-8');
+        // 04_RAW_DATA (Omit indentation to avoid Invalid string length on huge graphs like Chromium)
+        fs.writeFileSync(path.join(bundleDir, '04_RAW_DATA.json'), JSON.stringify(report), 'utf-8');
 
         // Dump diagnostic trace
         const { DiagnosticTracer } = require('../analysis/pipeline/DiagnosticTracer');

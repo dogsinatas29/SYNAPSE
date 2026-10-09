@@ -836,7 +836,10 @@ export function runStageB5Validation(snapshot: Readonly<GraphSnapshot>, workspac
     }
     console.log(`[Edge Integrity] Valid Edges: ${validEdges} / ${edges.length}`);
 
+    const perfLog = (global as any).perfLog || ((name: string) => process.stdout.write(`[PERFLOG] ${name} at ${Date.now()}\n`));
+
     console.log(`\n[1] Computing Graph Centralities (Degree, PageRank, Eigenvector)...`);
+    perfLog("B5 1 Start - Centrality");
     const degreeMap = GraphCentrality.computeDegree(nodeIds, edges, nodeIdSet, workspaceRoot);
     const prMap = GraphCentrality.computePageRank(nodeIds, edges, nodeIdSet, workspaceRoot);
     const evMap = GraphCentrality.computeEigenvector(nodeIds, edges, nodeIdSet, workspaceRoot);
@@ -854,8 +857,11 @@ export function runStageB5Validation(snapshot: Readonly<GraphSnapshot>, workspac
     const louvainWeighted = buildLouvainWeightedEdges(edges, nodeIdSet, workspaceRoot, degreeMap);
     console.log(`[B.5.4-C] Weighted Louvain Edges: count=${louvainWeighted.summary.edgeCount}, mean=${louvainWeighted.summary.mean.toExponential(3)}, p90=${louvainWeighted.summary.p90.toExponential(3)}, min=${louvainWeighted.summary.min.toExponential(3)}, max=${louvainWeighted.summary.max.toExponential(3)}`);
 
+    perfLog("B5 1 End - Centrality & Louvain Prep");
     console.log(`[2] Running Louvain Community Detection...`);
+    perfLog("B5 2 Start - Louvain");
     const result = detectCommunities(nodes as any, louvainWeighted.edges as any);
+    perfLog("B5 2 End - Louvain");
 
     // B.5.5: keep initial communities, then recursively split only continent-scale groups.
     const finalCommunityMap = new Map<string, string>(result.nodeCommunityMap);

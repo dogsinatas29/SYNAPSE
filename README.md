@@ -12,9 +12,9 @@ SYNAPSE transforms source code into an explorable architecture map,
 allowing engineers to visualize dependencies, execution flow,
 bottlenecks, and system-wide interactions across large software systems.
 
-[![Version](https://img.shields.io/badge/version-v0.3.33.1_fix2-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.33.1_fix2%20Layout%20Engine%20Sovereignity-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
-![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
+[![Version](https://img.shields.io/badge/version-v0.3.34.73-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.73-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+![Status](https://img.shields.io/badge/status-Experimental-blue.png)
 
 [🇰🇷 한국어 버전](./README.ko.md)
 
@@ -255,24 +255,7 @@ F       G ─ H
 - **Path Tracing**: Rapidly trace specific execution flows.
 - **Local Anomaly Detection**: Identify structural defects within a localized area.
 
-### 🔀 Auto-Generated Flow View
-SYNAPSE automatically generates a logical flowchart based on the underlying architecture.
 
-**Generation Conditions:**
-- The graph must contain valid logical or data flow edges (e.g., `Flow`, `Calls`, `Depends`).
-- Nodes must be properly connected; standalone, scattered nodes without connections will not form a meaningful flowchart.
-- Accessible via the `View -> Flow View` menu in the top navigation bar.
-
-![Flow View Screenshot](assets/network/flowview.png)
-Flow view image
-
-![Flow View Screenshot 2](assets/network/flow2.png)
-Information for specific nodes can also be verified within the flow view
-
-![Network Attached Flow View](assets/network/network_attached_flowview.png)
-The logic of clients connected to the network is also included in the flow view.
-
----
 
 ## 📂 Cluster Visibility
 
@@ -300,26 +283,6 @@ Clicking the `→` (REVEAL) button next to a folder smoothly navigates the canva
 Clusters created by clients connected to the network are clearly distinguished in the visibility panel. The system automatically prepends the client's account name (e.g., `[username]`) to their cluster names, keeping remote namespaces perfectly isolated and easily identifiable.
 
 ![Network Attached Cluster](assets/network_attached_cluster.png)
-
-### 5. Adaptive Scale Profile (EXTREME_SCALE)
-To proactively prevent browser lockups in extremely large mono-repos, SYNAPSE automatically analyzes the scale of the graph upon project load and applies the most optimal visibility profile.
-
-![Adaptive Scale Profile](assets/profile.png)
-
-#### Scale Score Formula
-The project scale score is calculated using the following formula:
-> **`Scale Score` = `Nodes` + `(Edges × 5)` + `(Clusters × 10)`**
-
-If the score exceeds a safe threshold (e.g., 500,000 points), the **EXTREME_SCALE** profile is triggered, automatically applying the following settings to control visual footprint and rendering overhead:
-
-#### Auto-Applied Settings (EXTREME_SCALE)
-- `[x] Show Nodes`: Rendering maintained.
-- `[x] Show Edges`: Rendering maintained (with LOD optimization).
-- `[ ] Show External Clusters`: **HIDDEN** - Instantly reduces rendering overhead by hiding hundreds of external dependency (External Packages) nodes. (Can be manually re-enabled in the visibility panel).
-- `[ ] Show Heatmap`: **HIDDEN** - Suspends real-time traffic computations.
-- `[x] Show Roots Only`: **ENABLED** - Enforces a wide field of view by collapsing all 2nd-depth and deeper folders, leaving only the top-level continental root folders expanded.
-
----
 
 
 
@@ -448,59 +411,39 @@ Verify is the Architect's real-time diagnostic system for inspecting the health 
 
 ### Verify Menu Items
 
-#### 🔬 Simulation Debug (Virtual Debug)
-Runs an isolated, deterministic simulation of the architecture graph to detect structural defects, logical failures, and coupling anomalies (e.g., Circular Dependencies, Fractured Boundaries, Necrosis). 
-- **Boundary Discovery**: Actively detects system boundaries and massive subsystems based on internal cohesion and volume.
-- **Semantic Context Generation**: Registers discovered boundaries into a central Semantic Context to distinguish intended architecture from raw topology.
-- Extracts a raw diagnostic baseline (`synapse_report/surgery/simulation_evidence.json`) which serves as the **Single Source of Truth** for all subsequent reports.
-- Generates on-screen visual evidence (red links for fractures, warning badges for high impact nodes).
-- **Required First Step**: You must run Simulation Debug before generating any Human-readable reports.
+#### Evidence-Backed Report Generation
 
-#### 📊 Architecture Scan Reports (ASR 3.0) Pipeline
-sample <br>
-godot simulation debug report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/godot_SIMULATION_DEBUG.md<br>
-godot architect report  : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/godot_ARCHITECT_REPORT.md<br>
-<br>
-vscode simulation debug report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/viscode_SIMULATION_DEBUG.md<br>
-vscode architect report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/vsc0de_ARCHITECT_REPORT.md<br>
-<br>
-linux kernel simulation debug report :  https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/linux_SIMULATION_DEBUG.md<br>
-linux kernel architect report : https://github.com/dogsinatas29/SYNAPSE/blob/main/assets/v0.3.34.30/linux_ARCHITECT_REPORT.md<br>
-<br>
+SYNAPSE reports are built from structural observations and traceable evidence, not from unsupported architectural assumptions.
 
-ASR 3.0 consists of a single scan (Virtual Debug) that collects topological and semantic data, followed by a pipeline that interprets this data into architectural narratives. All reports **must use `simulation_evidence.json` as the Single Source of Truth** and cannot be generated without it.
+The report pipeline follows an explicit evidence contract:
 
-##### Phase 1 - Analysis & Boundary Discovery (Virtual Debug)
-- Execute **Virtual Debug** from the canvas.
-- The system acts as an **Architecture What-if Laboratory** to simulate structural defects and discover Semantic Boundaries.
-- **Output**: Generates a single raw architecture data snapshot: `synapse_report/surgery/simulation_evidence.json`.
+**Question → Required Vocabulary → Allowed Evidence → Supporting Pattern → Supporting Metric → Claim**
 
-##### Phase 2 - Origin Report (Simulation Debug)
-- Along with `simulation_evidence.json`, a raw debug report (`03_SIMULATION_DEBUG.md`) is generated for internal logic verification.
-- Contains findings such as coupling and fractured edges, and Semantic Boundary discoveries.
+Each stage has a defined responsibility:
 
-##### Phase 3 - Architecture Report (📐)
-- **Input**: `simulation_evidence.json` + `03_SIMULATION_DEBUG.md`
-- **Role**: Actionable refactoring guide for Senior Engineers and Architects.
-- **Output**: Provides a prioritized list of Refactor Candidates. Translates raw metrics (like fan-out) into meaningful **Architectural Interpretations** by checking the Semantic Context (e.g., classifying a high fan-out node as an `INTENDED_HUB` if it resides in a protected boundary).
+- **Question:** Defines the architectural question being investigated.
+- **Required Vocabulary:** Defines the concepts needed to express the observation.
+- **Allowed Evidence:** Restricts the evidence that may support the result.
+- **Supporting Pattern:** Defines the structural pattern being evaluated.
+- **Supporting Metric:** Provides measurable support for the pattern result.
+- **Claim:** Presents only the conclusion supported by the available evidence.
 
-##### Phase 4 - Onboarding Report (🌱)
-- **Input**: `simulation_evidence.json`
-- **Role**: Architectural navigation map for new developers joining the project.
-- **Output**: Guides developers by identifying System Entry Points, Core Domains, and Safe Areas, utilizing Semantic Boundaries to prevent them from getting lost in the noise.
+A detected structure is not automatically an architectural defect. High connectivity, centrality, or dependency concentration alone does not establish that a component is incorrectly designed.
 
-##### Phase 5 - Executive Report (👔)
-- **Input**: `simulation_evidence.json`
-- **Role**: High-level architectural health summary for management and technical leadership.
-- **Output**: Summarizes clear Health status, Top Risks, and Recommended Actions using the interpreted Semantic Context.
+SYNAPSE distinguishes observed structure from interpretation. When evidence is insufficient, the report should preserve that limitation rather than infer intent or prescribe a corrective action.
 
-> **⚠️ Rule (Rule-001)**
-> The Executive, Architect, and Onboarding reports can NEVER be generated if `simulation_evidence.json` does not exist. (Error: `Run Virtual Debug first.`)
+#### Report Responsibilities
+
+- **Virtual Debug:** Trace structural observations, validation results, and their supporting evidence.
+- **Architect:** Help experienced engineers understand system structure, important nodes, boundaries, and dependency relationships.
+- **Onboarding:** Help new contributors navigate entry points and major structural areas, subject to the evidence available.
+
+Reports present validated results from the analysis pipeline. Detailed evidence should remain available for inspection so that readers can trace a reported conclusion back to its supporting observations and metrics.
 
 #### 🧹 Clear Debug
 Removes all debug visual states from the canvas and resets nodes to their default rendering state. Does not affect actual graph data.
 
-#### 💎 Det Bootstrap (`v0.2.28: Determinism Bootstrap`)
+#### 💎 Det Bootstrap (v0.2.28: Determinism Bootstrap)
 Runs the Determinism Bootstrap sequence. Resets internal state checksums and re-establishes a deterministic baseline for the current architecture snapshot. Used to eliminate accumulated non-determinism from repeated edits.
 
 #### 🔄 Deep Re-Scan
@@ -508,16 +451,11 @@ Performs a complete re-scan of the entire project directory from scratch. All pr
 
 ### Inference Pressure
 
-The Verify system reports **Inference Pressure** — a normalized measure of architectural health:
+The Verify system calculates **Inference Pressure** as a baseline structural metric:
 
-| Pressure | Status | Meaning |
-|---|---|---|
-| 0–10% | 🟢 Stable | Architecture is healthy |
-| 10–30% | 🟡 Caution | Minor issues detected |
-| 30–60% | 🟠 Warning | Significant problems present |
-| 60%+ | 🔥 Critical | Immediate action required |
+Pressure = `criticalIssues / totalAnalyzedNodes × 100`
 
-Pressure = `criticalIssues / totalAnalyzedNodes × 100`. Scale-invariant — valid for both small (50-node) and large (5000-node) projects.
+> ℹ️ **Verification Scope**: Currently validated on specific open-source architectures (VSCode, Godot, AntennaPod, Linux Kernel) up to 70k nodes. Inference Pressure serves as a relative calculation index within this validated scope, not a universal or scale-invariant health guarantee for all ecosystems.
 
 ---
 
@@ -547,6 +485,8 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Release Date | Description |
 | :---: | :---: | :--- |
+| **v0.3.34.73** | 2026-10-09 | **Resolver Trace Instrumentation**: Implemented P1 trace generation feature that records the entire internal reference resolution process by success/failure facts (`targetPathExists`, `targetNodeExists`, `resolverMatched`, `edgeCreated`). |
+| **v0.3.34.72** | 2026-10-09 | **Interpretability & Onboarding Quality Upgrade**: Executed product pivot including the removal of Executive reports and the completion of core values (O2, A2) to achieve the goal of 'Evidence-backed structural exploration'. |
 | **v0.3.34.41** | 2026-09-07 | **Validation Engine Completion & Provenance Tracking**: Upgraded from static analysis to a Level 3.5 Validation Engine that simulates structural collapse. Completely separated Claim and Study ownership by introducing `supportingStudyIds` to `ValidationClaim`. Rebuilt the Executive Report to only render mathematically proven `SUPPORTED` claims rather than guessing based on rules. Established the "Validation Engine proves, Report Builder renders" architecture philosophy. Deferred the Level 4 Decision Engine (P4) to address critical cross-project replication flaws (VSCode over-fitting) and prioritize testing against NestJS, AntennaPod, and Linux Kernel architectures. |
 | **v0.3.34.40** | 2026-08-30 | **Separation of Complexity & Control Rankings**: Split the architecture analysis into Report A (Complexity) and Report B (Control). Advanced the InsightEngine to calculate dependency centralization (Fan-In / `inboundEdges`) to uncover system dominators (`arch/arm`, `drivers/acpi`, `block`) vs mere complex hubs (`i915`). Solidified boundary promotion thresholds by auditing candidate rejections. |
 | **v0.3.34.31** | 2026-08-24 | **Semantic Hub Recognition & Wrapper Resurrection Fix**: Advanced the Semantic Engine to properly distinguish between high fan-out structural defects and intended architectural hubs. Massive core modules (e.g., `src/vs` in VSCode, `core`/`scene`/`servers/rendering` in Godot) are now correctly classified as `[INFO] INTENDED_HUB` instead of `[CRITICAL] STRUCTURAL_DEFECT`. Fixed the "Wrapper Resurrection" bug where `RootCauseAggregator` artificially recreated wrapper hubs (like `extensions/copilot`) that were intentionally split by `BoundaryGraphBuilder`. Added `splitWrappers` tracking, `EvidenceType.WRAPPER_NODE` emission, and dynamic depth drill-down (up to depth 5) to ensure aggregator groupings respect semantic boundaries. Validated successfully against VSCode and Godot architectures. |

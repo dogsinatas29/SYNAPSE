@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 import * as path from 'path';
+import * as fs from 'fs';
 import { TypeScriptResolver } from './resolvers/TypeScriptResolver';
 import { Logger } from '../utils/Logger';
 import { FileScanner, CodeSummary } from './FileScanner';
@@ -473,6 +474,63 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
       const validReferences = expansionResult.expandedReferences.filter(ref => 
           nodeIds.has(ref.targetId) || validGhostNodeIds.has(ref.targetId) || ref.resolutionKind === 'stdlib'
       );
+
+      // >>> [P1 RESOLVER TRACE INSTRUMENTATION v4 (Two-pass NDJSON stream)] <<<
+      const reportDir = path.join(projectRoot || process.cwd(), 'synapse_report', 'surgery');
+      if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
+      const traceTempPath = path.join(reportDir, '05_RESOLVER_TRACE_TEMP.ndjson');
+      const traceFinalPath = path.join(reportDir, '05_RESOLVER_TRACE.ndjson');
+      
+      let totalAttempted = 0;
+      
+      try {
+          const tempStream = fs.createWriteStream(traceTempPath, { flags: 'w' });
+          const fsCache = new Map<string, boolean>();
+          
+          for (let i = 0; i < expansionResult.expandedReferences.length; i++) {
+              const ref = expansionResult.expandedReferences[i];
+              totalAttempted++;
+              
+              const isVirtual = ref.targetId.startsWith('ghost://') || ref.targetId.startsWith('external://') || ref.targetId.startsWith('stdlib://');
+              let targetPathExists = false;
+              if (!isVirtual) {
+                  if (fsCache.has(ref.targetId)) {
+                      targetPathExists = fsCache.get(ref.targetId)!;
+                  } else {
+                      try { 
+                          targetPathExists = fs.existsSync(path.join(projectRoot || process.cwd(), ref.targetId)); 
+                      } catch (e) {}
+                      fsCache.set(ref.targetId, targetPathExists);
+                  }
+              }
+              
+              const outObj = {
+                  source: ref.sourceId,
+                  rawTarget: ref.originalTarget,
+                  normalizedTarget: ref.targetId,
+                  resolutionKind: ref.resolutionKind,
+                  isGhost: ref.isGhost,
+                  targetPathExists,
+                  targetNodeExists: nodeIds.has(ref.targetId),
+                  resolverMatched: ref.resolutionKind !== 'unresolved'
+              };
+              
+              const canWrite = tempStream.write(JSON.stringify(outObj) + '\n');
+              if (!canWrite) {
+                  await new Promise(r => tempStream.once('drain', () => r(undefined)));
+              }
+              if (i % 10000 === 0) {
+                  await new Promise(resolve => setTimeout(resolve, 0));
+              }
+          }
+          tempStream.end();
+          await new Promise(r => tempStream.once('finish', () => r(undefined)));
+          fsCache.clear();
+      } catch (e) {
+          console.error('[RESOLVER_TRACE_TEMP_ERROR]', e);
+      }
+      // >>> [END PASS 1] <<<
+
       expansionResult.expandedReferences = []; // Free the original huge array to allow GC
 
       for (const node of validGhostNodes) nodes.push(node);
@@ -516,7 +574,64 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
       });
       Logger.info(`[PROVENANCE_AUDIT] [EDGE_BUILDER] Total Edges: ${edgeBuilderResult.edges.length} | Stats: ${JSON.stringify(edgeProvStats)}`);
       // --------------------------------------
-      
+
+      // >>> [PASS 2: Add edgeCreated and write final NDJSON] <<<
+      try {
+          const actualEdgeSet = new Set<string>();
+          for (const edge of edgeBuilderResult.edges) {
+              actualEdgeSet.add(`${edge.from}::${edge.to}`); // Note: EdgeBuilder uses `from` and `to`
+          }
+
+          const finalStream = fs.createWriteStream(traceFinalPath, { flags: 'w' });
+          const readline = require('readline');
+          const rl = readline.createInterface({
+              input: fs.createReadStream(traceTempPath),
+              crlfDelay: Infinity
+          });
+
+          let traceCount = 0;
+          let skippedCount = 0;
+          const maxTraces = 2000000; // Increased cap for Chromium
+
+          for await (const line of rl) {
+              if (!line.trim()) continue;
+              if (traceCount >= maxTraces) {
+                  skippedCount++;
+                  continue;
+              }
+              
+              const item = JSON.parse(line);
+              // EdgeBuilder uses from and to for edges, so we match source::target
+              const edgeCreated = actualEdgeSet.has(`${item.source}::${item.normalizedTarget}`);
+              item.edgeCreated = edgeCreated;
+              
+              const canWrite = finalStream.write(JSON.stringify(item) + '\n');
+              if (!canWrite) {
+                  await new Promise(r => finalStream.once('drain', () => r(undefined)));
+              }
+              traceCount++;
+          }
+          
+          finalStream.write(JSON.stringify({ 
+              _metadata: { 
+                  totalAttempted,
+                  totalRecorded: traceCount,
+                  totalSkipped: skippedCount,
+                  capReached: skippedCount > 0,
+                  limitations: "edgeCreated is based on final surviving edges from EdgeBuilder."
+              }
+          }) + '\n');
+          
+          finalStream.end();
+          await new Promise(r => finalStream.once('finish', () => r(undefined)));
+          
+          // Cleanup temp file
+          fs.unlinkSync(traceTempPath);
+      } catch (e) {
+          console.error('[RESOLVER_TRACE_FINAL_ERROR]', e);
+      }
+      // >>> [END INSTRUMENTATION] <<<
+
       // Update pipeline diagnostics
       for (const [mappedType, count] of edgeBuilderResult.edgeTypeCount.entries()) {
         edgeTypeCount.set(mappedType, (edgeTypeCount.get(mappedType) || 0) + count);

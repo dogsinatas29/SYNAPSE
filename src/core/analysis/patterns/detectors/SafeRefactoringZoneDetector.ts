@@ -42,14 +42,14 @@ export class SafeRefactoringZoneDetector implements PatternDetector {
             const filePath = node.filePath || node.id;
             findings.push({
                 findingId: `F-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
-                patternId: PatternId.SAFE_REFACTORING_ZONE,
+                patternId: PatternId.ZERO_IN_DEGREE_NODE,
                 targetScope: 'NODE',
                 targetId: filePath,
                 confidence: 1.0,
                 evidence: [{
                     evidenceId: `E-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
                     type: 'STRUCTURAL_METRIC',
-                    description: 'Zero Fan-In (no consumers depend on this file)',
+                    description: 'Zero Fan-In (no consumers depend on this file in the observed graph)',
                     sourceId: filePath,
                     filePath
                 }]

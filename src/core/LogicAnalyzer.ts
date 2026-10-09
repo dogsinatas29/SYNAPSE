@@ -164,6 +164,7 @@ export class LogicAnalyzer {
 
             const neighbors = adj.get(u) || [];
             for (const v of neighbors) {
+                if (cycles.length >= 100) break; // [PERF FIX]
                 if (!visited.has(v)) {
                     findCycles(v, [...path]);
                 } else if (recStack.has(v)) {
@@ -180,9 +181,10 @@ export class LogicAnalyzer {
             recStack.delete(u);
         };
 
-        nodes.forEach(n => {
+        for (const n of nodes) {
+            if (cycles.length >= 100) break;
             if (!visited.has(n.id)) findCycles(n.id, []);
-        });
+        }
 
         const nodeMap = new Map<string, Node>();
         nodes.forEach(n => nodeMap.set(n.id, n));

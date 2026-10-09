@@ -70,7 +70,8 @@ export class SystemCoreDetector implements PatternDetector {
                         fanIn: c.evidence.fanIn,
                         blastRadius: c.evidence.blastRadius,
                         authorityReach: c.evidence.authorityReach
-                    }
+                    },
+                    selectionBasis: `controlScore (${c.score}) >= P50 median (${medianScore})`
                 };
 
                 findings.push({
@@ -79,7 +80,6 @@ export class SystemCoreDetector implements PatternDetector {
                     targetScope: 'NODE',
                     targetId: c.targetId,
                     confidence,
-                    selectionBasis: `controlScore (${c.score}) >= P50 median (${medianScore})`,
                     evidence: [evidenceItem]
                 });
             }

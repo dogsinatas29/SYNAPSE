@@ -1,0 +1,98 @@
+diff --git a/src/core/DataPipeline.ts b/src/core/DataPipeline.ts
+index df6c866..8f0e28e 100644
+--- a/src/core/DataPipeline.ts
++++ b/src/core/DataPipeline.ts
+@@ -1,5 +1,6 @@
+ import * as crypto from 'crypto';
+ import * as path from 'path';
++import * as fs from 'fs';
+ import { TypeScriptResolver } from './resolvers/TypeScriptResolver';
+ import { Logger } from '../utils/Logger';
+ import { FileScanner, CodeSummary } from './FileScanner';
+@@ -473,6 +474,28 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
+       const validReferences = expansionResult.expandedReferences.filter(ref => 
+           nodeIds.has(ref.targetId) || validGhostNodeIds.has(ref.targetId) || ref.resolutionKind === 'stdlib'
+       );
++
++      // >>> [P1 RESOLVER TRACE PRE-COMPUTATION] <<<
++      // Extract lightweight properties before GC to avoid OOM
++      const traceItems = expansionResult.expandedReferences.map(ref => {
++          const isVirtual = ref.targetId.startsWith('ghost://') || ref.targetId.startsWith('external://') || ref.targetId.startsWith('stdlib://');
++          let targetPathExists = false;
++          if (!isVirtual) {
++              try { targetPathExists = fs.existsSync(path.join(projectRoot || process.cwd(), ref.targetId)); } catch (e) { /* ignore */ }
++          }
++          return {
++              source: ref.sourceId,
++              rawTarget: ref.originalTarget,
++              normalizedTarget: ref.targetId,
++              resolutionKind: ref.resolutionKind,
++              isGhost: ref.isGhost,
++              targetPathExists,
++              targetNodeExists: nodeIds.has(ref.targetId),
++              resolverMatched: ref.resolutionKind !== 'unresolved'
++          };
++      });
++      // >>> [END PRE-COMPUTATION] <<<
++
+       expansionResult.expandedReferences = []; // Free the original huge array to allow GC
+ 
+       for (const node of validGhostNodes) nodes.push(node);
+@@ -516,7 +539,56 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
+       });
+       Logger.info(`[PROVENANCE_AUDIT] [EDGE_BUILDER] Total Edges: ${edgeBuilderResult.edges.length} | Stats: ${JSON.stringify(edgeProvStats)}`);
+       // --------------------------------------
+-      
++
++      // >>> [P1 RESOLVER TRACE INSTRUMENTATION v3 (NDJSON stream)] <<<
++      try {
++          const reportDir = path.join(projectRoot || process.cwd(), 'synapse_report', 'surgery');
++          if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
++          const tracePath = path.join(reportDir, '05_RESOLVER_TRACE.ndjson');
++          const traceStream = fs.createWriteStream(tracePath, { flags: 'w' });
++          
++          let traceCount = 0;
++          const maxTraces = 1000000;
++          let skippedCount = 0;
++          
++          const actualEdgeSet = new Set<string>();
++          for (const edge of edgeBuilderResult.edges) {
++              actualEdgeSet.add(`${edge.source}::${edge.target}`);
++          }
++
++          for (const item of traceItems) {
++              if (traceCount >= maxTraces) {
++                  skippedCount++;
++                  continue;
++              }
++              
++              const edgeCreated = actualEdgeSet.has(`${item.source}::${item.normalizedTarget}`);
++              const outObj = { ...item, edgeCreated };
++              
++              const canWrite = traceStream.write(JSON.stringify(outObj) + '\n');
++              if (!canWrite) {
++                  await new Promise(r => traceStream.once('drain', () => r(undefined)));
++              }
++              traceCount++;
++          }
++          
++          traceStream.write(JSON.stringify({ 
++              _metadata: { 
++                  totalAttempted: traceItems.length,
++                  totalRecorded: traceCount,
++                  totalSkipped: skippedCount,
++                  capReached: skippedCount > 0,
++                  limitations: "edgeCreated is based on source->target signature. Distinct references with identical source and target endpoints share the same edge."
++              }
++          }) + '\n');
++          
++          traceStream.end();
++          await new Promise(r => traceStream.once('finish', () => r(undefined)));
++      } catch (e) {
++          console.error('[RESOLVER_TRACE_ERROR]', e);
++      }
++      // >>> [END INSTRUMENTATION] <<<
++
+       // Update pipeline diagnostics
+       for (const [mappedType, count] of edgeBuilderResult.edgeTypeCount.entries()) {
+         edgeTypeCount.set(mappedType, (edgeTypeCount.get(mappedType) || 0) + count);

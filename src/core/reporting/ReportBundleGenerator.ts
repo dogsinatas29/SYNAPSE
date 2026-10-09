@@ -81,16 +81,23 @@ export class ReportBundleGenerator {
         }
         
         Logger.info('[REPORT] start');
+        
+        console.time('[PERF] buildOnboardingInsight');
         Logger.info('[REPORT] onboarding start');
         const onboardInsight = insight.buildOnboardingInsight(context, simulationContext);
         Logger.info('[REPORT] onboarding end');
+        console.timeEnd('[PERF] buildOnboardingInsight');
         
+        console.time('[PERF] buildSimulationInsight');
         const simInsight = insight.buildSimulationInsight(context, simulationContext);
+        console.timeEnd('[PERF] buildSimulationInsight');
         
         // Architect Insight consumes Simulation Insight as per architectural requirements
+        console.time('[PERF] buildArchitectInsight');
         Logger.info('[REPORT] architect start');
         const archInsight = insight.buildArchitectInsight(context, simInsight, simulationContext);
         Logger.info('[REPORT] architect end');
+        console.timeEnd('[PERF] buildArchitectInsight');
 
         let returnPath = '';
         
@@ -142,7 +149,9 @@ export class ReportBundleGenerator {
             const appendixData: any[] = [];
 
             const adapter = new FindingReportAdapter();
+            console.time('[PERF] adapter.buildExecutionSections');
             const simSections = adapter.buildExecutionSections(simInsight.patternFindings || []);
+            console.timeEnd('[PERF] adapter.buildExecutionSections');
 
             const debugContract: ReportContract = {
                 header: debugHeader,
@@ -153,22 +162,40 @@ export class ReportBundleGenerator {
             };
 
             returnPath = path.join(bundleDir, 'SIMULATION_DEBUG.md');
+            console.time('[PERF] renderReportToMarkdown');
             const md = insight.renderReportToMarkdown(debugContract);
+            console.timeEnd('[PERF] renderReportToMarkdown');
+            
             const sectionExists = md.includes('Impact Propagation (Pattern-based)');
             const renderedBoundaryItems = (md.match(/BOUNDARY/g) || []).length;
             console.log(`[DT-A4] Markdown:\n  reportSectionInputBoundary=0\n  section exists=${sectionExists}\n  renderedBoundaryItems=${renderedBoundaryItems}`);
+            
+            console.time('[PERF] writeFileSync MD');
             fs.writeFileSync(returnPath, md);
+            console.timeEnd('[PERF] writeFileSync MD');
         }
 
         // --- Step 4-A: Separate HTML generation ---
+        console.time('[PERF] extract allFindings');
         const allFindings = [
             ...(onboardInsight.findings || []),
             ...(simInsight.patternFindings || []),
             ...(archInsight.patternFindings || [])
         ];
-        fs.writeFileSync(path.join(bundleDir, 'allFindings.json'), JSON.stringify(allFindings, null, 2));
+        console.timeEnd('[PERF] extract allFindings');
+
+        // (Omit indentation to avoid Invalid string length on huge graphs)
+        console.time('[PERF] writeFileSync allFindings.json');
+        fs.writeFileSync(path.join(bundleDir, 'allFindings.json'), JSON.stringify(allFindings));
+        console.timeEnd('[PERF] writeFileSync allFindings.json');
+        
+        console.time('[PERF] EvidenceViewerBuilder.buildHtml');
         const evidenceHtml = EvidenceViewerBuilder.buildHtml(allFindings, bundleDir);
+        console.timeEnd('[PERF] EvidenceViewerBuilder.buildHtml');
+        
+        console.time('[PERF] writeFileSync EVIDENCE_VIEWER.html');
         fs.writeFileSync(path.join(bundleDir, 'EVIDENCE_VIEWER.html'), evidenceHtml);
+        console.timeEnd('[PERF] writeFileSync EVIDENCE_VIEWER.html');
 
         // Add DiagnosticTracer dump so we can debug why findings are empty
         DiagnosticTracer.getInstance().dump(bundleDir);

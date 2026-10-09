@@ -34,10 +34,11 @@ export class ChangeAmplifierDetector implements PatternDetector {
                 score: complexityScore,
                 evidence: {
                     size,
+                    internalEdges,
+                    externalEdges,
                     internalDensity,
                     externalDensity,
-                    complexityScore,
-                    blastRadius: externalDensity * size
+                    complexityScore
                 },
                 graphNodeId: f.nodeId || f.targetId
             };
@@ -58,21 +59,25 @@ export class ChangeAmplifierDetector implements PatternDetector {
                     evidenceId: `E-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
                     type: "COMPLEXITY_METRICS",
                     sourceId: c.targetId,
-                    description: `Change Amplifier (Complexity: ${c.evidence.complexityScore}, BlastRadius: ${c.evidence.blastRadius})`,
+                    description: `Change Amplifier (Complexity: ${c.evidence.complexityScore}, ExternalEdges: ${c.evidence.externalEdges})`,
                     filePath: c.targetId,
                     graphNodeId: c.graphNodeId,
                     metadata: {
-                        blastRadius: c.evidence.blastRadius,
-                        propagationReach: c.evidence.complexityScore // Mapping complexityScore to propagationReach for display
+                        size: c.evidence.size,
+                        internalEdges: c.evidence.internalEdges,
+                        externalEdges: c.evidence.externalEdges,
+                        internalDensity: c.evidence.internalDensity,
+                        externalDensity: c.evidence.externalDensity,
+                        complexityScore: c.evidence.complexityScore
                     },
                     predicate: {
                         condition: "P50_CUTOFF",
-                        metric: "propagationReach",
+                        metric: "complexityScore",
                         operator: ">=",
                         cutoff: medianScore,
                         actualValue: c.evidence.complexityScore
                     },
-                    selectionBasis: `propagationReach (${c.evidence.complexityScore}) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: ${medianScore}).`
+                    selectionBasis: `complexityScore (${c.evidence.complexityScore}) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: ${medianScore}).`
                 };
 
                 findings.push({

@@ -31,7 +31,7 @@ export class JsTsScanner implements LanguageScanner {
             }
 
             // JS/TS 임포트 (references, import type 지원) - [v0.3.21] Support multiline imports
-            const importRegex = /(?:import|require)\s+(?:type\s+)?(?:[\s\S]*?from\s+)?['"]([^'"`${}]+)['"]|import\s*\(\s*['"]([^'"`${}]+)['"]\s*\)/g;
+            const importRegex = /(?:import|export|require)\s+(?:type\s+)?(?:[\s\S]*?from\s+)?['"]([^'"`${}]+)['"]|import\s*\(\s*['"]([^'"`${}]+)['"]\s*\)/g;
             while ((match = importRegex.exec(content)) !== null) {
                 const ref = match[1] || match[2];
                 if (ref) {

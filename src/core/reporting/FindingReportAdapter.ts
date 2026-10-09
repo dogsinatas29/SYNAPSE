@@ -21,7 +21,7 @@ export class FindingReportAdapter {
                         metrics = filtered.map(([k,v]) => `${k}=${v}`).join(', ');
                     }
                 }
-                const basis = ev.selectionBasis || (typeof ev.predicate === 'string' ? ev.predicate : JSON.stringify(ev.predicate)) || 'No selection basis provided by detector';
+                const basis = f.selectionBasis || ev.selectionBasis || (typeof ev.predicate === 'string' ? ev.predicate : JSON.stringify(ev.predicate)) || 'No selection basis provided by detector';
                 evidenceStr = `\n  - Observed: ${metrics}\n  - Selection Basis: ${basis}`;
             }
             
@@ -98,7 +98,7 @@ export class FindingReportAdapter {
         
         if (e2Count > 0) {
             contentE2 += `Finding:\n${e2Count} change propagation amplifiers observed.\n\n`;
-            contentE2 += this.formatDetailedFindings(uniqueE2, e2Count, "E2", ['blastRadius', 'propagationReach']);
+            contentE2 += this.formatDetailedFindings(uniqueE2, e2Count, "E2", ['complexityScore', 'externalEdges']);
             
             e2Findings.forEach(f => {
                 if (f.findingId) traceReportConsume(f.findingId, 'SIMULATION_DEBUG', 'simulation.change_amplifiers');
@@ -240,7 +240,7 @@ export class FindingReportAdapter {
         
         if (a5Count > 0) {
             contentA5 += `Finding:\n${a5Count} structural control chokepoints observed.\n\n`;
-            contentA5 += this.formatDetailedFindings(uniqueA5, a5Count, "A5", ['rawBetweennessSum', 'topNodeContribution', 'clusterScore', 'aggregationMethod']);
+            contentA5 += this.formatDetailedFindings(uniqueA5, a5Count, "A5", ['rawBetweennessSum', 'weightedBetweennessSum', 'maxBetweenness', 'topNodeContribution', 'clusterScore', 'aggregationMethod']);
             
             a5Findings.forEach(f => {
                 if (f.findingId) traceReportConsume(f.findingId, 'ARCHITECT_REPORT', 'architect.chokepoints');

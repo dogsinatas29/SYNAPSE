@@ -12,8 +12,8 @@ SYNAPSE는 소스 코드를 탐색 가능한 아키텍처 맵으로 변환하여
 엔지니어가 대규모 소프트웨어 시스템 전반의 의존성, 실행 흐름,
 병목 현상, 그리고 시스템 전체의 상호작용을 시각화할 수 있게 해줍니다.
 
-[![Version](https://img.shields.io/badge/version-v0.3.33.1_fix2-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.33.1_fix2%20Layout%20Engine%20Sovereignity-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.34.73-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.73-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
 [🇺🇸 English Version](./README.md)

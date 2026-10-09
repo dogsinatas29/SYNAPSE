@@ -12,8 +12,8 @@ SYNAPSE transforms source code into an explorable architecture map,
 allowing engineers to visualize dependencies, execution flow,
 bottlenecks, and system-wide interactions across large software systems.
 
-[![Version](https://img.shields.io/badge/version-v0.3.34.73-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.73-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases)
+[![Version](https://img.shields.io/badge/version-v0.3.34.73-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.73-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73)
 ![Status](https://img.shields.io/badge/status-Experimental-blue.png)
 
 [🇰🇷 한국어 버전](./README.ko.md)

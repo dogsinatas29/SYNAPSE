@@ -12,8 +12,8 @@ SYNAPSE transforms source code into an explorable architecture map,
 allowing engineers to visualize dependencies, execution flow,
 bottlenecks, and system-wide interactions across large software systems.
 
-[![Version](https://img.shields.io/badge/version-v0.3.34.73-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.73-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73)
+[![Version](https://img.shields.io/badge/version-v0.3.34.73.fix1-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.73.fix1-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1)
 ![Status](https://img.shields.io/badge/status-Experimental-blue.png)
 
 [🇰🇷 한국어 버전](./README.ko.md)
@@ -444,9 +444,9 @@ Reports present validated results from the analysis pipeline. Detailed evidence 
 
 | Project | Architect Report | Onboarding Report | Simulation Debug | Evidence Viewer |
 |---------|------------------|-------------------|------------------|-----------------|
-| **Godot** | [Link](./assets/v0.3.34.73/godot/ARCHITECT_REPORT.md) | [Link](./assets/v0.3.34.73/godot/ONBOARDING_REPORT.md) | [Link](./assets/v0.3.34.73/godot/SIMULATION_DEBUG.md) | [Link](./assets/v0.3.34.73/godot/EVIDENCE_VIEWER.html) |
-| **AntennaPod** | [Link](./assets/v0.3.34.73/antenapod/ARCHITECT_REPORT.md) | [Link](./assets/v0.3.34.73/antenapod/ONBOARDING_REPORT.md) | [Link](./assets/v0.3.34.73/antenapod/SIMULATION_DEBUG.md) | [Link](./assets/v0.3.34.73/antenapod/EVIDENCE_VIEWER.html) |
-| **VSCode** | [Link](./assets/v0.3.34.73/vscode/ARCHITECT_REPORT.md) | [Link](./assets/v0.3.34.73/vscode/ONBOARDING_REPORT.md) | [Link](./assets/v0.3.34.73/vscode/SIMULATION_DEBUG.md) | [Link](./assets/v0.3.34.73/vscode/EVIDENCE_VIEWER.html) |
+| **Godot** | [Link](./assets/v0.3.34.73.fix1/godot/ARCHITECT_REPORT.md) | [Link](./assets/v0.3.34.73.fix1/godot/ONBOARDING_REPORT.md) | [Link](./assets/v0.3.34.73.fix1/godot/SIMULATION_DEBUG.md) | [Link](./assets/v0.3.34.73.fix1/godot/EVIDENCE_VIEWER.html) |
+| **AntennaPod** | [Link](./assets/v0.3.34.73.fix1/antenapod/ARCHITECT_REPORT.md) | [Link](./assets/v0.3.34.73.fix1/antenapod/ONBOARDING_REPORT.md) | [Link](./assets/v0.3.34.73.fix1/antenapod/SIMULATION_DEBUG.md) | [Link](./assets/v0.3.34.73.fix1/antenapod/EVIDENCE_VIEWER.html) |
+| **VSCode** | [Link](./assets/v0.3.34.73.fix1/vscode/ARCHITECT_REPORT.md) | [Link](./assets/v0.3.34.73.fix1/vscode/ONBOARDING_REPORT.md) | [Link](./assets/v0.3.34.73.fix1/vscode/SIMULATION_DEBUG.md) | [Link](./assets/v0.3.34.73.fix1/vscode/EVIDENCE_VIEWER.html) |
 
 #### 🧹 Clear Debug
 Removes all debug visual states from the canvas and resets nodes to their default rendering state. Does not affect actual graph data.
@@ -493,6 +493,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Release Date | Description |
 | :---: | :---: | :--- |
+| [**v0.3.34.73.fix1**](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1) | 2026-10-10 | **Infinite Bootstrap Fix & UX Expansion**: Resolved EROFS infinite loop during mock node creation. Added `.inc`, `.inl`, `.hh` scanner support properly restoring 593 ghosts. Increased cluster dragging hit-box padding proportional to camera zoom. |
 | [**v0.3.34.73**](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73) | 2026-10-09 | **Resolver Trace Instrumentation**: Implemented P1 trace generation feature that records the entire internal reference resolution process by success/failure facts (`targetPathExists`, `targetNodeExists`, `resolverMatched`, `edgeCreated`). |
 | **v0.3.34.72** | 2026-10-09 | **Interpretability & Onboarding Quality Upgrade**: Executed product pivot including the removal of Executive reports and the completion of core values (O2, A2) to achieve the goal of 'Evidence-backed structural exploration'. |
 | **v0.3.34.41** | 2026-09-07 | **Validation Engine Completion & Provenance Tracking**: Upgraded from static analysis to a Level 3.5 Validation Engine that simulates structural collapse. Completely separated Claim and Study ownership by introducing `supportingStudyIds` to `ValidationClaim`. Rebuilt the Executive Report to only render mathematically proven `SUPPORTED` claims rather than guessing based on rules. Established the "Validation Engine proves, Report Builder renders" architecture philosophy. Deferred the Level 4 Decision Engine (P4) to address critical cross-project replication flaws (VSCode over-fitting) and prioritize testing against NestJS, AntennaPod, and Linux Kernel architectures. |

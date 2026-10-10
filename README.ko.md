@@ -12,8 +12,8 @@ SYNAPSE는 소스 코드를 탐색 가능한 아키텍처 맵으로 변환하여
 엔지니어가 대규모 소프트웨어 시스템 전반의 의존성, 실행 흐름,
 병목 현상, 그리고 시스템 전체의 상호작용을 시각화할 수 있게 해줍니다.
 
-[![Version](https://img.shields.io/badge/version-v0.3.34.73-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.73-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73)
+[![Version](https://img.shields.io/badge/version-v0.3.34.73.fix1-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.73.fix1-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1)
 ![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
 
 [🇺🇸 English Version](./README.md)
@@ -480,9 +480,9 @@ SYNAPSE는 관찰된 구조와 해석을 명확히 구분합니다. 증거가 �
 
 | 프로젝트 | Architect Report | Onboarding Report | Simulation Debug | Evidence Viewer |
 |---------|------------------|-------------------|------------------|-----------------|
-| **Godot** | [링크](./assets/v0.3.34.73/godot/ARCHITECT_REPORT.md) | [링크](./assets/v0.3.34.73/godot/ONBOARDING_REPORT.md) | [링크](./assets/v0.3.34.73/godot/SIMULATION_DEBUG.md) | [링크](./assets/v0.3.34.73/godot/EVIDENCE_VIEWER.html) |
-| **AntennaPod** | [링크](./assets/v0.3.34.73/antenapod/ARCHITECT_REPORT.md) | [링크](./assets/v0.3.34.73/antenapod/ONBOARDING_REPORT.md) | [링크](./assets/v0.3.34.73/antenapod/SIMULATION_DEBUG.md) | [링크](./assets/v0.3.34.73/antenapod/EVIDENCE_VIEWER.html) |
-| **VSCode** | [링크](./assets/v0.3.34.73/vscode/ARCHITECT_REPORT.md) | [링크](./assets/v0.3.34.73/vscode/ONBOARDING_REPORT.md) | [링크](./assets/v0.3.34.73/vscode/SIMULATION_DEBUG.md) | [링크](./assets/v0.3.34.73/vscode/EVIDENCE_VIEWER.html) |
+| **Godot** | [링크](./assets/v0.3.34.73.fix1/godot/ARCHITECT_REPORT.md) | [링크](./assets/v0.3.34.73.fix1/godot/ONBOARDING_REPORT.md) | [링크](./assets/v0.3.34.73.fix1/godot/SIMULATION_DEBUG.md) | [링크](./assets/v0.3.34.73.fix1/godot/EVIDENCE_VIEWER.html) |
+| **AntennaPod** | [링크](./assets/v0.3.34.73.fix1/antenapod/ARCHITECT_REPORT.md) | [링크](./assets/v0.3.34.73.fix1/antenapod/ONBOARDING_REPORT.md) | [링크](./assets/v0.3.34.73.fix1/antenapod/SIMULATION_DEBUG.md) | [링크](./assets/v0.3.34.73.fix1/antenapod/EVIDENCE_VIEWER.html) |
+| **VSCode** | [링크](./assets/v0.3.34.73.fix1/vscode/ARCHITECT_REPORT.md) | [링크](./assets/v0.3.34.73.fix1/vscode/ONBOARDING_REPORT.md) | [링크](./assets/v0.3.34.73.fix1/vscode/SIMULATION_DEBUG.md) | [링크](./assets/v0.3.34.73.fix1/vscode/EVIDENCE_VIEWER.html) |
 
 #### 🧹 Clear Debug — 디버그 초기화
 캔버스에서 모든 디버그 시각 상태를 제거하고 노드를 기본 렌더링 상태로 초기화합니다. 실제 그래프 데이터에는 영향을 주지 않습니다.
@@ -529,6 +529,7 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 | 버전 | 릴리스 날짜 | 설명 |
 | :---: | :---: | :--- |
+| [**v0.3.34.73.fix1**](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1) | 2026-10-10 | **무한 부트스트랩(EROFS) 해결 및 UX 개선**: 샌드박스 외 파일 생성 시 크래시 및 무한 재시도 현상 수정. `.inc`, `.inl`, `.hh` 스캐너 지원을 통해 누락되었던 핵심 엣지 593건 복구 완료. 화면 줌 비율에 맞춰 클러스터 헤더 이동 판정 범위를 동적으로 확대하여 편의성 대폭 개선. |
 | **v0.3.34.41** | 2026-09-07 | **Validation Engine Completion & Provenance Tracking**: 단순 정적 분석을 넘어 구조 붕괴를 시뮬레이션하는 Validation Engine(Level 3.5) 구축. `ValidationClaim`에 `supportingStudyIds`를 도입하여 Claim과 Study의 소유권을 명확히 분리하고 완벽한 증거 추적(Provenance) 체계 확립. Executive Report를 대개편하여 어림짐작이 아닌 검증된(`SUPPORTED`) 사실만 렌더링하도록 수정("연구자가 증명하고 출판사가 렌더링한다" 원칙). VSCode 단일 데이터셋 과적합 문제를 해결하기 위해 Decision Engine(P4) 도입을 보류하고 NestJS, Linux Kernel 등 다수 이기종 프로젝트 교차 검증을 우선 목표로 재설정. |
 | **v0.3.34.40** | 2026-08-30 | **복잡도(Complexity)와 지배력(Control) 랭킹 분리**: 아키텍처 분석을 Report A(복잡도)와 Report B(지배력)로 분리했습니다. InsightEngine을 고도화하여 의존성 집중도(Fan-In / `inboundEdges`)를 계산함으로써, 단순 복잡한 허브(`i915`)와 실제 시스템 권력자(`arch/arm`, `drivers/acpi`, `block`)를 구분해냈습니다. 바운더리 승격 감사(Audit)를 통해 가짜 서브시스템 필터링 기준이 완벽히 동작함을 증명했습니다. |
 | **v0.3.34.31** | 2026-08-24 | **시맨틱 허브 인지 및 래퍼 부활 버그 수정**: 시맨틱 엔진을 고도화하여 단순한 Fan-out 기반의 구조적 결함과 의도된 아키텍처 허브를 완벽히 구분하도록 개선했습니다. VSCode의 `src/vs`, Godot의 `core`, `scene`, `servers/rendering` 같은 거대 핵심 모듈들이 이제 `[CRITICAL] STRUCTURAL_DEFECT`가 아닌 `[INFO] INTENDED_HUB`로 정확히 분류됩니다. `BoundaryGraphBuilder`가 폐기(SPLIT)한 래퍼 디렉토리(예: `extensions/copilot`)를 `RootCauseAggregator`가 가짜 허브로 부활시키던 'Wrapper Resurrection' 버그를 수정했습니다. 이를 위해 `splitWrappers` 추적, `EvidenceType.WRAPPER_NODE` 방출, 그리고 최대 Depth 5까지 파고드는 동적 집계 드릴다운 로직을 구현했습니다. VSCode와 Godot 아키텍처에서 성공적으로 검증을 완료했습니다. |

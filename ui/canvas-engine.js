@@ -4345,8 +4345,10 @@ class CanvasEngine {
             if (!isVisible) continue;
             if (!cluster._headerBounds) continue;
             const b = cluster._headerBounds;
-            if (worldX >= b.x && worldX <= b.x + b.width &&
-                worldY >= b.y && worldY <= b.y + b.height) {
+            // [v0.3.34] 클러스터 이동을 쉽게 하기 위해 화면 스케일에 비례하는 넉넉한 히트 패딩(30px) 추가
+            const padding = (this.transform && this.transform.zoom) ? (30 / this.transform.zoom) : 30;
+            if (worldX >= b.x - padding && worldX <= b.x + b.width + padding &&
+                worldY >= b.y - padding && worldY <= b.y + b.height + padding) {
                 const depth = this.clusterHierarchy
                     ? this.clusterHierarchy.getDepth(cluster.id)
                     : 0;

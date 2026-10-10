@@ -27,24 +27,24 @@ Interpretation Guide:
 Higher complexityScore indicates denser internal and external connections relative to component size. Actual change propagation reach requires separate dynamic tracing.
 
 Finding:
-75 change propagation amplifiers observed.
+76 change propagation amplifiers observed.
 
-- **Target**: `extensions/html-language-features`
-  - Observed: externalEdges=66, complexityScore=203
-  - Selection Basis: complexityScore (203) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 181).
-- **Target**: `test/automation`
-  - Observed: externalEdges=20, complexityScore=251
-  - Selection Basis: complexityScore (251) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 181).
 - **Target**: `extensions/copilot/test`
-  - Observed: externalEdges=1963, complexityScore=4357
-  - Selection Basis: complexityScore (4357) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 181).
-- **Target**: `extensions/emmet/src`
-  - Observed: externalEdges=48, complexityScore=187
-  - Selection Basis: complexityScore (187) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 181).
+  - Observed: externalEdges=1292, complexityScore=1219
+  - Selection Basis: complexityScore (1219) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 108).
 - **Target**: `extensions/git/src`
-  - Observed: externalEdges=85, complexityScore=834
-  - Selection Basis: complexityScore (834) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 181).
-- ... and 70 more.
+  - Observed: externalEdges=35, complexityScore=343
+  - Selection Basis: complexityScore (343) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 108).
+- **Target**: `extensions/markdown-language-features/src`
+  - Observed: externalEdges=24, complexityScore=183
+  - Selection Basis: complexityScore (183) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 108).
+- **Target**: `extensions/typescript-language-features/src`
+  - Observed: externalEdges=39, complexityScore=761
+  - Selection Basis: complexityScore (761) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 108).
+- **Target**: `src/vs/base`
+  - Observed: externalEdges=114, complexityScore=1757
+  - Selection Basis: complexityScore (1757) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 108).
+- ... and 71 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#E2)
 

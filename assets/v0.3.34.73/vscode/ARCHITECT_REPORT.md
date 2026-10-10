@@ -27,24 +27,24 @@ Interpretation Guide:
 Higher controlScore indicates a higher structural centrality score for the component in the observed dependency graph.
 
 Finding:
-75 system cores observed.
+78 system cores observed.
 
 - **Target**: `cli/src`
-  - Observed: controlScore=20066, fanIn=53, blastRadius=9768
-  - Selection Basis: controlScore (20066) >= P50 median (3168)
-- **Target**: `extensions/html-language-features`
-  - Observed: controlScore=6498, fanIn=3, blastRadius=3234
-  - Selection Basis: controlScore (6498) >= P50 median (3168)
+  - Observed: controlScore=6894, fanIn=53, blastRadius=3182
+  - Selection Basis: controlScore (6894) >= P50 median (2198)
 - **Target**: `extensions/copilot/test`
-  - Observed: controlScore=1947716, fanIn=42, blastRadius=973648
-  - Selection Basis: controlScore (1947716) >= P50 median (3168)
-- **Target**: `extensions/emmet/src`
-  - Observed: controlScore=4224, fanIn=0, blastRadius=2112
-  - Selection Basis: controlScore (4224) >= P50 median (3168)
+  - Observed: controlScore=1987526, fanIn=43, blastRadius=993548
+  - Selection Basis: controlScore (1987526) >= P50 median (2198)
 - **Target**: `extensions/git/src`
-  - Observed: controlScore=10300, fanIn=10, blastRadius=5100
-  - Selection Basis: controlScore (10300) >= P50 median (3168)
-- ... and 70 more.
+  - Observed: controlScore=4300, fanIn=10, blastRadius=2100
+  - Selection Basis: controlScore (4300) >= P50 median (2198)
+- **Target**: `extensions/markdown-language-features/src`
+  - Observed: controlScore=3864, fanIn=36, blastRadius=1752
+  - Selection Basis: controlScore (3864) >= P50 median (2198)
+- **Target**: `extensions/typescript-language-features/src`
+  - Observed: controlScore=11770, fanIn=7, blastRadius=5850
+  - Selection Basis: controlScore (11770) >= P50 median (2198)
+- ... and 73 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#A1)
 
@@ -61,24 +61,24 @@ Interpretation Guide:
 Contact points show where independent clusters couple. Higher dependencyCount indicates more observed structural references across the boundary.
 
 Finding:
-1538 module contact points observed.
+1571 module contact points observed.
 
-- **Target**: `src/vs/workbench/contrib/chat->src/vs/base`
-  - Observed: dependencyCount=3511
-  - Selection Basis: Valid edge between promoted boundaries (3511 dependencies)
 - **Target**: `src/vs/editor->src/vs/base`
   - Observed: dependencyCount=2317
   - Selection Basis: Valid edge between promoted boundaries (2317 dependencies)
-- **Target**: `extensions/copilot/src/platform->extensions/copilot/src/util/vs/workbench`
-  - Observed: dependencyCount=6
-  - Selection Basis: Valid edge between promoted boundaries (6 dependencies)
-- **Target**: `extensions/copilot/src/extension/prompts/node->extensions/copilot/src/platform`
-  - Observed: dependencyCount=523
-  - Selection Basis: Valid edge between promoted boundaries (523 dependencies)
-- **Target**: `src/vs/sessions->src/vs/workbench/contrib/chat`
-  - Observed: dependencyCount=309
-  - Selection Basis: Valid edge between promoted boundaries (309 dependencies)
-- ... and 1533 more.
+- **Target**: `src/vs/workbench/api->src/vs/base`
+  - Observed: dependencyCount=1249
+  - Selection Basis: Valid edge between promoted boundaries (1249 dependencies)
+- **Target**: `src/vs/workbench/api->src/vs/workbench/services`
+  - Observed: dependencyCount=458
+  - Selection Basis: Valid edge between promoted boundaries (458 dependencies)
+- **Target**: `src/vs/platform/agentHost->src/vs/base`
+  - Observed: dependencyCount=923
+  - Selection Basis: Valid edge between promoted boundaries (923 dependencies)
+- **Target**: `src/vs/workbench/contrib/search->src/vs/base`
+  - Observed: dependencyCount=229
+  - Selection Basis: Valid edge between promoted boundaries (229 dependencies)
+- ... and 1566 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#A2)
 
@@ -95,24 +95,24 @@ Interpretation Guide:
 Boundaries separate modules. Higher Isolation indicates a larger share of observed references stay inside the boundary; lower Isolation indicates a larger share cross it.
 
 Finding:
-152 structural boundaries observed.
+158 structural boundaries observed.
 
 - **Target**: `cli/src`
-  - Observed: strength=Moderate, cohesion=0.6989247311827957, internalEdges=71, externalEdges=132, members=74
-  - Selection Basis: Classified as Moderate Boundary Candidate ('Moderate') due to high Fan-In (inboundEdges=53 >= 30).
+  - Observed: strength=Strong, cohesion=0.8333333333333334, internalEdges=71, externalEdges=43, members=74
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') due to high cohesion (cohesion=0.833 >= 0.75).
+- **Target**: `extensions/configuration-editing`
+  - Observed: strength=Moderate, cohesion=0.6, internalEdges=6, externalEdges=5, members=16
+  - Selection Basis: Classified as Moderate Boundary Candidate ('Moderate') due to high Fan-In (inboundEdges=47 >= 30).
 - **Target**: `extensions/css-language-features`
-  - Observed: strength=Moderate, cohesion=0.5396825396825397, internalEdges=34, externalEdges=56, members=28
-  - Selection Basis: Classified as Moderate Boundary Candidate ('Moderate') due to moderate cohesion (cohesion=0.540 >= 0.45).
-- **Target**: `extensions/html-language-features`
-  - Observed: strength=Strong, cohesion=0.819047619047619, internalEdges=86, externalEdges=66, members=49
-  - Selection Basis: Classified as High Isolation Boundary ('Strong') due to high cohesion (cohesion=0.819 >= 0.75).
-- **Target**: `extensions/ipynb`
-  - Observed: strength=Moderate, cohesion=0.7272727272727273, internalEdges=32, externalEdges=22, members=22
-  - Selection Basis: Classified as Moderate Boundary Candidate ('Moderate') due to moderate cohesion (cohesion=0.727 >= 0.45).
-- **Target**: `extensions/json-language-features`
-  - Observed: strength=Moderate, cohesion=0.6129032258064516, internalEdges=19, externalEdges=22, members=17
-  - Selection Basis: Classified as Moderate Boundary Candidate ('Moderate') due to moderate cohesion (cohesion=0.613 >= 0.45).
-- ... and 147 more.
+  - Observed: strength=Strong, cohesion=0.9230769230769231, internalEdges=36, externalEdges=4, members=36
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') due to high cohesion (cohesion=0.923 >= 0.75).
+- **Target**: `extensions/emmet`
+  - Observed: strength=Strong, cohesion=0.9565217391304348, internalEdges=88, externalEdges=5, members=49
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') due to high cohesion (cohesion=0.957 >= 0.75).
+- **Target**: `extensions/extension-editing`
+  - Observed: strength=Strong, cohesion=0.8333333333333334, internalEdges=10, externalEdges=2, members=12
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') due to high cohesion (cohesion=0.833 >= 0.75).
+- ... and 153 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#A3)
 

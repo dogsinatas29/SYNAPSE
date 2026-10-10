@@ -415,7 +415,7 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
       summaries.length = 0;
 
       // [v0.3.32.3] Reference Resolution (Extracted to ReferenceResolver)
-      const resolvedReferences = ReferenceResolver.resolve(policyResult.validReferences, nodeIds, SymbolIndex.getInstance());
+      const resolvedReferences = ReferenceResolver.resolve(policyResult.validReferences, nodeIds, SymbolIndex.getInstance(), projectRoot);
       
       // [MEMORY OPTIMIZATION] Free policyResult references (~200MB)
       policyResult.validReferences.length = 0;
@@ -434,6 +434,7 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
         else if (r.resolutionKind === 'direct') { resolutionStats.resolved++; }
         else if (r.resolutionKind === 'basename') { fallbackMatchedCount++; resolutionStats.ambiguous++; }
         else if (r.resolutionKind === 'unresolved') { unresolvedCount++; resolutionStats.unresolved++; }
+        else if (r.resolutionKind === 'resolved_external') { resolutionStats.resolved++; }
         
         if (r.targetId.startsWith('ghost://') || r.targetId.startsWith('external://')) {
             resolutionStats.ghost++;
@@ -465,7 +466,6 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
       
       // Inject Mutated States (DataPipeline's responsibility)
       const validGhostNodes = expansionResult.ghostNodes.filter(n => {
-          if (n.role === NodeRole.GHOST) return false;
           if ((n.data as any)?.ghost_classification === 'parserArtifact') return false;
           return true;
       });
@@ -476,7 +476,7 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
       );
 
       // >>> [P1 RESOLVER TRACE INSTRUMENTATION v4 (Two-pass NDJSON stream)] <<<
-      const reportDir = path.join(projectRoot || process.cwd(), 'synapse_report', 'surgery');
+      const reportDir = '/tmp/synapse_report/surgery';
       if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
       const traceTempPath = path.join(reportDir, '05_RESOLVER_TRACE_TEMP.ndjson');
       const traceFinalPath = path.join(reportDir, '05_RESOLVER_TRACE.ndjson');

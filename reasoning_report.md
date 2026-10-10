@@ -1,0 +1,468 @@
+# SYNAPSE Reasoning Report
+
+## Graph Stats
+- Nodes: 528
+- Edges: 1171
+
+## Q1~Q8 Answers
+
+### Q3: 무엇이 핵심이고 무엇이 부수적인가? (Core vs Utility)
+**Summary**: Identified 10 Core Pillars, 0 Supporting nodes, and 0 Utilities.
+**Confidence**: 0.9
+
+#### Items:
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/pipeline/DiagnosticTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/GraphModel.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/models/SemanticTypes.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/types.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/resolvers/TypeScriptResolver.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/state/SimulationState.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/transaction/ProjectStateSerializer.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/types/schema.ts** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+- **typescript** (Score: 3): [CORE PILLAR] State Owner, Participates in 1 critical pipelines
+
+### Q4: 어디서 확장해야 하나? (Where are the Extension Points?)
+**Summary**: Identified 10 Designed Extension Points.
+**Confidence**: 1
+
+#### Items:
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/types.ts** (Score: 1): - 9 implementations
+- [EXTENSION_DENSITY] Has 9 implementations.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/PatternDetector.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 11 implementations.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/types/schema.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 12 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/models/GeneratorInterfaces.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/models/GeneratorInterfaces.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 2 architectural clusters.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/Answer.ts** (Score: 1): - 8 implementations
+- [EXTENSION_DENSITY] Has 8 implementations.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/Rule.ts** (Score: 1): - 10 implementations
+- [EXTENSION_DENSITY] Has 13 implementations.
+- [CROSS_CLUSTER_DENSITY] Implementors span across 7 architectural clusters.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/RuleEngine.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/validation/SimulationScenarioPolicy.ts** (Score: 0.8): - 3 implementations
+- [EXTENSION_DENSITY] Has 3 implementations.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/IEvidenceProvider.ts** (Score: 0.7): - 2 implementations
+- [EXTENSION_DENSITY] Has 2 implementations.
+
+### Q5: 어디를 건드리면 무너지는가? (Blast Radius)
+**Summary**: Identified structural blast radius for 376 nodes.
+**Confidence**: 0.9
+
+#### Items:
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/pipeline/DiagnosticTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/GraphModel.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/models/SemanticTypes.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/types.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/resolvers/TypeScriptResolver.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/state/SimulationState.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/transaction/ProjectStateSerializer.ts** (Score: 4): [CRITICAL] Classified as CORE.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/types/schema.ts** (Score: 4): [CRITICAL] Classified as CORE.
+• shatters 1 extension points
+- **typescript** (Score: 4): [CRITICAL] Classified as CORE.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/DetectorContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/SemanticContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/StateManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/AccountManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/IdentityManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/SessionManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/PhaseManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/PropagationContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/recovery/RecoveryPropagationContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/validation/ValidationContext.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/bootstrap/BootstrapEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/BoundaryAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/BoundaryGuardAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/CycleAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/DeadEndAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/DependencyPressureAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/FractureAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/IsolatedNodeAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/NecrosisAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/SchemaViolationAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/ArchitectureAnalysisEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/ast/AstSymbolResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/ClusterBridgeAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/GraphViewBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/InterventionSimulator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/reasoning/CommunityDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/reasoning/DependencyClassifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/reasoning/InterventionEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/reasoning/ReasoningEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/reasoning/SmellDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/reasoning/TarjanSCC.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/TargetSelector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/AnomalyCollector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ArchitectureDSL.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/BlacklistOrchestrator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ClusterHierarchy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/CompareProjection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/EdgeGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/HarvestProjection.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ConfigScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/CppScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/FailurePropagator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/filterSnapshot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/FlowchartGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/GeminiParser.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/GoScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/JavaScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/JsTsScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/KotlinScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/MarkdownScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/PythonScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/resolvers/LanguageResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RuleEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RustScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ScannerRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ShellScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/SimulationSession.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/SimulationTargetSelector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/TopologyMutator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/TopologyOverlay.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/SqlScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/StateAuditPipeline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/TransitionGrammar.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/VisibleGraphResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/test/intervention_stability.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/utils/exclusionRules.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/utils/visualHints.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/BatchRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/ProjectAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/SummaryGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/ActionCandidate.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/ArchitectMapGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/ArchitectureActionGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/ConfidenceEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/EvidenceAggregator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/EvidenceIR.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/FindingGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/IEvidenceProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/IntentEdge.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/MarkdownExporter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/RegexProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/intent/VSCodeProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/ast_verification_engine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/b5_validation_layer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/community_edge_audit.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/run_b5_bundle.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/signal_laboratory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/stage_a5_validator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/test_entry_point.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/test_o2_generation.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/test_o2_lineage.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/analyzers/BoundaryGraphBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/detectors/ArchitecturalChokepointDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/detectors/BoundaryPatternDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/detectors/CascadeFailureDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/detectors/ChangeAmplifierDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/detectors/CrossBoundaryReferenceDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/detectors/EntryPointDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/detectors/MetricAccessDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/detectors/OnboardingPatternDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/detectors/SafeRefactoringZoneDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/detectors/SystemCoreDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/detectors/VocabularyViolationDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/EvidenceItem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/PatternDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/PatternFinding.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/PatternId.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/patterns/PatternRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/pipeline/DetectorFactory.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/pipeline/DiagnosticPipeline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/pipeline/DiagnosticTracer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/providers/BetweennessProvider.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/providers/CategoryClassifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/providers/ClusterAggregator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/EvidenceViewerBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/FrontierPartitioner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/InsightEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/OnboardingAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/ParetoFrontier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/RiskClassifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/RiskVectorBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/RootCauseAggregator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reporting/ValidationRenderer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/validation/ArchitectureAuditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/validation/ValidationEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/VirtualDebugger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/audit_evidence.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/audit_gate_g.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/audit_gate_i.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/audit_gate_j.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/audit_gate_k.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/audit_gate_l.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/audit_gate_m.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/audit_gate_n_series.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/audit_gate_o_series.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/audit_phase_12_adversarial.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/audit_pipeline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/run_census.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/run_placement_analysis.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/run_signal_census.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/run_synapse_actual_census.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analyzers/ArchitecturalCorridorBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analyzers/ArchitecturalTransitionGraph.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analyzers/ArchitecturalVocabulary.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analyzers/AuthorityAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analyzers/DominanceAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analyzers/OwnershipAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analyzers/PropagationAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analyzers/RefactorAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analyzers/StateTransitionAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/builder/ArchitecturalEvidenceBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/builders/ArchitecturalReasoningModelBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/evidence/ArchitecturalEvidence.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/model/ArchitecturalReasoningModel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/pipeline/ArchitecturalReasoningPipeline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/signal/extractors/BasicSignalExtractor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/signal/SignalDefinition.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/signal/SignalExtractor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/signal/SignalFinding.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/signal/SignalPlacementAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/signal/SignalRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/signal/SignalStabilityAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/signal/SignalStatisticsGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/cli/verify_determinism.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/utils/determinism.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/utils/hash_utils.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/client.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/AiOrchestrator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/BillingManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/CDPManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/ArchitectureIndexBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/BoundaryGuard.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/CollaborationTransport.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/CompareEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/HarvestEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/HarvestSessionManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/MountManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/ReferenceVerifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/RemoteLayerProjector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/RestCollaborationTransport.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/collaboration/RuntimeInitializer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/CommandInterceptor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/DatabaseEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/DirectChatScraper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/FlowScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/JVMAuditor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/LogicAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/PbSessionWatcher.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ProjectMetadata.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/PromptLogger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/SymbolIndex.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/SynapseIgnore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/WebviewInterceptor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/explorer/ArchitectureExplorer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/extension.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/server/server.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/server/standalone.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/test/phase1_validation.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/test/phase2_validation.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/test/security_regression.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/utils/ChatExtractor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/utils/Logger.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/utils/SensitiveInfoMasker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/semantic/ProjectContextDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/analysis/semantic/SemanticClassifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/validation/AccuracyBenchmark.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/validation/BaselineTruthDataset.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/benchmark/BenchmarkGraphGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/benchmark/BenchmarkHarness.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ClusterBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/CommunityDetector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/DataPipeline.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/DirectoryTreeBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/EdgeBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ExternalReferenceSemantics.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/FileScanner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/GhostClassifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/GhostExpander.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/GhostPolicy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/GraphAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/ArchitectureIrBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/evaluators/BoundaryEvidenceEvaluator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/evaluators/ExtensionPointEvidenceEvaluator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/evaluators/PayloadEvidenceEvaluator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/evaluators/StateOwnerEvidenceEvaluator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/generators/BoundaryCandidateGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/generators/ExtensionPointCandidateGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/generators/PayloadCandidateGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/generators/StateOwnerCandidateGenerator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/models/GeneratorInterfaces.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ir/promoters/PromotionEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/LayoutEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/NodeBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/projection/ProjectionLayer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/projection/RuleStore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/BoundaryAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ReferenceResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/CanvasEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/Intent.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/PhaseGate.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/RenderProtocol.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/RuleEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/ScenarioRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/SpatialRuleBook.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/ValidationHarness.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/canvas-engine/VisualRuleBook.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/ControlSystem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/DebuggerSystem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/EdgeCodeRefactorer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/graphBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/GridSystem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/RendererCore.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/SnapshotSystem.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/transaction/CommitManager.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/transaction/ExecutionLayer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/transaction/VerificationLayer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/verify_v0.3.10.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/webview/CanvasPanel.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/__tests__/AgreementMatrixBuilder.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/__tests__/AmplificationTracker.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/AgreementMatrixBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/AmplificationTracker.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/BenchmarkSnapshotter.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/BlindSpotMapper.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/CostProfiler.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/index.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/PropertyRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Reengineering/__tests__/AmplificationPathAnalyzer.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Reengineering/__tests__/ValidationFanoutAnalyzer.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Reengineering/AmplificationPathAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Reengineering/ValidationFanoutAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/types/metrology.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Reengineering/__tests__/FalsePositiveFilterLayer.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Reengineering/FalsePositiveFilterLayer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Reengineering/__tests__/ValidationLayerGuards.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Reengineering/ValidationLayerGuards.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Verification/__tests__/DeterministicHashVerifier.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Verification/DeterministicHashVerifier.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Verification/__tests__/DeterministicStabilityRunner.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Verification/DeterministicStabilityRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Verification/__tests__/SnapshotDriftAnalyzer.test.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/metrology/Verification/SnapshotDriftAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/AuthorityAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/BlastRadiusAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/CriticalityAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/ExtensionAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/FlowAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/InfluenceAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/analysis/RoleAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/aggregators/Q1EntryPointAggregator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/aggregators/Q2AuthorityAggregator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/aggregators/Q3CriticalityAggregator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/aggregators/Q4ExtensionAggregator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/aggregators/Q5BlastRadiusAggregator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/aggregators/Q6BoundaryAggregator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/aggregators/Q7DataFlowAggregator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/aggregators/Q8ControlFlowAggregator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/Answer.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/answers/AnswerEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/evidence/Evidence.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/evidence/EvidenceExtractor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/ReasoningPipelineRunner.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/authority/AuthorityRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/blast/BlastRadiusRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/boundary/BoundaryCrosserRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/boundary/BoundaryRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/criticality/CriticalityRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/extension/ExtensionRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/flow/ControlPipelineRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/flow/DataPipelineRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/roles/AdapterRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/roles/ControllerRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/roles/PolicyOwnerRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/roles/StateOwnerRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/roles/ViewRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/Rule.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/rules/RuleEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/reasoning/snapshot/ReasoningSnapshot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/evidence/SimulationEvidence.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/evidence/SimulationEvidenceCollector.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/evidence/SimulationEvidenceGraph.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/evidence/SimulationEvidenceType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/audit/PropagationPositionAnalyzer.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/audit/SimulationAuditBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/audit/TraceCompressor.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/policies/RecoveryPolicies.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/PropagationImpact.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/PropagationResult.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/PropagationRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/PropagationTraceEdge.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/recovery/RecoveryImpact.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/recovery/RecoveryRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/recovery/RecoveryRuleEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/recovery/RecoveryTraceGraph.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/recovery/rules/DependencyRestoredRealRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/rules/DependencyRemovedRealRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/SimulationPropagationResult.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/SimulationRuleEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/validation/rules/ValidationPassedRealRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/validation/ValidationImpact.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/validation/ValidationRule.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/propagation/validation/ValidationRuleEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/RecoveryEventType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/RecoveryScenario.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/SimulationScenario.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/SimulationScenarioRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/SimulationScenarioType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/SimulationScenarioValidator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/validation/policies/BoundarySplitPolicy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/validation/policies/DependencyRemovedPolicy.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/validation/policies/UnsupportedPolicies.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/validation/SimulationScenarioPolicy.ts** (Score: 1): [LOW] Classified as UTILITY.
+• shatters 1 extension points
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/validation/SimulationScenarioValidationResult.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/ValidationEventType.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/scenario/ValidationScenario.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/SimulationBoundaryResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/SimulationProjectionBuilder.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/SimulationScopeResolver.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/SimulationSnapshot.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/state/FailureCauseRegistry.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/state/SimulationStateMatrix.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/state/SimulationTransition.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/state/StateTransitionEngine.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/state/TransitionBatchValidator.ts** (Score: 1): [LOW] Classified as UTILITY.
+- **/home/dogsinatas/TypeScript_project/antigravity-extension-vis/src/core/simulation/state/TransitionResult.ts** (Score: 1): [LOW] Classified as UTILITY.
+
+### Q6: 시스템 경계는 어디인가? (Where are the boundaries?)
+**Summary**: Identified 18 Boundaries and 0 Crossers based on structural topology.
+**Confidence**: 1
+
+#### Items:
+- **Group[3 nodes]** (Score: 1): Isolated Island with 3 nodes. Highly decoupled.
+- **Group[4 nodes]** (Score: 1): Isolated Island with 4 nodes. Highly decoupled.
+- **Group[14 nodes]** (Score: 1): Isolated Island with 14 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[2 nodes]** (Score: 1): Isolated Island with 2 nodes. Highly decoupled.
+- **Group[4 nodes]** (Score: 1): Isolated Island with 4 nodes. Highly decoupled.
+- **Group[46 nodes]** (Score: 1): Isolated Island with 46 nodes. Highly decoupled.
+- **Group[36 nodes]** (Score: 0.916030534351145): Cohesive structural Boundary with 36 nodes (Modularity: 91.6%).
+- **Group[37 nodes]** (Score: 0.8888888888888888): Cohesive structural Boundary with 37 nodes (Modularity: 88.9%).
+- **Group[50 nodes]** (Score: 0.8035714285714286): Cohesive structural Boundary with 50 nodes (Modularity: 80.4%).
+- **Group[16 nodes]** (Score: 0.78125): Cohesive structural Boundary with 16 nodes (Modularity: 78.1%).
+- **Group[60 nodes]** (Score: 0.6605504587155964): Cohesive structural Boundary with 60 nodes (Modularity: 66.1%).
+- **Group[40 nodes]** (Score: 0.6402877697841727): Cohesive structural Boundary with 40 nodes (Modularity: 64.0%).
+- **Group[23 nodes]** (Score: 0.5851063829787234): Cohesive structural Boundary with 23 nodes (Modularity: 58.5%).
+- **Group[32 nodes]** (Score: 0.5802469135802469): Cohesive structural Boundary with 32 nodes (Modularity: 58.0%).
+

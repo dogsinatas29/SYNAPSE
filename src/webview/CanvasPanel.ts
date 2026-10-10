@@ -1213,6 +1213,22 @@ export class CanvasPanel {
 
     private async openFile(filePath: string, createIfNotExists: boolean = false, clientUsername?: string) {
         console.log(`[SYNAPSE-DEBUG] Extension Host received openFile for: ${filePath}, create=${createIfNotExists}, client=${clientUsername}`);
+        
+        // [P2 Fix] Block ghost/external nodes from attempting fs.stat
+        if (filePath.startsWith('ghost://') || filePath.startsWith('external://')) {
+            vscode.window.showWarningMessage(`[SYNAPSE] 이 노드는 가상 노드(Ghost/External)이므로 파일을 열 수 없습니다.`);
+            return;
+        }
+
+        // [P2 Fix] Check the graph state to see if it's a ghost node
+        const state = canvasEngine.getFinalSnapshot();
+        const node = state.nodes[filePath];
+        if (node && (node.type === 'system' || node.type === 'external' || node.type === 'ghost')) {
+            vscode.window.showWarningMessage(`[SYNAPSE] 가상 노드이거나 외부 종속성(${filePath})이므로 파일을 열 수 없습니다.`);
+            return;
+        }
+
+        
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) {
             console.log(`[SYNAPSE-DEBUG] _workspaceFolder is undefined!`);

@@ -117,7 +117,7 @@ export function buildNodes(
 
     for (const item of summaries) {
         const fileName = path.basename(item.filePath, path.extname(item.filePath));
-        if (item.filePath.includes('.synapse_contexts') || fileName.startsWith('session_')) continue;
+        if (item.filePath.includes('.synapse_contexts') || (fileName.startsWith('session_') && (item.filePath.endsWith('.json') || item.filePath.endsWith('.txt')))) continue;
 
         const doc = isDocFile(item.filePath);
         const relPath = path.dirname(item.filePath);

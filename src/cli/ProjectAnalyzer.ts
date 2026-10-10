@@ -75,7 +75,7 @@ export class ProjectAnalyzer {
             }));
 
             // 3. Resolve symbols to absolute file paths
-            const resolved = ReferenceResolver.resolve(refsForResolver, existingNodeIds, symbolIndex);
+            const resolved = ReferenceResolver.resolve(refsForResolver, existingNodeIds, symbolIndex, projectPath);
 
             // 4. Filter unresolved and rebuild intentEdges
             const resolvedEdges: any[] = [];

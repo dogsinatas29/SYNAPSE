@@ -27,24 +27,23 @@ Interpretation Guide:
 Higher complexityScore indicates denser internal and external connections relative to component size. Actual change propagation reach requires separate dynamic tracing.
 
 Finding:
-9 change propagation amplifiers observed.
+5 change propagation amplifiers observed.
 
-- **Target**: `app/src/androidTest/java/de/test/antennapod/ui`
-  - Observed: externalEdges=413, complexityScore=122
-  - Selection Basis: complexityScore (122) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 120).
+- **Target**: `playback`
+  - Observed: externalEdges=117, complexityScore=90
+  - Selection Basis: complexityScore (90) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 42).
+- **Target**: `storage`
+  - Observed: externalEdges=115, complexityScore=42
+  - Selection Basis: complexityScore (42) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 42).
+- **Target**: `app/src/androidTest/java/de/test/antennapod`
+  - Observed: externalEdges=88, complexityScore=94
+  - Selection Basis: complexityScore (94) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 42).
 - **Target**: `app/src/main/java/de/danoeh/antennapod/actionbutton`
-  - Observed: externalEdges=168, complexityScore=430
-  - Selection Basis: complexityScore (430) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 120).
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/episodeslist`
-  - Observed: externalEdges=620, complexityScore=155
-  - Selection Basis: complexityScore (155) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 120).
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/swipeactions`
-  - Observed: externalEdges=288, complexityScore=1637
-  - Selection Basis: complexityScore (1637) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 120).
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/screen/drawer`
-  - Observed: externalEdges=385, complexityScore=196
-  - Selection Basis: complexityScore (196) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 120).
-- ... and 4 more.
+  - Observed: externalEdges=44, complexityScore=112
+  - Selection Basis: complexityScore (112) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 42).
+- **Target**: `app/src/main/java/de/danoeh/antennapod/ui`
+  - Observed: externalEdges=504, complexityScore=2016
+  - Selection Basis: complexityScore (2016) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 42).
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#E2)
 

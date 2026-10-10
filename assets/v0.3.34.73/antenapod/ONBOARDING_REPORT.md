@@ -30,20 +30,20 @@ Finding:
 5 dependency roots observed.
 
 - **Target**: `playback/service/src/main/java/de/danoeh/antennapod/playback/service/Media3PlaybackService.java`
-  - Observed: inDegree=0, outDegree=215
-  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=215)
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/screen/onlinefeedview/OnlineFeedViewActivity.java`
-  - Observed: inDegree=0, outDegree=175
-  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=175)
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/screen/playback/SleepTimerDialog.java`
-  - Observed: inDegree=0, outDegree=147
-  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=147)
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/screen/episode/ItemFragment.java`
-  - Observed: inDegree=0, outDegree=131
-  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=131)
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/screen/feed/FeedInfoFragment.java`
-  - Observed: inDegree=0, outDegree=127
-  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=127)
+  - Observed: inDegree=0, outDegree=56
+  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=56)
+- **Target**: `app/src/androidTest/java/de/test/antennapod/playback/PlaybackTest.java`
+  - Observed: inDegree=0, outDegree=26
+  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=26)
+- **Target**: `app/src/main/java/de/danoeh/antennapod/ClientConfigurator.java`
+  - Observed: inDegree=0, outDegree=24
+  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=24)
+- **Target**: `app/src/androidTest/java/de/test/antennapod/ui/DownloadLogTest.java`
+  - Observed: inDegree=0, outDegree=21
+  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=21)
+- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/screen/playback/TranscriptDialogFragment.java`
+  - Observed: inDegree=0, outDegree=19
+  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=19)
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#O2)
 

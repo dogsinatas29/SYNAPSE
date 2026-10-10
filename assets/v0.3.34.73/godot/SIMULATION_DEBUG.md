@@ -27,24 +27,24 @@ Interpretation Guide:
 Higher complexityScore indicates denser internal and external connections relative to component size. Actual change propagation reach requires separate dynamic tracing.
 
 Finding:
-33 change propagation amplifiers observed.
+42 change propagation amplifiers observed.
 
 - **Target**: `core`
-  - Observed: externalEdges=1057, complexityScore=167547
-  - Selection Basis: complexityScore (167547) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 413).
-- **Target**: `drivers`
-  - Observed: externalEdges=2136, complexityScore=21258
-  - Selection Basis: complexityScore (21258) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 413).
+  - Observed: externalEdges=772, complexityScore=122666
+  - Selection Basis: complexityScore (122666) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 767).
 - **Target**: `editor`
-  - Observed: externalEdges=11951, complexityScore=1748783
-  - Selection Basis: complexityScore (1748783) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 413).
+  - Observed: externalEdges=11613, complexityScore=1786427
+  - Selection Basis: complexityScore (1786427) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 767).
+- **Target**: `main`
+  - Observed: externalEdges=237, complexityScore=767
+  - Selection Basis: complexityScore (767) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 767).
 - **Target**: `modules`
-  - Observed: externalEdges=14255, complexityScore=189648
-  - Selection Basis: complexityScore (189648) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 413).
-- **Target**: `scene`
-  - Observed: externalEdges=14737, complexityScore=733077
-  - Selection Basis: complexityScore (733077) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 413).
-- ... and 28 more.
+  - Observed: externalEdges=12884, complexityScore=283416
+  - Selection Basis: complexityScore (283416) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 767).
+- **Target**: `platform`
+  - Observed: externalEdges=2984, complexityScore=11776
+  - Selection Basis: complexityScore (11776) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: 767).
+- ... and 37 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#E2)
 

@@ -27,24 +27,24 @@ Interpretation Guide:
 Higher controlScore indicates a higher structural centrality score for the component in the observed dependency graph.
 
 Finding:
-33 system cores observed.
+43 system cores observed.
 
 - **Target**: `core`
-  - Observed: controlScore=1275378, fanIn=37270, blastRadius=451339
-  - Selection Basis: controlScore (1275378) >= P50 median (11160)
-- **Target**: `drivers`
-  - Observed: controlScore=742046, fanIn=2435, blastRadius=358848
-  - Selection Basis: controlScore (742046) >= P50 median (11160)
+  - Observed: controlScore=1079354, fanIn=38301, blastRadius=348172
+  - Selection Basis: controlScore (1079354) >= P50 median (6318)
 - **Target**: `editor`
-  - Observed: controlScore=15160242, fanIn=7808, blastRadius=7541081
-  - Selection Basis: controlScore (15160242) >= P50 median (11160)
+  - Observed: controlScore=14898158, fanIn=7997, blastRadius=7409094
+  - Selection Basis: controlScore (14898158) >= P50 median (6318)
+- **Target**: `main`
+  - Observed: controlScore=6520, fanIn=178, blastRadius=2370
+  - Selection Basis: controlScore (6520) >= P50 median (6318)
 - **Target**: `modules`
-  - Observed: controlScore=29239370, fanIn=4513, blastRadius=14597120
-  - Selection Basis: controlScore (29239370) >= P50 median (11160)
-- **Target**: `scene`
-  - Observed: controlScore=20093210, fanIn=5089, blastRadius=10021160
-  - Selection Basis: controlScore (20093210) >= P50 median (11160)
-- ... and 28 more.
+  - Observed: controlScore=26743068, fanIn=4742, blastRadius=13347824
+  - Selection Basis: controlScore (26743068) >= P50 median (6318)
+- **Target**: `platform`
+  - Observed: controlScore=2240372, fanIn=834, blastRadius=1116016
+  - Selection Basis: controlScore (2240372) >= P50 median (6318)
+- ... and 38 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#A1)
 
@@ -61,24 +61,24 @@ Interpretation Guide:
 Contact points show where independent clusters couple. Higher dependencyCount indicates more observed structural references across the boundary.
 
 Finding:
-877 module contact points observed.
+1380 module contact points observed.
 
-- **Target**: `servers/rendering->thirdparty/basis_universal`
-  - Observed: dependencyCount=32
-  - Selection Basis: Valid edge between promoted boundaries (32 dependencies)
+- **Target**: `scene->core`
+  - Observed: dependencyCount=8230
+  - Selection Basis: Valid edge between promoted boundaries (8230 dependencies)
+- **Target**: `modules->editor`
+  - Observed: dependencyCount=2386
+  - Selection Basis: Valid edge between promoted boundaries (2386 dependencies)
 - **Target**: `editor->core`
-  - Observed: dependencyCount=7484
-  - Selection Basis: Valid edge between promoted boundaries (7484 dependencies)
-- **Target**: `scene->editor`
-  - Observed: dependencyCount=3469
-  - Selection Basis: Valid edge between promoted boundaries (3469 dependencies)
-- **Target**: `thirdparty/thorvg/src->editor`
-  - Observed: dependencyCount=48
-  - Selection Basis: Valid edge between promoted boundaries (48 dependencies)
-- **Target**: `thirdparty/basis_universal->core`
-  - Observed: dependencyCount=353
-  - Selection Basis: Valid edge between promoted boundaries (353 dependencies)
-- ... and 872 more.
+  - Observed: dependencyCount=7507
+  - Selection Basis: Valid edge between promoted boundaries (7507 dependencies)
+- **Target**: `scene->modules`
+  - Observed: dependencyCount=1588
+  - Selection Basis: Valid edge between promoted boundaries (1588 dependencies)
+- **Target**: `modules->core`
+  - Observed: dependencyCount=7968
+  - Selection Basis: Valid edge between promoted boundaries (7968 dependencies)
+- ... and 1375 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#A2)
 
@@ -95,24 +95,24 @@ Interpretation Guide:
 Boundaries separate modules. Higher Isolation indicates a larger share of observed references stay inside the boundary; lower Isolation indicates a larger share cross it.
 
 Finding:
-65 structural boundaries observed.
+86 structural boundaries observed.
 
 - **Target**: `core`
-  - Observed: strength=Strong, cohesion=0.94700533082471, internalEdges=5376, externalEdges=1057, members=427
-  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive internal structure (size=427 >= 100, internalEdges=5376 >= 1000).
-- **Target**: `drivers`
-  - Observed: strength=Strong, cohesion=0.49611197511664074, internalEdges=530, externalEdges=2136, members=168
-  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive Fan-In (inboundEdges=2435 >= 100).
+  - Observed: strength=Strong, cohesion=0.9708757847072141, internalEdges=5685, externalEdges=772, members=451
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive internal structure (size=451 >= 100, internalEdges=5685 >= 1000).
 - **Target**: `editor`
-  - Observed: strength=Strong, cohesion=0.9186635629193483, internalEdges=7633, externalEdges=11951, members=631
-  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive internal structure (size=631 >= 100, internalEdges=7633 >= 1000).
+  - Observed: strength=Strong, cohesion=0.9417021861680187, internalEdges=7913, externalEdges=11613, members=638
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive internal structure (size=638 >= 100, internalEdges=7913 >= 1000).
 - **Target**: `main`
-  - Observed: strength=Strong, cohesion=0.04854368932038835, internalEdges=10, externalEdges=247, members=9
-  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive Fan-In (inboundEdges=176 >= 100).
+  - Observed: strength=Strong, cohesion=0.08955223880597014, internalEdges=18, externalEdges=237, members=10
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive Fan-In (inboundEdges=178 >= 100).
 - **Target**: `modules`
-  - Observed: strength=Strong, cohesion=0.7183595472585624, internalEdges=3735, externalEdges=14255, members=1024
-  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive internal structure (size=1024 >= 100, internalEdges=3735 >= 1000).
-- ... and 60 more.
+  - Observed: strength=Strong, cohesion=0.8315585672797676, internalEdges=4859, externalEdges=12884, members=1036
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive internal structure (size=1036 >= 100, internalEdges=4859 >= 1000).
+- **Target**: `platform`
+  - Observed: strength=Strong, cohesion=0.6422413793103449, internalEdges=743, externalEdges=2984, members=374
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive Fan-In (inboundEdges=834 >= 100).
+- ... and 81 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#A3)
 
@@ -132,20 +132,20 @@ Finding:
 20 structural control chokepoints observed.
 
 - **Target**: `thirdparty/basis_universal/transcoder`
-  - Observed: rawBetweennessSum=4470932.400827502, weightedBetweennessSum=4470932.400827502, maxBetweenness=3768569.603737817, topNodeContribution=0.8429046261223525, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=3873924.02330127
-  - Selection Basis: Ranked #1 (in top 20) by alphaScore (3873924.02) among all aggregated clusters.
-- **Target**: `editor`
-  - Observed: rawBetweennessSum=4375732.240735427, weightedBetweennessSum=4375732.240735427, maxBetweenness=2937199.6106198477, topNodeContribution=0.6712475647564291, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=3152979.5051371846
-  - Selection Basis: Ranked #2 (in top 20) by alphaScore (3152979.51) among all aggregated clusters.
-- **Target**: `core/config`
-  - Observed: rawBetweennessSum=3980564.6339463596, weightedBetweennessSum=3980564.6339463596, maxBetweenness=2696389.898696823, topNodeContribution=0.6773887994939057, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=2889016.1089842534
-  - Selection Basis: Ranked #3 (in top 20) by alphaScore (2889016.11) among all aggregated clusters.
+  - Observed: rawBetweennessSum=4292404.132695455, weightedBetweennessSum=4292404.132695455, maxBetweenness=3220167.6884692516, topNodeContribution=0.7502014230069985, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=3381003.155103182
+  - Selection Basis: Ranked #1 (in top 20) by alphaScore (3381003.16) among all aggregated clusters.
 - **Target**: `core/io`
-  - Observed: rawBetweennessSum=7534596.915606346, weightedBetweennessSum=7534596.915606346, maxBetweenness=2032488.55885925, topNodeContribution=0.26975411977903874, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=2857804.8123713145
-  - Selection Basis: Ranked #4 (in top 20) by alphaScore (2857804.81) among all aggregated clusters.
+  - Observed: rawBetweennessSum=6860943.063890841, weightedBetweennessSum=6860943.063890841, maxBetweenness=1876957.9196449057, topNodeContribution=0.27357141753927966, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=2624555.691281796
+  - Selection Basis: Ranked #2 (in top 20) by alphaScore (2624555.69) among all aggregated clusters.
+- **Target**: `editor`
+  - Observed: rawBetweennessSum=3509621.720650452, weightedBetweennessSum=3509621.720650452, maxBetweenness=2402361.9435996907, topNodeContribution=0.6845073728214935, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=2568450.9101573047
+  - Selection Basis: Ranked #3 (in top 20) by alphaScore (2568450.91) among all aggregated clusters.
+- **Target**: `core/config`
+  - Observed: rawBetweennessSum=3530171.9711814886, weightedBetweennessSum=3530171.9711814886, maxBetweenness=2332170.8884592145, topNodeContribution=0.6606394553857037, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=2511871.0508675557
+  - Selection Basis: Ranked #4 (in top 20) by alphaScore (2511871.05) among all aggregated clusters.
 - **Target**: `thirdparty/xatlas`
-  - Observed: rawBetweennessSum=2587211.078338374, weightedBetweennessSum=2587211.078338374, maxBetweenness=2587026.8735906966, topNodeContribution=0.999928801809323, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=2587054.504302848
-  - Selection Basis: Ranked #5 (in top 20) by alphaScore (2587054.50) among all aggregated clusters.
+  - Observed: rawBetweennessSum=2363717.8486108733, weightedBetweennessSum=2363717.8486108733, maxBetweenness=2363557.5430077855, topNodeContribution=0.9999321807367229, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=2363581.5888482486
+  - Selection Basis: Ranked #5 (in top 20) by alphaScore (2363581.59) among all aggregated clusters.
 - ... and 15 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#A5)

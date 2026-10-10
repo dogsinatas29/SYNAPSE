@@ -32,9 +32,6 @@ Finding:
 - **Target**: `scene/3d/physics/shape_cast_3d.cpp`
   - Observed: inDegree=0, outDegree=71
   - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=71)
-- **Target**: `thirdparty/sdl/include/SDL3/SDL.h`
-  - Observed: inDegree=0, outDegree=53
-  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=53)
 - **Target**: `scene/3d/physics/static_body_3d.cpp`
   - Observed: inDegree=0, outDegree=49
   - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=49)
@@ -44,6 +41,9 @@ Finding:
 - **Target**: `scene/2d/physics/static_body_2d.cpp`
   - Observed: inDegree=0, outDegree=44
   - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=44)
+- **Target**: `tests/scene/test_code_edit.cpp`
+  - Observed: inDegree=0, outDegree=40
+  - Selection Basis: Observed graph dependency root (inDegree=0, outDegree=40)
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#O2)
 

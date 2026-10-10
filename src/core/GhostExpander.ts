@@ -106,7 +106,7 @@ export class GhostExpander {
         for (const ref of resolvedReferences) {
             _ghostIdx++;
             const targetNodeId = ref.targetId;
-            const isUnresolved = ref.resolutionKind === 'unresolved';
+            const isUnresolved = ref.resolutionKind === 'unresolved' || ref.resolutionKind === 'resolved_external';
 
             expandedReferences.push({
                 sourceId: ref.sourceId,
@@ -125,21 +125,22 @@ export class GhostExpander {
                 const cleanId = ref.fullPath ? ref.fullPath : _origTarget.replace('external://', '').replace('ghost://', '');
 
                 let isExternal = false;
-                if (ref.referenceType === 'network_link') {
+                if (ref.resolutionKind === 'resolved_external' || ref.referenceType === 'network_link') {
                     isExternal = true;
-                } else if (internalNamespace && cleanId.includes('.')) {
-                    isExternal = !cleanId.startsWith(internalNamespace);
-                } else {
-                    isExternal = ref.referenceType === 'api_call' || ref.referenceType === 'dependency' || !targetNodeId.includes('.');
                 }
 
                 const ghostDomain = extractGhostDomain(targetNodeId);
 
-                let ghostClusterId = isDocRef ? 'doc_shelf' : (isExternal ? getGhostClusterId(ghostDomain) : 'sys_cluster_reserved');
+                let ghostClusterId = isDocRef ? 'doc_shelf' : (isExternal ? getGhostClusterId(ghostDomain) : 'cluster_ghost_unverified');
 
                 if (ref.referenceType === 'network_link') {
                     ghostClusterId = 'cluster_ghost_network_remote';
                     // We removed the console logs to keep it pure, or we can keep them out.
+                }
+
+                // [P2 Fix] Block unresolved api_call / FUNCTION_CALL from becoming ghost file nodes
+                if (ref.referenceType === 'api_call' || ref.provenance === 'FUNCTION_CALL' || ref.provenance?.includes('FUNCTION_CALL')) {
+                    continue; // Skip node creation, but remains in expandedReferences
                 }
 
                 if (isExternal && ghostClusterId !== 'doc_shelf') {
@@ -152,6 +153,8 @@ export class GhostExpander {
                     
                     // [v0.3.35] Domain Sub-Cluster 생성 및 Parent 연결
                     addGhostCluster(ghostClusterId, label, 'cluster_ghosts');
+                } else if (ghostClusterId === 'cluster_ghost_unverified') {
+                    addGhostCluster('cluster_ghost_unverified', '⚠️ Unverified References', null);
                 }
 
                 let ghostContinent = 'unknown';

@@ -27,24 +27,23 @@ Interpretation Guide:
 Higher controlScore indicates a higher structural centrality score for the component in the observed dependency graph.
 
 Finding:
-9 system cores observed.
+5 system cores observed.
 
-- **Target**: `app/src/androidTest/java/de/test/antennapod/ui`
-  - Observed: controlScore=9106, fanIn=2, blastRadius=4543
-  - Selection Basis: controlScore (9106) >= P50 median (7568)
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/episodeslist`
-  - Observed: controlScore=12740, fanIn=34, blastRadius=6200
-  - Selection Basis: controlScore (12740) >= P50 median (7568)
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/swipeactions`
-  - Observed: controlScore=7568, fanIn=8, blastRadius=3744
-  - Selection Basis: controlScore (7568) >= P50 median (7568)
-- **Target**: `model/src/main/java/de/danoeh/antennapod/model/feed`
-  - Observed: controlScore=18960, fanIn=366, blastRadius=7650
-  - Selection Basis: controlScore (18960) >= P50 median (7568)
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/screen/feed`
-  - Observed: controlScore=10768, fanIn=22, blastRadius=5274
-  - Selection Basis: controlScore (10768) >= P50 median (7568)
-- ... and 4 more.
+- **Target**: `playback`
+  - Observed: controlScore=6240, fanIn=39, blastRadius=2925
+  - Selection Basis: controlScore (6240) >= P50 median (4576)
+- **Target**: `storage`
+  - Observed: controlScore=12460, fanIn=188, blastRadius=5290
+  - Selection Basis: controlScore (12460) >= P50 median (4576)
+- **Target**: `ui`
+  - Observed: controlScore=8978, fanIn=125, blastRadius=3864
+  - Selection Basis: controlScore (8978) >= P50 median (4576)
+- **Target**: `app/src/androidTest/java/de/test/antennapod`
+  - Observed: controlScore=4576, fanIn=0, blastRadius=2288
+  - Selection Basis: controlScore (4576) >= P50 median (4576)
+- **Target**: `app/src/main/java/de/danoeh/antennapod/ui`
+  - Observed: controlScore=127428, fanIn=42, blastRadius=63504
+  - Selection Basis: controlScore (127428) >= P50 median (4576)
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#A1)
 
@@ -61,24 +60,24 @@ Interpretation Guide:
 Contact points show where independent clusters couple. Higher dependencyCount indicates more observed structural references across the boundary.
 
 Finding:
-67 module contact points observed.
+41 module contact points observed.
 
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/screen/download->model/src/main/java/de/danoeh/antennapod/model/feed`
-  - Observed: dependencyCount=7
-  - Selection Basis: Valid edge between promoted boundaries (7 dependencies)
-- **Target**: `storage/database/src/main/java/de/danoeh/antennapod/storage/database->model/src/main/java/de/danoeh/antennapod/model/feed`
-  - Observed: dependencyCount=49
-  - Selection Basis: Valid edge between promoted boundaries (49 dependencies)
-- **Target**: `app-wearos/src/main/java/de/danoeh/antennapod/wearos->model/src/main/java/de/danoeh/antennapod/model/feed`
-  - Observed: dependencyCount=9
-  - Selection Basis: Valid edge between promoted boundaries (9 dependencies)
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/screen/playback->app-wearos/src/main/java/de/danoeh/antennapod/wearos`
-  - Observed: dependencyCount=1
-  - Selection Basis: Valid edge between promoted boundaries (1 dependencies)
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/swipeactions->model/src/main/java/de/danoeh/antennapod/model/feed`
-  - Observed: dependencyCount=24
-  - Selection Basis: Valid edge between promoted boundaries (24 dependencies)
-- ... and 62 more.
+- **Target**: `app/src/main/java/de/danoeh/antennapod/ui->storage`
+  - Observed: dependencyCount=107
+  - Selection Basis: Valid edge between promoted boundaries (107 dependencies)
+- **Target**: `app/src/main/java/de/danoeh/antennapod/ui->model/src`
+  - Observed: dependencyCount=149
+  - Selection Basis: Valid edge between promoted boundaries (149 dependencies)
+- **Target**: `playback->model/src`
+  - Observed: dependencyCount=48
+  - Selection Basis: Valid edge between promoted boundaries (48 dependencies)
+- **Target**: `app/src/main/java/de/danoeh/antennapod/ui->ui`
+  - Observed: dependencyCount=89
+  - Selection Basis: Valid edge between promoted boundaries (89 dependencies)
+- **Target**: `storage->model/src`
+  - Observed: dependencyCount=96
+  - Selection Basis: Valid edge between promoted boundaries (96 dependencies)
+- ... and 36 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#A2)
 
@@ -95,24 +94,24 @@ Interpretation Guide:
 Boundaries separate modules. Higher Isolation indicates a larger share of observed references stay inside the boundary; lower Isolation indicates a larger share cross it.
 
 Finding:
-18 structural boundaries observed.
+10 structural boundaries observed.
 
-- **Target**: `app-wearos/src/main/java/de/danoeh/antennapod/wearos`
-  - Observed: strength=Moderate, cohesion=0.6222222222222222, internalEdges=14, externalEdges=52, members=14
-  - Selection Basis: Classified as Moderate Boundary Candidate ('Moderate') due to moderate cohesion (cohesion=0.622 >= 0.45).
-- **Target**: `app/src/androidTest/java/de/test/antennapod/ui`
-  - Observed: strength=Weak, cohesion=0.026785714285714284, internalEdges=6, externalEdges=413, members=11
-  - Selection Basis: Classified as Low Isolation Boundary ('Weak') because it did not meet Fan-In or cohesion thresholds for promotion (inboundEdges=2 < 30 AND adjusted cohesion=0.027 < 0.45).
-- **Target**: `app/src/main/java/de/danoeh/antennapod/actionbutton`
-  - Observed: strength=Weak, cohesion=0.16842105263157894, internalEdges=16, externalEdges=168, members=10
-  - Selection Basis: Classified as Low Isolation Boundary ('Weak') because it did not meet Fan-In or cohesion thresholds for promotion (inboundEdges=15 < 30 AND adjusted cohesion=0.168 < 0.45).
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/episodeslist`
-  - Observed: strength=Moderate, cohesion=0.012690355329949238, internalEdges=5, externalEdges=620, members=10
-  - Selection Basis: Classified as Moderate Boundary Candidate ('Moderate') due to high Fan-In (inboundEdges=34 >= 30).
-- **Target**: `app/src/main/java/de/danoeh/antennapod/ui/swipeactions`
-  - Observed: strength=Weak, cohesion=0.17222222222222222, internalEdges=31, externalEdges=288, members=13
-  - Selection Basis: Classified as Low Isolation Boundary ('Weak') because it did not meet Fan-In or cohesion thresholds for promotion (inboundEdges=8 < 30 AND adjusted cohesion=0.172 < 0.45).
-- ... and 13 more.
+- **Target**: `net`
+  - Observed: strength=Strong, cohesion=0.8529411764705882, internalEdges=23, externalEdges=5, members=26
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') due to high cohesion (cohesion=0.853 >= 0.75).
+- **Target**: `playback`
+  - Observed: strength=Moderate, cohesion=0.4819277108433735, internalEdges=22, externalEdges=117, members=25
+  - Selection Basis: Classified as Moderate Boundary Candidate ('Moderate') due to high Fan-In (inboundEdges=39 >= 30).
+- **Target**: `storage`
+  - Observed: strength=Strong, cohesion=0.6111111111111112, internalEdges=28, externalEdges=115, members=46
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive Fan-In (inboundEdges=188 >= 100).
+- **Target**: `ui`
+  - Observed: strength=Strong, cohesion=0.6629213483146067, internalEdges=36, externalEdges=69, members=56
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive Fan-In (inboundEdges=125 >= 100).
+- **Target**: `model/src`
+  - Observed: strength=Strong, cohesion=0.9655172413793104, internalEdges=21, externalEdges=1, members=36
+  - Selection Basis: Classified as High Isolation Boundary ('Strong') primarily due to massive Fan-In (inboundEdges=427 >= 100).
+- ... and 5 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#A3)
 
@@ -132,20 +131,20 @@ Finding:
 20 structural control chokepoints observed.
 
 - **Target**: `app/src/main/java/de/danoeh/antennapod/activity`
-  - Observed: rawBetweennessSum=5752.2568450333565, weightedBetweennessSum=5752.2568450333565, maxBetweenness=5582.930654557166, topNodeContribution=0.9705635205384838, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=5608.329583128595
-  - Selection Basis: Ranked #1 (in top 20) by alphaScore (5608.33) among all aggregated clusters.
+  - Observed: rawBetweennessSum=5829.554674063134, weightedBetweennessSum=5829.554674063134, maxBetweenness=5660.260951119411, topNodeContribution=0.9709594072945323, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=5685.65500956097
+  - Selection Basis: Ranked #1 (in top 20) by alphaScore (5685.66) among all aggregated clusters.
 - **Target**: `app/src/main/java/de/danoeh/antennapod/actionbutton`
-  - Observed: rawBetweennessSum=3030.0305430077174, weightedBetweennessSum=3030.0305430077174, maxBetweenness=1552.285714285715, topNodeContribution=0.5123003521756121, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=1773.9474385940152
-  - Selection Basis: Ranked #2 (in top 20) by alphaScore (1773.95) among all aggregated clusters.
+  - Observed: rawBetweennessSum=3085.3043653705504, weightedBetweennessSum=3085.3043653705504, maxBetweenness=1546.7193157084464, topNodeContribution=0.5013182274879654, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=1777.507073157762
+  - Selection Basis: Ranked #2 (in top 20) by alphaScore (1777.51) among all aggregated clusters.
 - **Target**: `playback/service/src/main/java/de/danoeh/antennapod/playback/service`
-  - Observed: rawBetweennessSum=2469.5054700674286, weightedBetweennessSum=2469.5054700674286, maxBetweenness=1468.0614146818095, topNodeContribution=0.5944758707668402, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=1618.2780229896523
-  - Selection Basis: Ranked #3 (in top 20) by alphaScore (1618.28) among all aggregated clusters.
+  - Observed: rawBetweennessSum=2461.4264657684935, weightedBetweennessSum=2461.4264657684935, maxBetweenness=1467.3936071668268, topNodeContribution=0.5961557769749115, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=1616.4985359570767
+  - Selection Basis: Ranked #3 (in top 20) by alphaScore (1616.50) among all aggregated clusters.
 - **Target**: `app/src/main/java/de/danoeh/antennapod/ui/screen/preferences`
-  - Observed: rawBetweennessSum=2466.766980638409, weightedBetweennessSum=2466.766980638409, maxBetweenness=1256.8501569858713, topNodeContribution=0.5095131266353312, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=1438.337680533752
-  - Selection Basis: Ranked #4 (in top 20) by alphaScore (1438.34) among all aggregated clusters.
+  - Observed: rawBetweennessSum=2437.8479903886005, weightedBetweennessSum=2437.8479903886005, maxBetweenness=1242.0355919308972, topNodeContribution=0.5094803272508033, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=1421.4074516995527
+  - Selection Basis: Ranked #4 (in top 20) by alphaScore (1421.41) among all aggregated clusters.
 - **Target**: `app/src/main/java/de/danoeh/antennapod/ui/screen/feed`
-  - Observed: rawBetweennessSum=1422.0524440361169, weightedBetweennessSum=1422.0524440361169, maxBetweenness=1405.3191107027837, topNodeContribution=0.9882329703074523, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=1407.8291107027837
-  - Selection Basis: Ranked #5 (in top 20) by alphaScore (1407.83) among all aggregated clusters.
+  - Observed: rawBetweennessSum=1333.4442726645702, weightedBetweennessSum=1333.4442726645702, maxBetweenness=1313.6061774264751, topNodeContribution=0.9851226664325061, aggregationMethod=MAX_PLUS_DIMINISHING_RETURNS, clusterScore=1316.5818917121894
+  - Selection Basis: Ranked #5 (in top 20) by alphaScore (1316.58) among all aggregated clusters.
 - ... and 15 more.
 
 [View All Detailed Evidence](EVIDENCE_VIEWER.html#A5)

@@ -3,7 +3,7 @@ import { LanguageScanner, CodeSummary, EdgeProvenance } from '../types/schema';
 
 export class CppScanner implements LanguageScanner {
     supportsExtension(ext: string): boolean {
-        return ['.cpp', '.h', '.c', '.hpp', '.cc'].includes(ext);
+        return ['.cpp', '.h', '.c', '.hpp', '.cc', '.inc', '.inl', '.hh'].includes(ext);
     }
 
     parse(content: string, summary: CodeSummary, filePath?: string): void {

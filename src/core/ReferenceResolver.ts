@@ -3,7 +3,7 @@ import { SymbolIndex } from './SymbolIndex';
 import { ReferenceWithSource } from './GhostPolicy';
 import { EdgeProvenance } from '../types/schema';
 
-export type ResolutionKind = 'direct' | 'basename' | 'symbol_index' | 'unresolved' | 'broadcast' | 'stdlib';
+export type ResolutionKind = 'direct' | 'basename' | 'symbol_index' | 'unresolved' | 'broadcast' | 'stdlib' | 'resolved_external';
 
 const GO_STDLIB_PREFIXES = new Set([
     'archive', 'bufio', 'bytes', 'compress', 'container', 'context', 'crypto', 
@@ -33,7 +33,8 @@ export class ReferenceResolver {
     public static resolve(
         validReferences: ReferenceWithSource[],
         existingNodeIds: ReadonlySet<string>,
-        symbolIndex: SymbolIndex
+        symbolIndex: SymbolIndex,
+        projectRoot?: string
     ): ResolvedReference[] {
         const result: ResolvedReference[] = [];
         console.error('[REFERENCE_RESOLVER_ENTER] validReferences=', validReferences.length);
@@ -116,9 +117,40 @@ export class ReferenceResolver {
             const originalTarget = targetNodeId;
             let resolutionKind: ResolutionKind = 'direct';
             let fallbackResult = '';
+
+            if (originalTarget.includes('nav_map_builder_2d.h') || originalTarget.includes('pcfutil.c') || originalTarget.includes('parseZipCentralDirectory') || originalTarget.includes('sanitize') || originalTarget.includes('rpc.h') || originalTarget.includes('android/api-level.h')) {
+                console.error(`[TRACE-TARGET-EXTRACTED] Target: ${originalTarget} extracted from Source: ${sourceFilePath}. Type: ${ref.type}, Provenance: ${ref.provenance}`);
+            }
             
             if (!existingNodeIds.has(targetNodeId)) {
-                // [v0.3.34.51 FIX] 1. Alias Resolver (VSCode 코어 모듈 특화)
+                let isCppTraceTarget = targetNodeId.includes('nav_map_builder_2d.h') || targetNodeId.includes('pcfutil.c') || targetNodeId.includes('parseZipCentralDirectory') || targetNodeId.includes('sanitize') || targetNodeId.includes('rpc.h') || targetNodeId.includes('android/api-level.h');
+                if (isCppTraceTarget) {
+                    console.error(`[TRACE-GHOST] REF: ${targetNodeId}, fullPath: ${ref.fullPath || 'undefined'}, projectRoot: ${projectRoot || 'undefined'}`);
+                }
+
+                // [Ghost Fix] Attempt to resolve using absolute fullPath provided by AST/Extractor
+                if (projectRoot && ref.fullPath) {
+                    const relPath = path.relative(projectRoot, ref.fullPath).replace(/\\/g, '/');
+                    if (isCppTraceTarget) console.error(`[TRACE-GHOST] relPath: ${relPath}, existsInNodeIds: ${existingNodeIds.has(relPath)}`);
+                    
+                    if (!relPath.startsWith('../') && relPath !== '..') {
+                        // ALWAYS use the canonical relative path if it's within the project,
+                        // even if it's not in existingNodeIds. This prevents duplicate ghost nodes
+                        // (e.g. '2d/nav_map.h' vs 'modules/nav_map.h').
+                        targetNodeId = relPath;
+                        if (existingNodeIds.has(relPath)) {
+                            resolutionKind = 'direct';
+                            if (isCppTraceTarget) console.error(`[TRACE-GHOST] SUCCESS: targetNodeId=${targetNodeId}`);
+                        }
+                    } else if (existingNodeIds.has(relPath)) {
+                        targetNodeId = relPath;
+                        resolutionKind = 'direct';
+                    }
+                }
+
+                if (!existingNodeIds.has(targetNodeId)) {
+                    if (isCppTraceTarget) console.error(`[TRACE-GHOST] Still not resolved. proceeding to alias/ext/symbol index.`);
+                    // [v0.3.34.51 FIX] 1. Alias Resolver (VSCode 코어 모듈 특화)
                 if (targetNodeId.startsWith('vs/')) {
                     targetNodeId = 'src/' + targetNodeId;
                 }
@@ -157,16 +189,66 @@ export class ReferenceResolver {
                             resolvedSymbolsFreq.set(originalTarget, (resolvedSymbolsFreq.get(originalTarget) || 0) + 1);
                         }
                     } else {
-                        resolutionKind = 'unresolved';
+                        // [v0.3.34.75 FIX] Normalize relative path prefix
+                        if (targetNodeId.startsWith('./')) {
+                            targetNodeId = targetNodeId.substring(2);
+                        }
+                        // [v0.3.34.52 FIX] C/C++ Include Suffix Resolution (Compiler Include Path Emulator)
+                        const isCppHeader = targetNodeId.endsWith('.h') || targetNodeId.endsWith('.hpp') || targetNodeId.endsWith('.inc') || targetNodeId.endsWith('.c') || targetNodeId.endsWith('.cpp') || targetNodeId.endsWith('.cc') || targetNodeId.endsWith('.hh') || targetNodeId.endsWith('.inl');
+                        if (isCppHeader) {
+                            const suffix = '/' + targetNodeId;
+                            let match: string | undefined;
+                            let candidates = 0;
+                            for (const existingId of existingNodeIds) {
+                                if (existingId.endsWith(suffix) || existingId === targetNodeId) {
+                                    if (!match) match = existingId;
+                                    else { match = undefined; break; } // Ambiguous, fail safe
+                                    candidates++;
+                                }
+                            }
+                            if (match && candidates === 1) {
+                                targetNodeId = match;
+                                resolutionKind = 'direct';
+                            } else {
+                                resolutionKind = 'unresolved';
+                            }
+                        } else {
+                            resolutionKind = 'unresolved';
+                        }
                     }
                 }
-            }
+            } // Closes if (!existingNodeIds.has(targetNodeId)) - inner
+            } // Closes if (!existingNodeIds.has(targetNodeId)) - outer
 
             // Final check if it's actually in nodeIds, otherwise mark unresolved.
             if (resolutionKind === 'symbol_index' && !existingNodeIds.has(targetNodeId)) {
                 resolutionKind = 'unresolved';
             } else if (resolutionKind === 'direct' && !existingNodeIds.has(targetNodeId)) {
                 resolutionKind = 'unresolved';
+            }
+
+            // [v0.3.34 FIX for Ghost Root Clumping]
+            // If it's a C/C++ internal include but was unresolved, and it has no directory path,
+            // we attach the source directory so it doesn't clump at the root cluster!
+            if (resolutionKind === 'unresolved' && !targetNodeId.includes('/')) {
+                const isCppHeader = targetNodeId.endsWith('.h') || targetNodeId.endsWith('.hpp') || targetNodeId.endsWith('.inc') || targetNodeId.endsWith('.c') || targetNodeId.endsWith('.cpp') || targetNodeId.endsWith('.cc');
+                if (isCppHeader) {
+                    const cStdlibHeaders = new Set([
+                        'assert.h', 'complex.h', 'ctype.h', 'errno.h', 'fenv.h', 'float.h', 
+                        'inttypes.h', 'iso646.h', 'limits.h', 'locale.h', 'math.h', 'setjmp.h', 
+                        'signal.h', 'stdarg.h', 'stdbool.h', 'stddef.h', 'stdint.h', 'stdio.h', 
+                        'stdlib.h', 'string.h', 'tgmath.h', 'time.h', 'wchar.h', 'wctype.h', 
+                        'malloc.h', 'memory.h', 'windows.h', 'unistd.h', 'fcntl.h', 'pthread.h', 
+                        'dlfcn.h', 'omp.h', 'dirent.h', 'strings.h', 'syslog.h', 'utime.h', 'alloca.h'
+                    ]);
+                    if (!cStdlibHeaders.has(targetNodeId)) {
+                        targetNodeId = path.posix.join(path.dirname(sourceFilePath), targetNodeId);
+                        // Make sure it doesn't just become "foo.h" if source file was at root
+                        if (targetNodeId === '.' || targetNodeId === '..') {
+                            targetNodeId = originalTarget; // rollback just in case
+                        }
+                    }
+                }
             }
 
             // [Method A] STDLIB Override: If it's Go and matches stdlib, preserve targetId but set kind to 'stdlib'

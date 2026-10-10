@@ -95,11 +95,17 @@ export class BootstrapEngine {
                 const discoveredState = await this.autoDiscover(projectRoot, structure.includePaths);
 
                 // 검색된 노드 정보를 structure 형식으로 변환 (createStructure 지원을 위해)
-                structure.files = discoveredState.nodes!.map(n => ({
-                    path: n.data!.file || '',
-                    type: n.type as any,
-                    description: n.data!.description || ''
-                })).filter(f => f.path);
+                structure.files = discoveredState.nodes!
+                    .filter(n => {
+                        const f = n.data?.file || '';
+                        return n.type !== 'system' && n.type !== 'external' && n.type !== 'ghost' &&
+                               !f.startsWith('external://') && !f.startsWith('ghost://') && !f.startsWith('../');
+                    })
+                    .map(n => ({
+                        path: n.data!.file || '',
+                        type: n.type as any,
+                        description: n.data!.description || ''
+                    })).filter(f => f.path);
 
                 const nodeMap = new Map<string, string>();
                 discoveredState.nodes!.forEach(n => nodeMap.set(n.id, n.data!.file || ''));
@@ -562,9 +568,9 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
                     const isProtocol = fileName === 'rules.md' || fileName === 'gemini.md' || fileName === 'architecture.md';
 
                     if (isIgnoredFile(currentRelPath)) continue;
-                    const scanExtensions = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.cc', '.rs', '.sh', '.sql', '.md', '.csv', '.yaml', '.yml', '.json', '.java', '.kt', '.kts', '.swift', '.go'];
+                    const scanExtensions = ['.ts', '.js', '.tsx', '.jsx', '.py', '.c', '.h', '.cpp', '.hpp', '.cc', '.inc', '.inl', '.hh', '.rs', '.sh', '.sql', '.md', '.csv', '.yaml', '.yml', '.json', '.java', '.kt', '.kts', '.swift', '.go'];
                     if (scanExtensions.includes(ext) || isProtocol) {
-                        if (fileName.includes('logic_report') || fileName.includes('synapse')) {
+                        if ((fileName.includes('logic_report') || fileName.includes('synapse')) && ['.json', '.md', '.txt', '.csv'].includes(ext)) {
                             // [v0.3.34.45] 🚫 Block SYNAPSE generated data from being scanned as source
                             console.log(`[BOOTSTRAP_PROTOCOL] 🚫 Blocked ${fileName} from scan pool! (path: ${currentRelPath})`);
                             continue;

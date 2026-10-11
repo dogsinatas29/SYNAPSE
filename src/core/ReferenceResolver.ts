@@ -196,21 +196,33 @@ export class ReferenceResolver {
                         // [v0.3.34.52 FIX] C/C++ Include Suffix Resolution (Compiler Include Path Emulator)
                         const isCppHeader = targetNodeId.endsWith('.h') || targetNodeId.endsWith('.hpp') || targetNodeId.endsWith('.inc') || targetNodeId.endsWith('.c') || targetNodeId.endsWith('.cpp') || targetNodeId.endsWith('.cc') || targetNodeId.endsWith('.hh') || targetNodeId.endsWith('.inl');
                         if (isCppHeader) {
-                            const suffix = '/' + targetNodeId;
-                            let match: string | undefined;
-                            let candidates = 0;
-                            for (const existingId of existingNodeIds) {
-                                if (existingId.endsWith(suffix) || existingId === targetNodeId) {
-                                    if (!match) match = existingId;
-                                    else { match = undefined; break; } // Ambiguous, fail safe
-                                    candidates++;
+                            let localMatched = false;
+                            if (!targetNodeId.includes('/')) {
+                                const localFallback = path.join(path.dirname(sourceFilePath), targetNodeId).replace(/\\/g, '/');
+                                if (existingNodeIds.has(localFallback)) {
+                                    targetNodeId = localFallback;
+                                    resolutionKind = 'direct';
+                                    localMatched = true;
                                 }
                             }
-                            if (match && candidates === 1) {
-                                targetNodeId = match;
-                                resolutionKind = 'direct';
-                            } else {
-                                resolutionKind = 'unresolved';
+                            
+                            if (!localMatched) {
+                                const suffix = '/' + targetNodeId;
+                                let match: string | undefined;
+                                let candidates = 0;
+                                for (const existingId of existingNodeIds) {
+                                    if (existingId.endsWith(suffix) || existingId === targetNodeId) {
+                                        if (!match) match = existingId;
+                                        else { match = undefined; break; } // Ambiguous, fail safe
+                                        candidates++;
+                                    }
+                                }
+                                if (match && candidates === 1) {
+                                    targetNodeId = match;
+                                    resolutionKind = 'direct';
+                                } else {
+                                    resolutionKind = 'unresolved';
+                                }
                             }
                         } else {
                             resolutionKind = 'unresolved';

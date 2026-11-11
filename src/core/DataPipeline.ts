@@ -25,6 +25,7 @@ import { canvasEngine } from './canvas-engine/CanvasEngine';
 import { RuleEngine } from './RuleEngine';
 import { SymbolIndex } from './SymbolIndex';
 import { ProjectMetadata } from './ProjectMetadata';
+import { isBuildOrPackagingAsset } from '../utils/exclusionRules';
 
 // [Phase 1 Debug] analyzeGraph 완전 OFF - 범인 검출용 임시 플래그
 const SKIP_ANALYSIS = true;
@@ -77,19 +78,27 @@ export class DataPipeline {
   public async processFiles(files: string[], projectRoot?: string, onProgress?: (msg: string, percent: number) => void): Promise<PipelineResult> {
     try {
       // [v0.3.30] Security: validate all files are within project boundary
+      // [v0.3.34.74 P3-1] Ingestion Boundary: Exclude build system & packaging assets ($V_{build} \cap V_{app} = \emptyset$)
       const validFiles: string[] = [];
-      if (projectRoot) {
-        const meta = ProjectMetadata.getInstance();
-        for (const file of files) {
-          const absPath = path.isAbsolute(file) ? file : path.join(projectRoot, file);
-          if (!meta.validatePath(absPath)) {
-            console.warn(`[v0.3.30] Security: File outside project boundary skipped: ${file}`);
-          } else {
-            validFiles.push(file);
-          }
+      let excludedBuildCount = 0;
+      const meta = projectRoot ? ProjectMetadata.getInstance() : null;
+      for (const file of files) {
+        const absPath = projectRoot ? (path.isAbsolute(file) ? file : path.join(projectRoot, file)) : file;
+        const relPath = projectRoot ? path.relative(projectRoot, absPath).replace(/\\/g, '/') : file.replace(/\\/g, '/');
+        if (meta && !meta.validatePath(absPath)) {
+          console.warn(`[v0.3.30] Security: File outside project boundary skipped: ${file}`);
+          continue;
         }
-        files = validFiles;
+        if (isBuildOrPackagingAsset(relPath)) {
+          excludedBuildCount++;
+          continue;
+        }
+        validFiles.push(file);
       }
+      if (excludedBuildCount > 0) {
+        Logger.info(`[v0.3.34.74] Ingestion Boundary: Excluded ${excludedBuildCount} build/packaging assets from pipeline.`);
+      }
+      files = validFiles;
 
       // 1. DATA 수집 시작 (Phase 0)
       phaseManager.assertPhase(Phase.DATA);
@@ -472,7 +481,7 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
       
       const validGhostNodeIds = new Set(validGhostNodes.map(n => n.id));
       const validReferences = expansionResult.expandedReferences.filter(ref => 
-          nodeIds.has(ref.targetId) || validGhostNodeIds.has(ref.targetId) || ref.resolutionKind === 'stdlib'
+          nodeIds.has(ref.targetId) || validGhostNodeIds.has(ref.targetId)
       );
 
       // >>> [P1 RESOLVER TRACE INSTRUMENTATION v4 (Two-pass NDJSON stream)] <<<

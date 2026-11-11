@@ -132,6 +132,14 @@ export class CanvasEngine {
     return this.stateManager.getRetentionDiagnostics();
   }
 
+  public hasUnsavedChanges(): boolean {
+    return this.stateManager.hasUnsavedChanges();
+  }
+
+  public markSaved(): void {
+    this.stateManager.markSaved();
+  }
+
   // [v0.3.34.9] Batch cluster sync: O(N) instead of O(N × 500ms)
   public batchAddClusters(clusters: any[]): void {
     this.stateManager.batchAddClusters(clusters);

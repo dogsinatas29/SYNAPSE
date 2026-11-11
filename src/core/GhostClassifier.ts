@@ -430,7 +430,7 @@ export class GhostClassifier {
         projectRoot?: string;
         existingNodeIds: ReadonlySet<string>;
     }): GhostClassificationReport {
-        const externalNodes = params.ghostNodes.filter(n => n.type === 'external' || n.cluster_id === 'cluster_ghosts');
+        const externalNodes = params.ghostNodes.filter(n => n.status === 'ghost' || n.type === 'external' || n.cluster_id === 'cluster_ghosts' || n.cluster_id.startsWith('cluster_ghost_'));
         Logger.info(`[GHOST_V2_ENTRY] totalExternal=${externalNodes.length} totalGhostNodes=${params.ghostNodes.length}`);
 
         const unresolved = params.resolvedReferences.filter(r => r.resolutionKind === 'unresolved');
@@ -497,7 +497,7 @@ export class GhostClassifier {
 
         const nodeByTarget = new Map<string, Node[]>();
         for (const node of params.ghostNodes) {
-            if (node.type !== 'external' && node.cluster_id !== 'cluster_ghosts') continue;
+            if (node.status !== 'ghost' && node.type !== 'external' && node.cluster_id !== 'cluster_ghosts' && !node.cluster_id.startsWith('cluster_ghost_')) continue;
             const key = stripDecorations((node.data as any)?.file || node.id).toLowerCase();
             if (!nodeByTarget.has(key)) nodeByTarget.set(key, []);
             nodeByTarget.get(key)!.push(node);

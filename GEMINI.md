@@ -711,6 +711,48 @@ LLM must assume:
  - 릴리즈 노트에 기록된 내용은 버전.md파일을 기반으로 작업한 내용 + 작업중 추가한 요소로 반영하고 릴리즈 노트가 완성되면 버전.md파일에 추가 작업 내용을 바로 기록할것
  - 릴리즈 노트의 파일 명은 v버전_release_notes.md로 통일할 것
 
+3. 작업 검증, 테스트 검증은 반드시 아래 원칙을 따를 것 
+ - 시냅스 파이프 라인을 태운 데이터를 사용할 것 ( ex : project_state.json
+ - 이 데이터를 시냅스 파이프 라인에 태워 분석 할 것 
+ - 분석 결과에 LLM의 해석을 덧 붙이지 말 것 
+ 
+### 작업 및 테스트 검증 원칙 (Mandatory)
+
+1. **실제 파이프라인 데이터 사용**
+   - 작업 및 테스트 검증에는 SYNAPSE 파이프라인을 통해 생성된 실제 데이터(예: `project_state.json`)를 사용한다.
+   - 별도로 제작한 모의 데이터나 임의의 예시만으로 실제 파이프라인의 정상 동작을 입증하지 않는다. 모의 데이터는 단위 테스트에 한해 사용할 수 있으며, 실제 파이프라인 검증을 대체할 수 없다.
+
+2. **SYNAPSE 파이프라인을 통한 분석**
+   - 생성된 데이터를 SYNAPSE 파이프라인에 입력하여 분석하고, 실제 출력 결과를 기준으로 검증한다.
+   - 코드 검사나 단위 테스트만으로 실제 파이프라인 검증을 완료했다고 판정하지 않는다.
+
+3. **LLM 해석과 분석 결과의 분리**
+   - SYNAPSE가 산출한 결과에 LLM의 추정, 해석, 보정 또는 임의의 분류를 섞지 않는다.
+   - 데이터에서 직접 확인할 수 없는 내용은 사실로 단정하지 않는다.
+   - 원인에 대한 가설은 분석 결과와 분리하여 명시하고, 추가 검증 전까지 미확인으로 취급한다.
+
+4. **검증 기준의 사전 고정**
+   - 테스트 실행 전에 기대 결과, 불변식, 비교 대상 및 합격 기준을 정의한다.
+   - 결과를 확인한 뒤 합격 기준을 임의로 변경하지 않는다.
+   - 검증되지 않은 항목은 통과로 간주하지 않는다.
+
+5. **구조 및 메타데이터의 전수 비교**
+   - 구조 보존 검증 시 노드·엣지 개수만 비교하지 않는다.
+   - 노드 및 엣지 식별자, 출발점과 도착점, 엣지 유형, 관련 메타데이터 및 `resolutionKind` 등 검증 대상 속성을 비교한다.
+   - 비교 범위와 제외 항목을 명시하고, 검증하지 않은 속성까지 보존되었다고 주장하지 않는다.
+
+6. **재현 가능한 증거 기록**
+   - 검증에 사용한 입력 데이터, 생성 경로, 실행 조건, 기준 스냅샷, 비교 결과 및 테스트 로그를 기록한다.
+   - 결과를 재현할 수 없는 경우 검증 완료로 판정하지 않는다.
+
+7. **결과 상태의 엄격한 구분**
+   - 검증 결과는 `PASS`, `FAIL`, `UNVERIFIED`로 구분한다.
+   - `UNVERIFIED`는 `PASS`로 간주하지 않는다.
+   - 테스트 실패나 불일치를 발견하면 이를 숨기거나 임의로 수정해 통과 처리하지 말고, 원인과 영향 범위를 별도로 조사한다.
+
+8. **검증 범위를 넘는 주장 금지**
+   - 특정 입력과 테스트에서 확인한 결과를 모든 프로젝트, 언어 또는 실행 환경에서 검증된 사실로 일반화하지 않는다.
+   - 테스트 통과는 해당 테스트가 확인한 조건에 대한 증거로만 사용한다.
 
 📜 마일스톤 문서 생성 및 경로 규격 (제미나이.md 추가 사양)
 1. 표준 저장 경로 (Standard Path)
@@ -918,44 +960,18 @@ actual hierarchy
 
 ## ROOT Structure
 프로젝트 주요 디렉터리 구조 및 소스코드 현황입니다. (Active/Orphaned/Legacy 상태 포함, 마일스톤/릴리즈 노트 제외)
-*Last Updated: v0.3.34.72 (2026-10-09)*
+*Last Updated: v0.3.34.74 (2026-11-11)*
 
 ### 📂 Directory Tree
 ```text
 .
-├── Directory
 ├── demo
 │   └── canvas-engine.js
 ├── scripts
 │   ├── debug
 │   │   └── debug_entrypoint_detector.ts
-│   ├── src
-│   │   └── core
-│   │       └── reporting
 │   ├── validation
 │   │   └── resolver_trace_audit.ts
-│   ├── validations
-│   │   ├── append_milestone.js
-│   │   ├── append_milestone_2.js
-│   │   ├── append_milestone_3.js
-│   │   ├── cluster_analysis.js
-│   │   ├── cross_project_correlation.js
-│   │   ├── dump_top100_csv.js
-│   │   ├── metric_correlation.js
-│   │   ├── scatter_analysis.js
-│   │   ├── test_cascade_failure_detector.ts
-│   │   ├── test_change_amplifier_detector.ts
-│   │   ├── test_detector.ts
-│   │   ├── test_determinism.ts
-│   │   ├── test_diagnostic_pipeline.ts
-│   │   ├── test_entry_point_detector.ts
-│   │   ├── test_semantic_precision.ts
-│   │   ├── test_system_core_detector.ts
-│   │   ├── top100_evidence.csv
-│   │   ├── top100_semantic_precision.json
-│   │   ├── ts_ast_extractor.js
-│   │   ├── ts_ast_extractor_debug.js
-│   │   └── ts_ast_extractor_debug2.js
 │   ├── audit_extension_clusters.ts
 │   ├── create-account.js
 │   ├── extension_discovery_audit.ts
@@ -967,6 +983,10 @@ actual hierarchy
 │   ├── test_architecture_verification_28_29.ts
 │   ├── test_architecture_verification_30.ts
 │   ├── test_generate.ts
+│   ├── test_local_header.ts
+│   ├── test_local_header2.ts
+│   ├── test_regression.ts
+│   ├── test_session_bug.ts
 │   ├── update_project_state.ts
 │   └── verify_anomaly_collector.ts
 ├── src
@@ -1050,6 +1070,9 @@ actual hierarchy
 │   │   ├── benchmark
 │   │   │   ├── BenchmarkGraphGenerator.ts
 │   │   │   └── BenchmarkHarness.ts
+│   │   ├── build
+│   │   │   ├── BuildMetadataAdapter.ts
+│   │   │   └── BuildMetadataTypes.ts
 │   │   ├── canvas-engine
 │   │   │   ├── CanvasEngine.ts
 │   │   │   ├── Intent.ts
@@ -1133,8 +1156,7 @@ actual hierarchy
 │   │   │   └── types.ts
 │   │   ├── resolvers
 │   │   │   ├── LanguageResolver.ts
-│   │   │   ├── TypeScriptResolver.ts
-│   │   │   └── foo
+│   │   │   └── TypeScriptResolver.ts
 │   │   ├── simulation
 │   │   │   ├── evidence
 │   │   │   ├── propagation
@@ -1310,19 +1332,16 @@ actual hierarchy
 ├── REVISION_HISTORY.md
 ├── RULES.md
 ├── build-guard.js
-├── diagnostic_log.txt
 ├── package-lock.json
 ├── package.json
 ├── robots.txt
-├── scratch_EntryPointDetector.ts
-├── synapse-visual-architecture-v0.3.34.72.vsix
+├── synapse-visual-architecture-v0.3.34.73_fix1.vsix
+├── synapse-visual-architecture-v0.3.34.74.vsix
 ├── synapse.config.json
-├── test.js
-├── test2.js
 ├── tsconfig.json
 └── webpack.config.js
 
-88 directories, 311 files
+84 directories, 292 files
 
 ```
 
@@ -1330,7 +1349,8 @@ actual hierarchy
 런타임 또는 테스트 실행 중 생성되는 가비지/출력 디렉토리 목록입니다. (이 항목들은 Source of Truth 구성 요소가 아닙니다.)
 ```text
 .
-└── synapse_report/            ← [테스트/출력] 시냅스 리포트
+├── synapse_report/            ← [테스트/출력] 시냅스 정규 리포트 출력
+└── scratch/                   ← [격리/임시] 검증용 일회성 스크립트, 러너, 덤프 및 테스트 스크래치
 ```
 
 ### 📇 File Index (파일별 역할 설명)
@@ -1339,10 +1359,16 @@ actual hierarchy
 
 | 파일/폴더 경로 | 상태 | 주요 역할 및 기능 설명 |
 | :--- | :--- | :--- |
-| `src/core/analysis/patterns/` | 🟢 Active (v0.3.34.72) | `BoundaryPatternDetector.ts`, `EntryPointDetector.ts` 등 계약(Contract) 기반 증거(Evidence) 패턴 스캐너 |
-| `src/core/reporting/FindingReportAdapter.ts` | 🟢 Active (v0.3.34.72) | `E2, O2, A1~A5` 등 정규 리포트 본문에 구조적 타겟과 관측 지표(Metrics), 선정 근거(Basis)를 동적 렌더링하는 핵심 어댑터 |
-| `src/core/reporting/ReportContract.ts` | 🟢 Active | A1~O2 리포트에 대한 지원 패턴(supportingPatterns) 및 허용 증거(allowedEvidence) 명세 |
+| `src/core/build/` | 🟢 Active (v0.3.34.74) | 빌드 산출물 메타데이터 수집 어댑터 (`BuildMetadataAdapter.ts`, `BuildMetadataTypes.ts`) |
+| `src/core/analysis/patterns/detectors/EntryPointDetector.ts` | 🟢 Active (v0.3.34.74) | 진입점(O2) 감지기; `NodeRole.TEST` 노드 필터링 적용으로 순수 제품 진입점만 추출 |
+| `src/core/analysis/patterns/detectors/SystemCoreDetector.ts` | 🟢 Active (v0.3.34.74) | 시스템 코어(A1) 감지기; 테스트 컴포넌트(`testNodeRatio >= 0.8`) 배제, P90 상위 10% 절삭 및 결정론적 2차 정렬 적용 |
+| `src/core/analysis/patterns/detectors/ChangeAmplifierDetector.ts` | 🟢 Active (v0.3.34.74) | 변경 증폭기(E2) 감지기; 테스트 컴포넌트(`testNodeRatio >= 0.8`) 배제, P90 상위 10% 절삭 및 결정론적 2차 정렬 적용 |
+| `src/core/reporting/FindingReportAdapter.ts` | 🟢 Active (v0.3.34.74) | E2, O2, A1~A5 정규 리포트 본문 렌더링, 부동소수점 정밀도 포맷팅(`toPrecision(3)` 가드) 및 모수 비율(`15 selected / 144 candidates`) 동적 렌더링 어댑터 |
+| `src/core/reporting/ReportBundleGenerator.ts` | 🟢 Active (v0.3.34.74) | 3대 정규 아키텍처 보고서(`ARCHITECT_REPORT`, `ONBOARDING_REPORT`, `SIMULATION_DEBUG`) 생성기; 100% 바이트 단위 재현성 및 모수 표기 동기화 |
+| `src/core/reporting/ReportContract.ts` | 🟢 Active (v0.3.34.74) | A1~O2 리포트 지원 패턴, 허용 증거 및 A1 controlScore 사실적 해석 가이드(Interpretation Guide) 명세 |
 | `src/core/reporting/BoundaryAnalysisReportBuilder.ts` | 🟡 Diagnostic | 정규 계약을 우회하는 디버그/진단용 덤프 빌더 (`REJECTED_CANDIDATE` 기록 용도) |
+| `src/core/ReferenceResolver.ts` | 🟢 Active (v0.3.34.74) | 참조/심볼 해석기; Rust Cargo.toml 로컬 크레이트 경로 매핑 및 미초기화 서브모듈 방어 |
+| `src/core/NodeBuilder.ts` | 🟢 Active (v0.3.34.74) | 노드 생성기; 경로 패턴 기반 `NodeRole.TEST` 분류 및 아키텍처 역할 태깅 |
 | `package.json` | 유지 | VS Code 확장 프로그램 메타데이터(기여 지점, 명령어 바인딩) 정의 및 패키지 관리 |
 | `build-guard.js` | 유지 | 마일스톤 및 릴리즈 노트 유효성 자동 검증 배포 통제 스크립트 |
 | `RULES.md` | 유지 | 프로젝트 코딩 규칙 및 아키텍처 제약 문서 |
@@ -1364,7 +1390,7 @@ actual hierarchy
 | `src/core/canvas-engine/` | Active | CanvasEngine, Intent, PhaseGate, StateManager, RuleEngine, VisualRuleBook, SpatialRuleBook, ValidationHarness, ScenarioRunner, RenderProtocol — 캔버스 구동 도메인 물리 분리 (10개 파일) |
 | `src/core/transaction/` | Active | CommitManager, ExecutionLayer, VerificationLayer — 아키텍처 상태 변경 트랜잭션 무결성 검증 및 커밋 |
 | `src/core/projection/` | Active | ProjectionLayer, RuleStore — 추상화된 설계 룰을 시각적 레이어에 투영 |
-| `src/core/reporting/` | 🟢 Active | OnboardingReportBuilder, ExecutiveReportBuilder — 경영/신규 진입자를 위한 의존성 없는 순수 리포트 뷰 |
+| `src/core/reporting/` | 🟢 Active | OnboardingReportBuilder, ArchitectReportBuilder 등 경영/신규 진입자를 위한 의존성 없는 순수 리포트 뷰 |
 | `src/core/simulation/` | 🟢 Active | TopologyOverlay, SimulationSession, DiffBuilder — 기존 구조 파괴 없이 가상 Action과 Undo를 테스트하는 What-if 시뮬레이터 |
 | `src/core/StateAuditPipeline.ts` | 🟢 Active | Anomaly, FSMAudit, Propagation을 연결하는 뷰/시뮬레이션 전단 오케스트레이터 |
 | `src/core/FailurePropagator.ts` | 🟢 Active | 노드 고장에 따른 정적 파급 효과(Blast Radius) 연산기 (TopologyOverlay 참조 없음, IGraphView 추상화) |
@@ -1387,7 +1413,7 @@ actual hierarchy
 | `src/core/ControlSystem.ts` | Active | 시스템 제어 명령어 및 피드백 루프 |
 | `src/core/AiOrchestrator.ts` | Active | AI 에이전트 오케스트레이션 (PhaseGate/Mutation) |
 | `src/core/PythonScanner.ts` | Active | 파이썬 소스 분석 스캐너 |
-| `src/core/RustScanner.ts` | Active | Rust 소스 분석 스캐너 |
+| `src/core/RustScanner.ts` | 🟢 Active (v0.3.34.74) | Rust 소스 분석 스캐너 + Cargo.toml 로컬 크레이트 경로 정규화 매핑 지원 |
 | `src/core/JsTsScanner.ts` | 🟢 Active | JavaScript/TypeScript 소스 분석 스캐너 |
 | `src/core/MarkdownScanner.ts` | Active | 마크다운 문서 스캐너 |
 | `src/core/PhaseManager.ts` | Active | Phase 상태 관리 및 전이 |
@@ -1425,7 +1451,7 @@ actual hierarchy
 | `src/core/GhostClassifier.ts` | 🟢 Active | 고스트 노드 유형별 분류 로직 |
 | `src/core/ExternalReferenceSemantics.ts` | 🟢 Active | 외부 참조 시맨틱 파악 모듈 |
 | `src/core/ClusterBuilder.ts` | 🟡 Modified | 클러스터 생성기 + [CREATE_CLUSTER] 유령 클러스터 생성 추적용 정밀 프로브 주입 |
-| `src/core/NodeBuilder.ts` | 🟡 Modified | 노드 생성기 + [REPORT_FILES] 특정 폴더 내부 노드 증발 여부 감시용 정밀 프로브 주입 |
+| `src/core/NodeBuilder.ts` | 🟢 Active (v0.3.34.74) | 노드 생성기; 경로 패턴 기반 `NodeRole.TEST` 분류 및 아키텍처 역할 태깅 |
 | `src/analysis/hintEngine.ts` | Active | 실시간 아키텍처 분석 및 진단 힌트(R1~R5 경고) 캔버스 제공 |
 | `src/bootstrap/BootstrapEngine.ts` | Active | 초기 로드 시 디렉터리 스캔 → 아키텍처 그래프 자동 구성 |
 | `src/rust_checker/` | Active | Rust 프로젝트 소스 구조 분석 및 종속성 추출 (mod.rs + reporter.rs + state_checker.rs) |
@@ -1446,9 +1472,8 @@ actual hierarchy
 | `src/test/security_regression.test.ts` | Active | 보안 및 역호환성 회귀 검증 (계정 포맷 및 포트 충돌 방어) |
 | `src/test/phase3_validation.test.ts` ~ `transport_validation.test.ts` | **Deleted** | 기존 Submission 기반 비동기식 테스트 영구 삭제 (v0.3.30 Harvest 통합) |
 | `src/utils/SensitiveInfoMasker.ts` | Active | 로그 내 민감 정보(Secret, Token, Password 등) 자동 마스킹 유틸리티 |
-| `tools/*` | 유지 | 성능 벤치마킹, 규격 파일 생성, 진단 로그 분석용 보조 스크립트 |
 
-> **삭제된 파일**: `test_scan.ts`, `src/core/GhostNodeManager.ts`, `src/core/ContextVault.ts`, `src/core/collaboration/SubmissionManager.ts`, `src/test/phase3_validation.test.ts ~ transport_validation.test.ts` — 과거 일회성 테스트 스크립트 및 이전 리팩토링 과정에서 제거되어 현재 디스크에 존재하지 않습니다. (v0.3.33 리팩토링 기준)
+> **삭제 및 격리 이전된 파일**: `test_scan.ts`, `src/core/GhostNodeManager.ts`, `src/core/ContextVault.ts`, `src/core/collaboration/SubmissionManager.ts`, `tools/*`, `src/test/phase3_validation.test.ts ~ transport_validation.test.ts` 등 과거 리팩토링 과정에서 영구 삭제된 파일과, 이번 v0.3.34.74 정리 작업에서 `scratch/` 폴더로 격리 이전된 임시 진단 스크립트(`scripts/validations/*`, 루트의 `*.ts`, `*.js`, `*.py`, `*.ndjson`, `*.dump.json` 등)는 소스 트리 및 인덱스에서 제외되었습니다.
 
 ### 📄 소스파일 성능 최적화 이전 원본 상태 (Pre-Optimization Sources)
 

@@ -33,6 +33,8 @@ export class StateManager {
   private deletedNodeIds: Set<string> = new Set();
   private deletedPaths: Set<string> = new Set();
   private dirtyNodeIds: Set<string> = new Set();
+  private dirtyEdgeIds: Set<string> = new Set();
+  private dirtyClusterIds: Set<string> = new Set();
   private reservedPaths: Set<string> = new Set(); // 📡 Immediate Sovereignty Signal (RTOS Style)
   private currentTxnId: number = 0;
   private activeScopeId: string | null = null;
@@ -149,6 +151,7 @@ export class StateManager {
         representative_edge: undefined
     };
     this.bufferClusters.set(clusterId, newCluster);
+    this.dirtyClusterIds.add(clusterId);
     this.incrementTxn();
     targetNodes.forEach(node => {
         const buffered = this.bufferNodes.get(node.id) || { ...node };
@@ -254,6 +257,7 @@ export class StateManager {
       collapsed: payload.collapsed || false,
       data: { ...payload.data, layer: payload.data?.layer || 'user' }
     });
+    this.dirtyClusterIds.add(payload.id);
     this.incrementTxn();
     // [v0.3.34.9 PERF FIX] Do NOT call getSnapshot() here.
     // This is called in a tight loop (e.g., 2909 clusters in saveState).
@@ -287,6 +291,7 @@ export class StateManager {
       visual: { color: '#888', thickness: 1 }
     };
     this.bufferEdges.set(id, newEdge);
+    this.dirtyEdgeIds.add(id);
     this.incrementTxn();
     return this.getSnapshot();
   }
@@ -322,18 +327,52 @@ export class StateManager {
   }
 
   private mutateDeleteEdge(payload: any): CanvasState {
-    this.bufferEdges.delete(`${payload.from}->${payload.to}`);
-    this.incrementTxn();
+    const fromTo = (payload.from && payload.to) ? `${payload.from}->${payload.to}` : '';
+    let foundKey = '';
+    if (payload.id && this.bufferEdges.has(payload.id)) {
+        foundKey = payload.id;
+    } else if (fromTo && this.bufferEdges.has(fromTo)) {
+        foundKey = fromTo;
+    } else if (fromTo) {
+        for (const [k, e] of this.bufferEdges) {
+            if (e.from === payload.from && e.to === payload.to) {
+                foundKey = k;
+                break;
+            }
+        }
+    }
+    const finalKey = foundKey || payload.id || fromTo;
+    if (finalKey) {
+        this.bufferEdges.delete(finalKey);
+        this.dirtyEdgeIds.add(finalKey);
+        this.incrementTxn();
+    }
     return this.getSnapshot();
   }
 
   private mutateUpdateEdge(payload: any): CanvasState {
-    const id = payload.id || `${payload.from}->${payload.to}`;
-    const edge = this.bufferEdges.get(payload.id) || this.bufferEdges.get(id);
-    if (edge && payload.updates) {
+    const fromTo = (payload.from && payload.to) ? `${payload.from}->${payload.to}` : '';
+    let foundKey = '';
+    let edge = payload.id ? this.bufferEdges.get(payload.id) : undefined;
+    if (edge) {
+        foundKey = payload.id;
+    } else if (fromTo && this.bufferEdges.has(fromTo)) {
+        edge = this.bufferEdges.get(fromTo);
+        foundKey = fromTo;
+    } else if (fromTo) {
+        for (const [k, e] of this.bufferEdges) {
+            if (e.from === payload.from && e.to === payload.to) {
+                edge = e;
+                foundKey = k;
+                break;
+            }
+        }
+    }
+    if (edge && payload.updates && foundKey) {
         const updated = { ...edge, ...payload.updates };
         if (payload.updates.data) updated.data = { ...edge.data, ...payload.updates.data };
-        this.bufferEdges.set(id, updated);
+        this.bufferEdges.set(foundKey, updated);
+        this.dirtyEdgeIds.add(foundKey);
         this.incrementTxn();
     }
     return this.getSnapshot();
@@ -348,6 +387,7 @@ export class StateManager {
         this.markDirty(n.id);
     });
     this.bufferClusters.delete(payload.clusterId);
+    this.dirtyClusterIds.add(payload.clusterId);
     this.incrementTxn();
     return this.getSnapshot();
   }
@@ -378,7 +418,7 @@ export class StateManager {
       };
       if (commitManager.commitCluster(cluster).success) {
           this.bufferNodes.clear(); this.bufferEdges.clear(); this.bufferClusters.clear();
-          this.dirtyNodeIds.clear();
+          this.dirtyNodeIds.clear(); this.dirtyEdgeIds.clear(); this.dirtyClusterIds.clear();
       }
       return this.getSnapshot();
   }
@@ -824,6 +864,8 @@ export class StateManager {
         this.deletedNodeIds.clear();
         this.deletedPaths.clear();
         this.dirtyNodeIds.clear();
+        this.dirtyEdgeIds.clear();
+        this.dirtyClusterIds.clear();
         this.reservedPaths.clear();
         this._normalizeCache.clear();
         this.activeScopeId = null;
@@ -869,10 +911,27 @@ export class StateManager {
         };
     }
 
+    public hasUnsavedChanges(): boolean {
+        return this.dirtyNodeIds.size > 0 ||
+               this.deletedNodeIds.size > 0 ||
+               this.deletedPaths.size > 0 ||
+               this.dirtyEdgeIds.size > 0 ||
+               this.dirtyClusterIds.size > 0;
+    }
+
+  public markSaved() {
+    this.dirtyNodeIds.clear();
+    this.dirtyEdgeIds.clear();
+    this.dirtyClusterIds.clear();
+    this.deletedNodeIds.clear();
+    this.deletedPaths.clear();
+  }
+
   public load(state: any) {
     if (!state) return;
     this.bufferNodes.clear(); this.bufferEdges.clear(); this.bufferClusters.clear();
-    this.deletedNodeIds.clear(); this.deletedPaths.clear(); this.dirtyNodeIds.clear();
+    this.deletedNodeIds.clear(); this.deletedPaths.clear(); 
+    this.dirtyNodeIds.clear(); this.dirtyEdgeIds.clear(); this.dirtyClusterIds.clear();
 
     if (state.deletedNodeIds) state.deletedNodeIds.forEach((id: string) => this.deletedNodeIds.add(id));
     if (state.deletedPaths) state.deletedPaths.forEach((p: string) => this.deletedPaths.add(this.normalizePath(p)));

@@ -305,11 +305,13 @@ export class BootstrapEngine {
                         return n;
                     });
 
-                    // 2. Preserve Manual Nodes & Edges
+                    // 2. Preserve Manual Nodes & Edges (never resurrect excluded build/doc/changelog files)
                     const manualNodes = (existingData.nodes || []).filter((n: any) =>
-                        n.id.startsWith('node_manual_') ||
-                        n.data?.isUserCreated === true ||
-                        (n.layer === 'user' && n.status === 'pending')
+                        !isIgnoredFile(n.id) &&
+                        !isIgnoredFolder(n.id) &&
+                        (n.id.startsWith('node_manual_') ||
+                        (n.data?.isUserCreated === true && n.type !== 'document' && n.cluster_id !== 'doc_shelf') ||
+                        (n.layer === 'user' && n.status === 'pending'))
                     );
                     const manualNodeIds = new Set(manualNodes.map((n: any) => n.id));
                     const manualEdges = (existingData.edges || []).filter((e: any) =>
@@ -324,11 +326,17 @@ export class BootstrapEngine {
                     if (manualNodes.length > 0) nodes = [...nodes, ...manualNodes] as any;
                     if (manualEdges.length > 0) edges = [...edges, ...manualEdges] as any;
 
-                    // 3. Preserve Manual Clusters
+                    // 3. Preserve Manual Clusters (exclude old auto-generated folder/system clusters that became empty)
                     let preservedClusters: any[] = [];
                     if (existingData.clusters && Array.isArray(existingData.clusters)) {
                         const currentClusterIds = new Set(graphModel.createSnapshot().clusters.map(c => c.id));
-                        preservedClusters = existingData.clusters.filter((c: any) => !currentClusterIds.has(c.id));
+                        preservedClusters = existingData.clusters.filter((c: any) =>
+                            !currentClusterIds.has(c.id) &&
+                            c.type !== 'folder' &&
+                            c.type !== 'system' &&
+                            !String(c.id).startsWith('folder_') &&
+                            !String(c.id).startsWith('cluster_ghost')
+                        );
                     }
                     
                     const deletedNodeIds = existingData.deletedNodeIds || [];
@@ -477,6 +485,7 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
     public async autoDiscover(projectRoot: string, includePaths?: string[], onProgress?: (msg: string) => void): Promise<ProjectState> {
         console.log('[AUTODISCOVER_ENTER]');
         Logger.info(`🔍 [SYNAPSE] Auto-discovering source files in: ${projectRoot}`);
+        ProjectMetadata.getInstance().initialize(projectRoot);
         // [v0.3.13 Fix] Ensure exclusion rules are loaded before scan to prevent explosions
         RuleEngine.getInstance().loadRules(projectRoot);
         const discoveredFiles = this.getDiscoverableFiles(projectRoot, includePaths);
@@ -531,7 +540,7 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
         const stats: Record<string, number> = {};
 
         const scanDir = (dir: string, relPath: string = '', depth: number = 0) => {
-            if (!fs.existsSync(dir) || depth > 10) return;
+            if (!fs.existsSync(dir) || depth > 20) return;
             const files = fs.readdirSync(dir);
             files.sort(); // [v0.3.34.13 Fix] Ensure deterministic file scanning order
             for (const file of files) {

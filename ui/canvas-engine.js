@@ -2040,6 +2040,38 @@ class CanvasEngine {
         this.setupEventListeners();
     }
 
+    isUserLogic(n) {
+        if (!n) return false;
+        return n.layer === 'user' ||
+            (n.data && n.data.layer === 'user') ||
+            (n.id && typeof n.id === 'string' && n.id.startsWith('node_manual_')) ||
+            (n.cluster_id && typeof n.cluster_id === 'string' && n.cluster_id.startsWith('sys_') && n.cluster_id !== 'sys_cluster_reserved' && n.cluster_id !== 'sys_cluster_buffer');
+    }
+
+    isExternalLogic(n) {
+        if (!n) return false;
+        return n.layer === 'external' ||
+            (n.data && n.data.layer === 'external') ||
+            n.type === 'external' ||
+            n.status === 'ghost' ||
+            (n.cluster_id && n.cluster_id === 'cluster_ghosts');
+    }
+
+    isNodeVisible(node) {
+        if (!node) return false;
+        const cl = node.clientLayer || (node.data && node.data.clientLayer);
+        if (cl) {
+            return this._isClientLayerVisible(node);
+        }
+        if (this.isExternalLogic(node)) {
+            return !!this.showExternalLayer;
+        }
+        if (this.isUserLogic(node)) {
+            return !!this.showUserLayer;
+        }
+        return !!this.showBaseLayer;
+    }
+
     _recordPerfMetric(name, ms) {
         const sample = this._perfSample;
         if (!sample || !sample.active) return;
@@ -2311,15 +2343,33 @@ class CanvasEngine {
         }
 
         // [v0.2.19] Layer Visibility Toggles
+        const _onLayerToggled = () => {
+            this.hoveredNode = null;
+            this.hoveredEdge = null;
+            this.hoverClusterId = null;
+            if (this.selectedNode && !this.isNodeVisible(this.selectedNode)) {
+                this.selectedNode = null;
+            }
+            if (this.selectedNodes && this.selectedNodes.size > 0) {
+                for (const sn of Array.from(this.selectedNodes)) {
+                    if (!this.isNodeVisible(sn)) this.selectedNodes.delete(sn);
+                }
+            }
+            if (this.tooltip) this.tooltip.style.display = 'none';
+            if (this.nodeSummary) this.nodeSummary.style.display = 'none';
+            if (this._tooltipTimer) clearTimeout(this._tooltipTimer);
+            this.isGraphDataDirty = true; console.trace('[DIRTY_SOURCE]');
+            this.isEdgeDirty = true;
+            this.render();
+        };
+
         const btnLayerBase = document.getElementById('btn-layer-base');
         if (btnLayerBase) {
             btnLayerBase.addEventListener('click', () => {
                 this.showBaseLayer = !this.showBaseLayer;
                 btnLayerBase.classList.toggle('active', this.showBaseLayer);
                 btnLayerBase.textContent = this.showBaseLayer ? 'ON' : 'OFF';
-                this.isGraphDataDirty = true; console.trace('[DIRTY_SOURCE]');
-                this.isEdgeDirty = true;
-                this.render();
+                _onLayerToggled();
             });
         }
 
@@ -2329,9 +2379,7 @@ class CanvasEngine {
                 this.showUserLayer = !this.showUserLayer;
                 btnLayerUser.classList.toggle('active', this.showUserLayer);
                 btnLayerUser.textContent = this.showUserLayer ? 'ON' : 'OFF';
-                this.isGraphDataDirty = true; console.trace('[DIRTY_SOURCE]');
-                this.isEdgeDirty = true;
-                this.render();
+                _onLayerToggled();
             });
         }
 
@@ -2341,9 +2389,7 @@ class CanvasEngine {
                 this.showExternalLayer = !this.showExternalLayer;
                 btnLayerExternal.classList.toggle('active', this.showExternalLayer);
                 btnLayerExternal.textContent = this.showExternalLayer ? 'ON' : 'OFF';
-                this.isGraphDataDirty = true; console.trace('[DIRTY_SOURCE]');
-                this.isEdgeDirty = true;
-                this.render();
+                _onLayerToggled();
             });
         }
         if (btnLayerExternal) {
@@ -3131,34 +3177,22 @@ class CanvasEngine {
         const elExternal = document.getElementById('layer-count-external');
         if (!elBase || !elUser) return;
 
-        let userCount, baseCount, externalCount;
-        
-        const useBackend = backendCounts && 
-            (backendCounts.userCount !== undefined || backendCounts.user_count !== undefined) &&
-            ((backendCounts.aiCount ?? backendCounts.ai_count ?? 0) > 0 || (this.nodes && this.nodes.length === 0));
+        // [Phase C Alignment] Compute counts strictly against active canvas nodes (this.nodes)
+        // using the exact same logic as render-level layer visibility filtering (isUserLogic / isExternalLogic).
+        const canvasNodes = this.nodes || [];
+        let userCount = 0;
+        let externalCount = 0;
+        let baseCount = 0;
 
-        if (useBackend) {
-            // [v0.3.11] Use Authoritative Counts if provided
-            userCount = backendCounts.userCount ?? backendCounts.user_count;
-            baseCount = backendCounts.aiCount ?? backendCounts.ai_count;
-            externalCount = backendCounts.externalCount ?? backendCounts.external_count ?? 0;
-        } else {
-            // Fallback to local filtering
-            const userNodes = this.nodes.filter(n => 
-                n.layer === 'user' || 
-                (n.data && n.data.layer === 'user') ||
-                (n.id && n.id.startsWith('node_manual_'))
-            );
-            const externalNodes = this.nodes.filter(n =>
-                n.layer === 'external' ||
-                (n.data && n.data.layer === 'external') ||
-                n.type === 'external' ||
-                n.status === 'ghost' ||
-                (n.cluster_id && n.cluster_id === 'cluster_ghosts')
-            );
-            userCount = userNodes.length;
-            externalCount = externalNodes.length;
-            baseCount = this.nodes.length - userCount - externalCount;
+        for (let i = 0; i < canvasNodes.length; i++) {
+            const n = canvasNodes[i];
+            if (this.isUserLogic(n)) {
+                userCount++;
+            } else if (this.isExternalLogic(n)) {
+                externalCount++;
+            } else {
+                baseCount++;
+            }
         }
 
         const updateBadge = (el, newCount) => {
@@ -4241,6 +4275,7 @@ class CanvasEngine {
         // REVERSE order to hit top nodes first
         for (let i = searchNodes.length - 1; i >= 0; i--) {
             const node = searchNodes[i];
+            if (!this.isNodeVisible(node)) continue;
             const nodeWidth = node._width || 120;
             const nodeHeight = 60;
             const isSelected = this.selectedNodes.has(node);
@@ -4368,6 +4403,7 @@ class CanvasEngine {
         const targetNodes = (this.spatialIndex ? this.spatialIndex.queryViewport(worldX - searchRadius, worldY - searchRadius, worldX + searchRadius, worldY + searchRadius, 'nodes') : null) || this._visibleNodesCache || this.nodes;
 
         for (const node of targetNodes) {
+            if (!this.isNodeVisible(node)) continue;
             if (!node.position) continue;
             const nodeRenderY = this._getNodeRenderY ? this._getNodeRenderY(node) : node.position.y;
             const centerX = node.position.x + 60;
@@ -5785,6 +5821,7 @@ class CanvasEngine {
         for (const hs of this.hotspots) {
             // Use anchor's role color for identity
             const anchor = this.nodeMap.get(hs.coreId);
+            if (!anchor || !this.isNodeVisible(anchor)) continue;
             const baseColor = anchor?.visual?.color || '#fabd2f';
             
             // 1. Soft Fill (Area)
@@ -8750,18 +8787,8 @@ class CanvasEngine {
                             }
                         }
                     };
-                    const isUserLogic = (n) => 
-                        n.layer === 'user' || 
-                        (n.data && n.data.layer === 'user') || 
-                        (n.id && typeof n.id === 'string' && n.id.startsWith('node_manual_')) ||
-                        (n.cluster_id && typeof n.cluster_id === 'string' && n.cluster_id.startsWith('sys_') && n.cluster_id !== 'sys_cluster_reserved' && n.cluster_id !== 'sys_cluster_buffer');
-
-                    const isExternalLogic = (n) =>
-                        n.layer === 'external' ||
-                        (n.data && n.data.layer === 'external') ||
-                        n.type === 'external' ||
-                        n.status === 'ghost' ||
-                        (n.cluster_id && n.cluster_id === 'cluster_ghosts');
+                    const isUserLogic = (n) => this.isUserLogic(n);
+                    const isExternalLogic = (n) => this.isExternalLogic(n);
 
                     console.log(
                         '[NODE_SAMPLE]',
@@ -12683,16 +12710,7 @@ class CanvasEngine {
         const toNode = this.nodeMap.get(edge.to);
         if (!fromNode || !toNode) return;
 
-        // [v0.0.37.1] Check node visibility based on showUserLayer, showBaseLayer & showExternalLayer
-        const isUserNode = (n) => n.layer === 'user' || (n.data && n.data.layer === 'user') || n.status === 'pending';
-        const isExternalNode = (n) => n.layer === 'external' || (n.data && n.data.layer === 'external') || n.type === 'external' || n.status === 'ghost' || (n.cluster_id && n.cluster_id === 'cluster_ghosts');
-        const isFromClient = fromNode.clientLayer || (fromNode.data && fromNode.data.clientLayer);
-        const isToClient = toNode.clientLayer || (toNode.data && toNode.data.clientLayer);
-
-        const isFromVisible = isFromClient ? this._isClientLayerVisible(fromNode) : (isUserNode(fromNode) ? this.showUserLayer : (isExternalNode(fromNode) ? this.showExternalLayer : this.showBaseLayer));
-        const isToVisible = isToClient ? this._isClientLayerVisible(toNode) : (isUserNode(toNode) ? this.showUserLayer : (isExternalNode(toNode) ? this.showExternalLayer : this.showBaseLayer));
-        
-        if (!isFromVisible || !isToVisible) return;
+        if (!this.isNodeVisible(fromNode) || !this.isNodeVisible(toNode)) return;
 
         // [v0.3.19] Hide Edges connected to filtered Leaf nodes
         if (this.hideLeafNodes) {

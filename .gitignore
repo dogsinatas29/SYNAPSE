@@ -86,3 +86,4 @@ graph_*.json
 synapse_report_before_fix/
 synapse_report/
 demo/
+baseline_v1/

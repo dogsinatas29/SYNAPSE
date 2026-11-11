@@ -5,6 +5,7 @@ import { GraphSnapshot } from './validation/ValidationContext';
 import * as path from 'path';
 import { ProjectState, Node, Edge, NodeStatus, EdgeType, HealthState, ViewState, UNCHARTED_CONTINENT } from '../types/schema';
 import { Logger } from '../utils/Logger';
+import { isBuildOrPackagingAsset } from '../utils/exclusionRules';
 
 export interface DebugImpact {
     necrosisNodeIds: string[];
@@ -328,10 +329,12 @@ export class VirtualDebugger {
         const platformNodeIds = new Set<string>();
         const contractNodeIds = new Set<string>();
         const archNodeIds = new Set<string>();
+        const buildNodeIds = new Set<string>();
 
         for (const n of targetNodes) {
             const id = n.id || (n.data as any)?.file || '';
-            if (PlatformHeaderPolicy.isPlatformHeader(id)) platformNodeIds.add(n.id);
+            if (isBuildOrPackagingAsset(id)) buildNodeIds.add(n.id);
+            else if (PlatformHeaderPolicy.isPlatformHeader(id)) platformNodeIds.add(n.id);
             else if (ArchitectureHeaderPolicy.isArchitectureHeader(id)) archNodeIds.add(n.id);
             else if (ContractHeaderPolicy.isContractHeader(id)) contractNodeIds.add(n.id);
         }
@@ -340,12 +343,16 @@ export class VirtualDebugger {
         const beforeEdgeCount = targetEdges.length;
         const targetEdgesBefore = targetEdges;
 
-        targetNodes = targetNodes.filter((n: any) => !platformNodeIds.has(n.id) && !archNodeIds.has(n.id));
+        targetNodes = targetNodes.filter((n: any) => !platformNodeIds.has(n.id) && !archNodeIds.has(n.id) && !buildNodeIds.has(n.id));
+        const survivingNodeIdSet = new Set<string>(targetNodes.map((n: any) => n.id));
         targetEdges = targetEdges.filter((e: any) =>
             !platformNodeIds.has(e.from) && !platformNodeIds.has(e.to) &&
-            !archNodeIds.has(e.from) && !archNodeIds.has(e.to)
+            !archNodeIds.has(e.from) && !archNodeIds.has(e.to) &&
+            !buildNodeIds.has(e.from) && !buildNodeIds.has(e.to) &&
+            survivingNodeIdSet.has(e.from) && survivingNodeIdSet.has(e.to)
         );
 
+        Logger.info(`[PLATFORM_FILTER] Build/Packaging Assets Removed: ${buildNodeIds.size}`);
         Logger.info(`[PLATFORM_FILTER] Platform Headers Removed: ${platformNodeIds.size}`);
         Logger.info(`[PLATFORM_FILTER] Architecture Headers Removed: ${archNodeIds.size}`);
         Logger.info(`[PLATFORM_FILTER] Contract Headers Retained: ${contractNodeIds.size}`);

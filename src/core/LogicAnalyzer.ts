@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ProjectState, Node, Edge, NodeRole } from '../types/schema';
 import { determineNodeRole } from './NodeBuilder';
+import { isBuildOrPackagingAsset } from '../utils/exclusionRules';
 
 export interface AnalysisIssue {
     type: 'circular' | 'dead-end' | 'bottleneck' | 'isolated' | 'warning' | 'schema-violation' | 'architecture-violation';
@@ -48,7 +49,10 @@ export class LogicAnalyzer {
         const edges = state.edges!;
 
         // [v0.3.34] 논리 디버깅 대상 필터링 (오직 RUNTIME 노드만 포함하여 허브 노이즈 방지)
+        // [v0.3.34.74] 빌드/패키징 자산 제외 동기화
         const logicNodes = nodes.filter(n => {
+            const fileId = n.id || (n.data as any)?.file || '';
+            if (isBuildOrPackagingAsset(fileId)) return false;
             let r = n.role;
             if (!r && n.id) r = determineNodeRole(n.id).role;
             return r === NodeRole.RUNTIME;

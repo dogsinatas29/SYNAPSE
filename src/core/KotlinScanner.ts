@@ -38,12 +38,38 @@ export class KotlinScanner implements LanguageScanner {
             }
         }
 
-        // Kotlin top-level functions (basic extraction)
-        const funRegex = /^\s*(?:public\s+|private\s+|protected\s+|internal\s+|inline\s+|suspend\s+)*fun\s+(?:<[^>]+>\s+)?([a-zA-Z0-9_]+)/gm;
-        while ((match = funRegex.exec(content)) !== null) {
-            const name = match[1];
-            if (name && !summary.functions.includes(name)) {
-                summary.functions.push(name);
+        // Clean comments and strings for accurate top-level declaration extraction
+        const cleaned = this.cleanCommentsAndStrings(content);
+        const lines = cleaned.split('\n');
+        let braceDepth = 0;
+        let parenDepth = 0;
+
+        for (const line of lines) {
+            if (braceDepth === 0 && parenDepth === 0) {
+                // Top-level val / var / const val -> register as symbol identifier
+                const propMatch = line.match(/^\s*(?:public\s+|private\s+|protected\s+|internal\s+)?(?:const\s+)?(?:val|var)\s+([a-zA-Z0-9_]+)/);
+                if (propMatch) {
+                    const name = propMatch[1];
+                    if (name && !summary.classes.includes(name)) {
+                        summary.classes.push(name);
+                    }
+                }
+
+                // Top-level fun / @Composable fun / extension fun
+                const funMatch = line.match(/^\s*(?:@[a-zA-Z0-9_.]+(?:\([^)]*\))?\s*)*(?:public\s+|private\s+|protected\s+|internal\s+|inline\s+|suspend\s+|operator\s+)*fun\s+(?:<[^>]+>\s+)?(?:(?:[a-zA-Z0-9_<>*?.,\s]+)\.)?([a-zA-Z0-9_]+)\s*\(/);
+                if (funMatch) {
+                    const name = funMatch[1];
+                    if (name && !summary.functions.includes(name)) {
+                        summary.functions.push(name);
+                    }
+                }
+            }
+
+            for (const ch of line) {
+                if (ch === '{') braceDepth++;
+                else if (ch === '}') braceDepth = Math.max(0, braceDepth - 1);
+                else if (ch === '(') parenDepth++;
+                else if (ch === ')') parenDepth = Math.max(0, parenDepth - 1);
             }
         }
 
@@ -67,5 +93,83 @@ export class KotlinScanner implements LanguageScanner {
         if (inheritanceCount > 0) {
             console.log('[KOTLIN_INHERITANCE]', { found: inheritanceCount });
         }
+    }
+
+    private cleanCommentsAndStrings(src: string): string {
+        let out = '';
+        let i = 0;
+        const n = src.length;
+        let inBlockComment = 0;
+        let inLineComment = false;
+        let inString = false;
+        let inRawString = false;
+
+        while (i < n) {
+            if (inLineComment) {
+                if (src[i] === '\n') {
+                    inLineComment = false;
+                    out += '\n';
+                } else {
+                    out += ' ';
+                }
+                i++;
+            } else if (inBlockComment > 0) {
+                if (src[i] === '/' && src[i + 1] === '*') {
+                    inBlockComment++;
+                    out += '  ';
+                    i += 2;
+                } else if (src[i] === '*' && src[i + 1] === '/') {
+                    inBlockComment--;
+                    out += '  ';
+                    i += 2;
+                } else {
+                    out += (src[i] === '\n') ? '\n' : ' ';
+                    i++;
+                }
+            } else if (inRawString) {
+                if (src[i] === '"' && src[i + 1] === '"' && src[i + 2] === '"') {
+                    inRawString = false;
+                    out += '   ';
+                    i += 3;
+                } else {
+                    out += (src[i] === '\n') ? '\n' : ' ';
+                    i++;
+                }
+            } else if (inString) {
+                if (src[i] === '\\' && i + 1 < n) {
+                    out += '  ';
+                    i += 2;
+                } else if (src[i] === '"') {
+                    inString = false;
+                    out += ' ';
+                    i++;
+                } else {
+                    out += (src[i] === '\n') ? '\n' : ' ';
+                    i++;
+                }
+            } else {
+                if (src[i] === '/' && src[i + 1] === '/') {
+                    inLineComment = true;
+                    out += '  ';
+                    i += 2;
+                } else if (src[i] === '/' && src[i + 1] === '*') {
+                    inBlockComment = 1;
+                    out += '  ';
+                    i += 2;
+                } else if (src[i] === '"' && src[i + 1] === '"' && src[i + 2] === '"') {
+                    inRawString = true;
+                    out += '   ';
+                    i += 3;
+                } else if (src[i] === '"') {
+                    inString = true;
+                    out += ' ';
+                    i++;
+                } else {
+                    out += src[i];
+                    i++;
+                }
+            }
+        }
+        return out;
     }
 }

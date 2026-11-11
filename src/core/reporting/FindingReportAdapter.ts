@@ -18,7 +18,14 @@ export class FindingReportAdapter {
                 if (ev.metadata) {
                     const filtered = Object.entries(ev.metadata).filter(([k]) => allowedMetrics.includes(k));
                     if (filtered.length > 0) {
-                        metrics = filtered.map(([k,v]) => `${k}=${v}`).join(', ');
+                        metrics = filtered.map(([k,v]) => {
+                            let formattedVal: any = v;
+                            if (typeof v === 'number' && !Number.isInteger(v)) {
+                                const rounded = Number(v.toFixed(3));
+                                formattedVal = (v !== 0 && rounded === 0) ? Number(v.toPrecision(3)) : rounded;
+                            }
+                            return `${k}=${formattedVal}`;
+                        }).join(', ');
                     }
                 }
                 const basis = f.selectionBasis || ev.selectionBasis || (typeof ev.predicate === 'string' ? ev.predicate : JSON.stringify(ev.predicate)) || 'No selection basis provided by detector';
@@ -57,7 +64,7 @@ export class FindingReportAdapter {
         const o2Count = uniqueO2.size;
         
         if (o2Count > 0) {
-            contentO2 += `Finding:\n${o2Count} dependency roots observed.\n\n`;
+            contentO2 += `Finding:\nTop ${o2Count} dependency roots observed (ranked by outgoing fan-out).\n\n`;
             contentO2 += this.formatDetailedFindings(uniqueO2, o2Count, "O2", ['inDegree', 'outDegree']);
             
             o2Findings.forEach(f => {
@@ -95,9 +102,11 @@ export class FindingReportAdapter {
             uniqueE2.set(key, f);
         }
         const e2Count = uniqueE2.size;
+        const e2Total = e2Findings[0]?.evidence?.[0]?.metadata?.totalCandidates;
+        const e2TotalStr = e2Total ? ` (${e2Count} selected / ${e2Total} candidates)` : '';
         
         if (e2Count > 0) {
-            contentE2 += `Finding:\n${e2Count} change propagation amplifiers observed.\n\n`;
+            contentE2 += `Finding:\nTop 10% change propagation amplifiers observed${e2TotalStr}.\n\n`;
             contentE2 += this.formatDetailedFindings(uniqueE2, e2Count, "E2", ['complexityScore', 'externalEdges']);
             
             e2Findings.forEach(f => {
@@ -135,9 +144,11 @@ export class FindingReportAdapter {
             uniqueA1.set(key, f);
         }
         const a1Count = uniqueA1.size;
+        const a1Total = a1Findings[0]?.evidence?.[0]?.metadata?.totalCandidates;
+        const a1TotalStr = a1Total ? ` (${a1Count} selected / ${a1Total} candidates)` : '';
         
         if (a1Count > 0) {
-            contentA1 += `Finding:\n${a1Count} system cores observed.\n\n`;
+            contentA1 += `Finding:\nTop 10% system cores observed${a1TotalStr}.\n\n`;
             contentA1 += this.formatDetailedFindings(uniqueA1, a1Count, "A1", ['controlScore', 'fanIn', 'blastRadius']);
             
             a1Findings.forEach(f => {

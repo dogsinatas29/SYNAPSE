@@ -2,6 +2,7 @@ import { Node, Cluster, NodeType } from './GraphModel';
 import { NodeRole } from '../types/schema';
 import { ResolvedReference } from './ReferenceResolver';
 import { makeExternalSemantic } from './ExternalReferenceSemantics';
+import { isBuildOrPackagingAsset } from '../utils/exclusionRules';
 
 export interface ExpandedReference {
     sourceId: string;
@@ -102,15 +103,51 @@ export class GhostExpander {
             return p[0] || 'other';
         };
 
+        const getIsolatedVirtualTargetId = (ref: ResolvedReference): string => {
+            const isDocRef = ref.targetId.toLowerCase().endsWith('.md');
+            if (isDocRef) return ref.targetId;
+
+            if (ref.resolutionKind === 'resolved_external') {
+                const srcExt = (ref.sourceId || '').toLowerCase().split('.').pop() || '';
+                let ecosystem = 'pkg';
+                if (srcExt === 'rs') ecosystem = 'cargo';
+                else if (['ts', 'tsx', 'js', 'jsx'].includes(srcExt)) ecosystem = 'npm';
+                else if (srcExt === 'py') ecosystem = 'pip';
+                else if (srcExt === 'go') ecosystem = 'gomod';
+                else if (['java', 'kt', 'kts'].includes(srcExt)) ecosystem = 'maven';
+                else if (['c', 'cpp', 'cc', 'h', 'hpp', 'hh', 'inc', 'inl'].includes(srcExt)) ecosystem = 'sys';
+                return `external://${ecosystem}/${ref.targetId}`;
+            }
+
+            if (ref.resolutionKind === 'unresolved') {
+                const srcExt = (ref.sourceId || '').toLowerCase().split('.').pop() || '';
+                let lang = 'unknown';
+                if (['ts', 'tsx', 'js', 'jsx'].includes(srcExt)) lang = 'javascript';
+                else if (srcExt === 'rs') lang = 'rust';
+                else if (srcExt === 'py') lang = 'python';
+                else if (srcExt === 'go') lang = 'go';
+                else if (srcExt === 'java') lang = 'java';
+                else if (['kt', 'kts'].includes(srcExt)) lang = 'kotlin';
+                else if (['c', 'cpp', 'cc', 'h', 'hpp', 'hh', 'inc', 'inl'].includes(srcExt)) lang = 'cpp';
+                else if (srcExt === 'sh') lang = 'shell';
+                return `ghost://${lang}/${ref.targetId}`;
+            }
+
+            return ref.targetId;
+        };
+
         let _ghostIdx = 0;
         for (const ref of resolvedReferences) {
             _ghostIdx++;
-            const targetNodeId = ref.targetId;
             const isUnresolved = ref.resolutionKind === 'unresolved' || ref.resolutionKind === 'resolved_external';
+            if (isUnresolved && isBuildOrPackagingAsset(ref.targetId)) {
+                continue;
+            }
+            const targetNodeId = isUnresolved ? getIsolatedVirtualTargetId(ref) : ref.targetId;
 
             expandedReferences.push({
                 sourceId: ref.sourceId,
-                targetId: ref.targetId,
+                targetId: targetNodeId,
                 referenceType: ref.referenceType,
                 isGhost: isUnresolved,
                 originalTarget: ref.originalTarget,
@@ -121,7 +158,7 @@ export class GhostExpander {
 
             if (isUnresolved) {
                 const _origTarget = ref.originalTarget;
-                const isDocRef = targetNodeId.toLowerCase().endsWith('.md');
+                const isDocRef = ref.targetId.toLowerCase().endsWith('.md');
                 const cleanId = ref.fullPath ? ref.fullPath : _origTarget.replace('external://', '').replace('ghost://', '');
 
                 let isExternal = false;
@@ -129,7 +166,7 @@ export class GhostExpander {
                     isExternal = true;
                 }
 
-                const ghostDomain = extractGhostDomain(targetNodeId);
+                const ghostDomain = extractGhostDomain(ref.targetId);
 
                 let ghostClusterId = isDocRef ? 'doc_shelf' : (isExternal ? getGhostClusterId(ghostDomain) : 'cluster_ghost_unverified');
 
@@ -139,7 +176,7 @@ export class GhostExpander {
                 }
 
                 // [P2 Fix] Block unresolved api_call / FUNCTION_CALL from becoming ghost file nodes
-                if (ref.referenceType === 'api_call' || ref.provenance === 'FUNCTION_CALL' || ref.provenance?.includes('FUNCTION_CALL')) {
+                if (ref.resolutionKind !== 'resolved_external' && (ref.referenceType === 'api_call' || ref.provenance === 'FUNCTION_CALL' || ref.provenance?.includes('FUNCTION_CALL'))) {
                     continue; // Skip node creation, but remains in expandedReferences
                 }
 
@@ -218,11 +255,13 @@ export class GhostExpander {
                         });
                     }
 
+                    const cleanLabel = isDocRef ? targetNodeId.split('/').pop() || targetNodeId : ref.targetId;
+
                     ghostNodes.push({
                         id: targetNodeId,
-                        filePath: isExternal ? `external://${targetNodeId}` : `ghost://${targetNodeId}`,
+                        filePath: targetNodeId,
                         type: isDocRef ? NodeType.DOCUMENTATION : (isExternal ? NodeType.EXTERNAL : NodeType.SYMBOL),
-                        label: targetNodeId.split('/').pop() || targetNodeId,
+                        label: cleanLabel,
                         cluster_id: ghostClusterId,
                         status: 'ghost' as any,
                         layer: isExternal ? 'external' : 'ai',
@@ -231,8 +270,8 @@ export class GhostExpander {
                         createdBy: 'GhostExpander',
                         role: isDocRef ? NodeRole.DOCUMENT : (isExternal ? NodeRole.EXTERNAL : NodeRole.GHOST),
                         data: {
-                            label: targetNodeId,
-                            file: targetNodeId,
+                            label: cleanLabel,
+                            file: ref.targetId,
                             cluster_id: ghostClusterId,
                             icon: isDocRef ? '📚' : '👻',
                             hiddenOnCanvas: isDocRef,

@@ -24,7 +24,10 @@ export class MarkdownScanner implements LanguageScanner {
             const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
             while ((match = linkRegex.exec(content)) !== null) {
                 const ref = match[2].trim();
-                if (ref && !ref.startsWith('http') && !ref.startsWith('#')) {
+                // Ignore empty refs, web links, intra-document anchors, and non-file URI schemes
+                // Note: Windows drive letters (e.g. C:\...) have a single letter before ':', whereas URI schemes have 2+ letters
+                const isNonFileScheme = /^[a-zA-Z][a-zA-Z0-9+.-]+:/.test(ref) && !ref.startsWith('file://');
+                if (ref && !ref.startsWith('http') && !ref.startsWith('#') && !isNonFileScheme) {
                     let cleanRef = ref.replace(/^file:\/\//, '').replace(/\\/g, '/');
                     if (cleanRef.includes('#')) {
                         cleanRef = cleanRef.split('#')[0];

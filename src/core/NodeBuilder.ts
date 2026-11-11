@@ -3,6 +3,7 @@ import { Node, NodeRole } from '../types/schema';
 import { NodeType } from './GraphModel';
 import { CodeSummary } from './FileScanner';
 import { DirNode, buildDirectoryTree, isDocFile } from './DirectoryTreeBuilder';
+import { isBuildOrPackagingAsset } from '../utils/exclusionRules';
 
 const BOILERPLATE = new Set(['src', 'main', 'test', 'java', 'kotlin', 'androidTest', 'resources', 'assets']);
 const MAX_CLUSTER_DEPTH = 4;
@@ -23,6 +24,10 @@ export function determineNodeRole(filePath: string): { role: NodeRole, category:
 
     if (['package.json', 'tsconfig.json', 'webpack.config.js', 'vite.config.ts', '.eslintrc.js', '.prettierrc'].includes(basename) || ext === '.yaml' || ext === '.yml' || ext === '.json' || ext === '.toml') {
         return { role: NodeRole.CONFIG, category: 'Config' };
+    }
+
+    if (isBuildOrPackagingAsset(relPath)) {
+        return { role: NodeRole.TOOLING, category: 'Tooling' };
     }
     
     if (ext === '.md' || ext === '.txt') {
@@ -118,6 +123,7 @@ export function buildNodes(
     for (const item of summaries) {
         const fileName = path.basename(item.filePath, path.extname(item.filePath));
         if (item.filePath.includes('.synapse_contexts') || (fileName.startsWith('session_') && (item.filePath.endsWith('.json') || item.filePath.endsWith('.txt')))) continue;
+        if (isBuildOrPackagingAsset(item.filePath)) continue;
 
         const doc = isDocFile(item.filePath);
         const relPath = path.dirname(item.filePath);

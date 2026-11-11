@@ -1,4 +1,4 @@
-import { LanguageScanner, CodeSummary } from '../types/schema';
+import { LanguageScanner, CodeSummary, EdgeProvenance } from '../types/schema';
 
 export class RustScanner implements LanguageScanner {
     supportsExtension(ext: string): boolean {
@@ -60,9 +60,10 @@ export class RustScanner implements LanguageScanner {
                 const idMatch = modMatch[1];
                 const modName = modMatch[2];
                 if (modName && !summary.references.some(r => r.target === modName)) {
-                    summary.references.push({ target: modName, type: 'dependency', nodeId: idMatch, isApproved: !isPendingOrDeleted });
+                    summary.references.push({ target: modName, type: 'dependency', nodeId: idMatch, isApproved: !isPendingOrDeleted, provenance: EdgeProvenance.DYNAMIC_IMPORT });
                 }
             }
         }
     }
 }
+

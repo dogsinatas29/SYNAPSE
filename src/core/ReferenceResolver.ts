@@ -1,16 +1,19 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import { SymbolIndex } from './SymbolIndex';
 import { ReferenceWithSource } from './GhostPolicy';
 import { EdgeProvenance } from '../types/schema';
+import { BuildMetadataAdapter } from './build/BuildMetadataAdapter';
+import { JsPackageScope, PyPackageScope, pyImportToDistAliases } from './build/BuildMetadataTypes';
 
 export type ResolutionKind = 'direct' | 'basename' | 'symbol_index' | 'unresolved' | 'broadcast' | 'stdlib' | 'resolved_external';
 
 const GO_STDLIB_PREFIXES = new Set([
-    'archive', 'bufio', 'bytes', 'compress', 'container', 'context', 'crypto', 
-    'database', 'debug', 'encoding', 'errors', 'expvar', 'flag', 'fmt', 'hash', 
-    'html', 'image', 'index', 'io', 'log', 'math', 'mime', 'net', 'os', 'path', 
-    'plugin', 'reflect', 'regexp', 'runtime', 'sort', 'strconv', 'strings', 
-    'sync', 'syscall', 'testing', 'text', 'time', 'unicode', 'unsafe'
+    'archive', 'bufio', 'builtin', 'bytes', 'cmp', 'compress', 'container', 'context', 'crypto',
+    'database', 'debug', 'embed', 'encoding', 'errors', 'expvar', 'flag', 'fmt', 'go', 'hash',
+    'html', 'image', 'index', 'io', 'iter', 'log', 'maps', 'math', 'mime', 'net', 'os', 'path',
+    'plugin', 'reflect', 'regexp', 'runtime', 'slices', 'sort', 'strconv', 'strings', 'structs',
+    'sync', 'syscall', 'testing', 'text', 'time', 'unicode', 'unique', 'unsafe', 'weak'
 ]);
 
 function isGoStdlib(importPath: string): boolean {
@@ -38,7 +41,7 @@ export class ReferenceResolver {
     ): ResolvedReference[] {
         const result: ResolvedReference[] = [];
         console.error('[REFERENCE_RESOLVER_ENTER] validReferences=', validReferences.length);
-        
+
         // Phase 15.8: Dump ReferenceResolver Inputs for Root Cause Analysis
         const inputSamples: string[] = [];
         for (let i = 0; i < Math.min(100, validReferences.length); i++) {
@@ -46,7 +49,7 @@ export class ReferenceResolver {
             inputSamples.push(`source=${v.sourceFilePath} | target=${v.ref.target} | type=${v.ref.type || (v.ref as any).provenance || 'unknown'}`);
         }
         console.error(`\n[REFERENCE_INPUT_SAMPLE] Total Inputs: ${validReferences.length}\n  ${inputSamples.join('\n  ')}\n`);
-        
+
         const auditStats = {
             totalFunctionCalls: 0,
             resolvedBySymbolIndex: 0,
@@ -73,24 +76,26 @@ export class ReferenceResolver {
             'Other': { direct: 0, basename: 0, symbol_index: 0, broadcast: 0, unresolved: 0 }
         };
 
-        
+
         // [v0.3.34] Optimize O(N*M) basename lookups to prevent Extension Host freezing
         const stemMap = new Map<string, string>();
         // [P1.1b] Package Map for Broadcast Lookup
         const packageMap = new Map<string, string[]>();
-        
+
         for (const id of existingNodeIds) {
             const nodeStem = path.basename(id, path.extname(id)).toLowerCase();
             if (!stemMap.has(nodeStem)) {
                 stemMap.set(nodeStem, id);
             }
-            
-            // Build package map (dir -> files)
-            const dir = path.dirname(id).replace(/\\/g, '/');
-            if (!packageMap.has(dir)) {
-                packageMap.set(dir, []);
+
+            // Build package map (dir -> files) for Go package broadcast resolution
+            if (id.endsWith('.go')) {
+                const dir = path.dirname(id).replace(/\\/g, '/');
+                if (!packageMap.has(dir)) {
+                    packageMap.set(dir, []);
+                }
+                packageMap.get(dir)!.push(id);
             }
-            packageMap.get(dir)!.push(id);
         }
 
         // [TRACE-4] Dump packageMap keys for Go modules mapping analysis
@@ -100,6 +105,10 @@ export class ReferenceResolver {
                 console.error(`[TRACE-4-PACKAGEMAP-KEY] ${dir}`);
             }
         }
+        // [EXP-C Track B] Build-System Isolation: Delegate build metadata collection to BuildMetadataAdapter
+        const buildMetadata = BuildMetadataAdapter.collect(projectRoot, existingNodeIds);
+        const { rustCrateMap, rustExternalPackages, jsLocalPackages, jsPackageScopes, pyPackageScopes } = buildMetadata;
+
 
         for (const { sourceFilePath, ref } of validReferences) {
             let targetNodeId = ref.target;
@@ -121,7 +130,7 @@ export class ReferenceResolver {
             if (originalTarget.includes('nav_map_builder_2d.h') || originalTarget.includes('pcfutil.c') || originalTarget.includes('parseZipCentralDirectory') || originalTarget.includes('sanitize') || originalTarget.includes('rpc.h') || originalTarget.includes('android/api-level.h')) {
                 console.error(`[TRACE-TARGET-EXTRACTED] Target: ${originalTarget} extracted from Source: ${sourceFilePath}. Type: ${ref.type}, Provenance: ${ref.provenance}`);
             }
-            
+
             if (!existingNodeIds.has(targetNodeId)) {
                 let isCppTraceTarget = targetNodeId.includes('nav_map_builder_2d.h') || targetNodeId.includes('pcfutil.c') || targetNodeId.includes('parseZipCentralDirectory') || targetNodeId.includes('sanitize') || targetNodeId.includes('rpc.h') || targetNodeId.includes('android/api-level.h');
                 if (isCppTraceTarget) {
@@ -129,10 +138,10 @@ export class ReferenceResolver {
                 }
 
                 // [Ghost Fix] Attempt to resolve using absolute fullPath provided by AST/Extractor
-                if (projectRoot && ref.fullPath) {
+                if (projectRoot && ref.fullPath && path.isAbsolute(ref.fullPath)) {
                     const relPath = path.relative(projectRoot, ref.fullPath).replace(/\\/g, '/');
                     if (isCppTraceTarget) console.error(`[TRACE-GHOST] relPath: ${relPath}, existsInNodeIds: ${existingNodeIds.has(relPath)}`);
-                    
+
                     if (!relPath.startsWith('../') && relPath !== '..') {
                         // ALWAYS use the canonical relative path if it's within the project,
                         // even if it's not in existingNodeIds. This prevents duplicate ghost nodes
@@ -151,85 +160,238 @@ export class ReferenceResolver {
                 if (!existingNodeIds.has(targetNodeId)) {
                     if (isCppTraceTarget) console.error(`[TRACE-GHOST] Still not resolved. proceeding to alias/ext/symbol index.`);
                     // [v0.3.34.51 FIX] 1. Alias Resolver (VSCode 코어 모듈 특화)
-                if (targetNodeId.startsWith('vs/')) {
-                    targetNodeId = 'src/' + targetNodeId;
-                }
-
-                // [v0.3.34.51 FIX] 2. Extension Probing (확장자 복원 시도)
-                let foundExt = false;
-                if (!existingNodeIds.has(targetNodeId)) {
-                    const exts = ['.ts', '.js', '/index.ts', '/index.js', '.tsx', '.jsx'];
-                    for (const ext of exts) {
-                        if (existingNodeIds.has(targetNodeId + ext)) {
-                            targetNodeId = targetNodeId + ext;
-                            foundExt = true;
-                            break;
-                        }
+                    if (targetNodeId.startsWith('vs/')) {
+                        targetNodeId = 'src/' + targetNodeId;
                     }
-                } else {
-                    foundExt = true;
-                }
 
-                // [v0.3.34.51 FIX] 3. basenameFallback 영구 폐기
-                // 엉뚱한 파일로 하이재킹하지 않고 깔끔하게 symbolIndex 검색 또는 unresolved로 넘깁니다.
-                if (!foundExt) {
-                    // Try symbol index (except for JS/TS module imports which are paths, not symbols)
-                    let resolvedPath: string | undefined;
-                    const isModulePath = (sourceFilePath.endsWith('.ts') || sourceFilePath.endsWith('.js') || sourceFilePath.endsWith('.tsx') || sourceFilePath.endsWith('.jsx')) && (ref.type === 'dependency' || ref.type === 'api_call' || ref.type === 'db_query');
-                    
-                    if (!isModulePath) {
-                        resolvedPath = symbolIndex.lookupSymbol(targetNodeId);
-                    }
-                    
-                    if (resolvedPath) {
-                        targetNodeId = resolvedPath;
-                        resolutionKind = 'symbol_index';
-                        if (ref.provenance === 'FUNCTION_CALL' || ref.provenance === EdgeProvenance.FUNCTION_CALL) {
-                            auditStats.resolvedBySymbolIndex++;
-                            resolvedSymbolsFreq.set(originalTarget, (resolvedSymbolsFreq.get(originalTarget) || 0) + 1);
+                    // [v0.3.34.51 FIX] 2. Extension Probing (확장자 복원 시도)
+                    let foundExt = false;
+                    if (!existingNodeIds.has(targetNodeId)) {
+                        const exts = ['.ts', '.js', '/index.ts', '/index.js', '.tsx', '.jsx'];
+                        for (const ext of exts) {
+                            if (existingNodeIds.has(targetNodeId + ext)) {
+                                targetNodeId = targetNodeId + ext;
+                                foundExt = true;
+                                break;
+                            }
                         }
                     } else {
-                        // [v0.3.34.75 FIX] Normalize relative path prefix
-                        if (targetNodeId.startsWith('./')) {
-                            targetNodeId = targetNodeId.substring(2);
+                        foundExt = true;
+                    }
+
+                    // [v0.3.34.51 FIX] 3. basenameFallback 영구 폐기
+                    // 엉뚱한 파일로 하이재킹하지 않고 깔끔하게 symbolIndex 검색 또는 unresolved로 넘깁니다.
+                    if (!foundExt) {
+                        // Try symbol index (except for JS/TS module imports which are paths, not symbols)
+                        let resolvedPath: string | undefined;
+                        const isModulePath = (sourceFilePath.endsWith('.ts') || sourceFilePath.endsWith('.js') || sourceFilePath.endsWith('.tsx') || sourceFilePath.endsWith('.jsx')) && (ref.type === 'dependency' || ref.type === 'api_call' || ref.type === 'db_query');
+
+                        if (!isModulePath) {
+                            resolvedPath = symbolIndex.lookupSymbol(targetNodeId);
                         }
-                        // [v0.3.34.52 FIX] C/C++ Include Suffix Resolution (Compiler Include Path Emulator)
-                        const isCppHeader = targetNodeId.endsWith('.h') || targetNodeId.endsWith('.hpp') || targetNodeId.endsWith('.inc') || targetNodeId.endsWith('.c') || targetNodeId.endsWith('.cpp') || targetNodeId.endsWith('.cc') || targetNodeId.endsWith('.hh') || targetNodeId.endsWith('.inl');
-                        if (isCppHeader) {
-                            let localMatched = false;
-                            if (!targetNodeId.includes('/')) {
-                                const localFallback = path.join(path.dirname(sourceFilePath), targetNodeId).replace(/\\/g, '/');
-                                if (existingNodeIds.has(localFallback)) {
-                                    targetNodeId = localFallback;
-                                    resolutionKind = 'direct';
-                                    localMatched = true;
-                                }
+
+                        if (resolvedPath) {
+                            targetNodeId = resolvedPath;
+                            resolutionKind = 'symbol_index';
+                            if (ref.provenance === 'FUNCTION_CALL' || ref.provenance === EdgeProvenance.FUNCTION_CALL) {
+                                auditStats.resolvedBySymbolIndex++;
+                                resolvedSymbolsFreq.set(originalTarget, (resolvedSymbolsFreq.get(originalTarget) || 0) + 1);
                             }
-                            
-                            if (!localMatched) {
-                                const suffix = '/' + targetNodeId;
-                                let match: string | undefined;
-                                let candidates = 0;
-                                for (const existingId of existingNodeIds) {
-                                    if (existingId.endsWith(suffix) || existingId === targetNodeId) {
-                                        if (!match) match = existingId;
-                                        else { match = undefined; break; } // Ambiguous, fail safe
-                                        candidates++;
+                        } else {
+                            // [v0.3.34.75 FIX] Normalize relative path prefix
+                            if (targetNodeId.startsWith('./')) {
+                                targetNodeId = targetNodeId.substring(2);
+                            }
+                            // [v0.3.34.52 FIX] C/C++ Include Suffix Resolution (Compiler Include Path Emulator)
+                            const isCppHeader = targetNodeId.endsWith('.h') || targetNodeId.endsWith('.hpp') || targetNodeId.endsWith('.inc') || targetNodeId.endsWith('.c') || targetNodeId.endsWith('.cpp') || targetNodeId.endsWith('.cc') || targetNodeId.endsWith('.hh') || targetNodeId.endsWith('.inl');
+                            if (isCppHeader) {
+                                let localMatched = false;
+                                if (!targetNodeId.includes('/')) {
+                                    const localFallback = path.join(path.dirname(sourceFilePath), targetNodeId).replace(/\\/g, '/');
+                                    if (existingNodeIds.has(localFallback)) {
+                                        targetNodeId = localFallback;
+                                        resolutionKind = 'direct';
+                                        localMatched = true;
                                     }
                                 }
-                                if (match && candidates === 1) {
-                                    targetNodeId = match;
+
+                                if (!localMatched) {
+                                    const suffix = '/' + targetNodeId;
+                                    let match: string | undefined;
+                                    let candidates = 0;
+                                    for (const existingId of existingNodeIds) {
+                                        if (existingId.endsWith(suffix) || existingId === targetNodeId) {
+                                            if (!match) match = existingId;
+                                            else { match = undefined; break; } // Ambiguous, fail safe
+                                            candidates++;
+                                        }
+                                    }
+                                    if (match && candidates === 1) {
+                                        targetNodeId = match;
+                                        resolutionKind = 'direct';
+                                    } else {
+                                        resolutionKind = 'unresolved';
+                                    }
+                                }
+                            } else if (sourceFilePath.endsWith('.rs')) {
+                                // [v0.3.34.74 Track 10/12] Rust Local Module Resolution
+                                // Check local relative module files ONLY if ref is a module declaration (EdgeProvenance.DYNAMIC_IMPORT)
+                                const isModDecl = ref.provenance === EdgeProvenance.DYNAMIC_IMPORT;
+                                let resolvedDirectTarget: string | null = null;
+
+                                if (isModDecl) {
+                                    const srcDir = path.dirname(sourceFilePath).replace(/\\/g, '/');
+                                    const fileStem = path.basename(sourceFilePath, '.rs');
+                                    const validCandidates: string[] = [];
+
+                                    if (fileStem === 'mod' || fileStem === 'lib' || fileStem === 'main') {
+                                        // Case A: mod.rs, lib.rs, main.rs declare direct submodules in the same directory
+                                        const c1 = path.join(srcDir, targetNodeId + '.rs').replace(/\\/g, '/');
+                                        const c2 = path.join(srcDir, targetNodeId, 'mod.rs').replace(/\\/g, '/');
+                                        if (existingNodeIds.has(c1)) validCandidates.push(c1);
+                                        if (existingNodeIds.has(c2)) validCandidates.push(c2);
+                                    } else {
+                                        // Case B: Non-mod/lib/main file (e.g. bootstrap.rs, lang.rs)
+                                        // Rust 2018 Edition submodule directory rule: srcDir/fileStem/foo.rs or foo/mod.rs
+                                        const cSub1 = path.join(srcDir, fileStem, targetNodeId + '.rs').replace(/\\/g, '/');
+                                        const cSub2 = path.join(srcDir, fileStem, targetNodeId, 'mod.rs').replace(/\\/g, '/');
+                                        if (existingNodeIds.has(cSub1)) validCandidates.push(cSub1);
+                                        if (existingNodeIds.has(cSub2)) validCandidates.push(cSub2);
+
+                                        // Fallback legacy sibling (Rust 2015 sibling convention if submodule dir absent)
+                                        if (validCandidates.length === 0) {
+                                            const cSib1 = path.join(srcDir, targetNodeId + '.rs').replace(/\\/g, '/');
+                                            const cSib2 = path.join(srcDir, targetNodeId, 'mod.rs').replace(/\\/g, '/');
+                                            if (existingNodeIds.has(cSib1)) validCandidates.push(cSib1);
+                                            if (existingNodeIds.has(cSib2)) validCandidates.push(cSib2);
+                                        }
+                                    }
+
+                                    // Disambiguation protection: only accept if exactly one candidate exists
+                                    if (validCandidates.length === 1) {
+                                        resolvedDirectTarget = validCandidates[0];
+                                    }
+                                }
+
+                                if (resolvedDirectTarget) {
+                                    targetNodeId = resolvedDirectTarget;
                                     resolutionKind = 'direct';
+                                } else {
+                                    const entryNode = rustCrateMap.get(targetNodeId);
+                                    if (entryNode && existingNodeIds.has(entryNode)) {
+                                        targetNodeId = entryNode;
+                                        resolutionKind = 'direct';
+                                    } else if (rustExternalPackages.has(targetNodeId)) {
+                                        resolutionKind = 'resolved_external';
+                                    } else {
+                                        resolutionKind = 'unresolved';
+                                    }
+                                }
+                            } else if (sourceFilePath.endsWith('.ts') || sourceFilePath.endsWith('.tsx') || sourceFilePath.endsWith('.js') || sourceFilePath.endsWith('.jsx')) {
+                                // [v0.3.35] JS/TS Resolution: 1) Local Package/Workspace -> direct
+                                const localEntry = jsLocalPackages.get(targetNodeId);
+                                if (localEntry && existingNodeIds.has(localEntry)) {
+                                    targetNodeId = localEntry;
+                                    resolutionKind = 'direct';
+                                } else {
+                                    // 2) Find closest package scope for sourceFilePath
+                                    const normSource = sourceFilePath.replace(/\\/g, '/');
+                                    let matchedScope: JsPackageScope | null = null;
+                                    for (const sc of jsPackageScopes) {
+                                        if (sc.dirRel === '.' || normSource === sc.dirRel || normSource.startsWith(sc.dirRel + '/')) {
+                                            matchedScope = sc;
+                                            break;
+                                        }
+                                    }
+
+                                    // Extract root package name (handling scoped packages like @scope/pkg and subpaths like react-dom/client)
+                                    const rootPkg = targetNodeId.startsWith('@')
+                                        ? targetNodeId.split('/').slice(0, 2).join('/')
+                                        : targetNodeId.split('/')[0];
+
+                                    const nodeBuiltins = new Set([
+                                        'assert', 'async_hooks', 'buffer', 'child_process', 'cluster', 'console',
+                                        'constants', 'crypto', 'dgram', 'diagnostics_channel', 'dns', 'domain',
+                                        'events', 'fs', 'http', 'http2', 'https', 'inspector', 'module', 'net',
+                                        'os', 'path', 'perf_hooks', 'process', 'punycode', 'querystring', 'readline',
+                                        'repl', 'stream', 'string_decoder', 'timers', 'tls', 'trace_events', 'tty',
+                                        'url', 'util', 'v8', 'vm', 'wasi', 'worker_threads', 'zlib'
+                                    ]);
+
+                                    if (targetNodeId.startsWith('node:') || nodeBuiltins.has(rootPkg)) {
+                                        resolutionKind = 'stdlib';
+                                    } else if (matchedScope && (matchedScope.externalPackages.has(targetNodeId) || matchedScope.externalPackages.has(rootPkg))) {
+                                        resolutionKind = 'resolved_external';
+                                    } else {
+                                        resolutionKind = 'unresolved';
+                                    }
+                                }
+                            } else if (sourceFilePath.endsWith('.java') || sourceFilePath.endsWith('.kt') || sourceFilePath.endsWith('.kts')) {
+                                const pkgPath = ref.fullPath || targetNodeId;
+                                if (
+                                    pkgPath.startsWith('java.') ||
+                                    pkgPath.startsWith('javax.') ||
+                                    pkgPath.startsWith('kotlin.') ||
+                                    pkgPath.startsWith('kotlinx.') ||
+                                    pkgPath.startsWith('android.') ||
+                                    pkgPath.startsWith('dalvik.')
+                                ) {
+                                    resolutionKind = 'stdlib';
+                                } else if (pkgPath.includes('.') && ref.provenance !== 'FUNCTION_CALL') {
+                                    targetNodeId = pkgPath.replace(/\./g, '/');
+                                    resolutionKind = 'resolved_external';
                                 } else {
                                     resolutionKind = 'unresolved';
                                 }
+                            } else if (sourceFilePath.endsWith('.py')) {
+                                // [v0.3.35] Python Resolution: 1) Local-First check
+                                // Check if targetNodeId corresponds to a local file (.py, /__init__.py) in source directory or project root
+                                const srcDir = path.dirname(sourceFilePath).replace(/\\/g, '/');
+                                const localCand1 = (srcDir === '.' ? targetNodeId : srcDir + '/' + targetNodeId) + '.py';
+                                const localCand2 = (srcDir === '.' ? targetNodeId : srcDir + '/' + targetNodeId) + '/__init__.py';
+                                const rootCand1 = targetNodeId + '.py';
+                                const rootCand2 = targetNodeId + '/__init__.py';
+
+                                if (existingNodeIds.has(localCand1)) {
+                                    targetNodeId = localCand1;
+                                    resolutionKind = 'direct';
+                                } else if (existingNodeIds.has(localCand2)) {
+                                    targetNodeId = localCand2;
+                                    resolutionKind = 'direct';
+                                } else if (existingNodeIds.has(rootCand1)) {
+                                    targetNodeId = rootCand1;
+                                    resolutionKind = 'direct';
+                                } else if (existingNodeIds.has(rootCand2)) {
+                                    targetNodeId = rootCand2;
+                                    resolutionKind = 'direct';
+                                } else {
+                                    // 2) Find closest python package scope for sourceFilePath
+                                    const normSource = sourceFilePath.replace(/\\/g, '/');
+                                    let matchedScope: PyPackageScope | null = null;
+                                    for (const sc of pyPackageScopes) {
+                                        if (sc.dirRel === '.' || normSource === sc.dirRel || normSource.startsWith(sc.dirRel + '/')) {
+                                            matchedScope = sc;
+                                            break;
+                                        }
+                                    }
+
+                                    // Normalize import name to distribution name if in alias map
+                                    const rawLower = targetNodeId.toLowerCase();
+                                    const normalizedImport = rawLower.replace(/[-_.]+/g, '-');
+                                    const mappedDistName = pyImportToDistAliases[rawLower] || normalizedImport;
+
+                                    if (matchedScope && (matchedScope.externalPackages.has(normalizedImport) || matchedScope.externalPackages.has(mappedDistName))) {
+                                        resolutionKind = 'resolved_external';
+                                    } else {
+                                        resolutionKind = 'unresolved';
+                                    }
+                                }
+                            } else {
+                                resolutionKind = 'unresolved';
                             }
-                        } else {
-                            resolutionKind = 'unresolved';
                         }
                     }
-                }
-            } // Closes if (!existingNodeIds.has(targetNodeId)) - inner
+                } // Closes if (!existingNodeIds.has(targetNodeId)) - inner
             } // Closes if (!existingNodeIds.has(targetNodeId)) - outer
 
             // Final check if it's actually in nodeIds, otherwise mark unresolved.
@@ -246,14 +408,16 @@ export class ReferenceResolver {
                 const isCppHeader = targetNodeId.endsWith('.h') || targetNodeId.endsWith('.hpp') || targetNodeId.endsWith('.inc') || targetNodeId.endsWith('.c') || targetNodeId.endsWith('.cpp') || targetNodeId.endsWith('.cc');
                 if (isCppHeader) {
                     const cStdlibHeaders = new Set([
-                        'assert.h', 'complex.h', 'ctype.h', 'errno.h', 'fenv.h', 'float.h', 
-                        'inttypes.h', 'iso646.h', 'limits.h', 'locale.h', 'math.h', 'setjmp.h', 
-                        'signal.h', 'stdarg.h', 'stdbool.h', 'stddef.h', 'stdint.h', 'stdio.h', 
-                        'stdlib.h', 'string.h', 'tgmath.h', 'time.h', 'wchar.h', 'wctype.h', 
-                        'malloc.h', 'memory.h', 'windows.h', 'unistd.h', 'fcntl.h', 'pthread.h', 
+                        'assert.h', 'complex.h', 'ctype.h', 'errno.h', 'fenv.h', 'float.h',
+                        'inttypes.h', 'iso646.h', 'limits.h', 'locale.h', 'math.h', 'setjmp.h',
+                        'signal.h', 'stdarg.h', 'stdbool.h', 'stddef.h', 'stdint.h', 'stdio.h',
+                        'stdlib.h', 'string.h', 'tgmath.h', 'time.h', 'wchar.h', 'wctype.h',
+                        'malloc.h', 'memory.h', 'windows.h', 'unistd.h', 'fcntl.h', 'pthread.h',
                         'dlfcn.h', 'omp.h', 'dirent.h', 'strings.h', 'syslog.h', 'utime.h', 'alloca.h'
                     ]);
-                    if (!cStdlibHeaders.has(targetNodeId)) {
+                    if (cStdlibHeaders.has(targetNodeId)) {
+                        resolutionKind = 'stdlib';
+                    } else {
                         targetNodeId = path.posix.join(path.dirname(sourceFilePath), targetNodeId);
                         // Make sure it doesn't just become "foo.h" if source file was at root
                         if (targetNodeId === '.' || targetNodeId === '..') {
@@ -273,10 +437,10 @@ export class ReferenceResolver {
             let broadcastCandidates: string[] = [];
             // [TRACE] Go Semantic Collapse 추적 타겟
             const isTraceTarget = sourceFilePath.endsWith('.go') && (
-                originalTarget.includes('schema') || 
-                originalTarget.includes('serializer') || 
-                originalTarget.includes('runtime') || 
-                originalTarget.includes('labels') || 
+                originalTarget.includes('schema') ||
+                originalTarget.includes('serializer') ||
+                originalTarget.includes('runtime') ||
+                originalTarget.includes('labels') ||
                 originalTarget.includes('metav1') ||
                 originalTarget.includes('protoimpl')
             );
@@ -286,11 +450,11 @@ export class ReferenceResolver {
                 console.error(`[TRACE-2-RESOLVER-IN] Target: ${originalTarget}, Type: ${ref.type || (ref as any).provenance}`);
             }
 
-            if (sourceFilePath.endsWith('.go') && resolutionKind === 'unresolved' && (targetNodeId.includes('/') || targetNodeId.includes('.'))) {
+            if (sourceFilePath.endsWith('.go') && resolutionKind === 'unresolved') {
                 // Try Broadcast Fallback using FULL target string
                 const targetSuffix = '/' + targetNodeId;
                 let bestPkgDir = "";
-                
+
                 for (const pkgDir of packageMap.keys()) {
                     // Case 1: Physical path is longer/equal to import path (e.g. nested in staging/)
                     if (pkgDir.endsWith(targetSuffix) || pkgDir === targetNodeId) {
@@ -315,8 +479,21 @@ export class ReferenceResolver {
                     if (files.length > 50) {
                         console.warn(`[Broadcast Warning] package=${bestPkgDir} files=${files.length}`);
                     }
+                } else {
+                    // Universal Go Module Grammar:
+                    // If not found in local workspace packageMap:
+                    // - First segment without '.' -> Go stdlib
+                    // - First segment with domain '.' (e.g., github.com/*, google.golang.org/*, k8s.io/utils/*) -> resolved_external
+                    const firstSeg = originalTarget.split('/')[0];
+                    if (!originalTarget.startsWith('.')) {
+                        if (!firstSeg.includes('.')) {
+                            resolutionKind = 'stdlib';
+                        } else {
+                            resolutionKind = 'resolved_external';
+                        }
+                    }
                 }
-                
+
                 if (isTraceTarget) {
                     if (resolutionKind === 'broadcast') {
                         console.error(`[TRACE-3-BROADCAST] Matched Directory: ${matchedPkgDir}, File Count: ${broadcastCandidates.length}`);
@@ -324,7 +501,7 @@ export class ReferenceResolver {
                         console.error(`[TRACE-3-BROADCAST-FAIL] Import: ${originalTarget}`);
                         console.error(`[TRACE-3-BROADCAST-FAIL] Suffix: ${targetSuffix}`);
                         console.error(`[TRACE-3-BROADCAST-FAIL] Candidate Count: 0`);
-                        
+
                         // Dump nearby keys
                         const suffixStr = targetSuffix.replace('/', '');
                         const nearbyKeys = Array.from(packageMap.keys()).filter(k => k.includes(suffixStr)).slice(0, 5);
@@ -437,7 +614,7 @@ Unresolved (No Symbol Match): ${auditStats.unresolved}
 Dropped (Garbage/1-letter): ${auditStats.dropped}
 -------------------------------------------------------------
 Top 10 Resolved Symbols (By Event Frequency):
-${top100Resolved.slice(0, 10).map((x, i) => `  ${i+1}. ${x[0]} (${x[1]})`).join('\n')}
+${top100Resolved.slice(0, 10).map((x, i) => `  ${i + 1}. ${x[0]} (${x[1]})`).join('\n')}
 =============================================================
 `;
         console.log(auditLog);

@@ -3,6 +3,7 @@ import { PatternDetector } from '../PatternDetector';
 import { PatternFinding } from '../PatternFinding';
 import { PatternId } from '../PatternId';
 import { EvidenceItem } from '../EvidenceItem';
+import { NodeRole } from '../../../../types/schema';
 
 export class ChangeAmplifierDetector implements PatternDetector {
     
@@ -18,8 +19,50 @@ export class ChangeAmplifierDetector implements PatternDetector {
             return findings;
         }
 
+        // 1. Build nodeRoleMap from context.snapshot.nodes
+        const nodeRoleMap = new Map<string, string>();
+        if (context?.snapshot?.nodes) {
+            for (const n of context.snapshot.nodes) {
+                if (n.role) {
+                    nodeRoleMap.set(n.id || n.filePath, String(n.role).toLowerCase());
+                }
+            }
+        }
+
+        // 2. Pre-filter test components BEFORE score and percentile cutoff calculation
+        const nonTestSemanticFindings: any[] = [];
+        const excludedTestComponents: string[] = [];
+
+        for (const f of semanticFindings) {
+            const members: string[] = f.metadata?.members || [];
+            let isTestComponent = false;
+            if (members.length > 0 && nodeRoleMap.size > 0) {
+                let testNodeCount = 0;
+                for (const m of members) {
+                    const r = nodeRoleMap.get(m);
+                    if (r === 'test' || r === NodeRole.TEST.toLowerCase()) {
+                        testNodeCount++;
+                    }
+                }
+                const testRatio = testNodeCount / members.length;
+                if (testRatio >= 0.8) {
+                    isTestComponent = true;
+                }
+            }
+
+            if (isTestComponent) {
+                excludedTestComponents.push(f.targetId);
+            } else {
+                nonTestSemanticFindings.push(f);
+            }
+        }
+
+        if (excludedTestComponents.length > 0) {
+            console.log(`[CHANGE_AMPLIFIER_DETECTOR] Excluded ${excludedTestComponents.length} test components: ${excludedTestComponents.join(', ')}`);
+        }
+
         // Calculate complexity scores for Change Amplifier (Blast Radius)
-        const scoredCandidates = semanticFindings.map((f: any) => {
+        const scoredCandidates = nonTestSemanticFindings.map((f: any) => {
             const size = f.metadata?.size || 0;
             const internalEdges = f.metadata?.internalEdges || 0;
             const externalEdges = f.metadata?.externalEdges || 0;
@@ -46,49 +89,57 @@ export class ChangeAmplifierDetector implements PatternDetector {
 
         if (scoredCandidates.length === 0) return findings;
 
-        // Calculate P50 (Median) cutoff
-        const sortedScores = scoredCandidates.map((c: any) => c.score).sort((a: number, b: number) => a - b);
-        const medianScore = sortedScores[Math.floor(sortedScores.length / 2)];
-        const maxScore = sortedScores[sortedScores.length - 1];
-        
-        for (const c of scoredCandidates) {
-            if (c.score >= medianScore) {
-                const confidence = maxScore > 0 ? Number((c.score / maxScore).toFixed(2)) : 1.0;
-                
-                const evidenceItem: EvidenceItem = {
-                    evidenceId: `E-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
-                    type: "COMPLEXITY_METRICS",
-                    sourceId: c.targetId,
-                    description: `Change Amplifier (Complexity: ${c.evidence.complexityScore}, ExternalEdges: ${c.evidence.externalEdges})`,
-                    filePath: c.targetId,
-                    graphNodeId: c.graphNodeId,
-                    metadata: {
-                        size: c.evidence.size,
-                        internalEdges: c.evidence.internalEdges,
-                        externalEdges: c.evidence.externalEdges,
-                        internalDensity: c.evidence.internalDensity,
-                        externalDensity: c.evidence.externalDensity,
-                        complexityScore: c.evidence.complexityScore
-                    },
-                    predicate: {
-                        condition: "P50_CUTOFF",
-                        metric: "complexityScore",
-                        operator: ">=",
-                        cutoff: medianScore,
-                        actualValue: c.evidence.complexityScore
-                    },
-                    selectionBasis: `complexityScore (${c.evidence.complexityScore}) satisfied the CHANGE_AMPLIFIER selection criterion (>= P50 median: ${medianScore}).`
-                };
+        // P90 Cutoff: Sort descending by score, deterministic tie-breaking by targetId ascending
+        scoredCandidates.sort((a: any, b: any) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.targetId < b.targetId ? -1 : (a.targetId > b.targetId ? 1 : 0);
+        });
 
-                findings.push({
-                    findingId: `F-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
-                    patternId: PatternId.CHANGE_AMPLIFIER,
-                    targetScope: 'NODE',
-                    targetId: c.targetId,
-                    confidence,
-                    evidence: [evidenceItem]
-                });
-            }
+        const totalCandidates = scoredCandidates.length;
+        const p90Count = Math.ceil(0.1 * totalCandidates);
+        const selectedCandidates = scoredCandidates.slice(0, p90Count);
+        const maxScore = scoredCandidates[0]?.score || 1;
+        
+        for (let idx = 0; idx < selectedCandidates.length; idx++) {
+            const c = selectedCandidates[idx];
+            const confidence = maxScore > 0 ? Number((c.score / maxScore).toFixed(2)) : 1.0;
+            
+            const evidenceItem: EvidenceItem = {
+                evidenceId: `E-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                type: "COMPLEXITY_METRICS",
+                sourceId: c.targetId,
+                description: `Change Amplifier (Complexity: ${c.evidence.complexityScore}, ExternalEdges: ${c.evidence.externalEdges})`,
+                filePath: c.targetId,
+                graphNodeId: c.graphNodeId,
+                metadata: {
+                    size: c.evidence.size,
+                    internalEdges: c.evidence.internalEdges,
+                    externalEdges: c.evidence.externalEdges,
+                    internalDensity: c.evidence.internalDensity,
+                    externalDensity: c.evidence.externalDensity,
+                    complexityScore: c.evidence.complexityScore,
+                    rank: idx + 1,
+                    totalCandidates
+                },
+                predicate: {
+                    condition: "P90_CUTOFF",
+                    metric: "complexityScore",
+                    operator: "TOP_10_PERCENT",
+                    rank: idx + 1,
+                    cutoff: `${p90Count}/${totalCandidates}`,
+                    actualValue: c.evidence.complexityScore
+                },
+                selectionBasis: `Top 10% (P90) change propagation: ranked #${idx + 1} of ${totalCandidates} candidates (complexityScore: ${c.evidence.complexityScore})`
+            };
+
+            findings.push({
+                findingId: `F-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                patternId: PatternId.CHANGE_AMPLIFIER,
+                targetScope: 'NODE',
+                targetId: c.targetId,
+                confidence,
+                evidence: [evidenceItem]
+            });
         }
 
         return findings;

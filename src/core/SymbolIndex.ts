@@ -2,6 +2,24 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Logger } from '../utils/Logger';
 import { SynapseIgnore } from './SynapseIgnore';
+import { isBuildOrPackagingAsset } from '../utils/exclusionRules';
+
+// [v0.3.34.74 Rule 3 & 4] System/SDK & ubiquitous lifecycle identifiers that must NOT bind globally
+// without explicit path/module context, preventing Secondary Hijack across unrelated files.
+const SYSTEM_AND_UBIQUITOUS_SYMBOLS = new Set([
+    // COM / Win32 / POSIX / Standard lifecycle & system APIs
+    'Release', 'AddRef', 'QueryInterface', 'Sleep', 'GetLastError', 'SetLastError',
+    'CloseHandle', 'CreateFile', 'CreateFileW', 'CreateFileA', 'ReadFile', 'WriteFile',
+    'VirtualAlloc', 'VirtualFree', 'LocalFree', 'GlobalFree', 'CoInitialize', 'CoUninitialize',
+    'RegOpenKeyEx', 'RegOpenKeyExW', 'RegCloseKey', 'GetProcAddress', 'LoadLibrary', 'LoadLibraryW',
+    'FreeLibrary', 'ExitProcess', 'TerminateProcess', 'WaitForSingleObject', 'GetCurrentProcess',
+    // Ubiquitous generic entry/lifecycle function names
+    'main', 'wmain', 'WinMain', 'wWinMain', 'DllMain',
+    'init', 'Init', 'initialize', 'Initialize', 'close', 'Close', 'open', 'Open',
+    'start', 'Start', 'stop', 'Stop', 'run', 'Run', 'reset', 'Reset', 'clear', 'Clear',
+    'destroy', 'Destroy', 'dispose', 'Dispose', 'free', 'Free', 'clone', 'Clone',
+    'default', 'Default', 'new', 'drop', 'fmt', 'from', 'into', 'try_from', 'try_into'
+]);
 
 export interface FolderTree {
     path: string;
@@ -37,7 +55,7 @@ export interface SymbolIndexSchema {
     folderTree: FolderTree | null;
     fileRegistry: Map<string, FileEntry>;
     functionCatalog: FunctionEntry[];
-    symbolCatalog: Map<string, string>;
+    symbolCatalog: Map<string, Set<string>>;
 }
 
 function generateFunctionId(name: string, filePath: string, className: string | null): string {
@@ -86,6 +104,7 @@ export class SymbolIndex {
             const ext = path.extname(file).toLowerCase();
             const relPath = path.relative(root, file).replace(/\\/g, '/');
             if (this.ignore && this.ignore.isIgnored(relPath)) continue;
+            if (isBuildOrPackagingAsset(relPath)) continue;
             const fileName = path.basename(file);
             let fileSize = 0;
             let lastModified = 0;
@@ -126,6 +145,7 @@ export class SymbolIndex {
 
     addFunction(filePath: string, functionName: string, className: string | null, lineNumber: number): void {
         if (!this.index) return;
+        if (isBuildOrPackagingAsset(filePath)) return;
         const fnId = generateFunctionId(functionName, filePath, className);
         this.index.functionCatalog.push({
             functionId: fnId,
@@ -145,25 +165,51 @@ export class SymbolIndex {
     }
 
     addSymbol(filePath: string, symbolName: string): void {
-        if (!this.index || !symbolName) return;
+        if (!this.index || !symbolName || !filePath) return;
+        if (isBuildOrPackagingAsset(filePath)) return;
         
-        const existing = this.index.symbolCatalog.get(symbolName);
-        if (!existing) {
-            this.index.symbolCatalog.set(symbolName, filePath);
-        } else {
-            // [v0.3.34] Symbol Resolution: Prefer Implementation (Definition) over Header (Declaration)
-            const isExistingHeader = existing.endsWith('.h') || existing.endsWith('.hpp') || existing.endsWith('.hxx');
-            const isNewSource = filePath.endsWith('.c') || filePath.endsWith('.cpp') || filePath.endsWith('.cc') || filePath.endsWith('.rs');
-            
-            if (isExistingHeader && isNewSource) {
-                this.index.symbolCatalog.set(symbolName, filePath);
-            }
+        let candidates = this.index.symbolCatalog.get(symbolName);
+        if (!candidates) {
+            candidates = new Set<string>();
+            this.index.symbolCatalog.set(symbolName, candidates);
         }
+        candidates.add(filePath);
     }
 
     lookupSymbol(symbolName: string): string | undefined {
-        if (!this.index) return undefined;
-        return this.index.symbolCatalog.get(symbolName);
+        if (!this.index || !symbolName) return undefined;
+        // [v0.3.34.74 Rule 3 & 4] Prevent Secondary Hijack on ubiquitous/OS SDK identifiers
+        if (SYSTEM_AND_UBIQUITOUS_SYMBOLS.has(symbolName)) return undefined;
+        const candidates = this.index.symbolCatalog.get(symbolName);
+        if (!candidates || candidates.size === 0) return undefined;
+        if (candidates.size === 1) {
+            for (const p of candidates) {
+                return isBuildOrPackagingAsset(p) ? undefined : p;
+            }
+        }
+
+        // [Gate 2 V1] Multiple candidates: evaluate justified selection
+        // Fixed extensions: definitions (.c, .cpp, .cc, .rs) vs declarations (.h, .hpp, .hxx)
+        const defs: string[] = [];
+        let nonHeaderNonDefCount = 0;
+
+        for (const candidate of candidates) {
+            if (candidate.endsWith('.c') || candidate.endsWith('.cpp') || candidate.endsWith('.cc') || candidate.endsWith('.rs')) {
+                defs.push(candidate);
+            } else if (candidate.endsWith('.h') || candidate.endsWith('.hpp') || candidate.endsWith('.hxx')) {
+                // Header (declaration) candidate
+            } else {
+                nonHeaderNonDefCount++;
+            }
+        }
+
+        // Exactly 1 definition and 0 unclassified candidates -> justified selection
+        if (defs.length === 1 && nonHeaderNonDefCount === 0) {
+            return defs[0];
+        }
+
+        // Ambiguous: multiple definitions, multiple headers only, or unclassified candidates -> safe fail (undefined)
+        return undefined;
     }
 
     getFileRegistry(): Map<string, FileEntry> {

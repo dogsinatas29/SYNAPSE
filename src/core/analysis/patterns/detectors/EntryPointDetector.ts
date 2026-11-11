@@ -3,6 +3,7 @@ import { PatternDetector } from '../PatternDetector';
 import { PatternFinding } from '../PatternFinding';
 import { PatternId } from '../PatternId';
 import { EvidenceItem } from '../EvidenceItem';
+import { NodeRole } from '../../../../types/schema';
 
 export class EntryPointDetector implements PatternDetector {
     
@@ -35,15 +36,28 @@ export class EntryPointDetector implements PatternDetector {
             if (tgt) inDegreeMap.set(tgt, (inDegreeMap.get(tgt) || 0) + 1);
         }
 
-        // Execution Entry
+        // Execution Entry (Exclude test-role components from onboarding dependency root)
+        let excludedTestCount = 0;
         let execCandidates = validNodes.filter((n: any) => {
             const id = n.filePath || n.id;
             const fanIn = inDegreeMap.get(id) || 0;
             const fanOut = outDegreeMap.get(id) || 0;
             n.fanIn = fanIn;
             n.fanOut = fanOut;
-            return fanIn === 0 && fanOut > 0;
+
+            if (fanIn === 0 && fanOut > 0) {
+                if (n.role === NodeRole.TEST || String(n.role).toLowerCase() === 'test') {
+                    excludedTestCount++;
+                    return false;
+                }
+                return true;
+            }
+            return false;
         });
+
+        if (excludedTestCount > 0) {
+            console.log(`[ENTRY_POINT_DETECTOR] Excluded ${excludedTestCount} test-role nodes from DEPENDENCY_ROOT candidates.`);
+        }
 
         // Fallback if no strict fanIn=0 exists (unlikely but possible in cyclic roots)
         if (execCandidates.length === 0) {

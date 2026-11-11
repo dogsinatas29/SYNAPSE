@@ -48,7 +48,7 @@ export const QUESTION_DICTIONARY: Record<string, ReportQuestionContract> = {
         vocabulary: ["SYSTEM_CORE", "STRUCTURAL_CENTRALITY"],
         supportingPatterns: ["SYSTEM_CORE"],
         allowedEvidence: ["controlScore", "fanIn", "blastRadius"],
-        interpretationGuide: "Higher controlScore indicates a higher structural centrality score for the component in the observed dependency graph."
+        interpretationGuide: "controlScore combines inbound edges (fanIn × 10), estimated blast radius (external edges × member count × 2), and authority reach (× 100). Higher values indicate components that are larger and have more outgoing external edges. It is not a pure inbound-dependency measure."
     },
     "A2": {
         id: "A2",

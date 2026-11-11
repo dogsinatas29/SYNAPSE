@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { InsightEngine } from './InsightEngine';
 import { ReportScope, SelectionSource, ReportContract } from '../../types/schema';
+import { QUESTION_DICTIONARY } from './ReportContract';
 import { ValidationEvidence } from './types';
 import { Logger } from '../../utils/Logger';
 import { OnboardingReportBuilder } from './OnboardingReportBuilder';
@@ -109,9 +110,17 @@ export class ReportBundleGenerator {
             const adapter = new FindingReportAdapter();
             const sections = adapter.buildArchitectSections(archInsight.patternFindings || []);
 
+            const archFindings = archInsight.patternFindings || [];
+            const a1Count = new Set(archFindings.filter((f: any) => f.patternId === 'SYSTEM_CORE').map((f: any) => f.targetId)).size;
+            const a1Total = (archFindings.find((f: any) => f.patternId === 'SYSTEM_CORE')?.evidence?.[0]?.metadata as any)?.totalCandidates;
+            const a1Str = a1Total ? `top 10% (${a1Count} of ${a1Total} candidates)` : `${a1Count}`;
+            const a2Count = new Set(archFindings.filter((f: any) => f.patternId === 'CROSS_BOUNDARY_REFERENCE').map((f: any) => f.targetId)).size;
+            const a3Count = new Set(archFindings.filter((f: any) => QUESTION_DICTIONARY["A3"].supportingPatterns.includes(f.patternId)).map((f: any) => f.targetId)).size;
+            const a5Count = new Set(archFindings.filter((f: any) => f.patternId === 'CONTROL_BRIDGE').map((f: any) => f.targetId)).size;
+
             const archContract: ReportContract = {
                 header: archHeader,
-                summary: 'Observation-based structural analysis with rigorous validation provenance.',
+                summary: `Architectural structural scan observed ${a1Str} system cores, ${a2Count} cross-boundary reference points, ${a3Count} structural boundaries, and ${a5Count} control bridges.`,
                 findings: sections,
                 evidence: cleanEvidence,
                 appendix: appendixData
@@ -129,9 +138,12 @@ export class ReportBundleGenerator {
             const adapter = new FindingReportAdapter();
             const onboardSections = adapter.buildOnboardingSections((onboardInsight as any).patternFindings || onboardInsight.findings || []);
 
+            const onbFindings = (onboardInsight as any).patternFindings || onboardInsight.findings || [];
+            const o2Count = new Set(onbFindings.filter((f: any) => f.patternId === 'DEPENDENCY_ROOT').map((f: any) => f.targetId)).size;
+
             const onboardContract: ReportContract = {
                 header: onboardHeader,
-                summary: 'Onboarding Report',
+                summary: `Onboarding scan observed top ${o2Count} structural dependency roots with zero incoming dependencies.`,
                 findings: onboardSections,
                 evidence: cleanEvidence,
                 appendix: appendixData
@@ -153,9 +165,14 @@ export class ReportBundleGenerator {
             const simSections = adapter.buildExecutionSections(simInsight.patternFindings || []);
             console.timeEnd('[PERF] adapter.buildExecutionSections');
 
+            const execFindings = simInsight.patternFindings || [];
+            const e2Count = new Set(execFindings.filter((f: any) => f.patternId === 'CHANGE_AMPLIFIER').map((f: any) => f.targetId)).size;
+            const e2Total = (execFindings.find((f: any) => f.patternId === 'CHANGE_AMPLIFIER')?.evidence?.[0]?.metadata as any)?.totalCandidates;
+            const e2Str = e2Total ? `top 10% (${e2Count} of ${e2Total} candidates)` : `${e2Count}`;
+
             const debugContract: ReportContract = {
                 header: debugHeader,
-                summary: 'Simulation Debug Report',
+                summary: `Execution trace simulation observed ${e2Str} change propagation amplifier components.`,
                 findings: simSections,
                 evidence: cleanEvidence,
                 appendix: appendixData

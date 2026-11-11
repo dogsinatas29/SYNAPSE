@@ -21,6 +21,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as cp from 'child_process';
 import * as http from 'http';
+import * as crypto from 'crypto';
 import { Node, Edge, ProjectState, EdgeType, NodeType } from '../types/schema';
 import { FileScanner } from '../core/FileScanner';
 import { LogicAnalyzer } from '../core/LogicAnalyzer';
@@ -142,6 +143,57 @@ export class CanvasPanel {
     private _lastDiagnosticHash: string = '';
 
     private _panelId: string = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7); // UUID for tracking instances
+    private _lastLoadedDiskFingerprint: string = '';
+    private _lastLoadedDiskPath: string = '';
+
+    public computeNormalizedStateFingerprint(state: any): string {
+        if (!state) return '';
+        const nodes = Array.isArray(state.nodes) ? state.nodes : Object.values(state.nodes || {});
+        const edges = Array.isArray(state.edges) ? state.edges : Object.values(state.edges || {});
+        const clusters = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {});
+
+        const normNodes = nodes
+            .filter((n: any) => n && n.id)
+            .map((n: any) => [
+                n.id,
+                n.cluster_id || '',
+                n.layer || '',
+                n.filePath || '',
+                n.label || '',
+                n.type || ''
+            ])
+            .sort((a: any, b: any) => String(a[0]).localeCompare(String(b[0])));
+
+        const normEdges = edges
+            .filter((e: any) => e && (e.id || (e.from && e.to)))
+            .map((e: any) => [
+                e.from || '',
+                e.to || '',
+                e.type || '',
+                e.data?.resolutionKind || '',
+                e.data?.is_approved ? 1 : 0
+            ])
+            .sort((a: any, b: any) => {
+                const cmpFrom = String(a[0]).localeCompare(String(b[0]));
+                if (cmpFrom !== 0) return cmpFrom;
+                const cmpTo = String(a[1]).localeCompare(String(b[1]));
+                if (cmpTo !== 0) return cmpTo;
+                return String(a[2]).localeCompare(String(b[2]));
+            });
+
+        const normClusters = clusters
+            .filter((c: any) => c && c.id)
+            .map((c: any) => [
+                c.id,
+                c.label || '',
+                c.parent_id || '',
+                c.type || ''
+            ])
+            .sort((a: any, b: any) => String(a[0]).localeCompare(String(b[0])));
+
+        const canonicalPayload = JSON.stringify([normNodes, normEdges, normClusters]);
+        return crypto.createHash('sha256').update(canonicalPayload, 'utf8').digest('hex');
+    }
 
     public static createOrShow(context: vscode.ExtensionContext, workspaceFolder: vscode.WorkspaceFolder) {
         const extensionUri = context.extensionUri;
@@ -151,12 +203,31 @@ export class CanvasPanel {
 
         // If we already have a panel, show it
         if (CanvasPanel.currentPanel) {
-            if (CanvasPanel.currentPanel._workspaceFolder.uri.fsPath !== workspaceFolder.uri.fsPath) {
-                console.log(`[SYNAPSE] Switching canvas context to: ${workspaceFolder.name}`);
-                CanvasPanel.currentPanel._workspaceFolder = workspaceFolder;
-                CanvasPanel.currentPanel._taskQueue.push(() => CanvasPanel.currentPanel!.refreshState());
+            const panel = CanvasPanel.currentPanel;
+            if (panel._workspaceFolder.uri.fsPath !== workspaceFolder.uri.fsPath) {
+                // Track 11: Queue context switch in SequentialTaskQueue to avoid concurrency race conditions
+                panel._taskQueue.push(async () => {
+                    if (panel._workspaceFolder.uri.fsPath === workspaceFolder.uri.fsPath) {
+                        return; // Already switched
+                    }
+                    const oldWorkspace = panel._workspaceFolder;
+                    if (canvasEngine.hasUnsavedChanges()) {
+                        console.log(`[SYNAPSE] Preserving unsaved changes for ${oldWorkspace.name} before switching...`);
+                        const rawSnap = canvasEngine.getRawSnapshot();
+                        const saved = await panel.handleSaveState(rawSnap, oldWorkspace);
+                        if (!saved) {
+                            vscode.window.showErrorMessage(`[SYNAPSE] Failed to save unsaved changes for ${oldWorkspace.name}. Context switch aborted.`);
+                            return;
+                        }
+                    }
+                    console.log(`[SYNAPSE] Switching canvas context to: ${workspaceFolder.name}`);
+                    panel._workspaceFolder = workspaceFolder;
+                    panel._lastLoadedDiskFingerprint = '';
+                    panel._lastLoadedDiskPath = '';
+                    await panel.refreshState();
+                });
             }
-            CanvasPanel.currentPanel._panel.reveal(column);
+            panel._panel.reveal(column);
             return;
         }
 
@@ -3403,8 +3474,29 @@ export class CanvasPanel {
 
             // 5. [v0.3.10] Aggressive Edge Deduplication
             if (sortedState && sortedState.edges && Array.isArray(sortedState.edges)) {
+                // Phase B-2: Identify valid 'direct' resolutions to suppress duplicate stale unresolved edges
+                const directResolutions = new Set<string>();
+                for (const e of sortedState.edges) {
+                    const origTarget = e.data?.originalTarget;
+                    if (e.from && e.type && origTarget && e.data?.resolutionKind === 'direct') {
+                        directResolutions.add(`${e.from}::${e.type}::${origTarget}`);
+                    }
+                }
+
                 const seen = new Set<string>();
                 sortedState.edges = sortedState.edges.filter((e: any) => {
+                    const origTarget = e.data?.originalTarget;
+                    // If a verified 'direct' edge exists for this exact (from, type, originalTarget),
+                    // suppress residual 'unresolved' edges (excluding projected or external edges).
+                    if (
+                        e.from && e.type && origTarget &&
+                        e.data?.resolutionKind === 'unresolved' &&
+                        !e.data?.projected &&
+                        directResolutions.has(`${e.from}::${e.type}::${origTarget}`)
+                    ) {
+                        return false;
+                    }
+
                     // Ignore type and cluster metadata for primary identity to collapse duplicates
                     const key = `${e.from}|${e.to}`;
                     if (seen.has(key)) return false;
@@ -4552,7 +4644,7 @@ export class CanvasPanel {
 
     private _saveStateDebugCount = 0;
 
-    private async handleSaveState(newState: any) {
+    public async handleSaveState(newState: any, targetWorkspaceFolder?: vscode.WorkspaceFolder): Promise<boolean> {
         console.trace("[HANDLE_SAVE_STATE]");
         console.log("[SAVE_A] handleSaveState started");
         console.time('SAVE_STATE');
@@ -4562,10 +4654,10 @@ export class CanvasPanel {
             console.trace('[SAVE_STATE_TRACE] Caller stack:');
         }
 
-        const workspaceFolder = this._workspaceFolder;
+        const workspaceFolder = targetWorkspaceFolder || this._workspaceFolder;
         if (!workspaceFolder) {
             console.timeEnd('SAVE_STATE');
-            return;
+            return false;
         }
 
         try {
@@ -4575,39 +4667,41 @@ export class CanvasPanel {
             // [Performance] Use O(1) estimation instead of synchronous full state merge (which can take ~450ms for 70k nodes)
             const engineNodesCount = canvasEngine.getEstimatedNodeCount();
 
-            if (newState.nodes !== undefined) {
+            if (newState && newState.nodes !== undefined) {
                 const uiNodesCount = newState.nodes?.length || 0;
                 if (uiNodesCount === 0 && engineNodesCount > 0) {
                     Logger.warn(`[CanvasPanel] saveState BLOCKED: Attempted to save 0 nodes while engine has ${engineNodesCount}. Probable initialization race condition.`);
                     console.timeEnd('SAVE_STATE');
-                    return;
+                    return false;
                 }
             }
 
             // [v0.3.34.9 PERF FIX] 배치 처리: 클러스터 2909개를 루프 dispatch하면
             // 각 ADD_CLUSTER마다 getSnapshot() → 500ms 투영 → 2909 × 500ms = ~24분 대기 발생.
             // batchAddClusters로 한 번에 처리하고 txn을 1회만 올린다.
-            const clustersToSync = newState.clusters.map((uiCluster: any) => {
-                const isScanFolder = uiCluster.id.startsWith('cluster_') && !/^\d+$/.test(uiCluster.id.replace('cluster_', ''));
-                const isSystemAI = uiCluster.id === 'sys_cluster_reserved' || uiCluster.id === 'doc_shelf';
-                const isExternal = uiCluster.id === 'cluster_ghosts';
-                const defaultLayer = isExternal ? 'external' : ((isScanFolder || isSystemAI) ? 'ai' : 'user');
-                return {
-                    id: uiCluster.id,
-                    label: uiCluster.label,
-                    type: uiCluster.type || 'folder',
-                    position: uiCluster.position,
-                    collapsed: uiCluster.collapsed,
-                    parent_id: uiCluster.parent_id,
-                    children: uiCluster.children,
-                    data: { ...(uiCluster.data || {}), layer: (uiCluster.data && uiCluster.data.layer) || defaultLayer }
-                };
-            });
-            canvasEngine.batchAddClusters(clustersToSync);
+            if (newState && newState.clusters) {
+                const clustersToSync = newState.clusters.map((uiCluster: any) => {
+                    const isScanFolder = uiCluster.id.startsWith('cluster_') && !/^\d+$/.test(uiCluster.id.replace('cluster_', ''));
+                    const isSystemAI = uiCluster.id === 'sys_cluster_reserved' || uiCluster.id === 'doc_shelf';
+                    const isExternal = uiCluster.id === 'cluster_ghosts';
+                    const defaultLayer = isExternal ? 'external' : ((isScanFolder || isSystemAI) ? 'ai' : 'user');
+                    return {
+                        id: uiCluster.id,
+                        label: uiCluster.label,
+                        type: uiCluster.type || 'folder',
+                        position: uiCluster.position,
+                        collapsed: uiCluster.collapsed,
+                        parent_id: uiCluster.parent_id,
+                        children: uiCluster.children,
+                        data: { ...(uiCluster.data || {}), layer: (uiCluster.data && uiCluster.data.layer) || defaultLayer }
+                    };
+                });
+                canvasEngine.batchAddClusters(clustersToSync);
+            }
 
             // 1. Dispatch UPDATE_NODE for each node with a new position, cluster, and layer info
             // [v0.3.11] 🛡️ Hybrid Support: Handle both Array (UI) and Object (Internal Snapshot)
-            const incomingNodes = Array.isArray(newState.nodes) ? newState.nodes : Object.values(newState.nodes || {});
+            const incomingNodes = newState?.nodes ? (Array.isArray(newState.nodes) ? newState.nodes : Object.values(newState.nodes || {})) : [];
             console.log('[NODE_DISPATCH_START]', 'count:', incomingNodes.length);
             
             const positionUpdates: any[] = [];
@@ -4665,9 +4759,9 @@ export class CanvasPanel {
             const persistenceState: any = {
                 project_name: workspaceFolder.name,
                 canvas_state: {
-                    zoom_level: (newState.view ? newState.view.zoom : newState.zoom) || 1.0, 
-                    offset: (newState.view ? { x: newState.view.offsetX, y: newState.view.offsetY } : (newState.offset || { x: 0, y: 0 })),
-                    visible_layers: newState.visible_layers || (newState.data && newState.data.visible_layers) || ['source', 'documentation', 'user']
+                    zoom_level: (newState?.view ? newState.view.zoom : newState?.zoom) || 1.0, 
+                    offset: (newState?.view ? { x: newState.view.offsetX, y: newState.view.offsetY } : (newState?.offset || { x: 0, y: 0 })),
+                    visible_layers: newState?.visible_layers || (newState?.data && newState.data.visible_layers) || ['source', 'documentation', 'user']
                 },
                 // [v0.3.11] Backend Master Copy (SSoT) - Protects against incomplete UI payloads
                 nodes: finalNodesList.filter((n: any) => !n.id.startsWith('client::')),
@@ -4689,24 +4783,26 @@ export class CanvasPanel {
                 console.log(`[STATE_SAVE] Nodes: ${persistenceState.nodes.length}, Edges: ${persistenceState.edges.length}`);
                 await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
                 console.log(`[STATE_SAVE_COMPLETE] project_state.json successfully written.`);
+                
+                // Track 11: After successfully writing to disk SSOT, record fingerprint to prevent redundant reloading
+                this._lastLoadedDiskFingerprint = this.computeNormalizedStateFingerprint(persistenceState);
+                this._lastLoadedDiskPath = projectStateUri.fsPath;
+                canvasEngine.markSaved();
             } catch (err) {
                 console.error(`[STATE_SAVE_ERROR] Failed to write project_state.json in handleSaveState:`, err);
+                console.timeEnd('SAVE_STATE');
+                return false;
             }
 
             console.log(`[SYNAPSE] State synchronized: ${persistenceState.nodes.length} nodes saved to disk.`);
-            
-            // 🔥 [v0.3.11] IMMEDIATE REACTION: Ensure UI reflects backend identity sorting (AI vs User)
-            // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
-
-            // [v0.3.34.6] Cluster Coupling Analysis is removed from here
-            // because running O(N^2) analysis synchronously inside saveState 
-            // completely locks up the VS Code Extension Host on large graphs.
-            
             Logger.info("[SAVESTATE-4] exit successfully");
+            console.timeEnd('SAVE_STATE');
+            return true;
         } catch (error) {
             console.error('[SYNAPSE] Failed to save state:', error);
+            console.timeEnd('SAVE_STATE');
+            return false;
         }
-        console.timeEnd('SAVE_STATE');
     }
     private async handleSaveWorkspace(workspaceData: any) {
         const workspaceFolder = this._workspaceFolder;
@@ -5173,12 +5269,28 @@ export class CanvasPanel {
                 const retention = canvasEngine.getRetentionDiagnostics();
                 const rawNodeCount = retention.backendGraphNodes;
 
-                // [v0.3.32.2 FIX] If forceReset is true (e.g. after a fresh Bootstrap scan), we MUST reload from disk!
-                if (forceReset || rawNodeCount === 0 || rawNodeCount < (fileState.nodes || []).length) {
+                // Track 11: Deterministic State Synchronization & Dirty Protection
+                const diskFingerprint = this.computeNormalizedStateFingerprint(fileState);
+                const hasUnsaved = canvasEngine.hasUnsavedChanges();
+                const isDifferentProject = this._lastLoadedDiskPath !== projectStateUri.fsPath;
+                const isDiskChanged = !this._lastLoadedDiskFingerprint || this._lastLoadedDiskFingerprint !== diskFingerprint;
+
+                const shouldReloadFromDisk = forceReset || 
+                                             rawNodeCount === 0 || 
+                                             isDifferentProject || 
+                                             (isDiskChanged && !hasUnsaved);
+
+                if (isDiskChanged && hasUnsaved && !forceReset) {
+                    Logger.warn(`[CanvasPanel] External project_state.json modification detected, but local unsaved changes exist. Protecting in-memory user edits.`);
+                }
+
+                if (shouldReloadFromDisk) {
                     Logger.info(`\n[CACHE] loaded_from_cache=true`);
                     Logger.info(`[CACHE] nodes=${fileState.nodes?.length || 0} edges=${fileState.edges?.length || 0}`);
-                    Logger.info(`[CanvasPanel] Syncing backend engine from project_state.json (File: ${fileState.nodes?.length || 0} vs Engine: ${rawNodeCount})`);
+                    Logger.info(`[CanvasPanel] Syncing backend engine from project_state.json (File: ${fileState.nodes?.length || 0} vs Engine: ${rawNodeCount}, Fingerprint: ${diskFingerprint})`);
                     canvasEngine.loadInitialState(fileState);
+                    this._lastLoadedDiskFingerprint = diskFingerprint;
+                    this._lastLoadedDiskPath = projectStateUri.fsPath;
                     const rawAfterSync = canvasEngine.getRawSnapshot();
                     logHostMem('after-sync-backend-engine');
                     logHostGraphShape('after-sync-backend-engine', rawAfterSync);

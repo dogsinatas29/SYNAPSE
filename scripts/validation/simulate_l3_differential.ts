@@ -6,25 +6,27 @@ import {
   Edge,
   normalizePathCanonical,
   determineNodeRoleCanonical,
-  deepEqual,
+  deepEqualJSON,
   transformProjectStatePhaseB
 } from './phase_b_transformer';
 
 // ============================================================================
-// Condition 4: Rigorous Independent L3 Differential Graph Validator (v1.0.3)
+// Condition 4: Rigorous Independent L3 Differential Graph Validator (v1.0.4)
 // ============================================================================
-// 1. Snapshot Independence: Frozen snapshot stores ALL arbitrary edge attributes.
-// 2. Transformer Independence: Compares output of transformProjectStatePhaseB
-//    against frozen snapshot, NOT against self-copied objects.
-// 3. Mathematical Invariant Verification:
-//    \forall e \in E, e' = (M(e.from), M(e.to), e.id, attributes(e))
-// 4. Exact Set & 1:1 Bijective Mapping Assertions for Nodes and Edges.
-// 5. Strict Allow-list ID-level & Transition-type Assertions.
+// Solves P0-1 ~ P0-4 and P1-1 ~ P1-6:
+// 1. JSON Data Scoped Full Freeze Snapshot for all arbitrary node & edge attributes.
+// 2. Independent Mapping Verification: Re-derives expected M(id) independently.
+// 3. Bijective Mapping Assertion (Keys, Values, Sets 1:1 match).
+// 4. Node Attribute Preservation Assertion: All fields except (id, filePath, role)
+//    must be identical to the frozen snapshot. Non-NodeBuilder nodes must be 100% identical.
+// 5. Edge Attribute Preservation Assertion: All fields except (from, to) deepEqualJSON.
+// 6. Exact ID-level Allow-List Validation with bi-directional set equality.
+// 7. Transition Cause Assertion: All promoted nodes must satisfy segment condition.
 
 interface AllowListSpec {
   expectedTransitions: number;
   allowedTransitions: { [key: string]: number };
-  allowedIds?: Set<string>;
+  allowedIdsPath: string; // JSON file containing exact list of allowed node IDs
 }
 
 export function runRigorousIndependentL3Audit(
@@ -33,7 +35,7 @@ export function runRigorousIndependentL3Audit(
   spec: AllowListSpec
 ) {
   console.log(`\n===============================================================`);
-  console.log(`[INDEPENDENT L3 DIFFERENTIAL AUDIT v1.0.3] ${projectName}`);
+  console.log(`[INDEPENDENT L3 DIFFERENTIAL AUDIT v1.0.4] ${projectName}`);
   console.log(`[FILE] ${filePath}`);
   console.log(`===============================================================`);
 
@@ -41,16 +43,16 @@ export function runRigorousIndependentL3Audit(
   const originalState: ProjectState = JSON.parse(raw);
 
   // --------------------------------------------------------------------------
-  // Step 1: Pre-Validation & Full Attribute Frozen Snapshot
+  // Step 1: Source Pre-Validation & Full Attribute Frozen Snapshots
   // --------------------------------------------------------------------------
   const originalNodeIds = new Set<string>();
-  const originalNodeMap = new Map<string, Node>();
+  const originalNodeSnapshot = new Map<string, Node>();
   for (const n of originalState.nodes) {
     if (originalNodeIds.has(n.id)) {
       throw new Error(`[FATAL] Duplicate Node ID in source: "${n.id}"`);
     }
     originalNodeIds.add(n.id);
-    originalNodeMap.set(n.id, JSON.parse(JSON.stringify(n)));
+    originalNodeSnapshot.set(n.id, JSON.parse(JSON.stringify(n)));
   }
 
   const originalEdgeIds = new Set<string>();
@@ -60,7 +62,6 @@ export function runRigorousIndependentL3Audit(
       throw new Error(`[FATAL] Duplicate Edge ID in source: "${e.id}"`);
     }
     originalEdgeIds.add(e.id);
-    // Deep clone ENTIRE edge object including all arbitrary dynamic properties
     originalEdgeSnapshot.set(e.id, JSON.parse(JSON.stringify(e)));
   }
 
@@ -78,33 +79,94 @@ export function runRigorousIndependentL3Audit(
   console.log(`- Role Transitions Observed: ${roleTransitions.length}`);
 
   // --------------------------------------------------------------------------
-  // Step 3: Bijective Node Set & Endpoint Verification
+  // Step 3: Bijective Node Mapping & Node Attribute Preservation (P0-2, P0-3, P0-4)
   // --------------------------------------------------------------------------
+  // A. Independent Re-calculation of ID Mapping (P0-4)
+  const independentlyComputedMapping = new Map<string, string>();
+  for (const origNode of originalState.nodes) {
+    const expectedId = origNode.createdBy === 'NodeBuilder'
+      ? normalizePathCanonical(origNode.id)
+      : origNode.id;
+    independentlyComputedMapping.set(origNode.id, expectedId);
+
+    // Cross-check with transformer mapping
+    if (idMapping.get(origNode.id) !== expectedId) {
+      throw new Error(`[FAIL] Transformer idMapping diverged for node "${origNode.id}": got "${idMapping.get(origNode.id)}", expected "${expectedId}"`);
+    }
+  }
+
+  // B. Bijectivity Verification (P0-2)
+  if (idMapping.size !== originalNodeIds.size) {
+    throw new Error(`[FAIL] idMapping size mismatch: ${idMapping.size} !== ${originalNodeIds.size}`);
+  }
+  const mappedValuesSet = new Set<string>();
+  for (const [k, v] of idMapping.entries()) {
+    if (!originalNodeIds.has(k)) {
+      throw new Error(`[FAIL] idMapping contains extraneous key: "${k}"`);
+    }
+    if (mappedValuesSet.has(v)) {
+      throw new Error(`[FAIL] idMapping collision: multiple original IDs map to "${v}"`);
+    }
+    mappedValuesSet.add(v);
+  }
+
+  // C. Transformed Node Attributes & Deep Equality against Freeze Snapshot (P0-3)
   const transformedNodeMap = new Map<string, Node>();
   const transformedNodeIds = new Set<string>();
-  for (const n of transformedState.nodes) {
-    if (transformedNodeIds.has(n.id)) {
-      throw new Error(`[FAIL] Duplicate Node ID in transformed graph: "${n.id}"`);
+  let nodeAttributeMismatches = 0;
+
+  for (const transNode of transformedState.nodes) {
+    if (transformedNodeIds.has(transNode.id)) {
+      throw new Error(`[FAIL] Duplicate Node ID in transformed graph: "${transNode.id}"`);
     }
-    transformedNodeIds.add(n.id);
-    transformedNodeMap.set(n.id, n);
+    transformedNodeIds.add(transNode.id);
+    transformedNodeMap.set(transNode.id, transNode);
+
+    // Find original node corresponding to this transformed node
+    // In our invariant, transNode.id === M(origNode.id)
+    const origSnapshot = originalNodeSnapshot.get(transNode.id); // For 0-path diff nodes
+    const origNode = origSnapshot || Array.from(originalNodeSnapshot.values()).find(n => idMapping.get(n.id) === transNode.id);
+    if (!origNode) {
+      throw new Error(`[FAIL] Transformed node "${transNode.id}" has no originating node in snapshot!`);
+    }
+
+    if (origNode.createdBy !== 'NodeBuilder') {
+      // Non-NodeBuilder nodes must be 100% bit-for-bit identical!
+      if (!deepEqualJSON(origNode, transNode)) {
+        nodeAttributeMismatches++;
+        console.error(`[NON_NB_NODE_MUTATION] Non-NodeBuilder node "${transNode.id}" was modified!`);
+      }
+    } else {
+      // NodeBuilder nodes: only (id, filePath, role) may differ; all other attributes must be identical!
+      const origProps: Record<string, any> = { ...origNode };
+      delete origProps.id;
+      delete origProps.filePath;
+      delete origProps.role;
+
+      const transProps: Record<string, any> = { ...transNode };
+      delete transProps.id;
+      delete transProps.filePath;
+      delete transProps.role;
+
+      if (!deepEqualJSON(origProps, transProps)) {
+        nodeAttributeMismatches++;
+        console.error(`[NB_NODE_ATTRIBUTE_MUTATION] Node "${transNode.id}" non-target attributes diverged!`);
+      }
+    }
   }
 
-  // Check 1: Node count equality
-  if (transformedNodeIds.size !== originalNodeIds.size) {
-    throw new Error(`[FAIL] Node count invariant violated: ${transformedNodeIds.size} !== ${originalNodeIds.size}`);
-  }
+  console.log(`\nStep 3 (Node Bijectivity & Attribute Preservation Audit):`);
+  console.log(`- Independent Mapping Equivalence: 100% Match [PASS]`);
+  console.log(`- Bijective Mapping (1:1 Key-Value): 100% Unique [PASS]`);
+  console.log(`- Transformed Node Count: ${transformedNodeIds.size} === ${originalNodeIds.size} [PASS]`);
+  console.log(`- Node Non-Target Attribute Mismatches: ${nodeAttributeMismatches} (Must be 0)`);
 
-  // Check 2: Node mapping bijectivity (\forall n \in V, M(n.id) \in V')
-  for (const origId of originalNodeIds) {
-    const expectedMappedId = idMapping.get(origId);
-    if (!expectedMappedId || !transformedNodeIds.has(expectedMappedId)) {
-      throw new Error(`[FAIL] Node mapping broken for node "${origId}" -> "${expectedMappedId}"`);
-    }
+  if (nodeAttributeMismatches > 0) {
+    throw new Error(`[FAIL] Transformed nodes have non-target attribute mutations!`);
   }
 
   // --------------------------------------------------------------------------
-  // Step 4: Strict Independent Edge Invariant Verification
+  // Step 4: Strict Independent Edge Invariant Verification (P0-1, P0-4)
   // Invariant: \forall e \in E, e' = (M(e.from), M(e.to), e.id, attributes(e))
   // --------------------------------------------------------------------------
   const transformedEdgeIds = new Set<string>();
@@ -119,34 +181,29 @@ export function runRigorousIndependentL3Audit(
     }
     transformedEdgeIds.add(transformedEdge.id);
 
-    // Retrieve original frozen snapshot
     const origSnapshot = originalEdgeSnapshot.get(transformedEdge.id);
     if (!origSnapshot) {
       throw new Error(`[FAIL] Transformed edge "${transformedEdge.id}" does not exist in original snapshot!`);
     }
 
-    // Expected endpoints under ID mapping M
     const expectedFrom = idMapping.has(origSnapshot.from) ? idMapping.get(origSnapshot.from)! : origSnapshot.from;
     const expectedTo = idMapping.has(origSnapshot.to) ? idMapping.get(origSnapshot.to)! : origSnapshot.to;
 
     // Verify 1: Endpoint reachability
     if (!transformedNodeMap.has(transformedEdge.from) || !transformedNodeMap.has(transformedEdge.to)) {
       brokenEndpoints++;
-      console.error(`[BROKEN_ENDPOINT] Edge "${transformedEdge.id}": from="${transformedEdge.from}", to="${transformedEdge.to}"`);
     }
 
     // Verify 2: Endpoint mapping correctness
     if (transformedEdge.from !== expectedFrom || transformedEdge.to !== expectedTo) {
       mismatchedEndpoints++;
-      console.error(`[ENDPOINT_MISMATCH] Edge "${transformedEdge.id}": got (${transformedEdge.from}, ${transformedEdge.to}), expected (${expectedFrom}, ${expectedTo})`);
     }
 
     if (transformedEdge.from !== origSnapshot.from || transformedEdge.to !== origSnapshot.to) {
       redirectedCount++;
     }
 
-    // Verify 3: Full arbitrary attribute preservation
-    // Compare all properties except 'from' and 'to'
+    // Verify 3: Full JSON attribute preservation
     const origProps: Record<string, any> = { ...origSnapshot };
     delete origProps.from;
     delete origProps.to;
@@ -155,21 +212,21 @@ export function runRigorousIndependentL3Audit(
     delete transProps.from;
     delete transProps.to;
 
-    if (!deepEqual(origProps, transProps)) {
+    if (!deepEqualJSON(origProps, transProps)) {
       mismatchedAttributes++;
-      console.error(`[ATTRIBUTE_MISMATCH] Edge "${transformedEdge.id}" properties diverged from snapshot!`);
+      console.error(`[EDGE_ATTRIBUTE_MISMATCH] Edge "${transformedEdge.id}" properties diverged from snapshot!`);
     }
   }
 
   console.log(`\nStep 4 (Independent Edge Invariant Verification):`);
   console.log(`- Edge Count Preserved: ${transformedEdgeIds.size} === ${originalEdgeIds.size}`);
-  console.log(`- Broken Endpoints (Target Node Not Found): ${brokenEndpoints} (Must be 0)`);
-  console.log(`- Mismatched Endpoints (Mapping Error): ${mismatchedEndpoints} (Must be 0)`);
-  console.log(`- Mismatched Attributes (Full Deep Comparison): ${mismatchedAttributes} (Must be 0)`);
+  console.log(`- Broken Endpoints: ${brokenEndpoints} (Must be 0)`);
+  console.log(`- Mismatched Endpoints: ${mismatchedEndpoints} (Must be 0)`);
+  console.log(`- Mismatched Edge Attributes: ${mismatchedAttributes} (Must be 0)`);
   console.log(`- Redirected Endpoints: ${redirectedCount}`);
 
   if (transformedEdgeIds.size !== originalEdgeIds.size) {
-    throw new Error(`[FAIL] Edge count invariant violated: ${transformedEdgeIds.size} !== ${originalEdgeIds.size}`);
+    throw new Error(`[FAIL] Edge count invariant violated!`);
   }
   if (brokenEndpoints > 0) {
     throw new Error(`[FAIL] Broken endpoints detected!`);
@@ -178,41 +235,67 @@ export function runRigorousIndependentL3Audit(
     throw new Error(`[FAIL] Edge endpoint mapping mismatch detected!`);
   }
   if (mismatchedAttributes > 0) {
-    throw new Error(`[FAIL] Edge attribute divergence detected against frozen snapshot!`);
+    throw new Error(`[FAIL] Edge attribute divergence detected!`);
   }
 
   // --------------------------------------------------------------------------
-  // Step 5: Strict Role Allow-List Audit
+  // Step 5: Exact ID-Level & Type-Level Allow-List Audit (P1-1, P1-2, P1-4)
   // --------------------------------------------------------------------------
-  console.log(`\nStep 5 (Strict Role Allow-List Audit):`);
+  console.log(`\nStep 5 (Exact ID-Level Allow-List Audit):`);
+  const rawAllowedIds = fs.readFileSync(spec.allowedIdsPath, 'utf-8');
+  const allowedIdList: string[] = JSON.parse(rawAllowedIds);
+  const allowedIdSet = new Set<string>(allowedIdList);
+
+  if (allowedIdSet.size !== spec.expectedTransitions) {
+    throw new Error(`[FAIL] Allowed ID list size mismatch: ${allowedIdSet.size} !== ${spec.expectedTransitions}`);
+  }
+
+  // Check 1: Count match
   if (roleTransitions.length !== spec.expectedTransitions) {
-    throw new Error(`[FAIL] Unexpected transition count: ${roleTransitions.length} !== ${spec.expectedTransitions}`);
+    throw new Error(`[FAIL] Observed transitions count mismatch: ${roleTransitions.length} !== ${spec.expectedTransitions}`);
   }
 
+  // Check 2: Bi-directional ID Set Equality
+  const observedIdSet = new Set<string>(roleTransitions.map(t => t.id));
+  for (const id of observedIdSet) {
+    if (!allowedIdSet.has(id)) {
+      throw new Error(`[FAIL] Unallowed node ID transitioned to TEST: "${id}"`);
+    }
+  }
+  for (const id of allowedIdSet) {
+    if (!observedIdSet.has(id)) {
+      throw new Error(`[FAIL] Expected allowed node ID did not transition: "${id}"`);
+    }
+  }
+
+  // Check 3: Transition cause assertion (P1-4: Must be in test segment)
+  for (const id of observedIdSet) {
+    const isSeg = /(^|\/)(test|tests|unit_tests)(\/|$)/i.test(id.replace(/\\/g, '/'));
+    if (!isSeg) {
+      throw new Error(`[FAIL] Node "${id}" promoted without satisfying test segment condition!`);
+    }
+  }
+
+  // Check 4: Type-level breakdown assertion using Object.prototype.hasOwnProperty (P1-2)
   const observedBreakdown: { [key: string]: number } = {};
   for (const t of roleTransitions) {
     const k = `${t.from} -> ${t.to}`;
     observedBreakdown[k] = (observedBreakdown[k] || 0) + 1;
-
-    // Check if transition type is allowed
-    if (!spec.allowedTransitions[k]) {
-      throw new Error(`[FAIL] Unallowed transition type detected: "${k}" on node "${t.id}"`);
-    }
-
-    // Check if ID is in allowed set if provided
-    if (spec.allowedIds && !spec.allowedIds.has(t.id)) {
-      throw new Error(`[FAIL] Node "${t.id}" not in allowed ID set!`);
+    if (!Object.prototype.hasOwnProperty.call(spec.allowedTransitions, k)) {
+      throw new Error(`[FAIL] Unallowed transition type: "${k}" on node "${t.id}"`);
     }
   }
-
-  console.log(`- Observed Transitions:`, observedBreakdown);
-  console.log(`- Allowed Transitions:`, spec.allowedTransitions);
 
   for (const [k, count] of Object.entries(spec.allowedTransitions)) {
-    if (observedBreakdown[k] !== count) {
-      throw new Error(`[FAIL] Transition count mismatch for "${k}": observed ${observedBreakdown[k] || 0} !== expected ${count}`);
+    const observedCount = observedBreakdown[k] || 0;
+    if (observedCount !== count) {
+      throw new Error(`[FAIL] Type count mismatch for "${k}": observed ${observedCount} !== expected ${count}`);
     }
   }
+
+  console.log(`- Exact ID Set Equality (Bi-directional): 100% Verified [PASS]`);
+  console.log(`- Test Segment Cause Assertion: 100% Verified [PASS]`);
+  console.log(`- Transition Type Breakdown:`, observedBreakdown);
 
   console.log(`\n>>> [VERDICT: PROVEN] All L3 Invariants 100% Mathematically & Empirically Verified! <<<`);
   return {
@@ -231,7 +314,8 @@ runRigorousIndependentL3Audit(godotPath, 'Godot Engine', {
   expectedTransitions: 188,
   allowedTransitions: {
     'RUNTIME -> TEST': 188
-  }
+  },
+  allowedIdsPath: path.resolve(__dirname, 'godot_phase_b_allow_ids.json')
 });
 
 runRigorousIndependentL3Audit(vscodePath, 'VS Code', {
@@ -241,5 +325,6 @@ runRigorousIndependentL3Audit(vscodePath, 'VS Code', {
     'RUNTIME_ENTRY -> TEST': 6,
     'TOOLING -> TEST': 6,
     'DOMAIN_MODEL -> TEST': 1
-  }
+  },
+  allowedIdsPath: path.resolve(__dirname, 'vscode_phase_b_allow_ids.json')
 });

@@ -3,7 +3,7 @@ import * as path from 'path';
 import { isBuildOrPackagingAsset } from '../../src/utils/exclusionRules';
 
 // ============================================================================
-// Phase B Architecture Transformer & Validator Library (v1.0.3)
+// Phase B Architecture Transformer & Validator Library (v1.0.4)
 // ============================================================================
 
 export interface Node {
@@ -34,14 +34,15 @@ export interface ProjectState {
 }
 
 /**
- * Robust Canonical Path Normalizer:
+ * Robust Canonical Path Normalizer (v1.0.4):
  * - Preserves virtual schemas (ghost://, external://, builtin://)
- * - Preserves UNC paths (//server/share or \\server\share -> //server/share)
+ * - Strict UNC handling: Exactly 2 leading slashes followed by non-empty server & share (//server/share)
+ * - Multiple leading slashes (>2, e.g. ///foo) are normalized to single leading slash (/foo)
  * - Preserves POSIX absolute paths (/home/project/... -> /home/project/...)
  * - Preserves Windows drive paths (C:\project\... -> C:/project/...)
  * - Preserves parent directory navigation (../ -> ../)
  * - Iteratively resolves repeated current dir segments (./ and /./ -> normalized)
- * - Collapses consecutive slashes (/// -> /)
+ * - Collapses consecutive slashes (foo///bar -> foo/bar)
  */
 export function normalizePathCanonical(rawPath: string): string {
   if (!rawPath) return rawPath;
@@ -49,20 +50,23 @@ export function normalizePathCanonical(rawPath: string): string {
     return rawPath;
   }
 
-  // 1. Detect and preserve UNC: \\server\share or //server/share
-  const isUNC = rawPath.startsWith('\\\\') || rawPath.startsWith('//');
   let p = rawPath.replace(/\\/g, '/');
 
+  // 1. Strict UNC detection: Starts with exactly two slashes and has valid server & share segments
+  // e.g. //server/share/file.ts
+  const isStrictUNC = /^\/\/[^\/\s]+\/[^\/\s]+/.test(p) && !p.startsWith('///');
+
   let prefix = '';
-  if (isUNC) {
+  if (isStrictUNC) {
     prefix = '//';
     p = p.substring(2);
   } else if (p.startsWith('/')) {
     prefix = '/';
-    p = p.substring(1);
+    // Strip all leading slashes so they collapse to single '/' prefix
+    p = p.replace(/^\/+/, '');
   }
 
-  // 2. Collapse consecutive slashes
+  // 2. Collapse consecutive slashes in the path body
   p = p.replace(/\/+/g, '/');
 
   // 3. Resolve all current directory dot segments (./ and /./) iteratively
@@ -81,13 +85,13 @@ export function normalizePathCanonical(rawPath: string): string {
  * Canonical determineNodeRole implementation matching NodeBuilder.ts:
  * Priority Hierarchy:
  * 1. GRAMMAR (.tmLanguage.json)
- * 2. CONFIG (package.json, tsconfig.json, *.yaml, *.json, *.toml, etc.)
+ * 2. CONFIG (package.json, tsconfig.json, webpack.config.js, vite.config.ts, .eslintrc.js, .prettierrc, *.yaml, *.json, *.toml)
  * 3. TOOLING Asset (isBuildOrPackagingAsset from exclusionRules)
  * 4. DOCUMENT (.md, .txt)
  * 5. ASSET (.png, .jpg, .svg, etc.)
  * 6. TEST (Segment matching /(^|\/)(test|tests|unit_tests)(\/|$)/i OR Test File Naming)
- * 7. TOOLING Script (/scripts/, /build/, /tools/)
- * 8. DOMAIN_MODEL (schema.ts, types.ts, *.d.ts)
+ * 7. TOOLING Script (relPath.includes('/scripts/') || relPath.includes('/build/') || relPath.includes('/tools/'))
+ * 8. DOMAIN_MODEL (schema.ts, types.ts, interfaces.ts, constants.ts, *.d.ts)
  * 9. RUNTIME_ENTRY (extension.ts, main.ts, index.ts, activate.ts)
  * 10. RUNTIME (Default)
  */
@@ -125,7 +129,7 @@ export function determineNodeRoleCanonical(filePath: string): { role: string; ca
     return { role: 'ASSET', category: 'Asset' };
   }
 
-  // Priority 6: Test Code & Runner
+  // Priority 6: Test Code & Runner (Segment-based or Basename patterns)
   const isTestSegment = /(^|\/)(test|tests|unit_tests)(\/|$)/i.test(relPath);
   const isTestFile = (
     baseNameLower.includes('.test.') ||
@@ -140,7 +144,7 @@ export function determineNodeRoleCanonical(filePath: string): { role: string; ca
     return { role: 'TEST', category: 'Test' };
   }
 
-  // Priority 7: Tooling Scripts
+  // Priority 7: Tooling Scripts (Preserve exact NodeBuilder.ts rule)
   if (relPath.includes('/scripts/') || relPath.includes('/build/') || relPath.includes('/tools/')) {
     return { role: 'TOOLING', category: 'Tooling' };
   }
@@ -160,18 +164,18 @@ export function determineNodeRoleCanonical(filePath: string): { role: string; ca
 }
 
 /**
- * Deep Equality helper supporting arbitrary nested objects, arrays, null, undefined, primitives.
+ * Deep Equality helper strictly scoped to JSON data values (primitives, arrays, plain objects, null).
  */
-export function deepEqual(a: any, b: any): boolean {
+export function deepEqualJSON(a: any, b: any): boolean {
   if (a === b) return true;
-  if (a == null || b == null) return a === b;
+  if (a === null || b === null || a === undefined || b === undefined) return a === b;
   if (typeof a !== 'object' || typeof b !== 'object') return false;
   if (Array.isArray(a) !== Array.isArray(b)) return false;
 
   if (Array.isArray(a)) {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) {
-      if (!deepEqual(a[i], b[i])) return false;
+      if (!deepEqualJSON(a[i], b[i])) return false;
     }
     return true;
   }
@@ -181,7 +185,7 @@ export function deepEqual(a: any, b: any): boolean {
   if (keysA.length !== keysB.length) return false;
   for (const k of keysA) {
     if (!Object.prototype.hasOwnProperty.call(b, k)) return false;
-    if (!deepEqual(a[k], b[k])) return false;
+    if (!deepEqualJSON(a[k], b[k])) return false;
   }
   return true;
 }

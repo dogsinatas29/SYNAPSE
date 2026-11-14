@@ -52,20 +52,31 @@ function verifyProjectMembers(config: ProjectConfig) {
 
     const resolver = new ScopeResolver(config.patterns, 'CLI_FLAG');
     const a1Records = trace[config.traceKey].a1Trace;
+    const e2Records = trace[config.traceKey].e2Trace || [];
 
+    // Verify A1 Component Members
+    verifyTraceArray(`${config.name} A1`, a1Records, componentMembersMap, resolver);
+
+    // Verify E2 Component Members (if different from A1)
+    if (e2Records.length > 0) {
+        verifyTraceArray(`${config.name} E2`, e2Records, componentMembersMap, resolver);
+    }
+}
+
+function verifyTraceArray(label: string, records: any[], componentMembersMap: Map<string, string[]>, resolver: ScopeResolver) {
     let fullMatchCount = 0;
     let zeroMatchCount = 0;
     let fullMatchMembersTotal = 0;
     let zeroMatchMembersTotal = 0;
 
-    for (const rec of a1Records) {
+    for (const rec of records) {
         const members = componentMembersMap.get(rec.componentId);
-        assert(!!members, `${config.name}: Component "${rec.componentId}" exists in simulation evidence`);
+        assert(!!members, `${label}: Component "${rec.componentId}" exists in simulation evidence`);
         if (!members) continue;
 
         assert(
             members.length === rec.totalMembers,
-            `${config.name} [${rec.componentId}]: Member count (${members.length}) === Trace totalMembers (${rec.totalMembers})`
+            `${label} [${rec.componentId}]: Member count (${members.length}) === Trace totalMembers (${rec.totalMembers})`
         );
 
         let matchedCount = 0;
@@ -77,7 +88,7 @@ function verifyProjectMembers(config: ProjectConfig) {
 
         assert(
             matchedCount === rec.matchedMembers,
-            `${config.name} [${rec.componentId}]: Matched members (${matchedCount}) === Trace matchedMembers (${rec.matchedMembers})`
+            `${label} [${rec.componentId}]: Matched members (${matchedCount}) === Trace matchedMembers (${rec.matchedMembers})`
         );
 
         if (rec.matchClassification === 'FULL_MATCH') {
@@ -85,20 +96,20 @@ function verifyProjectMembers(config: ProjectConfig) {
             fullMatchMembersTotal += members.length;
             assert(
                 matchedCount === members.length,
-                `${config.name} FULL_MATCH [${rec.componentId}]: All ${members.length} members match scope pattern`
+                `${label} FULL_MATCH [${rec.componentId}]: All ${members.length} members match scope pattern`
             );
         } else if (rec.matchClassification === 'ZERO_MATCH') {
             zeroMatchCount++;
             zeroMatchMembersTotal += members.length;
             assert(
                 matchedCount === 0,
-                `${config.name} ZERO_MATCH [${rec.componentId}]: Exactly 0 of ${members.length} members match scope pattern`
+                `${label} ZERO_MATCH [${rec.componentId}]: Exactly 0 of ${members.length} members match scope pattern`
             );
         }
     }
 
-    console.log(`[SUMMARY] ${config.name}: ${fullMatchCount} FULL_MATCH components (${fullMatchMembersTotal} members verified 100% matched)`);
-    console.log(`[SUMMARY] ${config.name}: ${zeroMatchCount} ZERO_MATCH components (${zeroMatchMembersTotal} members verified 0% matched)`);
+    console.log(`[SUMMARY] ${label}: ${fullMatchCount} FULL_MATCH components (${fullMatchMembersTotal} members verified 100% matched)`);
+    console.log(`[SUMMARY] ${label}: ${zeroMatchCount} ZERO_MATCH components (${zeroMatchMembersTotal} members verified 0% matched)`);
 }
 
 function main() {

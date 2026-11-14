@@ -1,61 +1,32 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { normalizePathCanonical } from './phase_b_transformer';
 
 // ============================================================================
-// Condition 2: Rigorous Path Normalization & Collision Audit (v1.0.2)
+// Condition 2: Rigorous Path Normalization & Collision Audit (v1.0.3)
 // Strictly evaluates Canonical normalizePath on NodeBuilder physical nodes
 // ============================================================================
 
-export function normalizePathCanonical(rawPath: string): string {
-  if (!rawPath) return rawPath;
-  if (rawPath.startsWith('ghost://') || rawPath.startsWith('external://') || rawPath.startsWith('builtin://')) {
-    return rawPath;
-  }
-
-  // 1. UNC prefix preservation: \\server\share or //server/share
-  const isUNC = rawPath.startsWith('\\\\') || rawPath.startsWith('//');
-  let p = rawPath.replace(/\\/g, '/');
-
-  let prefix = '';
-  if (isUNC) {
-    prefix = '//';
-    p = p.substring(2);
-  }
-
-  // 2. Collapse consecutive slashes
-  p = p.replace(/\/+/g, '/');
-
-  // 3. Resolve all current directory segments (./ and /./) iteratively
-  const parts = p.split('/');
-  const resolvedParts: string[] = [];
-  for (const part of parts) {
-    if (part === '' || part === '.') continue;
-    resolvedParts.push(part);
-  }
-  p = resolvedParts.join('/');
-
-  // 4. Reattach UNC prefix if applicable
-  if (isUNC) {
-    return prefix + p;
-  }
-
-  return p;
-}
-
-// 1. Rigorous Boundary & Platform Edge Cases
+// 1. Rigorous Boundary & Platform Edge Cases (Full Matrix including POSIX absolute & root)
 const testCases = [
-  { in: '\\\\server\\share\\file.ts', expected: '//server/share/file.ts', desc: 'UNC path preservation' },
-  { in: '//server/share/file.ts', expected: '//server/share/file.ts', desc: 'POSIX UNC path' },
-  { in: 'C:\\project\\file.ts', expected: 'C:/project/file.ts', desc: 'Windows drive letter preservation' },
+  { in: '/home/project/src/index.ts', expected: '/home/project/src/index.ts', desc: 'POSIX absolute path preservation' },
+  { in: 'home/project/src/index.ts', expected: 'home/project/src/index.ts', desc: 'Project relative path' },
+  { in: '\\\\server\\share\\file.ts', expected: '//server/share/file.ts', desc: 'UNC Windows path' },
+  { in: '//server/share/file.ts', expected: '//server/share/file.ts', desc: 'UNC POSIX path' },
+  { in: 'C:\\project\\file.ts', expected: 'C:/project/file.ts', desc: 'Windows drive path' },
   { in: '././src/index.ts', expected: 'src/index.ts', desc: 'Repeated leading dot segments' },
   { in: 'src/././index.ts', expected: 'src/index.ts', desc: 'Repeated intermediate dot segments' },
-  { in: 'foo//bar///baz.ts', expected: 'foo/bar/baz.ts', desc: 'Repeated slashes collapse' },
+  { in: '/src/././index.ts', expected: '/src/index.ts', desc: 'Absolute repeated intermediate dot segments' },
   { in: 'foo/bar/../baz.ts', expected: 'foo/bar/../baz.ts', desc: 'Parent dir preservation (no arbitrary stripping)' },
-  { in: 'ghost://cpp/header.h', expected: 'ghost://cpp/header.h', desc: 'Virtual schema bypass' }
+  { in: '../../src/file.ts', expected: '../../src/file.ts', desc: 'Leading parent dirs preservation' },
+  { in: 'foo//bar///baz.ts', expected: 'foo/bar/baz.ts', desc: 'Consecutive slashes collapse' },
+  { in: 'ghost://cpp/header.h', expected: 'ghost://cpp/header.h', desc: 'Virtual schema bypass' },
+  { in: '', expected: '', desc: 'Empty string handling' },
+  { in: '/', expected: '/', desc: 'Root path handling' }
 ];
 
 console.log(`==================================================`);
-console.log(`[TEST 1] Boundary & Edge Case Verification`);
+console.log(`[TEST 1] Boundary & Edge Case Full Matrix Verification`);
 console.log(`==================================================`);
 for (const tc of testCases) {
   const out = normalizePathCanonical(tc.in);

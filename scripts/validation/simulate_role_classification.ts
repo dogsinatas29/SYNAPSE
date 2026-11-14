@@ -1,79 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { isBuildOrPackagingAsset } from '../../src/utils/exclusionRules';
+import {
+  determineNodeRoleCanonical,
+  normalizePathCanonical
+} from './phase_b_transformer';
 
 // ============================================================================
-// Condition 3: Unified Role Classification Simulator (v1.0.2)
+// Condition 3: Unified Role Classification Simulator (v1.0.3)
 // Strictly unified with determineNodeRoleCanonical and NodeBuilder population
 // ============================================================================
-
-export function determineNodeRoleCanonical(filePath: string): { role: string; category: string } {
-  const relPath = filePath.replace(/\\/g, '/');
-  const basename = path.posix.basename(relPath);
-  const ext = path.posix.extname(relPath).toLowerCase();
-  const baseNameLower = basename.toLowerCase();
-
-  // Priority 1: Grammar
-  if (ext === '.json' && basename.includes('.tmLanguage')) {
-    return { role: 'GRAMMAR', category: 'Grammar' };
-  }
-
-  // Priority 2: Config
-  if (
-    ['package.json', 'tsconfig.json', 'webpack.config.js', 'vite.config.ts', '.eslintrc.js', '.prettierrc'].includes(basename) ||
-    ext === '.yaml' || ext === '.yml' || ext === '.json' || ext === '.toml'
-  ) {
-    return { role: 'CONFIG', category: 'Config' };
-  }
-
-  // Priority 3: Build or Packaging Asset
-  if (isBuildOrPackagingAsset(relPath)) {
-    return { role: 'TOOLING', category: 'Tooling' };
-  }
-
-  // Priority 4: Document
-  if (ext === '.md' || ext === '.txt') {
-    return { role: 'DOCUMENT', category: 'Document' };
-  }
-
-  // Priority 5: Asset
-  if (['.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif', '.ico', '.woff', '.woff2', '.ttf', '.eot'].includes(ext)) {
-    return { role: 'ASSET', category: 'Asset' };
-  }
-
-  // Priority 6: Test Code & Runner
-  const isTestSegment = /(^|\/)(test|tests|unit_tests)(\/|$)/i.test(relPath);
-  const isTestFile = (
-    baseNameLower.includes('.test.') ||
-    baseNameLower.includes('.spec.') ||
-    baseNameLower.startsWith('test_') ||
-    baseNameLower.endsWith('_test.cpp') ||
-    baseNameLower.endsWith('_test.h') ||
-    baseNameLower.endsWith('_test.py') ||
-    baseNameLower === 'test-utils.ts'
-  );
-  if (isTestSegment || isTestFile) {
-    return { role: 'TEST', category: 'Test' };
-  }
-
-  // Priority 7: Tooling Scripts
-  if (relPath.includes('/scripts/') || relPath.includes('/build/') || relPath.includes('/tools/')) {
-    return { role: 'TOOLING', category: 'Tooling' };
-  }
-
-  // Priority 8: Domain Models
-  if (['schema.ts', 'types.ts', 'interfaces.ts', 'constants.ts'].includes(basename) || basename.endsWith('.d.ts')) {
-    return { role: 'DOMAIN_MODEL', category: 'Domain' };
-  }
-
-  // Priority 9: Runtime Entry Points
-  if (['extension.ts', 'main.ts', 'index.ts', 'activate.ts'].includes(basename)) {
-    return { role: 'RUNTIME_ENTRY', category: 'Entry' };
-  }
-
-  // Priority 10: Runtime Default
-  return { role: 'RUNTIME', category: 'Source' };
-}
 
 // 1. Boundary & Priority Test Cases
 const boundaryCases = [
@@ -116,17 +51,25 @@ function auditProjectRolePopulation(filePath: string, projectName: string, expec
   const nbNodes = data.nodes.filter((n: any) => n.createdBy === 'NodeBuilder');
   console.log(`Total NodeBuilder physical nodes: ${nbNodes.length}`);
 
+  // Confirm id === filePath for all NodeBuilder nodes
+  const pathMismatches = nbNodes.filter((n: any) => n.id !== n.filePath);
+  if (pathMismatches.length > 0) {
+    throw new Error(`[FAIL] NodeBuilder node id !== filePath for ${pathMismatches.length} nodes!`);
+  }
+  console.log(`- Pre-check: id === filePath for all ${nbNodes.length} nodes (0 mismatches) [PASS]`);
+
   const transitions: Array<{ id: string; from: string; to: string }> = [];
   let segBasedCount = 0;
   let filePatternCount = 0;
 
   for (const node of nbNodes) {
     const currentRole = node.role || 'UNKNOWN';
-    const targetRole = determineNodeRoleCanonical(node.filePath || node.id).role;
+    // Canonical path: node.id
+    const targetRole = determineNodeRoleCanonical(node.id).role;
 
     if (currentRole !== targetRole) {
       transitions.push({ id: node.id, from: currentRole, to: targetRole });
-      const rel = (node.filePath || node.id).replace(/\\/g, '/');
+      const rel = node.id.replace(/\\/g, '/');
       const isSeg = /(^|\/)(test|tests|unit_tests)(\/|$)/i.test(rel);
       if (isSeg) segBasedCount++;
       else filePatternCount++;

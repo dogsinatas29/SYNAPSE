@@ -1,12 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import {
-  determineNodeRoleCanonical,
-  normalizePathCanonical
+  determineNodeRoleCanonical
 } from './phase_b_transformer';
 
 // ============================================================================
-// Condition 3: Unified Role Classification Simulator (v1.0.3)
+// Condition 3: Unified Role Classification Simulator (v1.0.5)
 // Strictly unified with determineNodeRoleCanonical and NodeBuilder population
 // ============================================================================
 

@@ -1,9 +1,9 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import { isBuildOrPackagingAsset } from '../../src/utils/exclusionRules';
 
 // ============================================================================
-// Phase B Architecture Transformer & Validator Library (v1.0.4)
+// Phase B Architecture Transformer Library (v1.0.5)
+// Independent Transformation Implementation
 // ============================================================================
 
 export interface Node {
@@ -34,7 +34,7 @@ export interface ProjectState {
 }
 
 /**
- * Robust Canonical Path Normalizer (v1.0.4):
+ * Robust Canonical Path Normalizer (v1.0.5):
  * - Preserves virtual schemas (ghost://, external://, builtin://)
  * - Strict UNC handling: Exactly 2 leading slashes followed by non-empty server & share (//server/share)
  * - Multiple leading slashes (>2, e.g. ///foo) are normalized to single leading slash (/foo)
@@ -53,7 +53,6 @@ export function normalizePathCanonical(rawPath: string): string {
   let p = rawPath.replace(/\\/g, '/');
 
   // 1. Strict UNC detection: Starts with exactly two slashes and has valid server & share segments
-  // e.g. //server/share/file.ts
   const isStrictUNC = /^\/\/[^\/\s]+\/[^\/\s]+/.test(p) && !p.startsWith('///');
 
   let prefix = '';
@@ -62,7 +61,6 @@ export function normalizePathCanonical(rawPath: string): string {
     p = p.substring(2);
   } else if (p.startsWith('/')) {
     prefix = '/';
-    // Strip all leading slashes so they collapse to single '/' prefix
     p = p.replace(/^\/+/, '');
   }
 
@@ -164,35 +162,9 @@ export function determineNodeRoleCanonical(filePath: string): { role: string; ca
 }
 
 /**
- * Deep Equality helper strictly scoped to JSON data values (primitives, arrays, plain objects, null).
- */
-export function deepEqualJSON(a: any, b: any): boolean {
-  if (a === b) return true;
-  if (a === null || b === null || a === undefined || b === undefined) return a === b;
-  if (typeof a !== 'object' || typeof b !== 'object') return false;
-  if (Array.isArray(a) !== Array.isArray(b)) return false;
-
-  if (Array.isArray(a)) {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (!deepEqualJSON(a[i], b[i])) return false;
-    }
-    return true;
-  }
-
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  for (const k of keysA) {
-    if (!Object.prototype.hasOwnProperty.call(b, k)) return false;
-    if (!deepEqualJSON(a[k], b[k])) return false;
-  }
-  return true;
-}
-
-/**
  * Phase B Pure Transform Engine:
  * Generates an independently transformed graph from a given ProjectState.
+ * P0-4 Fix: Non-NodeBuilder nodes are preserved completely without any new property synthesis!
  */
 export function transformProjectStatePhaseB(originalState: ProjectState): {
   transformedState: ProjectState;
@@ -205,15 +177,17 @@ export function transformProjectStatePhaseB(originalState: ProjectState): {
 
   for (const node of originalState.nodes) {
     const origId = node.id;
-    let newId = origId;
-    let newRole = node.role || 'UNKNOWN';
 
-    // Strictly limit transformation to NodeBuilder created nodes
-    if (node.createdBy === 'NodeBuilder') {
-      newId = normalizePathCanonical(origId);
-      // Strictly use node.id as the canonical identifier
-      newRole = determineNodeRoleCanonical(newId).role;
+    // Strict preservation of Non-NodeBuilder nodes: Zero property mutation or injection!
+    if (node.createdBy !== 'NodeBuilder') {
+      idMapping.set(origId, origId);
+      transformedNodes.push(JSON.parse(JSON.stringify(node)));
+      continue;
     }
+
+    // NodeBuilder nodes:
+    const newId = normalizePathCanonical(origId);
+    const newRole = determineNodeRoleCanonical(newId).role;
     idMapping.set(origId, newId);
 
     if (newRole !== node.role) {
@@ -223,7 +197,7 @@ export function transformProjectStatePhaseB(originalState: ProjectState): {
     transformedNodes.push({
       ...node,
       id: newId,
-      filePath: node.filePath ? (node.createdBy === 'NodeBuilder' ? normalizePathCanonical(node.filePath) : node.filePath) : newId,
+      filePath: node.filePath ? normalizePathCanonical(node.filePath) : newId,
       role: newRole
     });
   }

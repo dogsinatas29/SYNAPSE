@@ -1,171 +1,116 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Condition 2: Path Normalization Conflict Analysis Simulation
-// Rules to evaluate:
-// 1. replace backslashes with slashes: \ -> /
-// 2. resolve /./ and extra slashes (e.g. // -> /)
-// 3. strip leading slash (if relative project file): /foo/bar -> foo/bar
-// 4. resolve ../ where applicable
-// 5. virtual schema protection: ghost://, external:// must remain untouched!
+// ============================================================================
+// Condition 2: Rigorous Path Normalization & Collision Audit (v1.0.2)
+// Strictly evaluates Canonical normalizePath on NodeBuilder physical nodes
+// ============================================================================
 
-interface ProjectState {
-  nodes: Array<{
-    id: string;
-    path?: string;
-    role?: string;
-    type?: string;
-    [key: string]: any;
-  }>;
-  edges?: Array<{
-    source: string;
-    target: string;
-    type?: string;
-    [key: string]: any;
-  }>;
-}
-
-function normalizePathCandidate(rawPath: string): string {
+export function normalizePathCanonical(rawPath: string): string {
   if (!rawPath) return rawPath;
-
-  // Protect virtual schemas
   if (rawPath.startsWith('ghost://') || rawPath.startsWith('external://') || rawPath.startsWith('builtin://')) {
     return rawPath;
   }
 
-  // 1. Replace Windows backslashes
+  // 1. UNC prefix preservation: \\server\share or //server/share
+  const isUNC = rawPath.startsWith('\\\\') || rawPath.startsWith('//');
   let p = rawPath.replace(/\\/g, '/');
 
-  // 2. Handle multiple consecutive slashes
-  p = p.replace(/\/+/g, '/');
-
-  // 3. Handle /./ segments
-  p = p.replace(/\/\.\//g, '/');
-  if (p.startsWith('./')) {
+  let prefix = '';
+  if (isUNC) {
+    prefix = '//';
     p = p.substring(2);
   }
 
-  // 4. Strip leading slash for relative project paths
-  if (p.startsWith('/')) {
-    p = p.substring(1);
-  }
+  // 2. Collapse consecutive slashes
+  p = p.replace(/\/+/g, '/');
 
-  // 5. Handle trailing slash if not root
-  if (p.length > 1 && p.endsWith('/')) {
-    p = p.substring(0, p.length - 1);
+  // 3. Resolve all current directory segments (./ and /./) iteratively
+  const parts = p.split('/');
+  const resolvedParts: string[] = [];
+  for (const part of parts) {
+    if (part === '' || part === '.') continue;
+    resolvedParts.push(part);
+  }
+  p = resolvedParts.join('/');
+
+  // 4. Reattach UNC prefix if applicable
+  if (isUNC) {
+    return prefix + p;
   }
 
   return p;
 }
 
-function analyzeProject(filePath: string, projectName: string) {
+// 1. Rigorous Boundary & Platform Edge Cases
+const testCases = [
+  { in: '\\\\server\\share\\file.ts', expected: '//server/share/file.ts', desc: 'UNC path preservation' },
+  { in: '//server/share/file.ts', expected: '//server/share/file.ts', desc: 'POSIX UNC path' },
+  { in: 'C:\\project\\file.ts', expected: 'C:/project/file.ts', desc: 'Windows drive letter preservation' },
+  { in: '././src/index.ts', expected: 'src/index.ts', desc: 'Repeated leading dot segments' },
+  { in: 'src/././index.ts', expected: 'src/index.ts', desc: 'Repeated intermediate dot segments' },
+  { in: 'foo//bar///baz.ts', expected: 'foo/bar/baz.ts', desc: 'Repeated slashes collapse' },
+  { in: 'foo/bar/../baz.ts', expected: 'foo/bar/../baz.ts', desc: 'Parent dir preservation (no arbitrary stripping)' },
+  { in: 'ghost://cpp/header.h', expected: 'ghost://cpp/header.h', desc: 'Virtual schema bypass' }
+];
+
+console.log(`==================================================`);
+console.log(`[TEST 1] Boundary & Edge Case Verification`);
+console.log(`==================================================`);
+for (const tc of testCases) {
+  const out = normalizePathCanonical(tc.in);
+  const pass = out === tc.expected;
+  console.log(`- [${pass ? 'PASS' : 'FAIL'}] ${tc.desc}: "${tc.in}" => "${out}" (Expected: "${tc.expected}")`);
+  if (!pass) throw new Error(`Path test failed on ${tc.in}`);
+}
+
+// 2. Physical Node Dataset Audit
+function auditDatasetPaths(filePath: string, projectName: string) {
   console.log(`\n==================================================`);
-  console.log(`[ANALYSIS] Project: ${projectName}`);
+  console.log(`[ANALYSIS] Path Normalization Audit: ${projectName}`);
   console.log(`[FILE] ${filePath}`);
   console.log(`==================================================`);
 
-  if (!fs.existsSync(filePath)) {
-    console.error(`File not found: ${filePath}`);
-    return;
-  }
-
   const raw = fs.readFileSync(filePath, 'utf-8');
-  const data: ProjectState = JSON.parse(raw);
+  const data = JSON.parse(raw);
 
-  const totalNodes = data.nodes.length;
-  console.log(`Total nodes in SSoT: ${totalNodes}`);
+  const nbNodes = data.nodes.filter((n: any) => n.createdBy === 'NodeBuilder');
+  console.log(`Total NodeBuilder physical nodes: ${nbNodes.length}`);
 
-  let backslashCount = 0;
-  let leadingSlashCount = 0;
-  let doubleSlashCount = 0;
-  let dotSlashCount = 0;
-  let dotDotSlashCount = 0;
-  let virtualSchemaCount = 0;
-  let changedCount = 0;
+  const normalizedMap = new Map<string, string[]>();
+  let pathModifications = 0;
 
-  const originalIdSet = new Set<string>();
-  const normalizedMap = new Map<string, string[]>(); // normalizedPath -> list of original IDs
-
-  for (const node of data.nodes) {
-    const id = node.id;
-    originalIdSet.add(id);
-
-    if (id.startsWith('ghost://') || id.startsWith('external://') || id.startsWith('builtin://')) {
-      virtualSchemaCount++;
-      continue;
+  for (const n of nbNodes) {
+    const orig = n.id;
+    const norm = normalizePathCanonical(orig);
+    if (norm !== orig) {
+      pathModifications++;
     }
-
-    if (id.includes('\\')) backslashCount++;
-    if (id.startsWith('/')) leadingSlashCount++;
-    if (id.includes('//')) doubleSlashCount++;
-    if (id.includes('/./') || id.startsWith('./')) dotSlashCount++;
-    if (id.includes('../')) dotDotSlashCount++;
-
-    const norm = normalizePathCandidate(id);
-    if (norm !== id) {
-      changedCount++;
-    }
-
     if (!normalizedMap.has(norm)) {
       normalizedMap.set(norm, []);
     }
-    normalizedMap.get(norm)!.push(id);
+    normalizedMap.get(norm)!.push(orig);
   }
 
-  console.log(`\n--- Pattern Detection Metrics ---`);
-  console.log(`- Virtual Schemas (ghost/external/builtin): ${virtualSchemaCount}`);
-  console.log(`- Contains Backslash (\\): ${backslashCount}`);
-  console.log(`- Starts with Leading Slash (/): ${leadingSlashCount}`);
-  console.log(`- Contains Consecutive Slashes (//): ${doubleSlashCount}`);
-  console.log(`- Contains Current Dir (./ or /./): ${dotSlashCount}`);
-  console.log(`- Contains Parent Dir (../): ${dotDotSlashCount}`);
-  console.log(`- Total IDs that would change: ${changedCount}`);
-
-  // Collision Detection
-  let collisionCount = 0;
-  const collisions: Array<{ normalized: string; originals: string[] }> = [];
-
-  for (const [norm, originals] of normalizedMap.entries()) {
-    if (originals.length > 1) {
-      collisionCount++;
-      collisions.push({ normalized: norm, originals });
+  let collisions = 0;
+  for (const [norm, origs] of normalizedMap.entries()) {
+    if (origs.length > 1) {
+      collisions++;
+      console.error(`[COLLISION] Normalized: "${norm}" <= Originals: ${JSON.stringify(origs)}`);
     }
   }
 
-  console.log(`\n--- Collision Detection Results ---`);
-  console.log(`- Total Normalized Unique Keys: ${normalizedMap.size}`);
-  console.log(`- Collision Count (Multiple original IDs mapping to same normalized path): ${collisionCount}`);
+  console.log(`- Path Modifications Required: ${pathModifications}`);
+  console.log(`- Unique Normalized Keys: ${normalizedMap.size}`);
+  console.log(`- Collision Count: ${collisions}`);
 
-  if (collisionCount > 0) {
-    console.log(`[ALERT] Collisions detected!`);
-    for (const c of collisions.slice(0, 10)) {
-      console.log(`  Normalized: "${c.normalized}" <= Originals: ${JSON.stringify(c.originals)}`);
-    }
-    if (collisions.length > 10) {
-      console.log(`  ... and ${collisions.length - 10} more`);
-    }
-  } else {
-    console.log(`[PASS] ZERO Collisions detected across all ${totalNodes} nodes!`);
+  if (collisions > 0) {
+    throw new Error(`[FAIL] Collisions detected in ${projectName}!`);
   }
-
-  return {
-    projectName,
-    totalNodes,
-    virtualSchemaCount,
-    backslashCount,
-    leadingSlashCount,
-    doubleSlashCount,
-    dotSlashCount,
-    dotDotSlashCount,
-    changedCount,
-    collisionCount,
-    collisions
-  };
 }
 
 const godotPath = '/home/dogsinatas/다운로드/godot-master/synapse_data/project_state.json';
 const vscodePath = '/home/dogsinatas/다운로드/vscode/vscode-main/synapse_data/project_state.json';
 
-const resGodot = analyzeProject(godotPath, 'Godot Engine');
-const resVSCode = analyzeProject(vscodePath, 'VS Code');
-
+auditDatasetPaths(godotPath, 'Godot Engine');
+auditDatasetPaths(vscodePath, 'VS Code');

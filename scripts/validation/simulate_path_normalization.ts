@@ -168,3 +168,4 @@ const vscodePath = '/home/dogsinatas/다운로드/vscode/vscode-main/synapse_dat
 
 const resGodot = analyzeProject(godotPath, 'Godot Engine');
 const resVSCode = analyzeProject(vscodePath, 'VS Code');
+

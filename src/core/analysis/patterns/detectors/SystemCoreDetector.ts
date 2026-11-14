@@ -4,6 +4,7 @@ import { PatternFinding } from '../PatternFinding';
 import { PatternId } from '../PatternId';
 import { EvidenceItem } from '../EvidenceItem';
 import { NodeRole } from '../../../../types/schema';
+import { ScopeResolver } from '../../ScopeResolver';
 
 export class SystemCoreDetector implements PatternDetector {
     
@@ -63,7 +64,7 @@ export class SystemCoreDetector implements PatternDetector {
         }
 
         // Calculate control scores based on new semantic metrics
-        const scoredCandidates = nonTestSemanticFindings.map((f: any) => {
+        let scoredCandidates = nonTestSemanticFindings.map((f: any) => {
             const fanIn = f.metadata?.inboundEdges || 0;
             const fanOut = f.metadata?.externalEdges || 0;
             const size = f.metadata?.size || 0;
@@ -71,11 +72,15 @@ export class SystemCoreDetector implements PatternDetector {
             const authorityReach = f.metadata?.authorityReach || 0.0;
             
             // Score weight: FanIn heavily dictates Core nature. Blast Radius adds impact. Authority Reach adds network centrality.
-            const controlScore = Math.floor(fanIn * 10 + blastRadius * 2 + (authorityReach * 100));
+            let controlScore = Math.floor(fanIn * 10 + blastRadius * 2 + (authorityReach * 100));
+            if (!Number.isFinite(controlScore) || controlScore <= 0) {
+                controlScore = 0;
+            }
             
             return {
                 targetId: f.targetId,
                 score: controlScore,
+                members: f.metadata?.members || [],
                 evidence: {
                     fanIn,
                     fanOut,
@@ -85,8 +90,33 @@ export class SystemCoreDetector implements PatternDetector {
                 },
                 graphNodeId: f.nodeId || f.targetId
             };
-        }).filter((c: any) => c.score > 0); // Must have at least some score
+        }).filter((c: any) => c.score > 0); // Base Qualification: Must have score > 0
 
+        const universeCandidates = scoredCandidates.length;
+
+        // Declared Scope Exclusion (Phase A)
+        const scopeResolver: ScopeResolver = context?.scopeResolver || ScopeResolver.loadConfig(context?.workspaceRoot);
+        let excludedByScopeCount = 0;
+
+        if (scopeResolver && scopeResolver.hasExclusions()) {
+            scoredCandidates = scoredCandidates.filter((c: any) => {
+                const members: string[] = c.members || [];
+                if (members.length > 0) {
+                    // Full Component Match: Exclude only if ALL members match scopeExclusions
+                    const allExcluded = members.every(m => scopeResolver.matches(m));
+                    if (allExcluded) {
+                        excludedByScopeCount++;
+                        return false;
+                    }
+                }
+                return true;
+            });
+            if (excludedByScopeCount > 0) {
+                console.log(`[SYSTEM_CORE_DETECTOR] Excluded ${excludedByScopeCount} components by scopeExclusions Full Match.`);
+            }
+        }
+
+        const eligibleCandidates = scoredCandidates.length;
         if (scoredCandidates.length === 0) return findings;
 
         // P90 Cutoff: Sort descending by score, deterministic tie-breaking by targetId ascending
@@ -95,8 +125,7 @@ export class SystemCoreDetector implements PatternDetector {
             return a.targetId < b.targetId ? -1 : (a.targetId > b.targetId ? 1 : 0);
         });
 
-        const totalCandidates = scoredCandidates.length;
-        const p90Count = Math.ceil(0.1 * totalCandidates);
+        const p90Count = Math.ceil(0.1 * eligibleCandidates);
         const selectedCandidates = scoredCandidates.slice(0, p90Count);
         const maxScore = scoredCandidates[0]?.score || 1;
         
@@ -106,6 +135,24 @@ export class SystemCoreDetector implements PatternDetector {
             // Normalize confidence between 0.0 and 1.0 relative to max score
             const confidence = maxScore > 0 ? Number((c.score / maxScore).toFixed(2)) : 1.0;
             
+            const selectionBasisStr = scopeResolver && scopeResolver.hasExclusions()
+                ? `Top 10% (P90) structural centrality: ranked #${idx + 1} of ${eligibleCandidates} eligible candidates (controlScore: ${c.score})`
+                : `Top 10% (P90) structural centrality: ranked #${idx + 1} of ${universeCandidates} candidates (controlScore: ${c.score})`;
+
+            const members: string[] = c.members || [];
+            let excludedMembersCount = 0;
+            if (scopeResolver && scopeResolver.hasExclusions() && members.length > 0) {
+                for (const m of members) {
+                    if (scopeResolver.matches(m)) {
+                        excludedMembersCount++;
+                    }
+                }
+            }
+            const eligibleMembersCount = members.length - excludedMembersCount;
+            const scopeStatus = (scopeResolver && scopeResolver.hasExclusions() && excludedMembersCount > 0 && eligibleMembersCount > 0)
+                ? `Partially Excluded (Eligible: ${eligibleMembersCount}/${members.length}, Excluded: ${excludedMembersCount}/${members.length})`
+                : undefined;
+
             const evidenceItem: EvidenceItem = {
                 evidenceId: `E-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
                 type: "SEMANTIC_METRICS",
@@ -119,9 +166,14 @@ export class SystemCoreDetector implements PatternDetector {
                     blastRadius: c.evidence.blastRadius,
                     authorityReach: c.evidence.authorityReach,
                     rank: idx + 1,
-                    totalCandidates
+                    totalCandidates: universeCandidates,
+                    universeCandidates: universeCandidates,
+                    excludedByScope: excludedByScopeCount,
+                    eligibleCandidates: eligibleCandidates,
+                    hasScopeExclusions: scopeResolver && scopeResolver.hasExclusions(),
+                    scopeStatus
                 },
-                selectionBasis: `Top 10% (P90) structural centrality: ranked #${idx + 1} of ${totalCandidates} candidates (controlScore: ${c.score})`
+                selectionBasis: selectionBasisStr
             };
 
             findings.push({

@@ -10,6 +10,7 @@ import { ValidationRenderer } from './ValidationRenderer';
 import { FindingReportAdapter } from './FindingReportAdapter';
 import { EvidenceViewerBuilder } from './EvidenceViewerBuilder';
 import { DiagnosticTracer } from '../analysis/pipeline/DiagnosticTracer';
+import { ScopeResolver } from '../analysis/ScopeResolver';
 
 export class ReportBundleGenerator {
     
@@ -100,6 +101,62 @@ export class ReportBundleGenerator {
         Logger.info('[REPORT] architect end');
         console.timeEnd('[PERF] buildArchitectInsight');
 
+        const scopeResolver: ScopeResolver = context.scopeResolver || ScopeResolver.loadConfig(context.workspaceRoot);
+        let scopeHeaderMd = '';
+
+        if (scopeResolver && scopeResolver.hasExclusions()) {
+            const patterns = scopeResolver.getPatterns();
+            const allNodes = context.snapshot?.nodes || [];
+            const patternMatchCounts = new Map<string, number>();
+            for (const p of patterns) {
+                patternMatchCounts.set(p, 0);
+            }
+            for (const n of allNodes) {
+                const fp = n.filePath || n.id;
+                if (fp) {
+                    for (const p of patterns) {
+                        if (scopeResolver.matchPattern(p, fp)) {
+                            patternMatchCounts.set(p, (patternMatchCounts.get(p) || 0) + 1);
+                        }
+                    }
+                }
+            }
+
+            let patternLines = '';
+            for (const p of patterns) {
+                const count = patternMatchCounts.get(p) || 0;
+                if (count === 0) {
+                    patternLines += `  - \`${p}\`: 0 files matched [WARN] UNMATCHED\n`;
+                } else {
+                    patternLines += `  - \`${p}\`: ${count} files matched\n`;
+                }
+            }
+
+            const onbFindings = (onboardInsight as any).patternFindings || onboardInsight.findings || [];
+            const o2Meta = onbFindings.find((f: any) => f.patternId === 'DEPENDENCY_ROOT')?.evidence?.[0]?.metadata;
+            const o2Excluded = o2Meta?.excludedByScope || 0;
+            const o2Eligible = o2Meta?.eligibleCandidates || 0;
+            const o2Universe = o2Meta?.universeCandidates || 0;
+
+            const archFindings = archInsight.patternFindings || [];
+            const a1Meta = archFindings.find((f: any) => f.patternId === 'SYSTEM_CORE')?.evidence?.[0]?.metadata;
+            const a1Excluded = a1Meta?.excludedByScope || 0;
+            const a1Eligible = a1Meta?.eligibleCandidates || 0;
+            const a1Universe = a1Meta?.universeCandidates || 0;
+
+            const execFindings = simInsight.patternFindings || [];
+            const e2Meta = execFindings.find((f: any) => f.patternId === 'CHANGE_AMPLIFIER')?.evidence?.[0]?.metadata;
+            const e2Excluded = e2Meta?.excludedByScope || 0;
+            const e2Eligible = e2Meta?.eligibleCandidates || 0;
+            const e2Universe = e2Meta?.universeCandidates || 0;
+
+            scopeHeaderMd = `- **Declared Scope Exclusions**:\n${patternLines}` +
+                `- **Scope Exclusion Accounting**:\n` +
+                `  - O2 (Dependency Roots): ${o2Excluded} nodes excluded (${o2Eligible} eligible / ${o2Universe} candidates)\n` +
+                `  - A1 (System Cores): ${a1Excluded} components excluded (${a1Eligible} eligible / ${a1Universe} candidates)\n` +
+                `  - E2 (Change Amplifiers): ${e2Excluded} components excluded (${e2Eligible} eligible / ${e2Universe} candidates)\n`;
+        }
+
         let returnPath = '';
         
         if (message.command === 'fetchArchitectureReport') {
@@ -112,8 +169,13 @@ export class ReportBundleGenerator {
 
             const archFindings = archInsight.patternFindings || [];
             const a1Count = new Set(archFindings.filter((f: any) => f.patternId === 'SYSTEM_CORE').map((f: any) => f.targetId)).size;
-            const a1Total = (archFindings.find((f: any) => f.patternId === 'SYSTEM_CORE')?.evidence?.[0]?.metadata as any)?.totalCandidates;
-            const a1Str = a1Total ? `top 10% (${a1Count} of ${a1Total} candidates)` : `${a1Count}`;
+            const a1Meta = archFindings.find((f: any) => f.patternId === 'SYSTEM_CORE')?.evidence?.[0]?.metadata as any;
+            const a1Total = a1Meta?.totalCandidates;
+            const a1Eligible = a1Meta?.eligibleCandidates;
+            const a1HasScope = a1Meta?.hasScopeExclusions;
+            const a1Str = a1HasScope
+                ? (a1Eligible !== undefined ? `top 10% (${a1Count} of ${a1Eligible} eligible candidates)` : `${a1Count}`)
+                : (a1Total ? `top 10% (${a1Count} of ${a1Total} candidates)` : `${a1Count}`);
             const a2Count = new Set(archFindings.filter((f: any) => f.patternId === 'CROSS_BOUNDARY_REFERENCE').map((f: any) => f.targetId)).size;
             const a3Count = new Set(archFindings.filter((f: any) => QUESTION_DICTIONARY["A3"].supportingPatterns.includes(f.patternId)).map((f: any) => f.targetId)).size;
             const a5Count = new Set(archFindings.filter((f: any) => f.patternId === 'CONTROL_BRIDGE').map((f: any) => f.targetId)).size;
@@ -125,6 +187,9 @@ export class ReportBundleGenerator {
                 evidence: cleanEvidence,
                 appendix: appendixData
             };
+            if (scopeHeaderMd) {
+                (archContract as any).scopeHeader = scopeHeaderMd;
+            }
 
             returnPath = path.join(bundleDir, 'ARCHITECT_REPORT.md');
             fs.writeFileSync(returnPath, insight.renderReportToMarkdown(archContract));
@@ -148,6 +213,10 @@ export class ReportBundleGenerator {
                 evidence: cleanEvidence,
                 appendix: appendixData
             };
+            if (scopeHeaderMd) {
+                (onboardContract as any).scopeHeader = scopeHeaderMd;
+            }
+
             returnPath = path.join(bundleDir, 'ONBOARDING_REPORT.md');
             fs.writeFileSync(returnPath, insight.renderReportToMarkdown(onboardContract));
         }
@@ -167,8 +236,13 @@ export class ReportBundleGenerator {
 
             const execFindings = simInsight.patternFindings || [];
             const e2Count = new Set(execFindings.filter((f: any) => f.patternId === 'CHANGE_AMPLIFIER').map((f: any) => f.targetId)).size;
-            const e2Total = (execFindings.find((f: any) => f.patternId === 'CHANGE_AMPLIFIER')?.evidence?.[0]?.metadata as any)?.totalCandidates;
-            const e2Str = e2Total ? `top 10% (${e2Count} of ${e2Total} candidates)` : `${e2Count}`;
+            const e2Meta = execFindings.find((f: any) => f.patternId === 'CHANGE_AMPLIFIER')?.evidence?.[0]?.metadata as any;
+            const e2Total = e2Meta?.totalCandidates;
+            const e2Eligible = e2Meta?.eligibleCandidates;
+            const e2HasScope = e2Meta?.hasScopeExclusions;
+            const e2Str = e2HasScope
+                ? (e2Eligible !== undefined ? `top 10% (${e2Count} of ${e2Eligible} eligible candidates)` : `${e2Count}`)
+                : (e2Total ? `top 10% (${e2Count} of ${e2Total} candidates)` : `${e2Count}`);
 
             const debugContract: ReportContract = {
                 header: debugHeader,
@@ -177,6 +251,9 @@ export class ReportBundleGenerator {
                 evidence: cleanEvidence,
                 appendix: appendixData
             };
+            if (scopeHeaderMd) {
+                (debugContract as any).scopeHeader = scopeHeaderMd;
+            }
 
             returnPath = path.join(bundleDir, 'SIMULATION_DEBUG.md');
             console.time('[PERF] renderReportToMarkdown');

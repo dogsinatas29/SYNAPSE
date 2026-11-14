@@ -1,0 +1,5029 @@
+{
+  "godot": {
+    "label": "Godot",
+    "a1Trace": [
+      {
+        "detector": "A1",
+        "componentId": "root",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "core",
+        "totalMembers": 451,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "editor",
+        "totalMembers": 638,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "main",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "scene",
+        "totalMembers": 717,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "tests",
+        "totalMembers": 188,
+        "matchedMembers": 188,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "drivers/apple",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "drivers/d3d12",
+        "totalMembers": 14,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "drivers/gles3",
+        "totalMembers": 40,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "drivers/metal",
+        "totalMembers": 21,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "drivers/png",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "drivers/unix",
+        "totalMembers": 16,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "drivers/vulkan",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "drivers/windows",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/astcenc",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/basis_universal",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/bcdec",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/betsy",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/bmp",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/camera",
+        "totalMembers": 14,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/cvtt",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/enet",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/etcpak",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/gdscript",
+        "totalMembers": 64,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/gltf",
+        "totalMembers": 68,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/godot_physics_2d",
+        "totalMembers": 33,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/godot_physics_3d",
+        "totalMembers": 47,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/hdr",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/jolt_physics",
+        "totalMembers": 91,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/jpg",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/jsonrpc",
+        "totalMembers": 8,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/ktx",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/lightmapper_rd",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/mobile_vr",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/mono",
+        "totalMembers": 53,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/multiplayer",
+        "totalMembers": 27,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/navigation_2d",
+        "totalMembers": 37,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/navigation_3d",
+        "totalMembers": 41,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/noise",
+        "totalMembers": 16,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/objectdb_profiler",
+        "totalMembers": 25,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/ogg",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/openxr",
+        "totalMembers": 151,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/raycast",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/svg",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/text_server_fb",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/tga",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/tilemap",
+        "totalMembers": 29,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/tinyexr",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/upnp",
+        "totalMembers": 11,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/webp",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/webrtc",
+        "totalMembers": 18,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/websocket",
+        "totalMembers": 17,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/zip",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "servers/audio",
+        "totalMembers": 57,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "servers/display",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "servers/navigation_2d",
+        "totalMembers": 11,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "servers/navigation_3d",
+        "totalMembers": 11,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "servers/physics_2d",
+        "totalMembers": 27,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "servers/physics_3d",
+        "totalMembers": 28,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "servers/rendering",
+        "totalMembers": 189,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "servers/text",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "servers/xr",
+        "totalMembers": 22,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/amd-fsr2",
+        "totalMembers": 37,
+        "matchedMembers": 37,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/astcenc",
+        "totalMembers": 34,
+        "matchedMembers": 34,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/basis_universal",
+        "totalMembers": 71,
+        "matchedMembers": 71,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/brotli",
+        "totalMembers": 32,
+        "matchedMembers": 32,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/clipper2",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/cvtt",
+        "totalMembers": 33,
+        "matchedMembers": 33,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/enet",
+        "totalMembers": 17,
+        "matchedMembers": 17,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/etcpak",
+        "totalMembers": 14,
+        "matchedMembers": 14,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/freetype",
+        "totalMembers": 463,
+        "matchedMembers": 463,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/glad",
+        "totalMembers": 8,
+        "matchedMembers": 8,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/libbacktrace",
+        "totalMembers": 17,
+        "matchedMembers": 17,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/libktx",
+        "totalMembers": 41,
+        "matchedMembers": 41,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/libogg",
+        "totalMembers": 6,
+        "matchedMembers": 6,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/libpng",
+        "totalMembers": 31,
+        "matchedMembers": 31,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/libvorbis",
+        "totalMembers": 70,
+        "matchedMembers": 70,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/manifold",
+        "totalMembers": 39,
+        "matchedMembers": 39,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/meshoptimizer",
+        "totalMembers": 21,
+        "matchedMembers": 21,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/mingw-std-threads",
+        "totalMembers": 5,
+        "matchedMembers": 5,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/miniupnpc",
+        "totalMembers": 34,
+        "matchedMembers": 34,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/minizip",
+        "totalMembers": 9,
+        "matchedMembers": 9,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/misc",
+        "totalMembers": 24,
+        "matchedMembers": 24,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/rvo2",
+        "totalMembers": 18,
+        "matchedMembers": 18,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/sdl",
+        "totalMembers": 288,
+        "matchedMembers": 288,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/spirv-cross",
+        "totalMembers": 26,
+        "matchedMembers": 26,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/vhacd",
+        "totalMembers": 32,
+        "matchedMembers": 32,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/wslay",
+        "totalMembers": 12,
+        "matchedMembers": 12,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/zlib",
+        "totalMembers": 21,
+        "matchedMembers": 21,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/zstd",
+        "totalMembers": 63,
+        "matchedMembers": 63,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "modules/visual_shader/vs_nodes",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "platform/android/api",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "platform/android/export",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "platform/web/export",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "platform/windows/export",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/directx_headers/include",
+        "totalMembers": 25,
+        "matchedMembers": 25,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/embree/common",
+        "totalMembers": 112,
+        "matchedMembers": 112,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/embree/kernels",
+        "totalMembers": 208,
+        "matchedMembers": 208,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/glslang/glslang",
+        "totalMembers": 73,
+        "matchedMembers": 73,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/glslang/SPIRV",
+        "totalMembers": 27,
+        "matchedMembers": 27,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/graphite/src",
+        "totalMembers": 67,
+        "matchedMembers": 67,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/icu4c/common",
+        "totalMembers": 424,
+        "matchedMembers": 424,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/jolt_physics/Jolt",
+        "totalMembers": 430,
+        "matchedMembers": 430,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/libjpeg-turbo/src",
+        "totalMembers": 92,
+        "matchedMembers": 92,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/libtheora/x86_vc",
+        "totalMembers": 13,
+        "matchedMembers": 13,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/libtheora/x86",
+        "totalMembers": 18,
+        "matchedMembers": 18,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/libwebp/sharpyuv",
+        "totalMembers": 12,
+        "matchedMembers": 12,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/libwebp/src",
+        "totalMembers": 164,
+        "matchedMembers": 164,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/linuxbsd_headers/alsa",
+        "totalMembers": 38,
+        "matchedMembers": 38,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/linuxbsd_headers/dbus",
+        "totalMembers": 18,
+        "matchedMembers": 18,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/linuxbsd_headers/pulse",
+        "totalMembers": 32,
+        "matchedMembers": 32,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/linuxbsd_headers/wayland",
+        "totalMembers": 7,
+        "matchedMembers": 7,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/linuxbsd_headers/X11",
+        "totalMembers": 30,
+        "matchedMembers": 30,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/linuxbsd_headers/xkbcommon",
+        "totalMembers": 5,
+        "matchedMembers": 5,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/mbedtls/library",
+        "totalMembers": 53,
+        "matchedMembers": 53,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/mbedtls/tf-psa-crypto",
+        "totalMembers": 208,
+        "matchedMembers": 208,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/metal-cpp/Foundation",
+        "totalMembers": 23,
+        "matchedMembers": 23,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/metal-cpp/Metal",
+        "totalMembers": 97,
+        "matchedMembers": 97,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/metal-cpp/MetalFX",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/metal-cpp/QuartzCore",
+        "totalMembers": 6,
+        "matchedMembers": 6,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/msdfgen/core",
+        "totalMembers": 53,
+        "matchedMembers": 53,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/openxr/src",
+        "totalMembers": 53,
+        "matchedMembers": 53,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/pcre2/src",
+        "totalMembers": 43,
+        "matchedMembers": 43,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/recastnavigation/Recast",
+        "totalMembers": 14,
+        "matchedMembers": 14,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/thorvg/src",
+        "totalMembers": 79,
+        "matchedMembers": 79,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/vulkan/include",
+        "totalMembers": 47,
+        "matchedMembers": 47,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/embree/include/embree4",
+        "totalMembers": 10,
+        "matchedMembers": 10,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/harfbuzz/src/graph",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/mbedtls/include/mbedtls",
+        "totalMembers": 20,
+        "matchedMembers": 20,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/openxr/include/openxr",
+        "totalMembers": 7,
+        "matchedMembers": 7,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/harfbuzz/src/OT/glyf",
+        "totalMembers": 10,
+        "matchedMembers": 10,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/pcre2/deps/sljit/sljit_src",
+        "totalMembers": 33,
+        "matchedMembers": 33,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/harfbuzz/src/OT/Layout/GPOS",
+        "totalMembers": 32,
+        "matchedMembers": 32,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "thirdparty/harfbuzz/src/OT/Layout/GSUB",
+        "totalMembers": 22,
+        "matchedMembers": 22,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "platform/android/java/editor/src/main/java/com/android/apksig",
+        "totalMembers": 118,
+        "matchedMembers": 118,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "platform/android/java/lib/src/main/java/org/godotengine/godot",
+        "totalMembers": 66,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      }
+    ],
+    "e2Trace": [
+      {
+        "detector": "E2",
+        "componentId": "root",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "core",
+        "totalMembers": 451,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "editor",
+        "totalMembers": 638,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "main",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "scene",
+        "totalMembers": 717,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "tests",
+        "totalMembers": 188,
+        "matchedMembers": 188,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "drivers/apple",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "drivers/d3d12",
+        "totalMembers": 14,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "drivers/gles3",
+        "totalMembers": 40,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "drivers/metal",
+        "totalMembers": 21,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "drivers/png",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "drivers/unix",
+        "totalMembers": 16,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "drivers/vulkan",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "drivers/windows",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/astcenc",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/basis_universal",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/bcdec",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/betsy",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/bmp",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/camera",
+        "totalMembers": 14,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/cvtt",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/enet",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/etcpak",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/gdscript",
+        "totalMembers": 64,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/gltf",
+        "totalMembers": 68,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/godot_physics_2d",
+        "totalMembers": 33,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/godot_physics_3d",
+        "totalMembers": 47,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/hdr",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/jolt_physics",
+        "totalMembers": 91,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/jpg",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/jsonrpc",
+        "totalMembers": 8,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/ktx",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/lightmapper_rd",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/mobile_vr",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/mono",
+        "totalMembers": 53,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/multiplayer",
+        "totalMembers": 27,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/navigation_2d",
+        "totalMembers": 37,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/navigation_3d",
+        "totalMembers": 41,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/noise",
+        "totalMembers": 16,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/objectdb_profiler",
+        "totalMembers": 25,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/ogg",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/openxr",
+        "totalMembers": 151,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/raycast",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/svg",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/text_server_fb",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/tga",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/tilemap",
+        "totalMembers": 29,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/tinyexr",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/upnp",
+        "totalMembers": 11,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/webp",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/webrtc",
+        "totalMembers": 18,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/websocket",
+        "totalMembers": 17,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/zip",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "servers/audio",
+        "totalMembers": 57,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "servers/display",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "servers/navigation_2d",
+        "totalMembers": 11,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "servers/navigation_3d",
+        "totalMembers": 11,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "servers/physics_2d",
+        "totalMembers": 27,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "servers/physics_3d",
+        "totalMembers": 28,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "servers/rendering",
+        "totalMembers": 189,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "servers/text",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "servers/xr",
+        "totalMembers": 22,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/amd-fsr2",
+        "totalMembers": 37,
+        "matchedMembers": 37,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/astcenc",
+        "totalMembers": 34,
+        "matchedMembers": 34,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/basis_universal",
+        "totalMembers": 71,
+        "matchedMembers": 71,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/brotli",
+        "totalMembers": 32,
+        "matchedMembers": 32,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/clipper2",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/cvtt",
+        "totalMembers": 33,
+        "matchedMembers": 33,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/enet",
+        "totalMembers": 17,
+        "matchedMembers": 17,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/etcpak",
+        "totalMembers": 14,
+        "matchedMembers": 14,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/freetype",
+        "totalMembers": 463,
+        "matchedMembers": 463,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/glad",
+        "totalMembers": 8,
+        "matchedMembers": 8,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/libbacktrace",
+        "totalMembers": 17,
+        "matchedMembers": 17,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/libktx",
+        "totalMembers": 41,
+        "matchedMembers": 41,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/libogg",
+        "totalMembers": 6,
+        "matchedMembers": 6,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/libpng",
+        "totalMembers": 31,
+        "matchedMembers": 31,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/libvorbis",
+        "totalMembers": 70,
+        "matchedMembers": 70,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/manifold",
+        "totalMembers": 39,
+        "matchedMembers": 39,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/meshoptimizer",
+        "totalMembers": 21,
+        "matchedMembers": 21,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/mingw-std-threads",
+        "totalMembers": 5,
+        "matchedMembers": 5,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/miniupnpc",
+        "totalMembers": 34,
+        "matchedMembers": 34,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/minizip",
+        "totalMembers": 9,
+        "matchedMembers": 9,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/misc",
+        "totalMembers": 24,
+        "matchedMembers": 24,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/rvo2",
+        "totalMembers": 18,
+        "matchedMembers": 18,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/sdl",
+        "totalMembers": 288,
+        "matchedMembers": 288,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/spirv-cross",
+        "totalMembers": 26,
+        "matchedMembers": 26,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/vhacd",
+        "totalMembers": 32,
+        "matchedMembers": 32,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/wslay",
+        "totalMembers": 12,
+        "matchedMembers": 12,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/zlib",
+        "totalMembers": 21,
+        "matchedMembers": 21,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/zstd",
+        "totalMembers": 63,
+        "matchedMembers": 63,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "modules/visual_shader/vs_nodes",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "platform/android/api",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "platform/android/export",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "platform/web/export",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "platform/windows/export",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/directx_headers/include",
+        "totalMembers": 25,
+        "matchedMembers": 25,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/embree/common",
+        "totalMembers": 112,
+        "matchedMembers": 112,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/embree/kernels",
+        "totalMembers": 208,
+        "matchedMembers": 208,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/glslang/glslang",
+        "totalMembers": 73,
+        "matchedMembers": 73,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/glslang/SPIRV",
+        "totalMembers": 27,
+        "matchedMembers": 27,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/graphite/src",
+        "totalMembers": 67,
+        "matchedMembers": 67,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/icu4c/common",
+        "totalMembers": 424,
+        "matchedMembers": 424,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/jolt_physics/Jolt",
+        "totalMembers": 430,
+        "matchedMembers": 430,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/libjpeg-turbo/src",
+        "totalMembers": 92,
+        "matchedMembers": 92,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/libtheora/x86_vc",
+        "totalMembers": 13,
+        "matchedMembers": 13,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/libtheora/x86",
+        "totalMembers": 18,
+        "matchedMembers": 18,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/libwebp/sharpyuv",
+        "totalMembers": 12,
+        "matchedMembers": 12,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/libwebp/src",
+        "totalMembers": 164,
+        "matchedMembers": 164,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/linuxbsd_headers/alsa",
+        "totalMembers": 38,
+        "matchedMembers": 38,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/linuxbsd_headers/pulse",
+        "totalMembers": 32,
+        "matchedMembers": 32,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/linuxbsd_headers/X11",
+        "totalMembers": 30,
+        "matchedMembers": 30,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/mbedtls/library",
+        "totalMembers": 53,
+        "matchedMembers": 53,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/mbedtls/tf-psa-crypto",
+        "totalMembers": 208,
+        "matchedMembers": 208,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/metal-cpp/Foundation",
+        "totalMembers": 23,
+        "matchedMembers": 23,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/metal-cpp/Metal",
+        "totalMembers": 97,
+        "matchedMembers": 97,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/metal-cpp/MetalFX",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/metal-cpp/QuartzCore",
+        "totalMembers": 6,
+        "matchedMembers": 6,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/msdfgen/core",
+        "totalMembers": 53,
+        "matchedMembers": 53,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/openxr/src",
+        "totalMembers": 53,
+        "matchedMembers": 53,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/pcre2/src",
+        "totalMembers": 43,
+        "matchedMembers": 43,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/recastnavigation/Recast",
+        "totalMembers": 14,
+        "matchedMembers": 14,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/thorvg/src",
+        "totalMembers": 79,
+        "matchedMembers": 79,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/vulkan/include",
+        "totalMembers": 47,
+        "matchedMembers": 47,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/embree/include/embree4",
+        "totalMembers": 10,
+        "matchedMembers": 10,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/harfbuzz/src/graph",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/mbedtls/include/mbedtls",
+        "totalMembers": 20,
+        "matchedMembers": 20,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/openxr/include/openxr",
+        "totalMembers": 7,
+        "matchedMembers": 7,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/harfbuzz/src/OT/glyf",
+        "totalMembers": 10,
+        "matchedMembers": 10,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/pcre2/deps/sljit/sljit_src",
+        "totalMembers": 33,
+        "matchedMembers": 33,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/harfbuzz/src/OT/Layout/GPOS",
+        "totalMembers": 32,
+        "matchedMembers": 32,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "thirdparty/harfbuzz/src/OT/Layout/GSUB",
+        "totalMembers": 22,
+        "matchedMembers": 22,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "platform/android/java/editor/src/main/java/com/android/apksig",
+        "totalMembers": 118,
+        "matchedMembers": 118,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "platform/android/java/lib/src/main/java/org/godotengine/godot",
+        "totalMembers": 66,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      }
+    ]
+  },
+  "vscode": {
+    "label": "VS Code",
+    "a1Trace": [
+      {
+        "detector": "A1",
+        "componentId": "cli/src",
+        "totalMembers": 74,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/css-language-features",
+        "totalMembers": 28,
+        "matchedMembers": 28,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/html-language-features",
+        "totalMembers": 49,
+        "matchedMembers": 49,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/ipynb",
+        "totalMembers": 22,
+        "matchedMembers": 22,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/json-language-features",
+        "totalMembers": 17,
+        "matchedMembers": 17,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/media-preview",
+        "totalMembers": 15,
+        "matchedMembers": 15,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/mermaid-markdown-features",
+        "totalMembers": 22,
+        "matchedMembers": 22,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/microsoft-authentication",
+        "totalMembers": 29,
+        "matchedMembers": 29,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "test/automation",
+        "totalMembers": 35,
+        "matchedMembers": 35,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "test/mcp",
+        "totalMembers": 27,
+        "matchedMembers": 27,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "test/sanity",
+        "totalMembers": 16,
+        "matchedMembers": 16,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/configuration-editing/src",
+        "totalMembers": 9,
+        "matchedMembers": 9,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/emmet/src",
+        "totalMembers": 44,
+        "matchedMembers": 44,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/extension-editing/src",
+        "totalMembers": 8,
+        "matchedMembers": 8,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/git-base/src",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/git/src",
+        "totalMembers": 60,
+        "matchedMembers": 60,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/github-authentication/src",
+        "totalMembers": 22,
+        "matchedMembers": 22,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/github/src",
+        "totalMembers": 20,
+        "matchedMembers": 20,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/markdown-language-features/preview-src",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/markdown-language-features/src",
+        "totalMembers": 73,
+        "matchedMembers": 73,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/merge-conflict/src",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/notebook-renderers/src",
+        "totalMembers": 13,
+        "matchedMembers": 13,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/npm/src",
+        "totalMembers": 12,
+        "matchedMembers": 12,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/php-language-features/src",
+        "totalMembers": 10,
+        "matchedMembers": 10,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/references-view/src",
+        "totalMembers": 12,
+        "matchedMembers": 12,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/terminal-suggest/src",
+        "totalMembers": 182,
+        "matchedMembers": 182,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/typescript-language-features/src",
+        "totalMembers": 148,
+        "matchedMembers": 148,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/base",
+        "totalMembers": 472,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/editor",
+        "totalMembers": 858,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/sessions",
+        "totalMembers": 387,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/platform",
+        "totalMembers": 559,
+        "matchedMembers": 559,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/typescript-language-features/web/src",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/agentHost",
+        "totalMembers": 1020,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/browserView",
+        "totalMembers": 34,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/configuration",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/environment",
+        "totalMembers": 15,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/extensionManagement",
+        "totalMembers": 38,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/externalTerminal",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/files",
+        "totalMembers": 48,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/instantiation",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/keybinding",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/mcp",
+        "totalMembers": 23,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/meteredConnection",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/networkFilter",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/otel",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/policy",
+        "totalMembers": 14,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/profiling",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/quickinput",
+        "totalMembers": 25,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/remote",
+        "totalMembers": 19,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/sandbox",
+        "totalMembers": 16,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/telemetry",
+        "totalMembers": 26,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/terminal",
+        "totalMembers": 47,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/theme",
+        "totalMembers": 25,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/userDataSync",
+        "totalMembers": 52,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/webContentExtractor",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/server/node",
+        "totalMembers": 20,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/api",
+        "totalMembers": 314,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/browser",
+        "totalMembers": 113,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/services",
+        "totalMembers": 586,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/byok",
+        "totalMembers": 34,
+        "matchedMembers": 34,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/chatSessions",
+        "totalMembers": 256,
+        "matchedMembers": 256,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/chronicle",
+        "totalMembers": 27,
+        "matchedMembers": 27,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/inlineEdits",
+        "totalMembers": 73,
+        "matchedMembers": 73,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/linkify",
+        "totalMembers": 24,
+        "matchedMembers": 24,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/onboardDebug",
+        "totalMembers": 18,
+        "matchedMembers": 18,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/tools",
+        "totalMembers": 115,
+        "matchedMembers": 115,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/xtab",
+        "totalMembers": 35,
+        "matchedMembers": 35,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/shared-fetch-utils/common",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/actions/browser",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/log/common",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/update/electron-main",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/url/common",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/platform/windows/electron-main",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/common/editor",
+        "totalMembers": 14,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/browserView",
+        "totalMembers": 43,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/chat",
+        "totalMembers": 734,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/comments",
+        "totalMembers": 34,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/debug",
+        "totalMembers": 101,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/editTelemetry",
+        "totalMembers": 25,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/mcp",
+        "totalMembers": 76,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/mergeEditor",
+        "totalMembers": 36,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/notebook",
+        "totalMembers": 244,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/onboarding",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/search",
+        "totalMembers": 59,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/tasks",
+        "totalMembers": 24,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/terminal",
+        "totalMembers": 120,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/testing",
+        "totalMembers": 71,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/agents/vscode-node",
+        "totalMembers": 14,
+        "matchedMembers": 14,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/completions-core/vscode-node",
+        "totalMembers": 344,
+        "matchedMembers": 344,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/mcp/vscode-node",
+        "totalMembers": 6,
+        "matchedMembers": 6,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/prompt/common",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/prompts/node",
+        "totalMembers": 202,
+        "matchedMembers": 202,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/typescriptContext/vscode-node",
+        "totalMembers": 5,
+        "matchedMembers": 5,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/workspaceRecorder/vscode-node",
+        "totalMembers": 6,
+        "matchedMembers": 6,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/util/vs/workbench",
+        "totalMembers": 15,
+        "matchedMembers": 15,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/accessibility/browser",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/accessibilitySignals/browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/codeEditor/electron-browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/customEditor/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/customEditor/common",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/extensions/browser",
+        "totalMembers": 31,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/extensions/common",
+        "totalMembers": 8,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/extensions/electron-browser",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/inlineChat/browser",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/interactive/browser",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/issue/browser",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/issue/electron-browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/localHistory/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/markers/browser",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/multiDiffEditor/browser",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/outline/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/output/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/performance/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/preferences/browser",
+        "totalMembers": 20,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/processExplorer/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/remote/browser",
+        "totalMembers": 13,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/scm/browser",
+        "totalMembers": 20,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/scm/common",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/searchEditor/browser",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/surveys/browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/chatAgentTools",
+        "totalMembers": 95,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/links",
+        "totalMembers": 26,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/update/browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/url/browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/userDataProfile/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/userDataSync/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/webview/electron-browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/webviewPanel/browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/welcomeGettingStarted/browser",
+        "totalMembers": 11,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/intents/node/testIntent",
+        "totalMembers": 9,
+        "matchedMembers": 9,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/typescriptContext/serverPlugin/src",
+        "totalMembers": 25,
+        "matchedMembers": 25,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/util/vs/editor/common",
+        "totalMembers": 30,
+        "matchedMembers": 30,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/agentsVoice/browser/components",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/files/browser/editors",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/files/browser/views",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/snippets/browser/commands",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/accessibility/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/chat/browser",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/quickFix/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/suggest/browser",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/util/vs/base/common/observableInternal",
+        "totalMembers": 36,
+        "matchedMembers": 36,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/util/vs/platform/instantiation/common",
+        "totalMembers": 5,
+        "matchedMembers": 5,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p4/source",
+        "totalMembers": 5,
+        "matchedMembers": 5,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "A1",
+        "componentId": "extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src",
+        "totalMembers": 9,
+        "matchedMembers": 9,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      }
+    ],
+    "e2Trace": [
+      {
+        "detector": "E2",
+        "componentId": "cli/src",
+        "totalMembers": 74,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/css-language-features",
+        "totalMembers": 28,
+        "matchedMembers": 28,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/html-language-features",
+        "totalMembers": 49,
+        "matchedMembers": 49,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/ipynb",
+        "totalMembers": 22,
+        "matchedMembers": 22,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/json-language-features",
+        "totalMembers": 17,
+        "matchedMembers": 17,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/media-preview",
+        "totalMembers": 15,
+        "matchedMembers": 15,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/mermaid-markdown-features",
+        "totalMembers": 22,
+        "matchedMembers": 22,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/microsoft-authentication",
+        "totalMembers": 29,
+        "matchedMembers": 29,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "test/automation",
+        "totalMembers": 35,
+        "matchedMembers": 35,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "test/mcp",
+        "totalMembers": 27,
+        "matchedMembers": 27,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "test/sanity",
+        "totalMembers": 16,
+        "matchedMembers": 16,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/configuration-editing/src",
+        "totalMembers": 9,
+        "matchedMembers": 9,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/emmet/src",
+        "totalMembers": 44,
+        "matchedMembers": 44,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/extension-editing/src",
+        "totalMembers": 8,
+        "matchedMembers": 8,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/git-base/src",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/git/src",
+        "totalMembers": 60,
+        "matchedMembers": 60,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/github-authentication/src",
+        "totalMembers": 22,
+        "matchedMembers": 22,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/github/src",
+        "totalMembers": 20,
+        "matchedMembers": 20,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/markdown-language-features/preview-src",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/markdown-language-features/src",
+        "totalMembers": 73,
+        "matchedMembers": 73,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/merge-conflict/src",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/notebook-renderers/src",
+        "totalMembers": 13,
+        "matchedMembers": 13,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/npm/src",
+        "totalMembers": 12,
+        "matchedMembers": 12,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/php-language-features/src",
+        "totalMembers": 10,
+        "matchedMembers": 10,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/references-view/src",
+        "totalMembers": 12,
+        "matchedMembers": 12,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/terminal-suggest/src",
+        "totalMembers": 182,
+        "matchedMembers": 182,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/typescript-language-features/src",
+        "totalMembers": 148,
+        "matchedMembers": 148,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/base",
+        "totalMembers": 472,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/editor",
+        "totalMembers": 858,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/sessions",
+        "totalMembers": 387,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/platform",
+        "totalMembers": 559,
+        "matchedMembers": 559,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/typescript-language-features/web/src",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/agentHost",
+        "totalMembers": 1020,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/browserView",
+        "totalMembers": 34,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/configuration",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/environment",
+        "totalMembers": 15,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/extensionManagement",
+        "totalMembers": 38,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/externalTerminal",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/files",
+        "totalMembers": 48,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/instantiation",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/keybinding",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/mcp",
+        "totalMembers": 23,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/meteredConnection",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/networkFilter",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/otel",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/policy",
+        "totalMembers": 14,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/profiling",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/quickinput",
+        "totalMembers": 25,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/remote",
+        "totalMembers": 19,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/sandbox",
+        "totalMembers": 16,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/telemetry",
+        "totalMembers": 26,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/terminal",
+        "totalMembers": 47,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/theme",
+        "totalMembers": 25,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/userDataSync",
+        "totalMembers": 52,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/webContentExtractor",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/server/node",
+        "totalMembers": 20,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/api",
+        "totalMembers": 314,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/browser",
+        "totalMembers": 113,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/services",
+        "totalMembers": 586,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/byok",
+        "totalMembers": 34,
+        "matchedMembers": 34,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/chatSessions",
+        "totalMembers": 256,
+        "matchedMembers": 256,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/chronicle",
+        "totalMembers": 27,
+        "matchedMembers": 27,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/inlineEdits",
+        "totalMembers": 73,
+        "matchedMembers": 73,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/linkify",
+        "totalMembers": 24,
+        "matchedMembers": 24,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/onboardDebug",
+        "totalMembers": 18,
+        "matchedMembers": 18,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/tools",
+        "totalMembers": 115,
+        "matchedMembers": 115,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/xtab",
+        "totalMembers": 35,
+        "matchedMembers": 35,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/shared-fetch-utils/common",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/actions/browser",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/log/common",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/update/electron-main",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/url/common",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/platform/windows/electron-main",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/common/editor",
+        "totalMembers": 14,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/browserView",
+        "totalMembers": 43,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/chat",
+        "totalMembers": 734,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/comments",
+        "totalMembers": 34,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/debug",
+        "totalMembers": 101,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/editTelemetry",
+        "totalMembers": 25,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/mcp",
+        "totalMembers": 76,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/mergeEditor",
+        "totalMembers": 36,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/notebook",
+        "totalMembers": 244,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/onboarding",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/search",
+        "totalMembers": 59,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/tasks",
+        "totalMembers": 24,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/terminal",
+        "totalMembers": 120,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/testing",
+        "totalMembers": 71,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/agents/vscode-node",
+        "totalMembers": 14,
+        "matchedMembers": 14,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/completions-core/vscode-node",
+        "totalMembers": 344,
+        "matchedMembers": 344,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/mcp/vscode-node",
+        "totalMembers": 6,
+        "matchedMembers": 6,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/prompt/common",
+        "totalMembers": 11,
+        "matchedMembers": 11,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/prompts/node",
+        "totalMembers": 202,
+        "matchedMembers": 202,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/typescriptContext/vscode-node",
+        "totalMembers": 5,
+        "matchedMembers": 5,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/workspaceRecorder/vscode-node",
+        "totalMembers": 6,
+        "matchedMembers": 6,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/util/vs/workbench",
+        "totalMembers": 15,
+        "matchedMembers": 15,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/accessibility/browser",
+        "totalMembers": 10,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/accessibilitySignals/browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/codeEditor/electron-browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/customEditor/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/customEditor/common",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/extensions/browser",
+        "totalMembers": 31,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/extensions/common",
+        "totalMembers": 8,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/extensions/electron-browser",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/inlineChat/browser",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/interactive/browser",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/issue/browser",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/issue/electron-browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/localHistory/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/markers/browser",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/multiDiffEditor/browser",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/outline/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/output/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/performance/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/preferences/browser",
+        "totalMembers": 20,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/processExplorer/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/remote/browser",
+        "totalMembers": 13,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/scm/browser",
+        "totalMembers": 20,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/scm/common",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/searchEditor/browser",
+        "totalMembers": 7,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/surveys/browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/chatAgentTools",
+        "totalMembers": 95,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/links",
+        "totalMembers": 26,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/update/browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/url/browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/userDataProfile/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/userDataSync/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/webview/electron-browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/webviewPanel/browser",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/welcomeGettingStarted/browser",
+        "totalMembers": 11,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/intents/node/testIntent",
+        "totalMembers": 9,
+        "matchedMembers": 9,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/typescriptContext/serverPlugin/src",
+        "totalMembers": 25,
+        "matchedMembers": 25,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/util/vs/editor/common",
+        "totalMembers": 30,
+        "matchedMembers": 30,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/agentsVoice/browser/components",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/files/browser/editors",
+        "totalMembers": 6,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/files/browser/views",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/snippets/browser/commands",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/accessibility/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/chat/browser",
+        "totalMembers": 9,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/quickFix/browser",
+        "totalMembers": 5,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "src/vs/workbench/contrib/terminalContrib/suggest/browser",
+        "totalMembers": 12,
+        "matchedMembers": 0,
+        "matchClassification": "ZERO_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": true
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/util/vs/base/common/observableInternal",
+        "totalMembers": 36,
+        "matchedMembers": 36,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/util/vs/platform/instantiation/common",
+        "totalMembers": 5,
+        "matchedMembers": 5,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/p4/source",
+        "totalMembers": 5,
+        "matchedMembers": 5,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      },
+      {
+        "detector": "E2",
+        "componentId": "extensions/copilot/src/extension/typescriptContext/serverPlugin/fixtures/context/testbed/src",
+        "totalMembers": 9,
+        "matchedMembers": 9,
+        "matchClassification": "FULL_MATCH",
+        "eligibilityBefore": true,
+        "eligibilityAfter": false
+      }
+    ]
+  }
+}

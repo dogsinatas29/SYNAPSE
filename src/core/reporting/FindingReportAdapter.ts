@@ -29,7 +29,11 @@ export class FindingReportAdapter {
                     }
                 }
                 const basis = f.selectionBasis || ev.selectionBasis || (typeof ev.predicate === 'string' ? ev.predicate : JSON.stringify(ev.predicate)) || 'No selection basis provided by detector';
-                evidenceStr = `\n  - Observed: ${metrics}\n  - Selection Basis: ${basis}`;
+                evidenceStr = `\n  - Observed: ${metrics}`;
+                if (ev.metadata?.scopeStatus) {
+                    evidenceStr += `\n  - Scope Status: ${ev.metadata.scopeStatus}`;
+                }
+                evidenceStr += `\n  - Selection Basis: ${basis}`;
             }
             
             content += `- **Target**: \`${targetName}\`${evidenceStr}\n`;
@@ -102,8 +106,13 @@ export class FindingReportAdapter {
             uniqueE2.set(key, f);
         }
         const e2Count = uniqueE2.size;
-        const e2Total = e2Findings[0]?.evidence?.[0]?.metadata?.totalCandidates;
-        const e2TotalStr = e2Total ? ` (${e2Count} selected / ${e2Total} candidates)` : '';
+        const e2Meta = e2Findings[0]?.evidence?.[0]?.metadata;
+        let e2TotalStr = '';
+        if (e2Meta?.hasScopeExclusions) {
+            e2TotalStr = e2Meta.eligibleCandidates !== undefined ? ` (${e2Count} selected / ${e2Meta.eligibleCandidates} eligible candidates)` : '';
+        } else if (e2Meta?.totalCandidates) {
+            e2TotalStr = ` (${e2Count} selected / ${e2Meta.totalCandidates} candidates)`;
+        }
         
         if (e2Count > 0) {
             contentE2 += `Finding:\nTop 10% change propagation amplifiers observed${e2TotalStr}.\n\n`;
@@ -144,8 +153,13 @@ export class FindingReportAdapter {
             uniqueA1.set(key, f);
         }
         const a1Count = uniqueA1.size;
-        const a1Total = a1Findings[0]?.evidence?.[0]?.metadata?.totalCandidates;
-        const a1TotalStr = a1Total ? ` (${a1Count} selected / ${a1Total} candidates)` : '';
+        const a1Meta = a1Findings[0]?.evidence?.[0]?.metadata;
+        let a1TotalStr = '';
+        if (a1Meta?.hasScopeExclusions) {
+            a1TotalStr = a1Meta.eligibleCandidates !== undefined ? ` (${a1Count} selected / ${a1Meta.eligibleCandidates} eligible candidates)` : '';
+        } else if (a1Meta?.totalCandidates) {
+            a1TotalStr = ` (${a1Count} selected / ${a1Meta.totalCandidates} candidates)`;
+        }
         
         if (a1Count > 0) {
             contentA1 += `Finding:\nTop 10% system cores observed${a1TotalStr}.\n\n`;

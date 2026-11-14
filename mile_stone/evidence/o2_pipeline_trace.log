@@ -1,0 +1,78 @@
+npm notice run synapse-visual-architecture@0.3.34 npx
+npm notice run 'ts-node' scripts/verify_o2_pipeline.ts
+=== Starting Automated O2 Independent Verification Suite ===
+
+===============================================================
+=== O2 Pipeline Independent Trace & Differential Validation: Godot Engine ===
+Data Source: /home/dogsinatas/다운로드/godot-master/synapse_data/project_state.json
+[PASS] Godot Engine: Snapshot nodes === 9876
+[PASS] Godot Engine: Valid physical nodes === 8917
+[PASS] Godot Engine: Strict roots === 842
+[PASS] Godot Engine: Test role drop === 9
+[PASS] Godot Engine: C_universe === 833
+[PASS] Godot Engine: Scope excluded === 504
+[PASS] Godot Engine: C_eligible === 329
+[ENTRY_POINT_DETECTOR] Excluded 9 test-role nodes from DEPENDENCY_ROOT candidates.
+[ENTRY_POINT_DETECTOR] Excluded 504 nodes matching scopeExclusions.
+[PASS] Godot Engine: Production detector findings count === 5
+[PASS] Godot Engine Top #1 Candidate ID match: "editor/import/3d/post_import_plugin_skeleton_rest_fixer.cpp" === "editor/import/3d/post_import_plugin_skeleton_rest_fixer.cpp"
+[PASS] Godot Engine Top #1 matches Expected Baseline ID: "editor/import/3d/post_import_plugin_skeleton_rest_fixer.cpp"
+[PASS] Godot Engine Top #2 Candidate ID match: "scene/3d/physics/static_body_3d.cpp" === "scene/3d/physics/static_body_3d.cpp"
+[PASS] Godot Engine Top #2 matches Expected Baseline ID: "scene/3d/physics/static_body_3d.cpp"
+[PASS] Godot Engine Top #3 Candidate ID match: "scene/gui/menu_button.cpp" === "scene/gui/menu_button.cpp"
+[PASS] Godot Engine Top #3 matches Expected Baseline ID: "scene/gui/menu_button.cpp"
+[PASS] Godot Engine Top #4 Candidate ID match: "drivers/gles3/storage/utilities.cpp" === "drivers/gles3/storage/utilities.cpp"
+[PASS] Godot Engine Top #4 matches Expected Baseline ID: "drivers/gles3/storage/utilities.cpp"
+[PASS] Godot Engine Top #5 Candidate ID match: "editor/themes/theme_classic.cpp" === "editor/themes/theme_classic.cpp"
+[PASS] Godot Engine Top #5 matches Expected Baseline ID: "editor/themes/theme_classic.cpp"
+[PASS] Godot Engine: Legacy Fallback was NOT triggered on real codebase (Strict Roots exist: 842 > 0)
+[PASS] Godot Engine: Legacy detector candidate count (329) === Expected eligible (329)
+[PASS] Godot Engine: Full Candidate ID Set Delta === 0 (All 329 IDs match 100% between strict root and legacy fallback)
+[PASS] Godot Engine: Legacy Top #1 ("editor/import/3d/post_import_plugin_skeleton_rest_fixer.cpp") === Production Top #1 ("editor/import/3d/post_import_plugin_skeleton_rest_fixer.cpp")
+[PASS] Godot Engine: Legacy Top #2 ("scene/3d/physics/static_body_3d.cpp") === Production Top #2 ("scene/3d/physics/static_body_3d.cpp")
+[PASS] Godot Engine: Legacy Top #3 ("scene/gui/menu_button.cpp") === Production Top #3 ("scene/gui/menu_button.cpp")
+[PASS] Godot Engine: Legacy Top #4 ("drivers/gles3/storage/utilities.cpp") === Production Top #4 ("drivers/gles3/storage/utilities.cpp")
+[PASS] Godot Engine: Legacy Top #5 ("editor/themes/theme_classic.cpp") === Production Top #5 ("editor/themes/theme_classic.cpp")
+
+===============================================================
+=== O2 Pipeline Independent Trace & Differential Validation: VS Code ===
+Data Source: /home/dogsinatas/다운로드/vscode/vscode-main/synapse_data/project_state.json
+[PASS] VS Code: Snapshot nodes === 14748
+[PASS] VS Code: Valid physical nodes === 11274
+[PASS] VS Code: Strict roots === 2621
+[PASS] VS Code: Test role drop === 2032
+[PASS] VS Code: C_universe === 589
+[PASS] VS Code: Scope excluded === 159
+[PASS] VS Code: C_eligible === 430
+[ENTRY_POINT_DETECTOR] Excluded 2032 test-role nodes from DEPENDENCY_ROOT candidates.
+[ENTRY_POINT_DETECTOR] Excluded 159 nodes matching scopeExclusions.
+[PASS] VS Code: Production detector findings count === 5
+[PASS] VS Code Top #1 Candidate ID match: "src/vs/workbench/workbench.common.main.ts" === "src/vs/workbench/workbench.common.main.ts"
+[PASS] VS Code Top #1 matches Expected Baseline ID: "src/vs/workbench/workbench.common.main.ts"
+[PASS] VS Code Top #2 Candidate ID match: "src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts" === "src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts"
+[PASS] VS Code Top #2 matches Expected Baseline ID: "src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts"
+[PASS] VS Code Top #3 Candidate ID match: "src/vs/sessions/sessions.common.main.ts" === "src/vs/sessions/sessions.common.main.ts"
+[PASS] VS Code Top #3 matches Expected Baseline ID: "src/vs/sessions/sessions.common.main.ts"
+[PASS] VS Code Top #4 Candidate ID match: "src/vs/workbench/api/browser/extensionHost.contribution.ts" === "src/vs/workbench/api/browser/extensionHost.contribution.ts"
+[PASS] VS Code Top #4 matches Expected Baseline ID: "src/vs/workbench/api/browser/extensionHost.contribution.ts"
+[PASS] VS Code Top #5 Candidate ID match: "src/vs/platform/agentHost/node/codex/protocol/generated/index.ts" === "src/vs/platform/agentHost/node/codex/protocol/generated/index.ts"
+[PASS] VS Code Top #5 matches Expected Baseline ID: "src/vs/platform/agentHost/node/codex/protocol/generated/index.ts"
+[PASS] VS Code: Legacy Fallback was NOT triggered on real codebase (Strict Roots exist: 2621 > 0)
+[PASS] VS Code: Legacy detector candidate count (430) === Expected eligible (430)
+[PASS] VS Code: Full Candidate ID Set Delta === 0 (All 430 IDs match 100% between strict root and legacy fallback)
+[PASS] VS Code: Legacy Top #1 ("src/vs/workbench/workbench.common.main.ts") === Production Top #1 ("src/vs/workbench/workbench.common.main.ts")
+[PASS] VS Code: Legacy Top #2 ("src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts") === Production Top #2 ("src/vs/code/electron-utility/sharedProcess/sharedProcessMain.ts")
+[PASS] VS Code: Legacy Top #3 ("src/vs/sessions/sessions.common.main.ts") === Production Top #3 ("src/vs/sessions/sessions.common.main.ts")
+[PASS] VS Code: Legacy Top #4 ("src/vs/workbench/api/browser/extensionHost.contribution.ts") === Production Top #4 ("src/vs/workbench/api/browser/extensionHost.contribution.ts")
+[PASS] VS Code: Legacy Top #5 ("src/vs/platform/agentHost/node/codex/protocol/generated/index.ts") === Production Top #5 ("src/vs/platform/agentHost/node/codex/protocol/generated/index.ts")
+
+===============================================================
+=== O2 Synthetic Rootless Graph Verification (Side-by-Side Execution) ===
+[PASS] Rootless Graph [Production Strict Root]: Returns exactly 0 findings (no false positive promotion)
+[PASS] Rootless Graph [Legacy Detector]: Fallback was TRIGGERED as fanIn=0 candidates were 0
+[PASS] Rootless Graph [Legacy Detector]: Falsely promoted all 3 cyclic nodes as entry points
+[PASS] Rootless Graph [Legacy Detector]: Emitted 3 invalid findings for cyclic non-root nodes
+[PROOF] Concrete execution difference: Legacy Fallback emits 3 false positives on cyclic graph, while Production Strict Root safely returns 0.
+
+===============================================================
+=== All Automated O2 Assertions & Cross-Checks PASSED (Total: 56) ===

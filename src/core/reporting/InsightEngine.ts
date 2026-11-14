@@ -282,6 +282,10 @@ export class InsightEngine {
 
 `;
 
+        if ((contract as any).scopeHeader) {
+            md += `${(contract as any).scopeHeader}\n\n`;
+        }
+
         md += `## Executive Summary\n\n${contract.summary}\n\n`;
 
         md += `## Findings\n\n`;

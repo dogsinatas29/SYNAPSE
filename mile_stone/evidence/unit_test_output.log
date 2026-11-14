@@ -1,0 +1,67 @@
+npm notice run synapse-visual-architecture@0.3.34 npx
+npm notice run 'ts-node' scripts/test_scope_resolver.ts
+=== Running ScopeResolver Contract Unit Tests ===
+PASS: ** matches main.ts
+PASS: ** matches src/main.ts
+PASS: ** matches src/core/main.ts
+PASS: foo/*/bar.ts matches foo/a/bar.ts
+PASS: foo/*/bar.ts does NOT match foo/bar.ts
+PASS: foo/*/bar.ts does NOT match foo/a/b/bar.ts (* cannot cross /)
+PASS: src/*.ts matches src/index.ts
+PASS: src/*.ts does NOT match src/index.js
+PASS: src/*.ts does NOT cross directory boundary
+PASS: foo/**/bar.ts matches foo/bar.ts (0 skip)
+PASS: foo/**/bar.ts matches foo/a/bar.ts (1 skip)
+PASS: foo/**/bar.ts matches foo/a/b/bar.ts (multiple skip)
+PASS: **/foo matches root foo
+PASS: **/foo matches a/b/foo
+PASS: foo/** matches direct child
+PASS: foo/** matches deep child
+PASS: Complex multi-** matches Godot apksig file
+PASS: thirdparty/** matches freetype header
+PASS: Case-sensitive test 1
+PASS: Case-sensitive test 2
+PASS: Virtual ghost node is skipped
+PASS: Virtual external node is skipped
+PASS: Virtual stdlib node is skipped
+PASS: Virtual AGGREGATE node is skipped
+PASS: Empty filePath is skipped
+PASS: Undefined/missing filePath is skipped
+PASS: Absolute path node is skipped
+PASS: Relative test path is matched
+PASS: Relative thirdparty path is matched
+PASS: In-house path is not matched
+PASS: Backslash path is normalized and matched
+PASS: Full Match component is marked for exclusion
+PASS: Partial Match component is NOT excluded (candidate eligibility retained)
+PASS: Reject in-segment **: foo**bar
+PASS: Reject triple asterisk: ***
+PASS: Reject redundant recursive wildcard: **/**
+PASS: Reject leading slash: /leading
+PASS: Reject trailing slash: trailing/
+PASS: Reject empty pattern string: ""
+PASS: Reject whitespace only pattern string
+PASS: Reject backslash in glob pattern: foo\bar
+PASS: Reject redundant slashes in pattern: foo//bar
+PASS: Reject directory traversal: foo/../bar
+PASS: Reject unsupported bracket glob: foo[a-z]
+PASS: Reject non-array config
+PASS: Reject non-string array item
+[SCOPE_CONFIG] Loaded scopeExclusions from: VSCODE_SETTINGS (count: 1)
+PASS: VSCode settings wins over synapse.config.json
+[SCOPE_CONFIG] Loaded scopeExclusions from: ENV_VAR (count: 1)
+PASS: ENV_VAR wins over VSCode settings
+[SCOPE_CONFIG] Loaded scopeExclusions from: CLI_FLAG (count: 1)
+PASS: CLI_FLAG wins over ENV_VAR
+[SCOPE_CONFIG] Loaded scopeExclusions from: CLI_FLAG (count: 0)
+PASS: CLI_FLAG with [] stops fallthrough to lower tiers
+[SCOPE_CONFIG] Loaded scopeExclusions from: ENV_VAR (count: 0)
+PASS: ENV_VAR with [] stops fallthrough to VSCode settings
+[FATAL] INVALID_CONFIG: scopeExclusions must be a valid array of strings (Expected property name or '}' in JSON at position 1 (line 1 column 2))
+PASS: Reject invalid JSON in SYNAPSE_SCOPE_EXCLUSIONS environment variable
+PASS: matched/** matched 1 file
+PASS: unmatched/** matched 0 files (triggers [WARN] UNMATCHED)
+PASS: Hybrid component retains candidate eligibility (not excluded by Full Match rule)
+PASS: Hybrid component metadata.scopeStatus matches format "Partially Excluded (Eligible: 2/3, Excluded: 1/3)"
+PASS: Report Markdown renders "- Scope Status: Partially Excluded (Eligible: 2/3, Excluded: 1/3)"
+=== All ScopeResolver Unit Tests Passed! ===

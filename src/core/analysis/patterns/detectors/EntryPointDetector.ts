@@ -4,6 +4,7 @@ import { PatternFinding } from '../PatternFinding';
 import { PatternId } from '../PatternId';
 import { EvidenceItem } from '../EvidenceItem';
 import { NodeRole } from '../../../../types/schema';
+import { ScopeResolver } from '../../ScopeResolver';
 
 export class EntryPointDetector implements PatternDetector {
     
@@ -59,10 +60,29 @@ export class EntryPointDetector implements PatternDetector {
             console.log(`[ENTRY_POINT_DETECTOR] Excluded ${excludedTestCount} test-role nodes from DEPENDENCY_ROOT candidates.`);
         }
 
-        // Fallback if no strict fanIn=0 exists (unlikely but possible in cyclic roots)
-        if (execCandidates.length === 0) {
-            execCandidates = validNodes.filter((n: any) => n.fanOut > 0);
+        // Fallback removed per Phase A v1.0.12 contract: Strict roots only.
+
+        // Declared Scope Exclusion (Phase A)
+        // Applied BEFORE Top 5 slice so Top 5 roots are populated from eligible candidates
+        const scopeResolver: ScopeResolver = context?.scopeResolver || ScopeResolver.loadConfig(context?.workspaceRoot);
+        const universeNodes = execCandidates.length;
+        let excludedByScopeCount = 0;
+
+        if (scopeResolver && scopeResolver.hasExclusions()) {
+            execCandidates = execCandidates.filter((n: any) => {
+                const p = n.filePath || n.id;
+                if (scopeResolver.matches(p)) {
+                    excludedByScopeCount++;
+                    return false;
+                }
+                return true;
+            });
+            if (excludedByScopeCount > 0) {
+                console.log(`[ENTRY_POINT_DETECTOR] Excluded ${excludedByScopeCount} nodes matching scopeExclusions.`);
+            }
         }
+
+        const eligibleNodes = execCandidates.length;
 
         if (execCandidates.length > 0) {
             execCandidates.sort((a: any, b: any) => {
@@ -85,7 +105,10 @@ export class EntryPointDetector implements PatternDetector {
                     graphNodeId: topExec.id,
                     metadata: {
                         inDegree: topExec.fanIn || 0,
-                        outDegree: topExec.fanOut || 0
+                        outDegree: topExec.fanOut || 0,
+                        universeCandidates: universeNodes,
+                        excludedByScope: excludedByScopeCount,
+                        eligibleCandidates: eligibleNodes
                     },
                     predicate: {
                         condition: topExec.fanIn === 0 ? "STRICT_ROOT" : "FALLBACK_ROOT",

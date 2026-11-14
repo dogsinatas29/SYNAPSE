@@ -16,6 +16,7 @@ async function main() {
         };
     }
     const context = {
+        workspaceRoot: root,
         snapshot,
         metrics: { topImpactFiles: [], systemAssemblyPoints: [] }
     };

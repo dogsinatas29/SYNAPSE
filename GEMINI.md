@@ -565,7 +565,7 @@ LLM Coding Principles:
 7. [Context Confirmation] 맥락 확인: 코드를 수정하기 전 반드시 맥락을 확인하라. 추측해서 때려 맞추지 말고, 누락된 코드나 파일이 있다면 당당하게 요청하라.
 8. [Rendering Isolation] 뷰 격리: 그래프, 파일, 플로 뷰 간 전환 시 WebGL 상태(framebuffer, shader, buffer binding)를 강제 초기화하여 시각적 간섭을 차단하라.
 9. 작업 시작 전 반드시 작업 계획서를 제출하고 승인을 받은 이후에 작업을 진행한다. 문서를 읽고 멋대로 다른 문서를 만들지 않는다. 문서를 읽고 멋대로 작업을 진행하지 않는다. 
-10. [KISS Principle - Zero Regeneration] 재생성 배제 및 원본 보존: 재생성 불가능한 데이터(SSoT, `project_state.json`)는 원본을 100% 영구 보존하고, 모든 분석·시뮬레이션·검증은 복사본(Working Copy)을 가지고 수행한다. 원본 재생성이나 복잡한 롤백/재구성(Reconstruction) 메커니즘을 절대 작성하지 마라. (재생성 불가능한 데이터는 원본 보존, 복사본 작업, 재구성은 불필요) 
+10. [KISS Principle - Zero Regeneration for SSoT] project_state.json 자동 재생성 배제 및 원본 보존: 기존 SSoT(project_state.json)의 손상이나 분석 실패를 복구하기 위한 자동 재생성은 금지한다. 분석 작업은 불변 원본의 복사본(Working Copy)에서 수행하며, 실패한 복사본은 폐기하고 원본에서 다시 생성한다. 원본 재생성이나 복잡한 롤백/재구성(Reconstruction) 메커니즘을 절대 작성하지 마라. Bootstrap에 의한 최초 생성과 명시적으로 승인된 재수집은 별도 작업이다. (재생성 불가능한 데이터는 원본 보존, 복사본 작업, 재구성은 불필요) 
 
 ## Lab (Architectural Ecology Laboratory)
 - v0.3.34.13에서 확립된 **Architectural Ecology Laboratory (아키텍처 생태계 실험실)** 프레임워크는 SYNAPSE의 영구적인 커뮤니티 품질 평가 표준으로 사용된다.
@@ -921,24 +921,28 @@ SYNAPSE는 파일 시스템과 그래프를 Source Of Truth로 사용하는 협�
 
 ---
 
-# KISS 원칙: 원본 불변 보존 및 재생성 전면 배제 규약 (Zero-Regeneration & Working Copy)
+# KISS 원칙: project_state.json 원본 불변 보존 및 재생성 배제 규약 (Zero-Regeneration & Working Copy)
 
-## 1. 재생성은 없앤다 (No Regeneration)
+## 0. 적용 범위 한정 (`project_state.json`)
+- 본 규약의 재생성 배제는 **기존 SSoT(`project_state.json`)의 손상이나 분석 실패를 복구하기 위한 자동 재생성을 금지**하는 것에 엄격히 한정한다.
+- Bootstrap에 의한 최초 생성과 명시적으로 승인된 재수집(Re-harvesting)은 분석 중 복구 목적의 재생성과 완전히 분리된 별도 작업이다.
+
+## 1. 기존 SSoT 복구 목적의 자동 재생성은 없앤다 (No Regeneration for SSoT Recovery)
 - 복잡한 크래시 롤백, 저널링, 상태 머신 복구 등 과도한 오버엔지니어링을 전면 배제한다.
 - 최고의 복구는 **"복구할 필요 자체를 만들지 않는 것"**이다.
 
 ## 2. 재생성 불가능한 데이터는 원본 영구 보존 (Immutable SSoT)
-- 재생성이 불가능하거나 고비용인 신뢰 기준선 데이터(SSoT, `project_state.json`)는 디스크 상에서 절대 수정·변조·재생성하지 않고 **영구 불변(Immutable)**으로 보존한다.
+- 재생성이 불가능하거나 고비용인 신뢰 기준선 데이터(SSoT, `project_state.json`)는 디스크 상에서 절대 수정·변조하거나 복구 목적으로 자동 재생성하지 않고 **영구 불변(Immutable)**으로 보존한다.
 - 원본 파일시스템 경로에 대한 인플레이스(In-place) 수정, 원자적 덮어쓰기(Overwrite) 시도 자체를 금지한다.
 
 ## 3. 원본의 복사본으로 작업 (Working Copy / Shadow Copy)
 - 분석, 시뮬레이션, 범위 제외, 리포트 검증 작업은 원본 SSoT를 직접 건드리지 않는다.
-- 재생성 필요 없이 **원본의 복사본(인메모리 객체 또는 격리된 작업 복사본)**을 가지고 분석해버리면 재생성 자체가 필요 없다.
+- 모든 분석 작업은 **불변 원본의 복사본(인메모리 객체 또는 격리된 작업 복사본)**에서 수행하며, 실패한 복사본은 폐기하고 원본에서 다시 생성한다.
 - 복사본 작업 중 오류나 중단이 발생하면 해당 복사본만 버리고 원본에서 다시 복사본을 취하면 그만이다.
 
 ## 4. 재구성은 불필요 (No Reconstruction)
 - 원본이 1바이트도 손상되지 않으므로, 데이터 파손을 가정한 복구·재구성(Reconstruction) 메커니즘을 복잡하게 설계할 필요가 없다.
-- **"재생성 불가능한 데이터는 원본 보존, 복사본 작업, 재구성은 불필요"** 원칙을 시스템 최상위 불변식으로 영구 고정한다.
+- **"재생성 불가능한 데이터(`project_state.json`)는 원본 보존, 복사본 작업, 재구성은 불필요"** 원칙을 시스템 최상위 불변식으로 영구 고정한다.
 
 ---
 

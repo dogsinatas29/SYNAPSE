@@ -116,12 +116,16 @@ export class LayoutStorage {
         return LayoutStorage.saveLayout(synapseDataDir, emptyLayout);
     }
 
-    private static async _atomicRenameWithBackoff(tmpPath: string, targetPath: string): Promise<void> {
+    public static async _atomicRenameWithBackoff(
+        tmpPath: string,
+        targetPath: string,
+        renameFn: (s: string, d: string) => void = fs.renameSync
+    ): Promise<void> {
         const delays = [50, 100, 200];
         let attempt = 0;
         while (true) {
             try {
-                fs.renameSync(tmpPath, targetPath);
+                renameFn(tmpPath, targetPath);
                 return;
             } catch (err: any) {
                 const isRetryable = err.code === 'EPERM' || err.code === 'EBUSY';

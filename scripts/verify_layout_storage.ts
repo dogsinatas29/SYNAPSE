@@ -135,10 +135,38 @@ async function main() {
     // Check no temp files left behind
     const remainingFiles = fs.readdirSync(atomicDir);
     const tmpFiles = remainingFiles.filter(f => f.includes('.tmp.'));
-    const c5Pass = saveResAtomic.success && tmpFiles.length === 0 && remainingFiles.includes('layout.json');
+    const basicAtomicPass = saveResAtomic.success && tmpFiles.length === 0 && remainingFiles.includes('layout.json');
     console.log(`  Atomic save succeeded: ${saveResAtomic.success}`);
     console.log(`  Temp files leftover: ${tmpFiles.length}`);
     console.log(`  Target layout.json exists: ${remainingFiles.includes('layout.json')}`);
+
+    // Injected Mock Error Test for Windows EBUSY & EPERM Backoff (50ms -> 100ms -> 200ms)
+    console.log('  [Error Injection Test] Simulating Windows EBUSY & EPERM retries...');
+    let callCount = 0;
+    const mockRename = (src: string, dst: string) => {
+        callCount++;
+        if (callCount === 1) {
+            const err: any = new Error('EBUSY: resource busy or locked');
+            err.code = 'EBUSY';
+            throw err;
+        } else if (callCount === 2) {
+            const err: any = new Error('EPERM: operation not permitted');
+            err.code = 'EPERM';
+            throw err;
+        }
+        // Success on 3rd attempt
+    };
+
+    const injectStart = performance.now();
+    await LayoutStorage._atomicRenameWithBackoff('mockTmp', 'mockTarget', mockRename);
+    const totalInjectDurationMs = performance.now() - injectStart;
+
+    const backoffPass = callCount === 3 && totalInjectDurationMs >= 140; // 50ms + 100ms ~= 150ms
+    console.log(`    Call count until success: ${callCount} (Expected: 3 - 2 retryable errors, 1 success)`);
+    console.log(`    Total retry delay elapsed: ${totalInjectDurationMs.toFixed(2)}ms (Expected: >= 150ms [50ms+100ms])`);
+    console.log(`    Windows Backoff Retry Logic: ${backoffPass ? '✅ PASS' : '❌ FAIL'}`);
+
+    const c5Pass = basicAtomicPass && backoffPass;
     console.log(`  Criterion 5 Evaluation: ${c5Pass ? '✅ PASS' : '❌ FAIL'}\n`);
     if (!c5Pass) allPass = false;
 

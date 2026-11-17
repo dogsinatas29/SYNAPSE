@@ -49,6 +49,7 @@ import { snapshotSystem } from '../core/SnapshotSystem';
 import { canvasEngine } from '../core/canvas-engine/CanvasEngine';
 import { RenderProtocol } from '../core/canvas-engine/RenderProtocol';
 import { ProjectStateSerializer } from '../core/transaction/ProjectStateSerializer';
+import { LayoutStorage, LayoutData } from '../core/layout/LayoutStorage';
 
 /**
  * SequentialTaskQueue - Asynchronous task serializer
@@ -141,6 +142,10 @@ export class CanvasPanel {
     // [v0.3.31] Network-Aware Virtual Debugger
     private _diagnosticDebounceTimer: NodeJS.Timeout | null = null;
     private _lastDiagnosticHash: string = '';
+
+    // [v0.3.34.75 Phase 1] OCC Layout & Snap-back prevention
+    private _lastAppliedSeq: number = 0;
+    private _layoutRevision: number = 0;
 
     private _panelId: string = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7); // UUID for tracking instances
     private _lastLoadedDiskFingerprint: string = '';
@@ -490,7 +495,7 @@ export class CanvasPanel {
                     const cs = Array.isArray(s?.clusters) ? s.clusters : Object.values(s?.clusters || {});
                     Logger.info('[BACKEND_COLLAPSE_CHECK]', cs.filter((c: any) => c?.collapsed === true).length);
                 }
-                await this.handleSaveState(message.data || message.state);
+                await this.handleSaveState(message.data || message.state, undefined, message.clientSeq ?? (message.data && message.data.clientSeq));
                 return;
             case 'readFile':
                 await this.handleReadFile(message.filePath, message.clientUsername);
@@ -4035,7 +4040,17 @@ export class CanvasPanel {
             return;
         }
 
-        // STEP 1: Disk Purge - project_state.json 물리적 초기화
+        // [Phase 1] Layout Reset 연동: revision + 1로 layout.json 원자적 초기화 (파일 삭제 배제)
+        try {
+            const synapseDataDir = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data').fsPath;
+            this._layoutRevision = this._layoutRevision + 1;
+            await LayoutStorage.resetLayout(synapseDataDir, this._layoutRevision);
+            Logger.info(`[CanvasPanel] Layout Reset complete. New layoutRevision=${this._layoutRevision}`);
+        } catch (err: any) {
+            Logger.warn(`[CanvasPanel] Layout Reset failed: ${err.message}`);
+        }
+
+        // STEP 1: Disk Purge - project_state.json 물리적 초기화 (Phase 1 legacy write 남음, Phase 2 이관 예정)
         const emptyState = { nodes: [], edges: [], clusters: [] };
         const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
         try {
@@ -4644,14 +4659,24 @@ export class CanvasPanel {
 
     private _saveStateDebugCount = 0;
 
-    public async handleSaveState(newState: any, targetWorkspaceFolder?: vscode.WorkspaceFolder): Promise<boolean> {
-        console.trace("[HANDLE_SAVE_STATE]");
-        console.log("[SAVE_A] handleSaveState started");
+    public async handleSaveState(newState: any, targetWorkspaceFolder?: vscode.WorkspaceFolder, incomingClientSeq?: number): Promise<boolean> {
+        console.log("[SAVE_A] handleSaveState started (Phase 1 LayoutStorage)");
         console.time('SAVE_STATE');
         console.count('SAVE_STATE_CALL');
-        if (typeof (this as any)._saveStateDebugCount === 'undefined') (this as any)._saveStateDebugCount = 0;
-        if (++(this as any)._saveStateDebugCount <= 5) {
-            console.trace('[SAVE_STATE_TRACE] Caller stack:');
+
+        const clientSeq = typeof incomingClientSeq === 'number' ? incomingClientSeq : newState?.clientSeq;
+        if (typeof clientSeq === 'number' && clientSeq <= this._lastAppliedSeq) {
+            console.log(`[CanvasPanel] saveState REJECTED stale clientSeq=${clientSeq} <= lastAppliedSeq=${this._lastAppliedSeq}`);
+            if (this._panel) {
+                this._panel.webview.postMessage({
+                    command: 'saveStateResult',
+                    ignored: true,
+                    revision: this._layoutRevision,
+                    clientSeq
+                });
+            }
+            console.timeEnd('SAVE_STATE');
+            return false;
         }
 
         const workspaceFolder = targetWorkspaceFolder || this._workspaceFolder;
@@ -4661,145 +4686,70 @@ export class CanvasPanel {
         }
 
         try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
+            if (typeof clientSeq === 'number') {
+                this._lastAppliedSeq = clientSeq;
+            }
+            this._layoutRevision = this._layoutRevision + 1;
 
-            // [v0.3.11] Anti-Wipe Safety: If UI sends empty state but engine/disk has data, block the save.
-            // [Performance] Use O(1) estimation instead of synchronous full state merge (which can take ~450ms for 70k nodes)
-            const engineNodesCount = canvasEngine.getEstimatedNodeCount();
+            const synapseDataDir = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data').fsPath;
 
-            if (newState && newState.nodes !== undefined) {
-                const uiNodesCount = newState.nodes?.length || 0;
-                if (uiNodesCount === 0 && engineNodesCount > 0) {
-                    Logger.warn(`[CanvasPanel] saveState BLOCKED: Attempted to save 0 nodes while engine has ${engineNodesCount}. Probable initialization race condition.`);
-                    console.timeEnd('SAVE_STATE');
-                    return false;
+            // Extract layout payload
+            const positions: Record<string, { x: number; y: number }> = {};
+            if (newState?.positions && typeof newState.positions === 'object') {
+                Object.assign(positions, newState.positions);
+            } else if (newState?.nodes) {
+                const incomingNodes = Array.isArray(newState.nodes) ? newState.nodes : Object.values(newState.nodes);
+                for (const n of (incomingNodes as any[])) {
+                    if (n && n.id && n.position) {
+                        positions[n.id] = { x: n.position.x, y: n.position.y };
+                    }
                 }
             }
 
-            // [v0.3.34.9 PERF FIX] 배치 처리: 클러스터 2909개를 루프 dispatch하면
-            // 각 ADD_CLUSTER마다 getSnapshot() → 500ms 투영 → 2909 × 500ms = ~24분 대기 발생.
-            // batchAddClusters로 한 번에 처리하고 txn을 1회만 올린다.
-            if (newState && newState.clusters) {
-                const clustersToSync = newState.clusters.map((uiCluster: any) => {
-                    const isScanFolder = uiCluster.id.startsWith('cluster_') && !/^\d+$/.test(uiCluster.id.replace('cluster_', ''));
-                    const isSystemAI = uiCluster.id === 'sys_cluster_reserved' || uiCluster.id === 'doc_shelf';
-                    const isExternal = uiCluster.id === 'cluster_ghosts';
-                    const defaultLayer = isExternal ? 'external' : ((isScanFolder || isSystemAI) ? 'ai' : 'user');
-                    return {
-                        id: uiCluster.id,
-                        label: uiCluster.label,
-                        type: uiCluster.type || 'folder',
-                        position: uiCluster.position,
-                        collapsed: uiCluster.collapsed,
-                        parent_id: uiCluster.parent_id,
-                        children: uiCluster.children,
-                        data: { ...(uiCluster.data || {}), layer: (uiCluster.data && uiCluster.data.layer) || defaultLayer }
-                    };
-                });
-                canvasEngine.batchAddClusters(clustersToSync);
-            }
-
-            // 1. Dispatch UPDATE_NODE for each node with a new position, cluster, and layer info
-            // [v0.3.11] 🛡️ Hybrid Support: Handle both Array (UI) and Object (Internal Snapshot)
-            const incomingNodes = newState?.nodes ? (Array.isArray(newState.nodes) ? newState.nodes : Object.values(newState.nodes || {})) : [];
-            console.log('[NODE_DISPATCH_START]', 'count:', incomingNodes.length);
-            
-            const positionUpdates: any[] = [];
-            const now = Date.now();
-
-            if (incomingNodes.length > 0) {
-                for (const uiNode of (incomingNodes as any[])) {
-                    const uiLayer = uiNode.layer || (uiNode.data && uiNode.data.layer);
-                    
-                    // [v0.3.15] Apply Snap-to-Grid during save (Grid Sovereignty)
-                    let snappedPosition = uiNode.position;
-                    if (snappedPosition) {
-                        snappedPosition = gridSystem.snapToGrid(snappedPosition.x, snappedPosition.y);
+            const clusters: Record<string, { collapsed: boolean }> = {};
+            if (newState?.clusters) {
+                const incomingClusters = Array.isArray(newState.clusters) ? newState.clusters : Object.values(newState.clusters);
+                for (const c of (incomingClusters as any[])) {
+                    if (c && c.id) {
+                        clusters[c.id] = { collapsed: !!c.collapsed };
                     }
-
-                    // Phase 1B.3B: 클라이언트 노드 이동 감지 및 업데이트 큐 추가
-                    const cl = uiNode.clientLayer || (uiNode.data && uiNode.data.clientLayer);
-                    if (cl && snappedPosition) {
-                        positionUpdates.push({
-                            id: uiNode.id,
-                            clientLayer: cl,
-                            position: snappedPosition,
-                            updatedAt: now
-                        });
-                    }
-
-                    canvasEngine.dispatch('UPDATE_NODE', {
-                        id: uiNode.id,
-                        updates: {
-                            position: snappedPosition,
-                            cluster_id: uiNode.cluster_id || (uiNode.data && uiNode.data.cluster_id),
-                            ...(uiLayer ? { layer: uiLayer, data: { ...uiNode.data, layer: uiLayer } } : {})
-                        }
-                    });
                 }
             }
-            console.log('[NODE_DISPATCH_END]');
-            console.log('[DISPATCH_END]');
 
-            if (positionUpdates.length > 0) {
-                this._sendClientPositionUpdates(positionUpdates);
-            }
-
-            Logger.info("[SAVESTATE-3] after basic dispatch, before SSoT serialization");
-            console.log("[SAVE_B]");
-
-            const rawSnap = canvasEngine.getRawSnapshot();
-            console.log("[SAVE_C]");
-            
-            // [v0.3.11] 🛡️ Identity Protection: 
-            // If the UI sends a snapshot missing nodes that were JUST created in the buffer, 
-            // we must preserve them to prevent race-condition wipeouts.
-            const finalNodesList = Object.values(rawSnap.nodes);
-            
-            const persistenceState: any = {
-                project_name: workspaceFolder.name,
-                canvas_state: {
-                    zoom_level: (newState?.view ? newState.view.zoom : newState?.zoom) || 1.0, 
-                    offset: (newState?.view ? { x: newState.view.offsetX, y: newState.view.offsetY } : (newState?.offset || { x: 0, y: 0 })),
-                    visible_layers: newState?.visible_layers || (newState?.data && newState.data.visible_layers) || ['source', 'documentation', 'user']
-                },
-                // [v0.3.11] Backend Master Copy (SSoT) - Protects against incomplete UI payloads
-                nodes: finalNodesList.filter((n: any) => !n.id.startsWith('client::')),
-                edges: Object.values(rawSnap.edges).filter((e: any) => !(e.id.startsWith('edge_client::') || e.from.startsWith('client::') || e.to.startsWith('client::'))),
-                clusters: (rawSnap.clusters || []).filter((c: any) => !c.id.startsWith('client::')),
-                deletedNodeIds: rawSnap.deletedNodeIds || [],
-                deletedPaths: rawSnap.deletedPaths || []
+            const view = {
+                zoom: (newState?.view ? newState.view.zoom : newState?.zoom) || 1.0,
+                offset: (newState?.view ? { x: newState.view.offsetX ?? newState.view.offset?.x ?? 0, y: newState.view.offsetY ?? newState.view.offset?.y ?? 0 } : (newState?.offset || { x: 0, y: 0 }))
             };
 
-            Logger.info('[FILE_SAVE_COLLAPSE]',
-                (Array.isArray(persistenceState.clusters) ? persistenceState.clusters : Object.values(persistenceState.clusters || {}))
-                    .filter((c: any) => c?.collapsed === true).length
-            );
+            const layoutData: LayoutData = {
+                revision: this._layoutRevision,
+                positions,
+                view,
+                clusters
+            };
 
-            const normalizedJson = this.normalizeProjectState(persistenceState);
-            try {
-                console.log("[SAVE_D] Writing file...");
-                console.log(`[STATE_SAVE_START] Output path: ${projectStateUri.fsPath} (handleSaveState)`);
-                console.log(`[STATE_SAVE] Nodes: ${persistenceState.nodes.length}, Edges: ${persistenceState.edges.length}`);
-                await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
-                console.log(`[STATE_SAVE_COMPLETE] project_state.json successfully written.`);
-                
-                // Track 11: After successfully writing to disk SSOT, record fingerprint to prevent redundant reloading
-                this._lastLoadedDiskFingerprint = this.computeNormalizedStateFingerprint(persistenceState);
-                this._lastLoadedDiskPath = projectStateUri.fsPath;
-                canvasEngine.markSaved();
-            } catch (err) {
-                console.error(`[STATE_SAVE_ERROR] Failed to write project_state.json in handleSaveState:`, err);
+            const saveResult = await LayoutStorage.saveLayout(synapseDataDir, layoutData);
+            if (!saveResult.success) {
+                console.error(`[CanvasPanel] LayoutStorage.saveLayout failed:`, saveResult.error);
                 console.timeEnd('SAVE_STATE');
                 return false;
             }
 
-            console.log(`[SYNAPSE] State synchronized: ${persistenceState.nodes.length} nodes saved to disk.`);
-            Logger.info("[SAVESTATE-4] exit successfully");
+            if (this._panel) {
+                this._panel.webview.postMessage({
+                    command: 'saveStateResult',
+                    success: true,
+                    revision: this._layoutRevision,
+                    clientSeq: clientSeq ?? 0
+                });
+            }
+
+            console.log(`[SYNAPSE] Layout state saved to layout.json (revision=${this._layoutRevision}, positions=${Object.keys(positions).length})`);
+            Logger.info("[SAVESTATE-4] layout.json saved successfully, project_state.json untouched");
             console.timeEnd('SAVE_STATE');
             return true;
         } catch (error) {
-            console.error('[SYNAPSE] Failed to save state:', error);
+            console.error('[SYNAPSE] Failed to save layout state:', error);
             console.timeEnd('SAVE_STATE');
             return false;
         }
@@ -5534,6 +5484,34 @@ export class CanvasPanel {
                 Logger.info(`[CanvasPanel] isHugeGraphState=true. Forcing forceReset=true and isAuthoritative=true to prevent UI freeze.`);
             }
 
+            // [v0.3.34.75 Phase 1] Overlay layout.json onto rendering copy only (SSoT untouched)
+            try {
+                const synapseDataDir = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data').fsPath;
+                const layout = LayoutStorage.loadLayout(synapseDataDir);
+                this._layoutRevision = Math.max(this._layoutRevision, layout.revision);
+                if (layout.positions && Object.keys(layout.positions).length > 0) {
+                    projectState.nodes = projectState.nodes.map((n: any) => {
+                        const pos = layout.positions[n.id];
+                        return pos ? { ...n, position: pos } : n;
+                    });
+                }
+                if (layout.view) {
+                    projectState.canvas_state = {
+                        ...(projectState.canvas_state || {}),
+                        zoom_level: layout.view.zoom,
+                        offset: layout.view.offset
+                    };
+                }
+                if (layout.clusters && Object.keys(layout.clusters).length > 0) {
+                    projectState.clusters = (projectState.clusters || []).map((c: any) => {
+                        const cl = layout.clusters[c.id];
+                        return cl ? { ...c, collapsed: cl.collapsed } : c;
+                    });
+                }
+            } catch (err: any) {
+                Logger.warn(`[CanvasPanel] Failed to overlay layout.json: ${err.message}`);
+            }
+
             console.log('[POST_MESSAGE_SEND] nodes=%d edges=%d clusters=%d', projectState.nodes.length, projectState.edges.length, projectState.clusters.length);
             console.time('webview-postmessage');
             try {
@@ -5585,7 +5563,9 @@ export class CanvasPanel {
                     data: finalPayload, // [v0.3.33 Phase 0] Baseline: IPC send timestamp
                     workspaceFolder: workspaceFolder.uri.fsPath,
                     forceReset: forceReset,
-                    isAuthoritative: isAuthoritative // 🔥 [v0.3.11] Interaction Bypass
+                    isAuthoritative: isAuthoritative, // 🔥 [v0.3.11] Interaction Bypass
+                    layoutRevision: this._layoutRevision,
+                    lastAppliedSeq: this._lastAppliedSeq
                 });
             } finally {
                 console.timeEnd('webview-postmessage');

@@ -1858,6 +1858,13 @@ class CanvasEngine {
         this.heatmapCacheLastBuildAt = 0;
         this.heatmapCacheMinIntervalMs = 250;
 
+        // [v0.3.34.75 Phase 1] OCC Layout & Snap-back prevention
+        this._clientSeq = 0;
+        this._currentLayoutRevision = 0;
+        this._layoutHandshakeDone = false;
+        this._saveInFlight = false;
+        this._pendingSaveState = false;
+
         // [v0.2.19] Layer Visibility State
         this.showBaseLayer = true;
         this.showUserLayer = true;
@@ -3953,12 +3960,11 @@ class CanvasEngine {
 
             // [v0.2.24] End Interaction Lock and apply any deferred updates
             this._isInteracting = false;
+            // [v0.3.34.75 Phase 1] Deterministic Revision Guard replacing fragile 300ms timer
             if (this._pendingState) {
-                // [v0.3.22.11] Protect manual position: 
-                // If we just finished a drag (didDrag=true) OR within 300ms of end, 
-                // discard pending state which is likely stale.
-                const withinDragGrace = (Date.now() - (this._lastDragEndTime || 0)) < 300;
-                if (didDrag || withinDragGrace) {
+                const isStale = typeof this._pendingState.layoutRevision === 'number' &&
+                                this._pendingState.layoutRevision < (this._currentLayoutRevision || 0);
+                if (didDrag || isStale) {
                     this.log('[SYNAPSE] Discarding stale pendingState after drag to preserve manual positions');
                     this._pendingState = null;
                 } else {
@@ -10561,52 +10567,70 @@ class CanvasEngine {
     }
 
     saveState(fullSync = false) {
-        console.count("FRONTEND_SAVE_STATE");
-        console.log("[WEBVIEW_SAVE_STATE]", fullSync);
-        console.log('[SAVE_COLLAPSE_CHECK]', this.clusters.filter(c => c.collapsed === true).length);
-        const stack = new Error().stack;
-        console.trace("[FRONTEND_SAVE_STATE_TRACE] saveState called! fullSync=" + fullSync);
-        if (typeof vscode !== 'undefined') {
-            vscode.postMessage({
-                command: 'log',
-                level: 'info',
-                text: '[FRONTEND_SAVE_STATE_TRACE] saveState called. Stack: ' + stack
-            });
+        // [v0.3.34.75 Phase 1] Handshake check: hold saving until handshake completes
+        if (typeof vscode !== 'undefined' && !this._layoutHandshakeDone) {
+            console.log('[SYNAPSE] saveState held: waiting for layout handshake from Host');
+            return;
         }
-        
+
+        // [v0.3.34.75 Phase 1] Single In-Flight Save & Merge Debounce
+        if (this._saveInFlight) {
+            console.log('[SYNAPSE] saveState in-flight: buffering latest coordinates for debounce');
+            this._pendingSaveState = true;
+            return;
+        }
+
+        this._executeSaveState();
+    }
+
+    _executeSaveState() {
+        this._saveInFlight = true;
         this._lastSaveTime = Date.now();
-        // VS Code 환경이면 저장을 위해 익스텐션으로 메시지 전송
+
         if (typeof vscode !== 'undefined') {
-            const sendLog = (txt) => { console.log(txt); vscode.postMessage({ command: 'log', level: 'info', text: txt }); };
-            sendLog('[SAVE_A] Beginning state serialization');
-            let projectState;
-            try {
-                projectState = {
-                    clusters: this.clusters,
-                    view: this.transform // [v0.2.36] Persist camera view
-                };
-                if (fullSync) {
-                    projectState.nodes = this.nodes;
-                    projectState.edges = this.edges;
+            this._clientSeq = (this._clientSeq || 0) + 1;
+            const currentSeq = this._clientSeq;
+
+            const positions = {};
+            const nodes = this.nodes || [];
+            for (let i = 0; i < nodes.length; i++) {
+                const n = nodes[i];
+                if (n && n.id && n.position) {
+                    positions[n.id] = { x: n.position.x, y: n.position.y };
                 }
-                sendLog('[SAVE_B] State object created, size check: ' + Object.keys(projectState).length);
-            } catch (err) {
-                sendLog('[SAVE_B_ERROR] ' + err.toString());
-                return;
             }
-            
-            sendLog('[SYNAPSE] Saving state to VS Code... (fullSync: ' + fullSync + ')');
-            
+
+            const clusters = {};
+            const cls = this.clusters || [];
+            for (let i = 0; i < cls.length; i++) {
+                const c = cls[i];
+                if (c && c.id) {
+                    clusters[c.id] = { collapsed: !!c.collapsed };
+                }
+            }
+
+            const view = {
+                zoom: this.transform?.zoom || 1.0,
+                offset: { x: this.transform?.x || 0, y: this.transform?.y || 0 }
+            };
+
+            const payload = {
+                clientSeq: currentSeq,
+                positions: positions,
+                clusters: clusters,
+                view: view
+            };
+
             try {
-                sendLog('[SAVE_C] Calling postMessage');
                 vscode.postMessage({
                     command: 'saveState',
-                    data: projectState,
+                    data: payload,
+                    clientSeq: currentSeq,
                     panelId: window.__PANEL_ID__
                 });
-                sendLog('[SAVE_D] postMessage completed successfully');
             } catch (err) {
-                sendLog('[SAVE_D_ERROR] postMessage threw an error! ' + err.toString());
+                this._saveInFlight = false;
+                console.error('[SYNAPSE] saveState postMessage failed:', err);
             }
         } else {
             // 브라우저 환경 - 스탠드얼론 서버에 저장 요청
@@ -10617,8 +10641,10 @@ class CanvasEngine {
             };
             this.callStandaloneApi('/api/save-state', projectState)
                 .then(res => {
+                    this._saveInFlight = false;
                     if (res?.success) console.log('[SYNAPSE] State saved to standalone server');
-                });
+                })
+                .catch(() => { this._saveInFlight = false; });
         }
     }
 
@@ -14305,6 +14331,21 @@ function initCanvas() {
                 break;
             }
             case 'projectStateChunkEnd': {
+                // [v0.3.34.75 Phase 1] Handshake & Snap-back layoutRevision filtering
+                if (typeof message.layoutRevision === 'number') {
+                    if (message.layoutRevision < (engine._currentLayoutRevision || 0)) {
+                        console.warn(`[SYNAPSE] Ignoring stale layout push: incoming=${message.layoutRevision} < current=${engine._currentLayoutRevision}`);
+                        break;
+                    }
+                    engine._currentLayoutRevision = message.layoutRevision;
+                }
+                if (typeof message.lastAppliedSeq === 'number') {
+                    if (!engine._layoutHandshakeDone || message.lastAppliedSeq > (engine._clientSeq || 0)) {
+                        engine._clientSeq = message.lastAppliedSeq;
+                    }
+                    engine._layoutHandshakeDone = true;
+                    console.log(`[SYNAPSE] Handshake synchronized: clientSeq=${engine._clientSeq}, layoutRevision=${engine._currentLayoutRevision}`);
+                }
                 if (message.data) {
                     console.log('[STATE_CHECK]', 'chunk-end-enter',
                         message.data.nodes?.length ?? 0,
@@ -14342,6 +14383,22 @@ function initCanvas() {
                         edges: message.data?.edges?.length ?? 0,
                         clusters: message.data?.clusters?.length ?? 0
                     });
+                }
+                break;
+            }
+            case 'saveStateResult': {
+                engine._saveInFlight = false;
+                if (typeof message.revision === 'number') {
+                    engine._currentLayoutRevision = Math.max(engine._currentLayoutRevision || 0, message.revision);
+                }
+                if (message.ignored) {
+                    console.warn(`[SYNAPSE] saveState ignored by Host (stale clientSeq=${message.clientSeq}, hostRevision=${message.revision})`);
+                } else {
+                    console.log(`[SYNAPSE] saveState ACK: revision=${message.revision}, clientSeq=${message.clientSeq}`);
+                }
+                if (engine._pendingSaveState) {
+                    engine._pendingSaveState = false;
+                    engine._executeSaveState();
                 }
                 break;
             }

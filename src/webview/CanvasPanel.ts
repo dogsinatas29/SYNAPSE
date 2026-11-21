@@ -4131,7 +4131,9 @@ export class CanvasPanel {
 
                     vscode.window.showInformationMessage('Project maps re-generated successfully.');
                     console.trace('[SEND_STATE_FROM]', 'handleGenerateSubNodes');
-                    await this.sendProjectState();
+                    // [P1-1] Wait for any in-flight overlay queue tasks before pushing new SSoT baseline
+                    await this._overlayQueue;
+                    await this.sendProjectState(true);
                 } else {
                     throw new Error(result.error);
                 }

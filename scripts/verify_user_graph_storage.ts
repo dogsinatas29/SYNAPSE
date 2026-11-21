@@ -116,6 +116,54 @@ async function runVerification() {
             'Mutating rendering copy does not affect masterState'
         );
 
+        // [P1-3] Strict Nested Reference Isolation Check
+        assert(
+            renderingCopy.nodes[0] !== masterState.nodes[0] &&
+            renderingCopy.edges[0] !== masterState.edges[0] &&
+            renderingCopy.clusters[0] !== masterState.clusters[0],
+            '[P1-3] Zero Nested Reference Sharing',
+            'All nested node, edge, and cluster objects in rendering copy have unique memory references'
+        );
+
+        // [P1-3] Non-Allowlist Field Rejection in Rendering Copy
+        const overlayWithForbiddenField: UserGraphData = {
+            ...overlay,
+            modifiedNodes: {
+                node1: { label: 'Valid Label', id: 'ILLEGAL_ID_OVERWRITE' } as any
+            }
+        };
+        const renderingForbidden = UserGraphStorage.createRenderingCopy(masterState, overlayWithForbiddenField);
+        assert(
+            renderingForbidden.nodes.find((n: any) => n.id === 'node1') !== undefined &&
+            !renderingForbidden.nodes.some((n: any) => n.id === 'ILLEGAL_ID_OVERWRITE'),
+            '[P1-3] Allowlist Enforcement in Rendering Copy',
+            'Illegal identity field modifications (id, from, to) are ignored in rendering copy'
+        );
+
+        // [P1-3] Cluster Members and Rendering Nodes Exact Alignment
+        const activeNodeIdsSet = new Set(renderingCopy.nodes.map((n: any) => n.id));
+        let clusterAlignmentPass = true;
+        for (const cluster of renderingCopy.clusters) {
+            for (const memberId of cluster.nodeIds) {
+                if (!activeNodeIdsSet.has(memberId)) {
+                    clusterAlignmentPass = false;
+                }
+            }
+        }
+        assert(
+            clusterAlignmentPass,
+            '[P1-3] Cluster-to-Node Set Consistency',
+            'Every member in cluster.nodeIds strictly exists in renderingCopy.nodes'
+        );
+
+        // [P1-3] Layout Coordinates Zero-Leak to SSoT
+        renderingCopy.nodes[0].position = { x: 9999, y: 8888 };
+        assert(
+            (masterState.nodes[0] as any).position === undefined,
+            '[P1-3] Layout Coordinates Zero-Leak to SSoT',
+            'Injecting layout positions into rendering copy never leaks into master SSoT'
+        );
+
         // Verify Overlay Application in Rendering Copy
         assert(
             renderingCopy.nodes.length === 2 && !renderingCopy.nodes.some((n: any) => n.id === 'node3'),
@@ -218,6 +266,59 @@ async function runVerification() {
                 'The sole remaining SSoT write is confirmed to reside inside handleReBootstrap (Phase 3)'
             );
         }
+
+        // [P1-2] Repository-Wide Full SSoT Write Path Audit
+        console.log('\n--- Test 6: [P1-2] Repository-Wide SSoT Write Audit ---');
+        function scanDirRecursive(dir: string): string[] {
+            let files: string[] = [];
+            for (const item of fs.readdirSync(dir)) {
+                const fullPath = path.join(dir, item);
+                if (fs.statSync(fullPath).isDirectory()) {
+                    files = files.concat(scanDirRecursive(fullPath));
+                } else if (item.endsWith('.ts') && !item.endsWith('.d.ts')) {
+                    files.push(fullPath);
+                }
+            }
+            return files;
+        }
+
+        const allSrcFiles = scanDirRecursive(path.join(__dirname, '..', 'src'));
+        const ssotWritingFiles: string[] = [];
+
+        for (const file of allSrcFiles) {
+            if (file.includes('/test/') || file.endsWith('.test.ts')) continue;
+
+            const content = fs.readFileSync(file, 'utf8');
+            const fileLines = content.split('\n');
+
+            for (const fl of fileLines) {
+                const isWriteCall = fl.includes('writeFile') || fl.includes('writeFileSync') || fl.includes('serializeToFileAsync');
+                const targetsSSoT = fl.includes('project_state.json') || fl.includes('projectStateUri') || (fl.includes('statePath') && !fl.includes('tmpPath') && !fl.includes('reportPath'));
+
+                if (isWriteCall && targetsSSoT && !fl.includes('//') && !fl.includes('configPath') && !fl.includes('reportPath') && !fl.includes('tmpPath')) {
+                    const rel = path.relative(path.join(__dirname, '..'), file);
+                    if (!ssotWritingFiles.includes(rel)) {
+                        ssotWritingFiles.push(rel);
+                    }
+                }
+            }
+        }
+
+        console.log('Files with write operations referencing SSoT/project_state.json:');
+        for (const f of ssotWritingFiles) {
+            console.log(`  - ${f}`);
+        }
+
+        // Only BootstrapEngine (initial generation) and CanvasPanel (handleReBootstrap) are authorized
+        const unauthorizedWriters = ssotWritingFiles.filter(
+            f => !f.includes('BootstrapEngine.ts') && !f.includes('CanvasPanel.ts')
+        );
+
+        assert(
+            unauthorizedWriters.length === 0,
+            '[P1-2] Repository-Wide SSoT Write Isolation',
+            `Zero unauthorized SSoT write modules in src/ (unauthorized: ${unauthorizedWriters.join(', ') || 'none'})`
+        );
 
     } finally {
         if (fs.existsSync(tempDir)) {

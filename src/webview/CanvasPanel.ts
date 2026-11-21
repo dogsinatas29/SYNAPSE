@@ -50,6 +50,7 @@ import { canvasEngine } from '../core/canvas-engine/CanvasEngine';
 import { RenderProtocol } from '../core/canvas-engine/RenderProtocol';
 import { ProjectStateSerializer } from '../core/transaction/ProjectStateSerializer';
 import { LayoutStorage, LayoutData } from '../core/layout/LayoutStorage';
+import { UserGraphStorage, UserGraphData } from '../core/layout/UserGraphStorage';
 
 /**
  * SequentialTaskQueue - Asynchronous task serializer
@@ -146,6 +147,45 @@ export class CanvasPanel {
     // [v0.3.34.75 Phase 1] OCC Layout & Snap-back prevention
     private _lastAppliedSeq: number = 0;
     private _layoutRevision: number = 0;
+
+    // [v0.3.34.75 Phase 2] User Graph Overlay & Serialization Queue
+    private _userGraphData: UserGraphData | null = null;
+    private _overlayQueue: Promise<void> = Promise.resolve();
+
+    private async ensureUserGraphLoaded(): Promise<UserGraphData> {
+        if (!this._userGraphData && this._workspaceFolder) {
+            this._userGraphData = await UserGraphStorage.loadUserGraph(this._workspaceFolder.uri.fsPath);
+        }
+        if (!this._userGraphData) {
+            this._userGraphData = UserGraphStorage.createEmptyUserGraph();
+        }
+        return this._userGraphData;
+    }
+
+    private async saveOverlayAndPush(mutator: (overlay: UserGraphData) => void | Promise<void>): Promise<void> {
+        const workspaceFolder = this._workspaceFolder;
+        if (!workspaceFolder) return;
+
+        this._overlayQueue = this._overlayQueue.then(async () => {
+            const overlay = await this.ensureUserGraphLoaded();
+            await mutator(overlay);
+            overlay.revision = (overlay.revision || 0) + 1;
+            overlay.updatedAt = new Date().toISOString();
+            try {
+                await UserGraphStorage.saveUserGraph(workspaceFolder.uri.fsPath, overlay);
+                await this.sendProjectState();
+            } catch (saveErr: any) {
+                Logger.error(`[CanvasPanel] Failed to save user_graph.json: ${saveErr.message}`);
+                vscode.window.showWarningMessage('[SYNAPSE] 사용자 편집 저장에 실패하여 이전 상태로 복원되었습니다.');
+                // 웹뷰 화면 롤백 푸시
+                await this.sendProjectState();
+            }
+        }).catch(err => {
+            Logger.error(`[CanvasPanel] Overlay queue error: ${err.message}`);
+        });
+
+        await this._overlayQueue;
+    }
 
     private _panelId: string = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(7); // UUID for tracking instances
     private _lastLoadedDiskFingerprint: string = '';
@@ -1082,25 +1122,19 @@ export class CanvasPanel {
 
     private async handleUpdateNodeData(node: any) {
         const workspaceFolder = this._workspaceFolder;
-        if (!workspaceFolder) return;
+        if (!workspaceFolder || !node || !node.id) return;
 
         try {
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
-            
-            // Dispatch update intent (currently using ADD_NODE logic for update if exists)
-            // [TODO: v0.3.11] Introduce UPDATE_NODE_DATA intent specifically
-            const result = canvasEngine.dispatch('ADD_NODE', node);
-            
-            if (result.ok) {
-                const finalState = canvasEngine.getFinalSnapshot();
-                const normalizedJson = this.normalizeProjectState(finalState);
-                await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
-                console.log(`[SYNAPSE] Node ${node.id} data updated via pipeline.`);
-                
-                // 🔥 [v0.3.11] IMMEDIATE REACTION
-                // console.trace('[SEND_STATE_FROM]', '_pushClientState');
-                // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
-            }
+            // [Phase 2] Route node edits to UserGraphStorage (SSoT project_state.json untouched)
+            canvasEngine.dispatch('ADD_NODE', node);
+
+            await this.saveOverlayAndPush(overlay => {
+                const patch: any = {};
+                if (typeof node.label === 'string') patch.label = node.label;
+                if (typeof node.description === 'string') patch.description = node.description;
+                overlay.modifiedNodes[node.id] = { ...(overlay.modifiedNodes[node.id] || {}), ...patch };
+            });
+            console.log(`[SYNAPSE] Node ${node.id} data updated via UserGraph overlay.`);
         } catch (error) {
             console.error('[SYNAPSE] Failed to update node data:', error);
         }
@@ -3766,16 +3800,14 @@ export class CanvasPanel {
             // 🔥 [IMMEDIATE REACTION] 노드 삭제를 엔진에 반영한 직후 즉시 화면 갱신
             // await this.sendProjectState(false, true); // [v0.3.30] Prevent UI overwrite that deletes client nodes
 
-            // 2. Persistence
-            const rawSnap = canvasEngine.getRawSnapshot();
-            projectState.nodes = Object.values(rawSnap.nodes).filter((n: any) => !n.id.startsWith('client::'));
-            projectState.edges = Object.values(rawSnap.edges).filter((e: any) => !(e.id.startsWith('edge_client::') || e.from.startsWith('client::') || e.to.startsWith('client::')));
-            projectState.clusters = (rawSnap.clusters || []).filter((c: any) => !c.id.startsWith('client::'));
-            projectState.deletedNodeIds = rawSnap.deletedNodeIds || [];
-            projectState.deletedPaths = rawSnap.deletedPaths || [];
-            
-            const finalNormalizedJson = JSON.stringify(projectState); // [Ponytail] Avoid string length limit
-            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(finalNormalizedJson, 'utf8'));
+            // 2. [Phase 2] Persistence via UserGraph overlay (hide nodes)
+            await this.saveOverlayAndPush(overlay => {
+                const newHidden = new Set(overlay.hiddenNodeIds || []);
+                for (const id of targetIds) {
+                    newHidden.add(id);
+                }
+                overlay.hiddenNodeIds = Array.from(newHidden);
+            });
 
             // 3. Cascading Cleanup & Physical Deletion (Keep existing UI logic)
             if (deletedNodeLabels.length > 0) {
@@ -3920,17 +3952,13 @@ export class CanvasPanel {
 
                     // 강제 종료 및 임시 엣지 파기
                     if (edge) {
-                        // Create a NEW snapshot for deletion to avoid mutating direct engine state
-                        const finalSnap = canvasEngine.getFinalSnapshot();
-                        const updatedEdges = Object.values(finalSnap.edges || {}).filter((e: any) => e.id !== edgeId);
-                        // [CRITICAL FIX] Must convert nodes Record to Array for UI-style saving!
-                        const newState = { 
-                            ...finalSnap, 
-                            nodes: Object.values(finalSnap.nodes || {}),
-                            edges: updatedEdges 
-                        };
-                        
-                        await vscode.workspace.fs.writeFile(stateUri, Buffer.from(this.normalizeProjectState(newState), 'utf8'));
+                        // [Phase 2] Route edge deletion to UserGraphStorage
+                        canvasEngine.dispatch('DELETE_EDGE', { id: edgeId });
+                        await this.saveOverlayAndPush(overlay => {
+                            const newHiddenEdges = new Set(overlay.hiddenEdgeIds || []);
+                            newHiddenEdges.add(edgeId);
+                            overlay.hiddenEdgeIds = Array.from(newHiddenEdges);
+                        });
                         // UI에서도 삭제
                         this._panel.webview.postMessage({ command: 'deleteEdgeUI', edgeId: edgeId });
                     }
@@ -3951,15 +3979,13 @@ export class CanvasPanel {
                 updates: { status: 'confirmed' } 
             });
 
-            // 3. Persistence (Normalized for UI compatibility)
-            const finalSnap = canvasEngine.getFinalSnapshot();
-            const projectStateArr = {
-                ...finalSnap,
-                nodes: Object.values(finalSnap.nodes || {}),
-                edges: Object.values(finalSnap.edges || {}),
-                clusters: finalSnap.clusters || []
-            };
-            await vscode.workspace.fs.writeFile(stateUri, Buffer.from(this.normalizeProjectState(projectStateArr), 'utf8'));
+            // 3. [Phase 2] Persistence via UserGraph overlay (confirm edge)
+            await this.saveOverlayAndPush(overlay => {
+                overlay.modifiedEdges[edgeId] = {
+                    ...(overlay.modifiedEdges[edgeId] || {}),
+                    status: 'confirmed'
+                };
+            });
 
             // [v0.3.10] 🛡️ UI TRIGGER: Inform Webview to remove the "?" badge immediately
             this._panel.webview.postMessage({ 
@@ -4031,7 +4057,7 @@ export class CanvasPanel {
         if (!workspaceFolder) return;
 
         const confirm = await vscode.window.showWarningMessage(
-            '🔄 project_state.json을 빈 상태로 초기화하시겠습니까?\n\n노드, 엣지, 클러스터 등 저장된 모든 캔버스 상태가 삭제됩니다.\n(소스 코드는 변경되지 않습니다.)',
+            '사용자 그래프 편집 내용(숨김, 레이블 수정, 레이아웃)을 초기화하시겠습니까? 원본 SSoT 분석 데이터는 보존됩니다.',
             { modal: true },
             '초기화'
         );
@@ -4040,45 +4066,21 @@ export class CanvasPanel {
             return;
         }
 
-        // [Phase 1] Layout Reset 연동: revision + 1로 layout.json 원자적 초기화 (파일 삭제 배제)
+        // [Phase 1 & 2] Layout & UserGraph Reset (SSoT project_state.json untouched)
         try {
             const synapseDataDir = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data').fsPath;
             this._layoutRevision = this._layoutRevision + 1;
             await LayoutStorage.resetLayout(synapseDataDir, this._layoutRevision);
-            Logger.info(`[CanvasPanel] Layout Reset complete. New layoutRevision=${this._layoutRevision}`);
+            this._userGraphData = await UserGraphStorage.reset(workspaceFolder.uri.fsPath);
+            Logger.info(`[CanvasPanel] Layout & UserGraph Reset complete. SSoT project_state.json preserved.`);
         } catch (err: any) {
-            Logger.warn(`[CanvasPanel] Layout Reset failed: ${err.message}`);
+            Logger.warn(`[CanvasPanel] Reset failed: ${err.message}`);
         }
 
-        // STEP 1: Disk Purge - project_state.json 물리적 초기화 (Phase 1 legacy write 남음, Phase 2 이관 예정)
-        const emptyState = { nodes: [], edges: [], clusters: [] };
-        const uri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
-        try {
-            await vscode.workspace.fs.writeFile(uri, Buffer.from(JSON.stringify(emptyState, null, 2), 'utf8'));
-            Logger.info('[CanvasPanel] STEP 1: Disk Purge complete.');
-        } catch (e) {
-            Logger.error('[CanvasPanel] Failed to reset project state:', e);
-            vscode.window.showErrorMessage(`[SYNAPSE] 초기화 실패: ${e}`);
-            return;
-        }
-
-        // STEP 2: Memory Flush - 익스텐션 호스트 내 상태 변수 초기화
-        canvasEngine.resetState();
-        canvasEngine.loadInitialState(emptyState);
-        Logger.info('[CanvasPanel] STEP 2: Memory Flush complete.');
-
-        // STEP 3: Visual Reset - 웹뷰에 RESET_CANVAS 신호 전송
+        // Visual Reset - 웹뷰에 RESET_CANVAS 및 최신 상태 전송
         this._panel.webview.postMessage({ command: 'resetCanvas' });
-        Logger.info('[CanvasPanel] STEP 3: Visual Reset signal sent to webview.');
-
-        // STEP 4: Re-Bootstrap Prompt
-        const choice = await vscode.window.showInformationMessage(
-            '🧹 캔버스가 깨끗해졌습니다. 이제 GEMINI.md를 불러올까요?',
-            'Bootstrap', '닫기'
-        );
-        if (choice === 'Bootstrap') {
-            await this.handleReBootstrap();
-        }
+        await this.sendProjectState(true);
+        Logger.info('[CanvasPanel] User Overlays Reset complete.');
     }
 
     private async handleReBootstrap() {
@@ -4165,16 +4167,16 @@ export class CanvasPanel {
                 return;
             }
 
-            // 2. Persistence
-            const finalState = canvasEngine.getFinalSnapshot();
-            const normalizedJson = this.normalizeProjectState(finalState);
-            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
+            // 2. [Phase 2] Persistence via UserGraph overlay
+            await this.saveOverlayAndPush(overlay => {
+                const patch: any = {};
+                if (updates?.label) patch.label = updates.label;
+                if (updates?.description) patch.description = updates.description;
+                overlay.modifiedEdges[edgeId] = { ...(overlay.modifiedEdges[edgeId] || {}), ...patch };
+            });
             
-            console.log('[SYNAPSE] Edge updated via pipeline:', edgeId);
+            console.log('[SYNAPSE] Edge updated via UserGraph overlay:', edgeId);
             vscode.window.showInformationMessage(`Edge updated`);
-
-            // 3. UI Update
-            await this.sendProjectState();
         } catch (error) {
             console.error('Failed to update edge:', error);
             vscode.window.showErrorMessage(`Failed to update edge: ${error}`);
@@ -4313,13 +4315,12 @@ export class CanvasPanel {
                 });
             }
 
-            // 2. Persistence
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
-            const finalState = canvasEngine.getFinalSnapshot();
-            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(this.normalizeProjectState(finalState), 'utf8'));
+            // 2. [Phase 2] Persistence via UserGraph overlay (approve node)
+            await this.saveOverlayAndPush(overlay => {
+                overlay.modifiedNodes[nodeId] = { ...(overlay.modifiedNodes[nodeId] || {}), status: 'approved' };
+            });
 
-            console.log('[SYNAPSE] Node approved via pipeline:', nodeId);
-            await this.sendProjectState();
+            console.log('[SYNAPSE] Node approved via UserGraph overlay:', nodeId);
         } catch (error) {
             console.error('Failed to approve node:', error);
             vscode.window.showErrorMessage(`Failed to approve node: ${error}`);
@@ -4358,13 +4359,14 @@ export class CanvasPanel {
                 this.proposedEdges = this.proposedEdges.filter(e => e.from !== nodeId && e.to !== nodeId);
             }
 
-            // 3. Persistence
-            const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
-            const finalState = canvasEngine.getFinalSnapshot();
-            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(this.normalizeProjectState(finalState), 'utf8'));
+            // 3. [Phase 2] Persistence via UserGraph overlay (hide rejected node)
+            await this.saveOverlayAndPush(overlay => {
+                const newHidden = new Set(overlay.hiddenNodeIds || []);
+                newHidden.add(nodeId);
+                overlay.hiddenNodeIds = Array.from(newHidden);
+            });
 
-            console.log('[SYNAPSE] Node rejected via pipeline:', nodeId);
-            await this.sendProjectState();
+            console.log('[SYNAPSE] Node rejected via UserGraph overlay:', nodeId);
         } catch (error) {
             console.error('Failed to reject node:', error);
         }
@@ -5021,26 +5023,10 @@ export class CanvasPanel {
                 console.warn('[SYNAPSE] Failed to create safety backup:', e);
             }
 
-            // 2. Overwrite with selected snapshot
-            let existingState: any = {};
-            try {
-                const data = await vscode.workspace.fs.readFile(projectStateUri);
-                existingState = JSON.parse(Buffer.from(data).toString('utf-8'));
-            } catch (e) { }
-
-            const newState = {
-                ...existingState,
-                canvas_state: snapshot.data.canvas_state || existingState.canvas_state || { zoom_level: 1.0, offset: { x: 0, y: 0 } },
-                nodes: snapshot.data.nodes,
-                edges: snapshot.data.edges,
-                clusters: snapshot.data.clusters
-            };
-            // [Ponytail] Avoid string length limit
-            await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(JSON.stringify(newState), 'utf8'));
-
-            // [v0.3.11 HARD SSOT] Sync BACKEND ENGINE immediately
-            // This prevents the engine from overwriting the disk with old state on next interaction
-            canvasEngine.loadInitialState(newState);
+            // [Phase 2] Rollback has been permanently retired in favor of Immutable SSoT.
+            // SSoT write is permanently deleted.
+            vscode.window.showInformationMessage('Rollback functionality has been retired in favor of immutable SSoT.');
+            return;
 
             // [v0.2.18] Restore File Backups physically to disk
             if (snapshot.fileBackups) {
@@ -5346,21 +5332,12 @@ export class CanvasPanel {
                         
                             const finalSnap = canvasEngine.getFinalSnapshot();
                             
-                            // [v0.3.21.4 Amnesia Guard] NEVER overwrite if we somehow ended up with 0 nodes
+                            // [Phase 2] autoDiscoverArchitecture: In-memory only, disk write to project_state.json removed.
                             if (Object.keys(finalSnap.nodes).length > 0) {
                                 projectState.nodes = Object.values(finalSnap.nodes);
                                 projectState.edges = Object.values(finalSnap.edges);
                                 projectState.clusters = finalSnap.clusters || [];
-
-                                try {
-                                    const normalizedJson = this.normalizeProjectState(finalSnap);
-                                    console.log(`[STATE_SAVE_START] Output path: ${projectStateUri.fsPath} (autoDiscover)`);
-                                    console.log(`[STATE_SAVE] Nodes: ${projectState.nodes.length}, Edges: ${projectState.edges.length}`);
-                                    await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf-8'));
-                                    console.log(`[STATE_SAVE_COMPLETE] project_state.json successfully written.`);
-                                } catch (writeErr) {
-                                    console.error(`[STATE_SAVE_ERROR] Failed to write project_state.json in autoDiscover:`, writeErr);
-                                }
+                                console.log(`[AUTODISCOVER_IN_MEMORY] Nodes: ${projectState.nodes.length}, Edges: ${projectState.edges.length}`);
                             }
                             
                             // [v0.3.34] Robust Chunking
@@ -5484,26 +5461,30 @@ export class CanvasPanel {
                 Logger.info(`[CanvasPanel] isHugeGraphState=true. Forcing forceReset=true and isAuthoritative=true to prevent UI freeze.`);
             }
 
+            // [v0.3.34.75 Phase 2] Create Independent Rendering Copy with UserGraph overlay (SSoT master untouched)
+            const userGraph = await this.ensureUserGraphLoaded();
+            let renderingState = UserGraphStorage.createRenderingCopy(projectState, userGraph);
+
             // [v0.3.34.75 Phase 1] Overlay layout.json onto rendering copy only (SSoT untouched)
             try {
                 const synapseDataDir = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data').fsPath;
                 const layout = LayoutStorage.loadLayout(synapseDataDir);
                 this._layoutRevision = Math.max(this._layoutRevision, layout.revision);
                 if (layout.positions && Object.keys(layout.positions).length > 0) {
-                    projectState.nodes = projectState.nodes.map((n: any) => {
+                    renderingState.nodes = renderingState.nodes.map((n: any) => {
                         const pos = layout.positions[n.id];
                         return pos ? { ...n, position: pos } : n;
                     });
                 }
                 if (layout.view) {
-                    projectState.canvas_state = {
-                        ...(projectState.canvas_state || {}),
+                    renderingState.canvas_state = {
+                        ...(renderingState.canvas_state || {}),
                         zoom_level: layout.view.zoom,
                         offset: layout.view.offset
                     };
                 }
                 if (layout.clusters && Object.keys(layout.clusters).length > 0) {
-                    projectState.clusters = (projectState.clusters || []).map((c: any) => {
+                    renderingState.clusters = (renderingState.clusters || []).map((c: any) => {
                         const cl = layout.clusters[c.id];
                         return cl ? { ...c, collapsed: cl.collapsed } : c;
                     });
@@ -5512,12 +5493,12 @@ export class CanvasPanel {
                 Logger.warn(`[CanvasPanel] Failed to overlay layout.json: ${err.message}`);
             }
 
-            console.log('[POST_MESSAGE_SEND] nodes=%d edges=%d clusters=%d', projectState.nodes.length, projectState.edges.length, projectState.clusters.length);
+            console.log('[POST_MESSAGE_SEND] nodes=%d edges=%d clusters=%d', renderingState.nodes.length, renderingState.edges.length, renderingState.clusters.length);
             console.time('webview-postmessage');
             try {
                 console.time('[TIMER] normalize-state');
                 logHostMem('before-postmessage-chunks');
-                logHostGraphShape('before-postmessage-chunks', projectState);
+                logHostGraphShape('before-postmessage-chunks', renderingState);
                 await this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
                 
                 const logHeapSend = (stage: string, chunkIdx: number) => {
@@ -5525,20 +5506,20 @@ export class CanvasPanel {
                     console.log(`[SEND_PROJECT_STATE] ${stage} chunk=${chunkIdx} heap=${heapMB}MB`);
                 };
 
-                for (let i = 0; i < projectState.nodes.length; i += CHUNK_SIZE) {
+                for (let i = 0; i < renderingState.nodes.length; i += CHUNK_SIZE) {
                     await this._panel.webview.postMessage({ 
                         command: 'projectStateNodesChunk', 
-                        data: projectState.nodes.slice(i, i + CHUNK_SIZE).filter(Boolean).map(stripNode)
+                        data: renderingState.nodes.slice(i, i + CHUNK_SIZE).filter(Boolean).map(stripNode)
                     });
                     if ((i / CHUNK_SIZE) % 3 === 0) {
                         logHeapSend('nodes', i / CHUNK_SIZE);
                         await new Promise(resolve => setTimeout(resolve, 5)); // Yield properly to prevent IPC flood and Host unresponsive
                     }
                 }
-                for (let i = 0; i < projectState.edges.length; i += CHUNK_SIZE) {
+                for (let i = 0; i < renderingState.edges.length; i += CHUNK_SIZE) {
                     await this._panel.webview.postMessage({ 
                         command: 'projectStateEdgesChunk', 
-                        data: projectState.edges.slice(i, i + CHUNK_SIZE).filter(Boolean).map(stripEdge)
+                        data: renderingState.edges.slice(i, i + CHUNK_SIZE).filter(Boolean).map(stripEdge)
                     });
                     if ((i / CHUNK_SIZE) % 3 === 0) {
                         logHeapSend('edges', i / CHUNK_SIZE);
@@ -5547,7 +5528,7 @@ export class CanvasPanel {
                 }
                 logHeapSend('COMPLETE', -1);
                 
-                const finalPayload: any = { ...projectState, _ipcTimestamp: Date.now() };
+                const finalPayload: any = { ...renderingState, _ipcTimestamp: Date.now() };
                 delete finalPayload.nodes;
                 delete finalPayload.edges;
                 console.timeEnd('[TIMER] normalize-state');
@@ -5556,7 +5537,7 @@ export class CanvasPanel {
                 console.warn(
                     "[SEND_PROJECT_STATE]",
                     performance.now(),
-                    projectState.clusters?.length
+                    renderingState.clusters?.length
                 );
                 this._panel.webview.postMessage({
                     command: 'projectStateChunkEnd',

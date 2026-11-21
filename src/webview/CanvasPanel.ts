@@ -4095,8 +4095,7 @@ export class CanvasPanel {
 
         if (confirm === 'Deep Reset') {
             try {
-                canvasEngine.resetState();
-                // 1. Bootstrap
+                // 1. Bootstrap: Delegate entire collection & SSoT persistence to BootstrapEngine (Single Ownership)
                 const engine = new BootstrapEngine();
                 const result = await engine.liteBootstrap(
                     workspaceFolder.uri.fsPath,
@@ -4112,23 +4111,15 @@ export class CanvasPanel {
                 this._panel.webview.postMessage({ command: 'progressComplete', taskId: 'bootstrap' });
 
                 if (result.success) {
-                    // 2. Reload Engine
+                    // 2. Commit Memory Baseline ONLY on successful bootstrap (No premature resetState)
+                    canvasEngine.resetState();
                     canvasEngine.loadInitialState({
                         nodes: result.initial_nodes,
                         edges: result.initial_edges,
-                        clusters: []
+                        clusters: (result as any).clusters || []
                     });
-                    
-                    const projectStateUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'project_state.json');
-                    const newState = {
-                        project_name: path.basename(workspaceFolder.uri.fsPath),
-                        nodes: result.initial_nodes,
-                        edges: result.initial_edges,
-                        clusters: []
-                    };
-                    const normalizedJson = this.normalizeProjectState(newState);
-                    await vscode.workspace.fs.writeFile(projectStateUri, Buffer.from(normalizedJson, 'utf8'));
 
+                    // 3. CanvasPanel does NOT write to SSoT. BootstrapEngine is the sole owner.
                     vscode.window.showInformationMessage('Project maps re-generated successfully.');
                     console.trace('[SEND_STATE_FROM]', 'handleGenerateSubNodes');
                     // [P1-1] Wait for any in-flight overlay queue tasks before pushing new SSoT baseline

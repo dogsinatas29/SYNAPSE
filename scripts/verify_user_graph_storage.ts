@@ -245,27 +245,16 @@ async function runVerification() {
             }
         }
 
-        console.log(`Found ${ssotWriteLines.length} SSoT write occurrences:`);
+        console.log(`Found ${ssotWriteLines.length} SSoT write occurrences in CanvasPanel.ts:`);
         for (const hit of ssotWriteLines) {
             console.log(`  Line ${hit.line}: ${hit.text}`);
         }
 
         assert(
-            ssotWriteLines.length === 1,
-            'SSoT Write Count Verification',
-            `Expected exactly 1 SSoT write (handleReBootstrap), found ${ssotWriteLines.length}`
+            ssotWriteLines.length === 0,
+            'CanvasPanel SSoT Zero-Write Verification',
+            `Expected exactly 0 SSoT writes in CanvasPanel (BootstrapEngine is sole owner), found ${ssotWriteLines.length}`
         );
-
-        if (ssotWriteLines.length === 1) {
-            // Verify that the single occurrence is in handleReBootstrap
-            const targetLine = ssotWriteLines[0].line;
-            const surrounding = lines.slice(Math.max(0, targetLine - 60), targetLine + 5).join('\n');
-            assert(
-                surrounding.includes('handleReBootstrap'),
-                'handleReBootstrap Sole Write Authorization',
-                'The sole remaining SSoT write is confirmed to reside inside handleReBootstrap (Phase 3)'
-            );
-        }
 
         // [P1-2] Repository-Wide Full SSoT Write Path Audit
         console.log('\n--- Test 6: [P1-2] Repository-Wide SSoT Write Audit ---');
@@ -309,15 +298,15 @@ async function runVerification() {
             console.log(`  - ${f}`);
         }
 
-        // Only BootstrapEngine (initial generation) and CanvasPanel (handleReBootstrap) are authorized
+        // Only BootstrapEngine (collection & generation) is authorized to write project_state.json
         const unauthorizedWriters = ssotWritingFiles.filter(
-            f => !f.includes('BootstrapEngine.ts') && !f.includes('CanvasPanel.ts')
+            f => !f.includes('BootstrapEngine.ts')
         );
 
         assert(
             unauthorizedWriters.length === 0,
-            '[P1-2] Repository-Wide SSoT Write Isolation',
-            `Zero unauthorized SSoT write modules in src/ (unauthorized: ${unauthorizedWriters.join(', ') || 'none'})`
+            '[P1-2] Repository-Wide SSoT Write Single Ownership',
+            `BootstrapEngine is the SOLE SSoT write module in entire repo (unauthorized: ${unauthorizedWriters.join(', ') || 'none'})`
         );
 
     } finally {

@@ -34,6 +34,7 @@ import { ProjectMetadata } from '../core/ProjectMetadata';
 import { Logger } from '../utils/Logger';
 
 export class BootstrapEngine {
+    private static _tempFileCounter: number = 0;
     private parser: GeminiParser;
     private flowchartGen: FlowchartGenerator;
     private fileScanner: FileScanner;
@@ -391,7 +392,8 @@ export class BootstrapEngine {
             console.log('clusters=' + (projectState.clusters ? projectState.clusters.length : 0));
             console.log('cluster_flows=' + (projectState.cluster_flows ? projectState.cluster_flows.length : 0));
 
-            await ProjectStateSerializer.serializeToFileAsync(projectState, statePath);
+            // [Phase 3-B] Re-Bootstrap 전용 원자적 SSoT 교체 파이프라인
+            await this.atomicSaveProjectState(projectState, statePath);
             console.log('[WRITE_SUCCESS]', fs.statSync(statePath).size);
 
             // [v0.3.10] Final Phase Advance: Hand over control to USER
@@ -603,5 +605,110 @@ The **Documentation Shelf** of the Synapse canvas is a sacred storage area for m
 
     private calculateComplexityHeuristic(content: string): number {
         return 1; // Simplified for Phase 1
+    }
+
+    /**
+     * [Phase 3-B] SSoT 원자적 교체 래퍼 (Re-Bootstrap 전용)
+     * 임시 파일 배타적 생성 -> 직렬화 -> lstat/fstat/Trailer 절단 검사 -> Windows 5회 지수 백오프 renameSync -> 부모 디렉터리 동기화
+     */
+    public async atomicSaveProjectState(projectState: any, statePath: string): Promise<void> {
+        const stateDir = path.dirname(statePath);
+        if (!fs.existsSync(stateDir)) {
+            fs.mkdirSync(stateDir, { recursive: true });
+        }
+
+        const counter = ++BootstrapEngine._tempFileCounter;
+        const tempPath = `${statePath}.tmp.${Date.now()}.${process.pid}.${counter}`;
+
+        // 1. 배타적 임시 파일 생성 ('wx')
+        const reserveFd = fs.openSync(tempPath, 'wx');
+        fs.closeSync(reserveFd);
+
+        try {
+            // 2. 스트리밍 직렬화 (동결된 ProjectStateSerializer 호출)
+            await ProjectStateSerializer.serializeToFileAsync(projectState, tempPath);
+
+            // 3. lstatSync 단일 결과 검증 (심볼릭 링크 탐지)
+            const tempStat = fs.lstatSync(tempPath);
+            if (!tempStat.isFile() || tempStat.isSymbolicLink()) {
+                throw new Error(`[SSOT_SECURITY] Invalid temporary file (symlink or non-file detected): ${tempPath}`);
+            }
+
+            // 4. fstatSync 및 Trailer 절단 검사
+            const tempFd = fs.openSync(tempPath, 'r+');
+            try {
+                const fStat = fs.fstatSync(tempFd);
+                if (!fStat.isFile() || fStat.size === 0) {
+                    throw new Error(`[SSOT_TRUNCATION] Truncated temporary file (size=${fStat.size})`);
+                }
+
+                // 마지막 64바이트 버퍼를 읽어 트림 후 '}' 확인
+                const bufSize = Math.min(64, fStat.size);
+                const buf = Buffer.alloc(bufSize);
+                fs.readSync(tempFd, buf, 0, bufSize, fStat.size - bufSize);
+                const trailer = buf.toString('utf-8').trimEnd();
+                if (!trailer.endsWith('}')) {
+                    throw new Error(`[SSOT_TRUNCATION] Invalid JSON trailer: "${trailer.slice(-5)}"`);
+                }
+
+                // 데이터 플러시
+                fs.fsyncSync(tempFd);
+            } finally {
+                fs.closeSync(tempFd);
+            }
+
+            // 5. Windows 잠금 총 5회 지수 백오프 원자적 교체 (renameSync)
+            const backoffDelays = [50, 100, 200, 400]; // 재시도 4회에 대한 대기 간격
+            let renamed = false;
+            let lastRenameErr: any = null;
+
+            for (let attempt = 1; attempt <= 5; attempt++) {
+                try {
+                    fs.renameSync(tempPath, statePath);
+                    renamed = true;
+                    break;
+                } catch (renameErr: any) {
+                    lastRenameErr = renameErr;
+                    // 일시적 잠금 오류(EBUSY, EPERM)만 백오프 재시도
+                    const isLockError = renameErr.code === 'EBUSY' || renameErr.code === 'EPERM';
+                    if (isLockError && attempt < 5) {
+                        const delayMs = backoffDelays[attempt - 1];
+                        console.warn(`[SSOT_RENAME_RETRY] Attempt ${attempt} failed with ${renameErr.code}. Retrying in ${delayMs}ms...`);
+                        await new Promise(resolve => setTimeout(resolve, delayMs));
+                    } else {
+                        // 비일시적 오류(ENOENT 등)이거나 5회 소진 시 즉시 중단
+                        break;
+                    }
+                }
+            }
+
+            if (!renamed) {
+                throw new Error(`[SSOT_RENAME_FAILED] Failed to atomically replace ${statePath} after attempts: ${lastRenameErr?.message || lastRenameErr}`);
+            }
+
+            // 6. 부모 디렉터리 fsync (POSIX 환경 디렉터리 엔트리 동기화 시도)
+            try {
+                const dirFd = fs.openSync(stateDir, 'r');
+                try {
+                    fs.fsyncSync(dirFd);
+                } finally {
+                    fs.closeSync(dirFd);
+                }
+            } catch (dirErr: any) {
+                // Windows 또는 디렉터리 fsync 미지원 파일시스템은 안전하게 무시 (COMMITTED_DURABILITY_UNCONFIRMED)
+                console.warn(`[SSOT_DURABILITY_UNCONFIRMED] Parent directory fsync not supported or failed: ${dirErr.message}`);
+            }
+
+        } catch (err: any) {
+            // PRE-COMMIT 오류 발생 시 임시 파일 정리
+            if (fs.existsSync(tempPath)) {
+                try {
+                    fs.unlinkSync(tempPath);
+                } catch (unlinkErr: any) {
+                    console.error(`[SSOT_TEMP_CLEANUP_WARN] Failed to delete temporary file ${tempPath}: ${unlinkErr.message}`);
+                }
+            }
+            throw err;
+        }
     }
 }

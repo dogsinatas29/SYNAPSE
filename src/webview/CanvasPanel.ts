@@ -152,6 +152,27 @@ export class CanvasPanel {
     private _userGraphData: UserGraphData | null = null;
     private _overlayQueue: Promise<void> = Promise.resolve();
 
+    // [v0.3.34.75 Phase 3-B] Atomic SSoT Replacement & Re-Bootstrap Exclusive Lock
+    private _isReBootstrapping: boolean = false;
+    private _isWebviewStale: boolean = false;
+    private _isReadOnlySafeMode: boolean = false;
+
+    private checkEditBlocked(): boolean {
+        if (this._isReBootstrapping) {
+            vscode.window.showWarningMessage('[SYNAPSE] 프로젝트 재수집 중에는 캔버스를 편집할 수 없습니다.');
+            return true;
+        }
+        if (this._isReadOnlySafeMode) {
+            vscode.window.showErrorMessage('[SYNAPSE] 시스템이 안전 읽기 전용 모드입니다. 창을 다시 로드해주세요.');
+            return true;
+        }
+        if (this._isWebviewStale) {
+            vscode.window.showWarningMessage('[SYNAPSE] 화면 동기화 진행 중입니다. 잠시 후 다시 시도해주세요.');
+            return true;
+        }
+        return false;
+    }
+
     private async ensureUserGraphLoaded(): Promise<UserGraphData> {
         if (!this._userGraphData && this._workspaceFolder) {
             this._userGraphData = await UserGraphStorage.loadUserGraph(this._workspaceFolder.uri.fsPath);
@@ -1121,6 +1142,7 @@ export class CanvasPanel {
     }
 
     private async handleUpdateNodeData(node: any) {
+        if (this.checkEditBlocked()) return;
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder || !node || !node.id) return;
 
@@ -3719,6 +3741,7 @@ export class CanvasPanel {
 
     // [Updated] Robust Delete Handler
     private async handleDeleteNodes(rawInput: any) {
+        if (this.checkEditBlocked()) return;
         // [HOT-FIX] Force show output channel and log immediately
         Logger.show();
         Logger.info(`[CanvasPanel] handleDeleteNodes CALLED. Raw Input:`, rawInput);
@@ -3858,6 +3881,7 @@ export class CanvasPanel {
     }
 
     private async handleRequestConfirmEdge(edgeId: string, fromFile: string | null, toFile: string | null) {
+        if (this.checkEditBlocked()) return;
         if (this._isProcessingConfirm) return;
         this._isProcessingConfirm = true;
 
@@ -4053,6 +4077,7 @@ export class CanvasPanel {
 
 
     private async handleResetProjectState() {
+        if (this.checkEditBlocked()) return;
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
@@ -4087,55 +4112,98 @@ export class CanvasPanel {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
+        // 1. 중복 실행 차단 및 SafeMode 확인
+        if (this._isReBootstrapping) {
+            vscode.window.showWarningMessage('[SYNAPSE] 이미 프로젝트 재수집이 진행 중입니다.');
+            return;
+        }
+        if (this._isReadOnlySafeMode) {
+            vscode.window.showErrorMessage('[SYNAPSE] 시스템이 안전 읽기 전용 모드입니다. 창을 다시 로드해주세요.');
+            return;
+        }
+
         const confirm = await vscode.window.showWarningMessage(
             '프로젝트 지도를 초기화하고 다시 스캔하시겠습니까? (수동으로 작업한 내용은 삭제됩니다)',
             { modal: true },
             'Deep Reset'
         );
 
-        if (confirm === 'Deep Reset') {
-            try {
-                // 1. Bootstrap: Delegate entire collection & SSoT persistence to BootstrapEngine (Single Ownership)
-                const engine = new BootstrapEngine();
-                const result = await engine.liteBootstrap(
-                    workspaceFolder.uri.fsPath,
-                    (msg, percent) => {
-                        this._panel.webview.postMessage({
-                            command: 'progress',
-                            label: msg,
-                            progress: percent || 0,
-                            taskId: 'bootstrap'
-                        });
-                    }
-                );
-                this._panel.webview.postMessage({ command: 'progressComplete', taskId: 'bootstrap' });
+        if (confirm !== 'Deep Reset') {
+            return;
+        }
 
-                if (result.success) {
-                    // 2. Commit Memory Baseline ONLY on successful bootstrap (No premature resetState)
+        // 2. 배타적 락 즉시 획득 (비동기 작업 전)
+        this._isReBootstrapping = true;
+
+        try {
+            // 3. 기존 대기 오버레이 큐 비우기 (Flush)
+            await this._overlayQueue;
+
+            // 4. Bootstrap: Delegate entire collection & SSoT persistence to BootstrapEngine (Single Ownership)
+            const engine = new BootstrapEngine();
+            const result = await engine.liteBootstrap(
+                workspaceFolder.uri.fsPath,
+                (msg, percent) => {
+                    this._panel.webview.postMessage({
+                        command: 'progress',
+                        label: msg,
+                        progress: percent || 0,
+                        taskId: 'bootstrap'
+                    });
+                }
+            );
+            this._panel.webview.postMessage({ command: 'progressComplete', taskId: 'bootstrap' });
+
+            if (!result.success) {
+                // PRE-COMMIT 실패: 임시 파일은 이미 엔진에서 폐기됨, 기존 SSoT 100% 보존
+                throw new Error(result.error || 'Bootstrap failed');
+            }
+
+            // 5. POST-COMMIT: Rename 완료 확정됨 -> 메모리 적재 시도 (최대 3회)
+            let memoryLoaded = false;
+            let lastMemErr: any = null;
+
+            for (let memAttempt = 1; memAttempt <= 3; memAttempt++) {
+                try {
                     canvasEngine.resetState();
                     canvasEngine.loadInitialState({
                         nodes: result.initial_nodes,
                         edges: result.initial_edges,
                         clusters: (result as any).clusters || []
                     });
-
-                    // 3. CanvasPanel does NOT write to SSoT. BootstrapEngine is the sole owner.
-                    vscode.window.showInformationMessage('Project maps re-generated successfully.');
-                    console.trace('[SEND_STATE_FROM]', 'handleGenerateSubNodes');
-                    // [P1-1] Wait for any in-flight overlay queue tasks before pushing new SSoT baseline
-                    await this._overlayQueue;
-                    await this.sendProjectState(true);
-                } else {
-                    throw new Error(result.error);
+                    memoryLoaded = true;
+                    break;
+                } catch (memErr) {
+                    lastMemErr = memErr;
+                    console.error(`[POST_COMMIT_RETRY] Memory load attempt ${memAttempt} failed:`, memErr);
                 }
-            } catch (error) {
-                console.error('Failed to re-bootstrap:', error);
-                vscode.window.showErrorMessage(`Re-bootstrap failed: ${error}`);
             }
+
+            if (!memoryLoaded) {
+                // 메모리 복구 3회 모두 실패 시 Safe Mode 진입 및 락 영구 유지 (_isReBootstrapping = true 유지)
+                this._isReadOnlySafeMode = true;
+                vscode.window.showErrorMessage('[SYNAPSE] 신규 프로젝트 상태의 메모리 적재에 실패하여 안전 읽기 전용 모드로 고정되었습니다. VS Code 창을 다시 로드해주세요.');
+                return;
+            }
+
+            // 6. 메모리 적재 성공 확인 -> 웹뷰 푸시 및 호스트 게시 확인
+            vscode.window.showInformationMessage('Project maps re-generated successfully.');
+            console.trace('[SEND_STATE_FROM]', 'handleReBootstrap');
+            await this.sendProjectState(true);
+
+            // 7. 정상 완료 시 락 해제
+            this._isReBootstrapping = false;
+
+        } catch (error) {
+            console.error('Failed to re-bootstrap:', error);
+            vscode.window.showErrorMessage(`Re-bootstrap failed: ${error}`);
+            // PRE-COMMIT 실패 시 기존 메모리 및 SSoT가 보존되었으므로 락 정상 해제
+            this._isReBootstrapping = false;
         }
     }
 
     private async handleUpdateEdge(edgeId: string, updates: any) {
+        if (this.checkEditBlocked()) return;
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
@@ -4266,6 +4334,7 @@ export class CanvasPanel {
     }
 
     private async handleApproveNode(nodeId: string) {
+        if (this.checkEditBlocked()) return;
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
@@ -4338,6 +4407,7 @@ export class CanvasPanel {
     }
 
     private async handleRejectNode(nodeId: string) {
+        if (this.checkEditBlocked()) return;
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
 
@@ -5142,7 +5212,10 @@ export class CanvasPanel {
         console.log(`[GRAPH_REBUILD_TRIGGER] sendProjectState called (forceReset=${forceReset}, authoritative=${isAuthoritative})`);
         const trace = new Error().stack?.split('\n')[2]?.trim() || 'unknown source';
         console.log(`[GRAPH_REBUILD_TRIGGER] Caller: ${trace}`);
-        if (!this._panel || this._isSyncing) return;
+        if (!this._panel || this._isSyncing) {
+            if (!this._panel) this._isWebviewStale = true;
+            return;
+        }
         this._isSyncing = true;
         
         const workspaceFolder = this._workspaceFolder;
@@ -5492,7 +5565,8 @@ export class CanvasPanel {
                 console.time('[TIMER] normalize-state');
                 logHostMem('before-postmessage-chunks');
                 logHostGraphShape('before-postmessage-chunks', renderingState);
-                await this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
+                const okStart = await this._panel.webview.postMessage({ command: 'projectStateChunkStart' });
+                if (!okStart) throw new Error('[IPC_FAILED] Failed to post projectStateChunkStart');
                 
                 const logHeapSend = (stage: string, chunkIdx: number) => {
                     const heapMB = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
@@ -5500,20 +5574,22 @@ export class CanvasPanel {
                 };
 
                 for (let i = 0; i < renderingState.nodes.length; i += CHUNK_SIZE) {
-                    await this._panel.webview.postMessage({ 
+                    const okNodes = await this._panel.webview.postMessage({ 
                         command: 'projectStateNodesChunk', 
                         data: renderingState.nodes.slice(i, i + CHUNK_SIZE).filter(Boolean).map(stripNode)
                     });
+                    if (!okNodes) throw new Error(`[IPC_FAILED] Failed to post nodes chunk at index ${i}`);
                     if ((i / CHUNK_SIZE) % 3 === 0) {
                         logHeapSend('nodes', i / CHUNK_SIZE);
                         await new Promise(resolve => setTimeout(resolve, 5)); // Yield properly to prevent IPC flood and Host unresponsive
                     }
                 }
                 for (let i = 0; i < renderingState.edges.length; i += CHUNK_SIZE) {
-                    await this._panel.webview.postMessage({ 
+                    const okEdges = await this._panel.webview.postMessage({ 
                         command: 'projectStateEdgesChunk', 
                         data: renderingState.edges.slice(i, i + CHUNK_SIZE).filter(Boolean).map(stripEdge)
                     });
+                    if (!okEdges) throw new Error(`[IPC_FAILED] Failed to post edges chunk at index ${i}`);
                     if ((i / CHUNK_SIZE) % 3 === 0) {
                         logHeapSend('edges', i / CHUNK_SIZE);
                         await new Promise(resolve => setTimeout(resolve, 5)); // Yield properly to prevent IPC flood and Host unresponsive
@@ -5532,7 +5608,7 @@ export class CanvasPanel {
                     performance.now(),
                     renderingState.clusters?.length
                 );
-                this._panel.webview.postMessage({
+                const okEnd = await this._panel.webview.postMessage({
                     command: 'projectStateChunkEnd',
                     data: finalPayload, // [v0.3.33 Phase 0] Baseline: IPC send timestamp
                     workspaceFolder: workspaceFolder.uri.fsPath,
@@ -5541,12 +5617,17 @@ export class CanvasPanel {
                     layoutRevision: this._layoutRevision,
                     lastAppliedSeq: this._lastAppliedSeq
                 });
+                if (!okEnd) throw new Error('[IPC_FAILED] Failed to post projectStateChunkEnd');
+
+                // [Phase 3-B] 모든 청크의 postMessage가 true를 반환했을 때에만 호스트 측 게시 확인 완료
+                this._isWebviewStale = false;
             } finally {
                 console.timeEnd('webview-postmessage');
                 logHostMem('after-webview-postmessage');
             }
 
         } catch (error) {
+            this._isWebviewStale = true;
             Logger.error(`[CanvasPanel] sendProjectState failed: ${error}`);
         } finally {
             this._isSyncing = false;

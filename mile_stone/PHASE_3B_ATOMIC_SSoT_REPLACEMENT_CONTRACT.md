@@ -1,9 +1,9 @@
-# [SYNAPSE Phase 3-B] 원자적 SSoT 교체 계약서 (Revision 6: 감사 보완 최종안)
+# [SYNAPSE Phase 3-B] 원자적 SSoT 교체 계약서 (Revision 7: 최종 승인안)
 ## Atomic SSoT Replacement Contract & Failure Recovery Protocol
 
 ## 0. 거버넌스 및 상태
-- **문서 버전:** `Revision 6 (감사 보완 최종안)`
-- **상태:** `PROPOSED DRAFT — PENDING MASTER APPROVAL`
+- **문서 버전:** `Revision 7 (최종 승인안)`
+- **상태:** `PROPOSED FINAL — PENDING MASTER APPROVAL`
 - **선행 조건:** Phase 2 CLOSED, Phase 3-A CLOSED
 - **코드 동결:** `Code Freeze: ACTIVE`, `Execution Freeze: ACTIVE`, `Implementation Authorization: NOT GRANTED`
 - **목적:** 수집기(`BootstrapEngine`)의 재수집(Re-Bootstrap) 시 기존 `project_state.json`을 손상시키지 않고, 안전하게 새로운 SSoT로 원자적 교체(Atomic Swap)하는 엄격한 계약 확정.
@@ -50,15 +50,20 @@
   - Serializer는 경로 문자열(`filePath`)을 받아 내부에서 `fs.openSync(filePath, 'w')`로 FD를 열고, 청킹 기록 후 `finally` 블록에서 `fs.closeSync(fd)`로 자체 닫기를 완료한다.
 - **경로 규칙 및 파티션 격리:** 파티션 간 이동(`EXDEV`)에 따른 원자성 훼손을 방지하기 위해 대상 파일과 동일한 디렉터리(`synapse_data`) 내에 생성.
 - **고유 식별자:** `project_state.json.tmp.${Date.now()}.${process.pid}.${counter}`
-- **배타적 생성 절차 및 소유권 한계 명시 (P1-1 보완):**
+- **배타적 생성 절차 및 소유권 한계 명시 (P1-1 정정):**
   1. `BootstrapEngine`이 `fs.openSync(tempPath, 'wx')`로 임시 파일을 생성하여 **최초 생성 시점의 경로 중복을 방지**한다.
   2. **예약용 FD 즉시 닫기:** Serializer 호출 전에 `fs.closeSync(reserveFd)`로 예약용 디스크립터를 즉시 닫는다.
-  3. **소유권 한계 명시 (OS 잠금 한계):** 임시 경로의 독점은 SYNAPSE 확장 호스트 애플리케이션 내부의 단일 실행 스코프 규칙에 의한 것이며, **운영체제나 파일시스템 수준에서 외부 프로세스의 경로 교체나 삭제를 방지하는 OS 파일 잠금(Lock)을 보장하는 것은 아니다.** 외부 프로세스에 의한 임시 경로 교체는 위 절차만으로 방지되지 않는다.
-  4. **방어적 재검증 절차:** 외부 프로세스 개입 위험을 완화하기 위해, Serializer 완료 후 파일을 다시 열기 전 반드시 다음을 확인한다:
-     - `fs.existsSync(tempPath)`가 참인가.
-     - `fs.statSync(tempPath).isFile()`이 참인가 (심볼릭 링크 또는 디렉터리 교체 방어).
-     - 파일 핸들 재개방(`fs.openSync(tempPath, 'r+')`)이 정상 성공하는가.
-  5. **엄격한 소유권 기반 정리:** 오류 발생 시 정리(`unlinkSync`)는 현재 인스턴스가 배타적으로 생성한 `tempPath`에 한해서만 수행하며, 타 프로세스나 이전 세션의 파일을 임의로 삭제하지 않는다.
+  3. **소유권 한계 및 TOCTOU 명시 (OS 잠금 한계):**
+     - 임시 경로의 독점은 SYNAPSE 확장 호스트 애플리케이션 내부의 단일 실행 스코프 규칙에 의한 것이며, **운영체제나 파일시스템 수준에서 외부 프로세스의 경로 교체나 삭제를 방지하는 OS 파일 잠금(Lock)을 보장하는 것은 아니다.**
+     - 예약 FD를 닫은 후 Serializer가 파일을 열기까지, 그리고 Serializer 완료 후 재개방하기까지의 시간차(TOCTOU)에 의해 외부 프로세스가 경로를 조작하는 행위는 본 절차만으로 원천 차단되지 않는다.
+     - 경로 기반 정리(`unlinkSync`) 역시 외부 프로세스가 경로를 교체했다면 동일 경로의 다른 파일이 삭제될 수 있는 본질적 한계를 지닌다. 따라서 본 절차는 정상적인 단일 애플리케이션 환경을 전제로 한 안전장치(Sanity Check)이며, 외부 프로세스의 악의적 개입까지 완벽히 차단하는 보안 보장으로 확대 해석하지 않는다.
+  4. **방어적 재검증 절차 (`lstatSync` 및 `fstatSync` 정정):**
+     - 외부 프로세스 개입 위험을 완화하기 위해, Serializer 완료 후 파일을 다시 열기 전과 연 직후 다음 검증을 엄격히 수행한다:
+       - `fs.existsSync(tempPath)`가 참인가.
+       - `fs.lstatSync(tempPath).isFile() && !fs.lstatSync(tempPath).isSymbolicLink()`가 참인가 (심볼릭 링크 및 디렉터리 교체 탐지).
+       - 파일 핸들 재개방(`tempFd = fs.openSync(tempPath, 'r+')`)이 정상 성공하는가.
+       - 재개방된 파일 디스크립터에 대해 `fs.fstatSync(tempFd).isFile()`이 참인가 (실제 열린 파일 객체 검증).
+  5. **엄격한 소유권 기반 정리:** 오류 발생 시 정리(`unlinkSync`)는 현재 인스턴스가 배타적으로 생성한 `tempPath`에 한해서만 수행한다.
 
 ### 계약 2: 스트리밍 완료 및 절단 방지 검사 (Streaming Completion & Truncation Check)
 대용량 그래프(Godot 9,800+ 노드 등)에서 V8 메모리 초과를 유발하는 전체 파일 `JSON.parse`를 전면 금지하며, 본 검사는 "전체 JSON 구조 검증"이 아닌 **"스트리밍 정상 완료 및 파일 절단 여부 확인"**으로 엄격히 한정한다 (실제 구조적 무결성은 Serializer의 정상 실행 계약에 의존):
@@ -74,7 +79,7 @@
 ```
 [임시 파일 스트리밍 쓰기 완료 (Serializer closeSync)]
          ↓
-[임시 파일 실존/일반 파일 확인 후 fsyncSync(tempFd) 플러시 시도 및 close]
+[임시 파일 lstatSync 확인 후 openSync('r+') -> fstatSync 확인 후 fsyncSync(tempFd) 플러시 시도 및 close]
          ↓
 [fs.renameSync(tempPath, targetPath)]  <--- COMMIT POINT
          ↓
@@ -117,7 +122,7 @@ Re-Bootstrap 실행 중 경합을 방지하고, 메모리-웹뷰 불일치를 �
          return;
      }
      ```
-4. **POST-COMMIT 실패 복구 및 호스트 측 메시지 게시 확인 완료 기준 (P1-2 보완):**
+4. **POST-COMMIT 실패 복구 및 호스트 측 메시지 게시 확인 완료 기준:**
    - **[메모리 동기화 실패 시]:** 신규 SSoT Commit 후 `canvasEngine.loadInitialState` 실패 시, 디스크 최신 SSoT 기준으로 최대 3회 재적재를 시도한다. 3회 모두 실패 시 락을 풀지 않고 `READ_ONLY_SAFE_MODE` 상태로 고정(편집 영구 차단 및 VS Code 창 리로드 안내).
    - **[용어 정의 및 한계]:** 완료 상태는 렌더러의 실제 DOM/WebGL 적용 완료(Rendering ACK)가 아니며, VS Code IPC를 통한 **"호스트 측 메시지 게시 확인 완료 (Host-side Message Post Confirmed)"**로 명확히 한정한다.
    - **[비동기 반환값 전수 검증]:**
@@ -158,7 +163,7 @@ Re-Bootstrap 후 사용자 편집 및 레이아웃 오버레이는 기존 검증
 
 ## 5. Phase 3 허용 변경 파일 범위 (엄격히 3개 파일 한정)
 
-1. `src/bootstrap/BootstrapEngine.ts` (임시 파일 배타적 생성 및 실존 확인, 스트리밍 연결, Trailer 절단 검사, Windows 잠금 총 5회 지수 백오프 재시도, 원자적 교체 및 fsync 동기화)
+1. `src/bootstrap/BootstrapEngine.ts` (임시 파일 배타적 생성 및 lstat/fstat 검증, 스트리밍 연결, Trailer 절단 검사, Windows 잠금 총 5회 지수 백오프 재시도, 원자적 교체 및 fsync 동기화)
 2. `src/webview/CanvasPanel.ts` (`_isReBootstrapping` 및 `_isWebviewStale` 배타적 선행 가드 7개소 배치, `postMessage` boolean 반환값 검증 및 POST-COMMIT 메모리/웹뷰 분리 복구 상태 관리)
 3. `scripts/verify_atomic_ssot_replacement.ts` (신규 검증 하네스: 5종 실패 주입, Windows 잠금 5회 재시도 실측, 배타적 선행 락 실측, 웹뷰 Stale 차단 실측, 오버레이 재적용 검증)
 

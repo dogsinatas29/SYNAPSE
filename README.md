@@ -12,8 +12,8 @@ SYNAPSE transforms source code into an explorable architecture map,
 allowing engineers to visualize dependencies, execution flow,
 bottlenecks, and system-wide interactions across large software systems.
 
-[![Version](https://img.shields.io/badge/version-v0.3.34.73.fix1-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.73.fix1-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1)
+[![Version](https://img.shields.io/badge/version-v0.3.34.75-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.75)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.75-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.75)
 ![Status](https://img.shields.io/badge/status-Experimental-blue.png)
 
 [🇰🇷 한국어 버전](./README.ko.md)
@@ -104,82 +104,85 @@ SYNAPSE uses a rich visual vocabulary to communicate the nature and health of yo
 ### 1. 📄 Entity Types (Identity Icons)
 Defines the physical nature or architectural role of the node.
 
+> *Note: Border color and glow are determined dynamically by **Node Status & Role Overlays** (`SYNAPSE_THEME.getFullNodeStyle`), rather than per-entity border colors.*
+
 | Icon | Type | Meaning | Visual Style |
 | :--- | :--- | :--- | :--- |
-| 📄 | Active Source | A physical source file (Logic, Config, etc.). | Solid border, base color |
-| ⚡ | Atomic Logic | Core logic or Entry Point (contains Atomic signature). | Purple glow (DTR) |
-| 📁 | Folder | A directory structure cluster. | Folder cluster container |
-| ☁️ | External API | External library (os, fs) or API call dependency. | Cloud-like UI |
-| 📚 | Doc Shelf | Milestone, release note, architecture document. | Hidden by default on canvas |
-| 🧪 | Test Case | Unit tests and validation scripts (.test.ts). | Orange border |
-| 🧩 | Component | Modular UI or logical component unit. | Blue-green border |
-| ⚙️ | Processor | Data transformation or computational engine. | Purple-grey border |
-| 🤝 | Service | Shared logic or infrastructure service layer. | Blue border |
-| ⛩️ | Gate | Security, authentication, or traffic controller. | Thick yellow border |
-| 📋 | Data Record | DB schema, JSON model, or pure data definition. | Thick border, dark background |
-| 👻 | Ghost Source | Referenced internal source missing physical file. | Dashed border |
+| 📄 | Active Source | A physical source file (Logic, Config, etc.). | Solid border (`#a89984`), base fill (`#3c3836`) |
+| ⚡ | Atomic Logic | Core / entry / atomic logic file (`atomic`, `core`, `entry`, `hasAtomicSignature`). *(Also shown for `Awaiting Approval`)* | Purple glow (`#8a2be2`) when `DTR >= 0.7` |
+| 📁 | Folder | A directory structure cluster. | Folder cluster container (`📁` collapsed / `📂` expanded) |
+| ☁️ / 🌐 / 🗄️ | External | External dependency (`api` → `☁️`, `db`/`sql` → `🗄️`, general libraries like `os`, `fs` → `🌐`). | Dashed green border (`#8ec07c`, `dash [5, 5]`) |
+| 📚 | Doc Shelf | Milestone, release note, architecture document (`.md`, `.txt`). | Hidden by default on canvas (`doc_shelf` cluster) |
+| 🧪 | Test Case | Unit tests and validation scripts (`.test.`, `_test`). | Standard box (border follows node status/role) |
+| 🧩 | Component | Modular UI or logical component unit (`logic` type). | Standard box (border follows node status/role) |
+| ⚙️ | Processor | Engine, processor, or renderer (`engine`, `processor`, `renderer`). | Standard box (border follows node status/role) |
+| 🤝 | Service | Shared service or provider (`service`, `provider`). | Standard box (border follows node status/role) |
+| ⛩️ | Gate | Router, controller, validator, or gate (`router`, `controller`, `gate`). | Diamond shape |
+| 📋 | Data Record | Config, DB schema, model, or table (`CONFIG`/`DATA`, `schema`, `model`, `table`). | Thick border (`4px`, `#83a598`), teal fill (`#076678`) for `CONFIG`/`DATA` |
+| 👻 | Ghost Source | Referenced internal source missing physical file. | Dashed grey border (`#928374`, `dash [4, 4]`), `0.6` opacity |
 
 ### 2. 🎨 Node Status & Glow
 Defines the current reasoning state and visual prominence of the node.
 
 | Status | Visual Hint | Color | Meaning |
 | :--- | :--- | :--- | :--- |
-| **Active** | solid border | `#83a598` | Verified and currently active in the codebase. |
-| **High DTR** | purple glow | `#8a2be2` | High reasoning density; critical logic point. |
-| **Ghost** | dashed border | `#928374` | Proposed architectural node (not yet materialized). |
-| **Deleted** | grayed out | `#282828` | Safely commented out/decommissioned node. |
-| **Warning** | red pulse | `#fb4934` | Logic error, circular dependency, or dead-end detected. |
-| **Necrosis** | 💀 | `#1d2021` | Fatal logic failure; broken build or severe physical defect. |
-| **Tombstone** | 🪦 | `#1d2021` | Irrecoverable deterministic failure; recommended for deletion. |
+| **Active** | ✅ / solid border | `#83a598` | Verified and currently active in the codebase (`status === 'active'`). |
+| **High DTR** | purple glow | `#8a2be2` | High deterministic reasoning density (`dtr >= 0.7`). |
+| **Proposed / Pending** | ❓ / pulsing dashed border | `#fabd2f` | Proposed architectural node (`proposed` / `pending`). |
+| **Ghost** | dashed border | `#928374` | Unmaterialized or missing referenced file (`0.6` opacity). |
+| **Deleted** | ❌ / dimmed | `#282828` | Decommissioned/deleted node (`0.3` opacity). |
+| **Warning** | ⚠️ / red border & glow | `#fb4934` | Error or structural warning detected (`warning` / `isError`). |
+| **Necrosis** | 💀 | `#1d2021` / `#fb4934` | Fatal logic/syntax failure; dark fill with `#fb4934` border. |
+| **Tombstone** | 🪦 | `#1d2021` | Irrecoverable failure state (`error_tombstone`). |
 
 ### 3. ➡️ Logic & Flow Markers
-Markers that occur on nodes or edges depending on the Zoom level (LOD).
+Markers and shapes used by `SYNAPSE_THEME` across Flow/Detail/Edge views.
 
 | Icon | Type | Meaning |
 | :--- | :--- | :--- |
-| ↻ | Loop | Iterative logic (for, while, map). |
-| ◈ | Decision | Branching logic (if, switch, validation). |
-| 🖨️ | Output | Terminal logging, printing, or side-effect output. |
-| 📡 | Signal | Network request or remote procedure call (RPC). |
-| 📊 | Payload | High-bandwidth data movement or stream. |
-| 🕒 | Async | Asynchronous processing or wait states. |
+| ↻ / 🔁 | Loop | Iterative logic (theme `loop` token `↻`, hexagon shape for `loop`/`iter`, `loop` edge icon `🔁`). |
+| ◈ | Decision | Branching/validation logic (diamond shape for `validator`, `checker`, `router`, `gate`, `is_*`). |
+| 🖨️ | Output | Terminal logging or output (`print:` / `console.log` node icon + parallelogram shape). |
+| 📡 | Signal | Function call / RPC signal (`call` edge icon & validation-in-progress indicator). |
+| 📊 | Payload | Data flow edge icon (`data_flow`). |
+| 🕒 | Async / Reserved | Theme `async` token & Reserved Cluster (`sys_cluster_reserved`) marker. |
 
 ### 4. ⚠️ Hazard & Purification Markers
-Visual indicators of system purity and architectural health.
+Visual indicators rendered for architectural faults and broken dependencies.
 
 | Icon | Type | Meaning | Visual Style |
 | :--- | :--- | :--- | :--- |
-| 💀 | Necrosis | Architectural failure (circular dependency, etc.). | Dark background + noise |
-| 🪦 | Tombstone | Persistent deterministic violation record. | Tombstone marker |
-| 💣 | Mine | High-hazard point (breaking changes detected). | Red-out warning |
-| ⚠️ | Logic Fault | Specific code-level error or sync failure. | Red pulse / Warning icon |
-| 🔴 | Dirty Dot | Local changes that require synchronization/push. | Top-right red dot |
+| 💀 | Necrosis | Node diagnostic/architectural failure (`necroticNodeIds` / `error_necrosis`). | Dark `#1d2021` fill, `#fb4934` border, radial gradient + `💀` at zoom > `0.8` |
+| 🪦 | Tombstone | Persistent unrecoverable state (`error_tombstone`). | Dark `#1d2021` fill + `🪦` marker |
+| 💥 | Fracture | Broken dependency or cross-boundary fracture (`broken_fracture`). | Dotted `#fb4934` edge (`3px`) + `💥` edge icon |
+| ⚠️ | Warning / Fault | Node error state (`warning` / `isError`). | Red `#fb4934` border & glow |
 
 ### 5. ✅ Interaction & Approval Badges
-Intelligent badges representing synchronization and user command status.
+Badges representing confirmation, validation, and lock state on nodes and edges.
 
 | Badge | Status | Meaning |
 | :--- | :--- | :--- |
-| ✅ | Confirmed | Manually approved by the Commander. |
-| 🤖 | AI Validated | Automatically verified against the codebase. |
-| ❓ | Pending | Proposed design awaiting verification (Draft). |
-| ❌ | Purge | Marked for physical removal or deletion. |
-| 🔒 | Locked | Immutable state; protected from modification. |
+| ✅ | Confirmed | Confirmed edge badge (`confirmed`) & edge confirmation action. |
+| 🤖 | AI Validated | AI validation edge badge (`validation.isAi`) & reasoning indicator. |
+| ❓ | Pending | Proposed/pending node badge (bottom-right) & pending edge badge (`pending_confirm`). |
+| ❌ | Error / Delete | Invalid edge hazard badge (`!validation.valid`) & Edit Logic delete badge. |
+| 🔒 | Locked | Node locked indicator (`node.data.isLocked`, top-right) & Edit Mode OFF state. |
 
 ### 🔗 Edge & Line Conventions
-SYNAPSE uses distinct colors and styles to represent different types of logical connections and data flows between nodes.
+SYNAPSE uses distinct colors and styles (`SYNAPSE_THEME.EDGES` / `getEdgeStyle`) to represent logical connections and data flows.
 
-| Edge Type | Color | Style & Thickness | Meaning |
-| :--- | :--- | :--- | :--- |
-| **Dependency** | `#ebdbb2` | solid 2px | Standard module dependency or import. |
-| **Data Flow** | `#83a598` | solid 3px | Heavy data transfer or payload movement. |
-| **Event** | `#fe8019` | solid 2px | Event triggers or asynchronous callbacks. |
-| **Conditional** | `#d3869b` | solid 1px | Conditional branches like if/else or match. |
-| **Origin** | `#d65d0e` | solid 1.5px | Prompt origin links for AI logic tracking. |
-| **API Call** | `#8ec07c` | dashed 2px | External API or cross-service network calls. |
-| **DB Query** | `#d3869b` | solid 3px | Database queries, mutations, or transactions. |
-| **Loop / Back** | `#fe8019` | dotted 2px | Loop-backs (while/for) or reverse logic flow. |
-| **Highlighted** | `#fabd2f` | pulse 5px | Active execution path (Hovered/Selected). |
+| Edge Type | Color | Style & Thickness | Icon | Meaning |
+| :--- | :--- | :--- | :--- | :--- |
+| **Dependency** | `#ebdbb2` | solid `2px` | 🔗 | Standard module dependency or import. |
+| **Reference / Include** | `#928374` | dashed `1.5px` (`[4, 4]`) | 🔗 / 📝 | Soft inclusion (`include`) or reference (`reference`). |
+| **Data Flow** | `#83a598` | solid `3px` | 📊 | Data transfer or payload movement (`data_flow`). |
+| **Event / Call** | `#fe8019` | solid `2px` | ⚡ / 📡 | Event triggers (`event`, `⚡`) or function calls (`call`, `📡`). |
+| **Conditional** | `#d3869b` | solid `1px` | ❓ | Conditional branches (`conditional`). |
+| **API Call** | `#8ec07c` | dashed `2px` (`[4, 4]`) | 🌐 | External API or cross-service network calls (`api_call`). |
+| **DB Query** | `#d3869b` | solid `3px` | 🛢️ | Database queries or mutations (`db_query`). |
+| **Loop / Back** | `#fe8019` | dotted `2px` (`[2, 4]`) | 🔁 | Loop-backs (`loop` / `loop_back`) or reverse logic flow. |
+| **Broken Fracture** | `#fb4934` | dotted `3px` (`[2, 2]`) | 💥 | Broken/fractured dependency edge (`broken_fracture`). |
+| **Highlighted** | `#fabd2f` | solid `5px` | ➤ | Active hovered or selected path (`highlighted`). |
 
 ## 🚀 Quick Start
 
@@ -188,7 +191,7 @@ Launch your visual architecture journey in seconds.
 ### 1. Install Extension
 Download the latest `.vsix` from [Releases](https://github.com/dogsinatas29/SYNAPSE/releases) and run:
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.33.1_fix2.vsix
+code --install-extension synapse-visual-architecture-v0.3.34.75.vsix
 ```
 
 ### 2. Launch Canvas
@@ -203,11 +206,11 @@ Select **"Lite Bootstrap"** to automatically discover your project architecture.
 
 - **🧠 Real-time Graph Visualization**: Live network mapping of your project.
 - **🚫 Hybrid Blacklist System**: Intelligent exclusion of noise (node_modules, dist) with O(1) path matching.
-- **🖱️ Explorer Context Integration**: Right-click any file/folder to instantly add to blacklist and refresh the graph.
+- **🖱️ Explorer Context Integration**: Right-click any file/folder to trigger `SYNAPSE: Toggle Blacklist` or `SYNAPSE: Toggle Analysis Scope Exclusion` and refresh the graph.
   ![Explorer Menu](assets/v0.3.23/synapse_explorer_menu.png)
 - **🔍 N-hop Focus View**: Automated identification of critical core nodes.
 - **⚠️ Diagnostic Intelligence**: Real-time architectural analysis (R1-R5).
-- **🧩 AI Scan Integration**: Unified scanning engine for Python, Rust, C++, and TS.
+- **🧩 AI Scan Integration**: Unified scanning engine for TypeScript/JS, Python, Rust, C/C++, Java, Kotlin, and Go.
 - **Semantic Zoom (LOD)**: Navigate thousands of nodes with performance optimization.
 
 ---
@@ -216,9 +219,9 @@ Select **"Lite Bootstrap"** to automatically discover your project architecture.
 
 SYNAPSE provides powerful semantic filters to analyze massive graphs by controlling layer visibility and isolating critical logic paths.
 
-| 1. Default View | 2. Hide Lead (Noise Reduction) |
+| 1. Default View | 2. Hide Leaf (Noise Reduction) |
 | :---: | :---: |
-| ![Default View](assets/v0.3.22/synapse_default_view.png) | ![Hide Lead](assets/v0.3.22/synapse_hide_lead.png) |
+| ![Default View](assets/v0.3.22/synapse_default_view.png) | ![Hide Leaf](assets/v0.3.22/synapse_hide_lead.png) |
 | **3. Focus Top Nodes (N-hop)** | **4. Traffic Heatmap (Beta)** |
 | ![Focus Top](assets/v0.3.22/synapse_focus_top.png) | ![Traffic Heatmap](assets/v0.3.22/synapse_traffic_heatmap.png) |
 
@@ -255,7 +258,24 @@ F       G ─ H
 - **Path Tracing**: Rapidly trace specific execution flows.
 - **Local Anomaly Detection**: Identify structural defects within a localized area.
 
+### 🔀 Auto-Generated Flowchart (Flow View)
+SYNAPSE automatically generates a Flowchart showing logical flows based on the architectural structure.
 
+**Flowchart Generation Requirements:**
+- The graph must contain at least one valid logic or data flow edge (e.g., `Flow`, `Calls`, `Depends`).
+- Nodes must share connected logical context rather than being isolated singletons.
+- Accessible via the `View -> Flow View` menu at the top of the UI.
+
+![Flow View Screenshot](assets/network/flowview.png)
+Flowchart View
+
+![Flow View Screenshot 2](assets/network/flow2.png)
+Inspect individual node details directly inside the Flowchart view
+
+![Network Attached Flow View](assets/network/network_attached_flowview.png)
+Logic from network-attached clients is also included in the Flowchart.
+
+---
 
 ## 📂 Cluster Visibility
 
@@ -264,9 +284,9 @@ SYNAPSE provides a **Cluster Visibility Panel** to effectively manage massive ar
 ![Cluster Visibility](assets/cluster_visibility2.png)
 
 ### Quick Actions
-- **모든 클러스터 - (Collapse All)**: Collapses all clusters in the tree, showing only the highest-level groupings.
-- **루트만 보기 (Roots Only)**: Expands only the root clusters while keeping deeper levels collapsed.
-- **모든 클러스터 + (Expand All)**: Expands all clusters in the tree to show their full contents.
+- **Collapse All -**: Collapses all clusters in the tree, showing only the highest-level groupings.
+- **Roots Only**: Expands only the root clusters while keeping deeper levels collapsed.
+- **Expand All +**: Expands all clusters in the tree to show their full contents.
 
 ### 1. Intuitive Hierarchy & Recursive Counting
 The visibility panel reflects your project's actual folder structure. The number next to a folder indicates the **accumulated total of all nodes (files)** contained within it and all its subfolders. You can instantly know how many components are inside a module just by looking at the top-level folder.
@@ -284,8 +304,25 @@ Clusters created by clients connected to the network are clearly distinguished i
 
 ![Network Attached Cluster](assets/network_attached_cluster.png)
 
+### 5. Adaptive Scale Profile
+To proactively prevent browser lockups in massive monorepo environments, SYNAPSE analyzes the graph scale on project load and automatically applies the optimal visibility profile.
 
+![Adaptive Scale Profile](assets/profile.png)
 
+#### Scale Score Formula
+The project scale score is calculated using the following formula:
+> **`Scale Score` = `Nodes` + `(Edges × 5)` + `(Clusters × 10)`**
+
+When the score exceeds the safety threshold (`500,000`), the **EXTREME_SCALE** profile is triggered, enforcing the following settings to control visual density and rendering overhead:
+
+#### Auto-Applied Settings (`EXTREME_SCALE`)
+- `[x] Show Nodes`: Rendering enabled
+- `[x] Show Edges`: Rendering enabled (with LOD optimization)
+- `[ ] Show External Clusters`: **Off (Hide)** — Hides hundreds of external dependency package nodes to immediately cut rendering overhead (can be manually re-enabled in the visibility panel if needed).
+- `[ ] Show Heatmap`: **Off (Hide)** — Disables real-time traffic heatmap calculations.
+- `[x] Roots Only`: **On (Roots Only)** — Keeps only top-level root clusters expanded and collapses all sub-clusters at depth 2 and below to maintain a clean macro overview.
+
+---
 
 ## 🌾 Harvest
 
@@ -473,9 +510,6 @@ You can declare **scope exclusions** to keep third-party libraries (`thirdparty/
 | **AntennaPod** | [Link](./assets/v0.3.34.73.fix1/antenapod/ARCHITECT_REPORT.md) | [Link](./assets/v0.3.34.73.fix1/antenapod/ONBOARDING_REPORT.md) | [Link](./assets/v0.3.34.73.fix1/antenapod/SIMULATION_DEBUG.md) | [Link](./assets/v0.3.34.73.fix1/antenapod/EVIDENCE_VIEWER.html) |
 | **VSCode** | [Link](./assets/v0.3.34.73.fix1/vscode/ARCHITECT_REPORT.md) | [Link](./assets/v0.3.34.73.fix1/vscode/ONBOARDING_REPORT.md) | [Link](./assets/v0.3.34.73.fix1/vscode/SIMULATION_DEBUG.md) | [Link](./assets/v0.3.34.73.fix1/vscode/EVIDENCE_VIEWER.html) |
 
-#### 🧹 Clear Debug
-Removes all debug visual states from the canvas and resets nodes to their default rendering state. Does not affect actual graph data.
-
 #### 💎 Det Bootstrap (v0.2.28: Determinism Bootstrap)
 Runs the Determinism Bootstrap sequence. Resets internal state checksums and re-establishes a deterministic baseline for the current architecture snapshot. Used to eliminate accumulated non-determinism from repeated edits.
 
@@ -488,7 +522,7 @@ The Verify system calculates **Inference Pressure** as a baseline structural met
 
 Pressure = `criticalIssues / totalAnalyzedNodes × 100`
 
-> ℹ️ **Verification Scope**: Currently validated on specific open-source architectures (VSCode, Godot, AntennaPod, Linux Kernel) up to 70k nodes. Inference Pressure serves as a relative calculation index within this validated scope, not a universal or scale-invariant health guarantee for all ecosystems.
+> ℹ️ **Verification Scope**: Currently validated on specific open-source architectures (VSCode, Godot, AntennaPod, PostgreSQL, Linux Kernel) up to ~100k nodes. Inference Pressure serves as a relative calculation index within this validated scope, not a universal or scale-invariant health guarantee for all ecosystems.
 
 ---
 

@@ -12,9 +12,9 @@ SYNAPSE는 소스 코드를 탐색 가능한 아키텍처 맵으로 변환하여
 엔지니어가 대규모 소프트웨어 시스템 전반의 의존성, 실행 흐름,
 병목 현상, 그리고 시스템 전체의 상호작용을 시각화할 수 있게 해줍니다.
 
-[![Version](https://img.shields.io/badge/version-v0.3.34.73.fix1-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.73.fix1-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1)
-![Status](https://img.shields.io/badge/status-Production_Ready-brightgreen.png)
+[![Version](https://img.shields.io/badge/version-v0.3.34.75-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.75)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.75-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.75)
+![Status](https://img.shields.io/badge/status-Experimental-blue.png)
 
 [🇺🇸 English Version](./README.md)
 
@@ -103,82 +103,85 @@ SYNAPSE는 풍부한 시각적 어휘를 사용하여 아키텍처의 성격과 
 ### 1. 📄 엔티티 타입 (정체성 아이콘)
 노드의 물리적 성격이나 아키텍처적 역할을 정의합니다.
 
+> *참고: 캔버스 노드의 테두리 색상과 발광(Glow)은 엔티티 타입별 색상이 아니라 **`SYNAPSE_THEME.getFullNodeStyle`의 노드 상태 및 역할 오버레이**가 동적으로 결정합니다.*
+
 | 아이콘 | 타입 | 의미 | 시각적 스타일 |
 | :--- | :--- | :--- | :--- |
-| 📄 | Active Source | 물리적 소스 파일 (Logic, Config 등). | 단색 테두리, 기본 색상 |
-| ⚡ | Atomic Logic | 핵심 로직 또는 진입점 (Atomic 서명 포함). | 보라색 빛 (DTR) |
-| 📁 | Folder | 디렉토리 구조 클러스터. | 폴더 클러스터 컨테이너 |
-| ☁️ | External API | 외부 라이브러리 (os, fs) 또는 API 호출 의존성. | 구름 모양 UI |
-| 📚 | Doc Shelf | 마일스톤, 릴리즈 노트, 아키텍처 문서. | 캔버스에서 기본적으로 숨김 처리 |
-| 🧪 | Test Case | 단위 테스트 및 검증 스크립트 (.test.ts). | 주황색 테두리 |
-| 🧩 | Component | 모듈화된 UI 또는 논리적 컴포넌트 단위. | 청록색 테두리 |
-| ⚙️ | Processor | 데이터 변환 또는 연산 엔진. | 회보라색 테두리 |
-| 🤝 | Service | 공유 로직 또는 인프라 서비스 레이어. | 파란색 테두리 |
-| ⛩️ | Gate | 보안, 인증 또는 트래픽 컨트롤러. | 두꺼운 노란색 테두리 |
-| 📋 | Data Record | DB 스키마, JSON 모델 또는 순수 데이터 정의. | 두꺼운 테두리, 어두운 배경 |
-| 👻 | Ghost Source | 물리적 파일이 누락된 내부 소스 참조. | 점선 테두리 |
+| 📄 | Active Source | 물리적 소스 파일 (Logic, Config 등). | 단색 테두리(`#a89984`), 기본 배경(`#3c3836`) |
+| ⚡ | Atomic Logic | 핵심/진입점/Atomic 서명 파일 (`atomic`, `core`, `entry`, `hasAtomicSignature`). *(`Awaiting Approval` 상태에도 공용)* | `DTR >= 0.7` 시 보라색 빛(`#8a2be2`) |
+| 📁 | Folder | 디렉토리 구조 클러스터. | 폴더 클러스터 컨테이너 (`📁` 접힘 / `📂` 펼침) |
+| ☁️ / 🌐 / 🗄️ | External | 외부 의존성 (`api` → `☁️`, `db`/`sql` → `🗄️`, 일반 라이브러리 `os`/`fs` 등 → `🌐`). | 녹색 점선 테두리 (`#8ec07c`, `dash [5, 5]`) |
+| 📚 | Doc Shelf | 마일스톤, 릴리즈 노트, 아키텍처 문서 (`.md`, `.txt`). | 캔버스에서 기본 숨김 처리 (`doc_shelf` 클러스터) |
+| 🧪 | Test Case | 단위 테스트 및 검증 스크립트 (`.test.`, `_test`). | 기본 박스 (테두리는 노드 상태/역할 따름) |
+| 🧩 | Component | 모듈화된 UI 또는 논리적 컴포넌트 단위 (`logic` 타입). | 기본 박스 (테두리는 노드 상태/역할 따름) |
+| ⚙️ | Processor | 엔진, 프로세서 또는 렌더러 (`engine`, `processor`, `renderer`). | 기본 박스 (테두리는 노드 상태/역할 따름) |
+| 🤝 | Service | 공유 서비스 또는 프로바이더 (`service`, `provider`). | 기본 박스 (테두리는 노드 상태/역할 따름) |
+| ⛩️ | Gate | 라우터, 컨트롤러, 검증기 또는 게이트 (`router`, `controller`, `gate`). | 마름모(Diamond) 도형 |
+| 📋 | Data Record | 설정, DB 스키마, 모델, 테이블 (`CONFIG`/`DATA`, `schema`, `model`, `table`). | 두꺼운 테두리(`4px`, `#83a598`), `CONFIG`/`DATA` 청록색 배경(`#076678`) |
+| 👻 | Ghost Source | 물리적 파일이 누락된 내부 소스 참조. | 회색 점선 테두리 (`#928374`, `dash [4, 4]`), 투명도 `0.6` |
 
 ### 2. 🎨 노드 상태 & 빛 효과 (Glow)
 노드의 현재 추론 상태와 시각적 중요도를 정의합니다.
 
 | 상태 | 시각적 힌트 | 색상 | 의미 |
 | :--- | :--- | :--- | :--- |
-| **Active** | 실선 테두리 | `#83a598` | 코드베이스에서 검증되고 현재 활성화됨. |
-| **High DTR** | 보라색 빛 | `#8a2be2` | 높은 추론 밀도; 중요한 논리 지점. |
-| **Ghost** | 점선 테두리 | `#928374` | 제안된 아키텍처 노드 (아직 구체화되지 않음). |
-| **Deleted** | 회색 처리 | `#282828` | 안전하게 주석 처리되거나 폐기된 노드. |
-| **Warning** | 붉은색 파동 | `#fb4934` | 논리 오류, 순환 참조 또는 막다른 길 감지됨. |
-| **Necrosis** | 💀 | `#1d2021` | 치명적인 논리 실패; 빌드 실패 또는 심각한 물리적 결함. |
-| **Tombstone** | 🪦 | `#1d2021` | 복구 불가능한 결정론적 실패; 삭제 권장. |
+| **Active** | ✅ / 실선 테두리 | `#83a598` | 코드베이스에서 검증되고 현재 활성화됨 (`status === 'active'`). |
+| **High DTR** | 보라색 빛 | `#8a2be2` | 높은 결정론적 추론 밀도 (`dtr >= 0.7`). |
+| **Proposed / Pending** | ❓ / 점멸 점선 테두리 | `#fabd2f` | 제안된 아키텍처 노드 (`proposed` / `pending`). |
+| **Ghost** | 점선 테두리 | `#928374` | 미구현 또는 물리적 파일이 없는 참조 노드 (투명도 `0.6`). |
+| **Deleted** | ❌ / 흐림 처리 | `#282828` | 폐기/삭제 처리된 노드 (투명도 `0.3`). |
+| **Warning** | ⚠️ / 붉은 테두리·빛 | `#fb4934` | 오류 또는 구조적 경고가 감지됨 (`warning` / `isError`). |
+| **Necrosis** | 💀 | `#1d2021` / `#fb4934` | 치명적 논리/구문 오류; 어두운 배경 + `#fb4934` 테두리. |
+| **Tombstone** | 🪦 | `#1d2021` | 복구 불가능한 실패 상태 (`error_tombstone`). |
 
 ### 3. ➡️ 논리 & 흐름 마커
-확대 수준(LOD)에 따라 노드나 엣지에 나타나는 마커입니다.
+플로우/상세/엣지 뷰에서 `SYNAPSE_THEME`이 사용하는 마커 및 도형입니다.
 
 | 아이콘 | 타입 | 의미 |
 | :--- | :--- | :--- |
-| ↻ | Loop | 반복 로직 (for, while, map). |
-| ◈ | Decision | 분기 로직 (if, switch, 검증). |
-| 🖨️ | Output | 터미널 로깅, 출력 또는 부수 효과. |
-| 📡 | Signal | 네트워크 요청 또는 원격 프로시저 호출 (RPC). |
-| 📊 | Payload | 고대역폭 데이터 이동 또는 스트림. |
-| 🕒 | Async | 비동기 처리 또는 대기 상태. |
+| ↻ / 🔁 | Loop | 반복 로직 (테마 `loop` 토큰 `↻`, `loop`/`iter` 육각형 도형, `loop` 엣지 `🔁`). |
+| ◈ | Decision | 분기·검증 로직 (`validator`, `checker`, `router`, `gate`, `is_*` 마름모 도형). |
+| 🖨️ | Output | 터미널 로깅 또는 출력 (`print:` / `console.log` 노드 아이콘 + 평행사변형 도형). |
+| 📡 | Signal | 함수 호출 / RPC 신호 (`call` 엣지 아이콘 및 검증 진행 표시). |
+| 📊 | Payload | 데이터 흐름 엣지 아이콘 (`data_flow`). |
+| 🕒 | Async / Reserved | 테마 `async` 토큰 및 예약 클러스터 (`sys_cluster_reserved`) 표식. |
 
 ### 4. ⚠️ 위험 & 정화 마커
-시스템의 순도와 아키텍처적 건강 상태를 시각적으로 나타냅니다.
+아키텍처 결함 및 깨진 의존성에 실제로 렌더링되는 시각 표식입니다.
 
 | 아이콘 | 타입 | 의미 | 시각적 스타일 |
 | :--- | :--- | :--- | :--- |
-| 💀 | Necrosis | 아키텍처적 실패 (순환 참조 등). | 어두운 배경 + 노이즈 |
-| 🪦 | Tombstone | 지속적인 결정론적 위반 기록. | 묘비 마커 |
-| 💣 | Mine | 고위험 지점 (호환성 깨짐 감지). | 붉은 경고 |
-| ⚠️ | Logic Fault | 특정 코드 레벨의 오류 또는 동기화 실패. | 붉은 파동 / 경고 아이콘 |
-| 🔴 | Dirty Dot | 동기화/푸시가 필요한 로컬 변경 사항. | 우측 상단 붉은 점 |
+| 💀 | Necrosis | 노드 진단/아키텍처 실패 (`necroticNodeIds` / `error_necrosis`). | `#1d2021` 배경, `#fb4934` 테두리, 방사형 그라데이션 + 줌 > `0.8` 시 `💀` |
+| 🪦 | Tombstone | 복구 불가 영구 실패 상태 (`error_tombstone`). | 어두운 `#1d2021` 배경 + `🪦` 마커 |
+| 💥 | Fracture | 깨진 의존성 또는 경계 침범 (`broken_fracture`). | 붉은 점선 엣지(`#fb4934`, `3px`) + `💥` 엣지 아이콘 |
+| ⚠️ | Warning / Fault | 노드 오류 상태 (`warning` / `isError`). | 붉은색 `#fb4934` 테두리 & 빛 |
 
 ### 5. ✅ 상호작용 & 승인 배지
-동기화 및 사용자 명령 상태를 나타내는 지능형 배지입니다.
+노드와 엣지 위의 승인, AI 검증, 잠금 상태를 나타내는 배지입니다.
 
 | 배지 | 상태 | 의미 |
 | :--- | :--- | :--- |
-| ✅ | Confirmed | 아키텍트(Commander)가 수동으로 승인함. |
-| 🤖 | AI Validated | 코드베이스에 대해 자동으로 검증됨. |
-| ❓ | Pending | 검증 대기 중인 제안된 설계 (초안). |
-| ❌ | Purge | 물리적 제거 또는 삭제 대기 상태. |
-| 🔒 | Locked | 불변 상태; 수정으로부터 보호됨. |
+| ✅ | Confirmed | 확정된 엣지 배지 (`confirmed`) 및 연결 확정 메뉴. |
+| 🤖 | AI Validated | AI 검증 완료 엣지 배지 (`validation.isAi`) 및 추론 패널 표식. |
+| ❓ | Pending | 제안/대기 노드 배지(우측 하단) 및 승인 대기 엣지 배지 (`pending_confirm`). |
+| ❌ | Error / Delete | 유효하지 않은 엣지 위험 배지 (`!validation.valid`) 및 편집 모드 삭제 배지. |
+| 🔒 | Locked | 노드 잠금 배지 (`node.data.isLocked`, 우측 상단) 및 편집 잠금 상태. |
 
 ### 🔗 엣지(연결선) 규칙
-SYNAPSE는 노드 간의 다양한 논리적 연결과 데이터 흐름을 구별하기 위해 고유한 색상과 스타일을 사용합니다.
+SYNAPSE는 `SYNAPSE_THEME.EDGES` / `getEdgeStyle`을 통해 논리적 연결과 데이터 흐름을 구분합니다.
 
-| 엣지 타입 | 색상 | 스타일 & 두께 | 의미 |
-| :--- | :--- | :--- | :--- |
-| **Dependency** | `#ebdbb2` | 실선 2px | 표준 모듈 의존성 또는 임포트. |
-| **Data Flow** | `#83a598` | 실선 3px | 무거운 데이터 전송 또는 페이로드 이동. |
-| **Event** | `#fe8019` | 실선 2px | 이벤트 트리거 또는 비동기 콜백. |
-| **Conditional** | `#d3869b` | 실선 1px | if/else 또는 match와 같은 조건 분기. |
-| **Origin** | `#d65d0e` | 실선 1.5px | AI 로직 추적을 위한 프롬프트 기원 링크. |
-| **API Call** | `#8ec07c` | 점선 2px | 외부 API 또는 크로스 서비스 네트워크 호출. |
-| **DB Query** | `#d3869b` | 실선 3px | 데이터베이스 쿼리, 뮤테이션 또는 트랜잭션. |
-| **Loop / Back** | `#fe8019` | 점선(dotted) 2px | 루프백(while/for) 또는 역방향 로직 흐름. |
-| **Highlighted** | `#fabd2f` | 파동 5px | 활성 실행 경로 (호버/선택 시). |
+| 엣지 타입 | 색상 | 스타일 & 두께 | 아이콘 | 의미 |
+| :--- | :--- | :--- | :--- | :--- |
+| **Dependency** | `#ebdbb2` | 실선 `2px` | 🔗 | 표준 모듈 의존성 또는 임포트. |
+| **Reference / Include** | `#928374` | 점선 `1.5px` (`[4, 4]`) | 🔗 / 📝 | 약한 포함 (`include`) 또는 참조 (`reference`). |
+| **Data Flow** | `#83a598` | 실선 `3px` | 📊 | 데이터 전송 또는 페이로드 이동 (`data_flow`). |
+| **Event / Call** | `#fe8019` | 실선 `2px` | ⚡ / 📡 | 이벤트 트리거 (`event`, `⚡`) 또는 함수 호출 (`call`, `📡`). |
+| **Conditional** | `#d3869b` | 실선 `1px` | ❓ | 조건 분기 (`conditional`). |
+| **API Call** | `#8ec07c` | 점선 `2px` (`[4, 4]`) | 🌐 | 외부 API 또는 서비스 간 호출 (`api_call`). |
+| **DB Query** | `#d3869b` | 실선 `3px` | 🛢️ | 데이터베이스 쿼리 또는 뮤테이션 (`db_query`). |
+| **Loop / Back** | `#fe8019` | 점선(dotted) `2px` (`[2, 4]`) | 🔁 | 루프백 (`loop` / `loop_back`) 또는 역방향 흐름. |
+| **Broken Fracture** | `#fb4934` | 점선(dotted) `3px` (`[2, 2]`) | 💥 | 손상/파단된 의존성 엣지 (`broken_fracture`). |
+| **Highlighted** | `#fabd2f` | 실선 `5px` | ➤ | 호버 또는 선택된 활성 경로 (`highlighted`). |
 
 ## 🚀 빠른 시작
 
@@ -187,7 +190,7 @@ SYNAPSE는 노드 간의 다양한 논리적 연결과 데이터 흐름을 구�
 ### 1. 확장 프로그램 설치
 [Releases](https://github.com/dogsinatas29/SYNAPSE/releases)에서 최신 `.vsix` 파일을 다운로드하고 다음 명령을 실행하세요:
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.33.1_fix2.vsix
+code --install-extension synapse-visual-architecture-v0.3.34.75.vsix
 ```
 
 ### 2. 캔버스 실행
@@ -202,11 +205,11 @@ code --install-extension synapse-visual-architecture-v0.3.33.1_fix2.vsix
 
 - **🧠 실시간 그래프 시각화**: 프로젝트의 라이브 네트워크 매핑.
 - **🚫 하이브리드 블랙리스트 시스템**: O(1) 경로 매칭을 통한 노이즈(node_modules, dist) 지능적 제외.
-- **🖱️ 탐색기 컨텍스트 통합**: 파일/폴더를 우클릭하여 즉시 블랙리스트에 추가하고 그래프를 새로 고침.
+- **🖱️ 탐색기 컨텍스트 통합**: 파일/폴더를 우클릭하여 `SYNAPSE: Toggle Blacklist` 또는 `SYNAPSE: Toggle Analysis Scope Exclusion`을 즉시 실행하고 그래프를 새로 고침.
   ![Explorer Menu](assets/v0.3.23/synapse_explorer_menu.png)
 - **🔍 N-hop 포커스 뷰**: 중요한 핵심 노드 자동 식별 및 집중 조명.
 - **⚠️ 진단 지능**: 실시간 아키텍처 분석 (R1-R5 경고 시스템).
-- **🧩 AI 스캔 통합**: Python, Rust, C++, TS를 지원하는 통합 스캐닝 엔진.
+- **🧩 AI 스캔 통합**: TypeScript/JS, Python, Rust, C/C++, Java, Kotlin, Go를 지원하는 통합 스캐닝 엔진.
 - **의미론적 줌 (Semantic Zoom, LOD)**: 수천 개의 노드를 탐색할 수 있는 성능 최적화.
 
 ---
@@ -215,9 +218,9 @@ code --install-extension synapse-visual-architecture-v0.3.33.1_fix2.vsix
 
 SYNAPSE는 방대한 그래프를 분석하기 위해 레이어 가시성을 제어하고 중요한 논리 경로를 격리하는 강력한 의미론적 필터를 제공합니다.
 
-| 1. 기본 뷰 (Default View) | 2. 리드 숨기기 (노이즈 감소) |
+| 1. 기본 뷰 (Default View) | 2. 리프 노드 숨기기 (노이즈 감소) |
 | :---: | :---: |
-| ![Default View](assets/v0.3.22/synapse_default_view.png) | ![Hide Lead](assets/v0.3.22/synapse_hide_lead.png) |
+| ![Default View](assets/v0.3.22/synapse_default_view.png) | ![Hide Leaf](assets/v0.3.22/synapse_hide_lead.png) |
 | **3. 상위 노드 포커스 (N-hop)** | **4. 트래픽 히트맵 (베타)** |
 | ![Focus Top](assets/v0.3.22/synapse_focus_top.png) | ![Traffic Heatmap](assets/v0.3.22/synapse_traffic_heatmap.png) |
 
@@ -509,9 +512,6 @@ SYNAPSE는 관찰된 구조와 해석을 명확히 구분합니다. 증거가 �
 | **AntennaPod** | [링크](./assets/v0.3.34.73.fix1/antenapod/ARCHITECT_REPORT.md) | [링크](./assets/v0.3.34.73.fix1/antenapod/ONBOARDING_REPORT.md) | [링크](./assets/v0.3.34.73.fix1/antenapod/SIMULATION_DEBUG.md) | [링크](./assets/v0.3.34.73.fix1/antenapod/EVIDENCE_VIEWER.html) |
 | **VSCode** | [링크](./assets/v0.3.34.73.fix1/vscode/ARCHITECT_REPORT.md) | [링크](./assets/v0.3.34.73.fix1/vscode/ONBOARDING_REPORT.md) | [링크](./assets/v0.3.34.73.fix1/vscode/SIMULATION_DEBUG.md) | [링크](./assets/v0.3.34.73.fix1/vscode/EVIDENCE_VIEWER.html) |
 
-#### 🧹 Clear Debug — 디버그 초기화
-캔버스에서 모든 디버그 시각 상태를 제거하고 노드를 기본 렌더링 상태로 초기화합니다. 실제 그래프 데이터에는 영향을 주지 않습니다.
-
 #### 💎 Det Bootstrap (`v0.2.28: Determinism Bootstrap`)
 결정론적 부트스트랩 시퀀스를 실행합니다. 내부 상태 체크섬을 초기화하고 현재 아키텍처 스냅샷에 대한 결정론적 기준선을 재확립합니다. 반복적인 편집으로 누적된 비결정성을 제거하는 데 사용합니다.
 
@@ -524,7 +524,7 @@ Verify 시스템은 구조적 측정의 기준선으로 **인퍼런스 압력**�
 
 압력 = `criticalIssues / totalAnalyzedNodes × 100`
 
-> ℹ️ **검증 범위**: 현재 특정 오픈소스 아키텍처(VSCode, Godot, AntennaPod, Linux Kernel 등 최대 7만 노드)에서만 검증되었습니다. 인퍼런스 압력은 검증된 범위 내에서의 상대적인 계산 지표로 기능할 뿐이며, 모든 생태계에 대한 척도 독립적(scale-invariant)인 건전성 보증을 의미하지 않습니다.
+> ℹ️ **검증 범위**: 현재 특정 오픈소스 아키텍처(VSCode, Godot, AntennaPod, PostgreSQL, Linux Kernel 등 최대 ~10만 노드)에서 검증되었습니다. 인퍼런스 압력은 검증된 범위 내에서의 상대적인 계산 지표로 기능할 뿐이며, 모든 생태계에 대한 척도 독립적(scale-invariant)인 건전성 보증을 의미하지 않습니다.
 
 ---
 

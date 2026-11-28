@@ -255,6 +255,83 @@ async function runAllTests() {
             const regex = new RegExp(`private async ${target}\\([^)]*\\)\\s*\\{[\\s\\S]*?if \\(this\\.checkEditBlocked\\(\\)\\) return;`);
             assert(regex.test(canvasPanelCode), `Scenario E: Handler ${target} has if (this.checkEditBlocked()) return; at the very top`);
         }
+
+        // [Phase 3-B A-02] 중앙 저장 관문(saveOverlayAndPush) 가드 및 모달 2차 가드 정적 검증
+        assert(canvasPanelCode.includes('if (this._isReBootstrapping || this._isReadOnlySafeMode)'), 'Scenario E: saveOverlayAndPush checks _isReBootstrapping and _isReadOnlySafeMode');
+        assert(canvasPanelCode.includes('[CanvasPanel] saveOverlayAndPush dropped: Re-Bootstrap or SafeMode is active'), 'Scenario E: saveOverlayAndPush logs dropped message');
+
+        // saveOverlayAndPush 내에서 가드와 _overlayQueue 체이닝 사이에 await가 없음을 검증
+        const gateRegex = /private async saveOverlayAndPush[\s\S]*?if \(this\._isReBootstrapping \|\| this\._isReadOnlySafeMode\)[\s\S]*?this\._overlayQueue = this\._overlayQueue\.then/;
+        assert(gateRegex.test(canvasPanelCode), 'Scenario E: saveOverlayAndPush places gate guard directly before _overlayQueue chaining without intermediate await');
+
+        // 모달 다이얼로그(handleRequestConfirmEdge, handleResetProjectState) 직후 2차 가드 검증
+        const confirmEdgeModalGuard = /handleRequestConfirmEdge[\s\S]*?showInformationMessage[\s\S]*?if \(this\.checkEditBlocked\(\)\) return;/;
+        assert(confirmEdgeModalGuard.test(canvasPanelCode), 'Scenario E: handleRequestConfirmEdge has checkEditBlocked guard immediately after modal prompt');
+
+        const resetModalGuard = /handleResetProjectState[\s\S]*?showWarningMessage[\s\S]*?if \(this\.checkEditBlocked\(\)\) return;/;
+        assert(resetModalGuard.test(canvasPanelCode), 'Scenario E: handleResetProjectState has checkEditBlocked guard immediately after modal prompt');
+
+        // [Phase 3-B A-02] 결정적 비동기 경합 런타임 시뮬레이션 검증
+        console.log('   -> Executing deterministic async in-flight handler race simulation...');
+        class MockOverlayHarness {
+            public _isReBootstrapping = false;
+            public _isReadOnlySafeMode = false;
+            public _overlayQueue: Promise<void> = Promise.resolve();
+            public mutationsExecuted = 0;
+
+            public async saveOverlayAndPush(mutator: () => Promise<void> | void): Promise<void> {
+                if (this._isReBootstrapping || this._isReadOnlySafeMode) {
+                    return; // Dropped
+                }
+                this._overlayQueue = this._overlayQueue.then(async () => {
+                    await mutator();
+                    this.mutationsExecuted++;
+                });
+                await this._overlayQueue;
+            }
+        }
+
+        const harness = new MockOverlayHarness();
+
+        // 1. 정상 상태에서 작업 실행 검증
+        await harness.saveOverlayAndPush(() => {});
+        assert(harness.mutationsExecuted === 1, 'Scenario E (A-02): Normal edit succeeds outside Re-Bootstrap');
+
+        // 2. 비동기 재개 경합 시뮬레이션
+        // 핸들러 진입 -> await 이전 비동기 I/O에서 중단 -> Re-Bootstrap 락 획득 & Drain -> 핸들러 재개 -> 저장 시도
+        let resolveSuspendedIo: () => void = () => {};
+        const suspendedIoPromise = new Promise<void>(resolve => { resolveSuspendedIo = resolve; });
+
+        let handlerResumed: boolean = false;
+        const inFlightHandlerPromise = (async () => {
+            // Handler starts when _isReBootstrapping === false
+            assert(harness._isReBootstrapping === false, 'Harness is initially not re-bootstrapping');
+            await suspendedIoPromise; // Suspended on I/O
+            handlerResumed = true;
+            // Resumed after Re-Bootstrap lock acquired and queue drained
+            await harness.saveOverlayAndPush(() => {
+                // Must not be executed!
+            });
+        })();
+
+        // Re-Bootstrap 시작 및 락 선점
+        harness._isReBootstrapping = true;
+        // Queue Drain
+        await harness._overlayQueue;
+
+        // 이제 지연되었던 비동기 I/O를 재개시킴
+        resolveSuspendedIo();
+        await inFlightHandlerPromise;
+
+        assert((handlerResumed as boolean) === true, 'Scenario E (A-02): In-flight handler did resume after suspension');
+        assert(harness.mutationsExecuted === 1, 'Scenario E (A-02): Post-drain resumed save was dropped (mutations remain 1)');
+
+        // 3. SafeMode 상태에서의 저장 차단 검증
+        harness._isReBootstrapping = false;
+        harness._isReadOnlySafeMode = true;
+        await harness.saveOverlayAndPush(() => {});
+        assert(harness.mutationsExecuted === 1, 'Scenario E (A-02): Overlay save dropped when in Safe Mode');
+        console.log('   -> Deterministic async race simulation passed successfully (0 mutations leaked).');
     }
 
     // -------------------------------------------------------------------------

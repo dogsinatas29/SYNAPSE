@@ -24,7 +24,12 @@ const boundaryCases = [
   { path: 'tests/core/config/test_project_settings.cpp', expected: 'TEST', desc: 'Godot test source' },
   { path: 'test/sanity/src/main.ts', expected: 'TEST', desc: 'VS Code test entry point' },
   { path: 'extensions/copilot/src/extension/tools/common/test/toolNames.spec.ts', expected: 'TEST', desc: 'Test in tools directory' },
-  { path: 'test/integration/electron/testrunner.d.ts', expected: 'TEST', desc: 'Test declaration in test directory' }
+  { path: 'test/integration/electron/testrunner.d.ts', expected: 'TEST', desc: 'Test declaration in test directory' },
+  // Windows backslash path boundary test cases (Cross-platform path.posix validation)
+  { path: 'C:\\repo\\src\\schema.ts', expected: 'DOMAIN_MODEL', desc: 'Windows backslash: Domain model' },
+  { path: 'C:\\repo\\package.json', expected: 'CONFIG', desc: 'Windows backslash: Config' },
+  { path: 'C:\\repo\\extension.ts', expected: 'RUNTIME_ENTRY', desc: 'Windows backslash: Runtime entry' },
+  { path: 'C:\\repo\\__tests__\\sample.test.ts', expected: 'TEST', desc: 'Windows backslash: Test runner in __tests__' }
 ];
 
 console.log(`==================================================`);
@@ -35,6 +40,13 @@ for (const tc of boundaryCases) {
   const pass = res.role === tc.expected;
   console.log(`- [${pass ? 'PASS' : 'FAIL'}] ${tc.desc}: "${tc.path}" => ${res.role} (Expected: ${tc.expected})`);
   if (!pass) throw new Error(`Boundary test failed on ${tc.path}`);
+
+  // Cross-verify with production NodeBuilder.determineNodeRole
+  const { determineNodeRole } = require('../../src/core/NodeBuilder');
+  const prodRes = determineNodeRole(tc.path);
+  if (prodRes.role !== tc.expected) {
+    throw new Error(`NodeBuilder.determineNodeRole diverged on ${tc.path}: ${prodRes.role} !== ${tc.expected}`);
+  }
 }
 
 // 2. Strict NodeBuilder Population Evaluation

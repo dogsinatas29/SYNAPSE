@@ -2,11 +2,12 @@
 ## Atomic SSoT Replacement Contract & Failure Recovery Protocol
 
 ## 0. 거버넌스 및 상태
-- **문서 버전:** `Revision 7 (최종 승인안)`
-- **상태:** `PROPOSED FINAL — PENDING MASTER APPROVAL`
-- **선행 조건:** Phase 2 CLOSED, Phase 3-A CLOSED
-- **코드 동결:** `Code Freeze: ACTIVE`, `Execution Freeze: ACTIVE`, `Implementation Authorization: NOT GRANTED`
-- **목적:** 수집기(`BootstrapEngine`)의 재수집(Re-Bootstrap) 시 기존 `project_state.json`을 손상시키지 않고, 안전하게 새로운 SSoT로 원자적 교체(Atomic Swap)하는 엄격한 계약 확정.
+- **문서 버전:** `Revision 7 (Final Implementation Contract — Closed)`
+- **상태:** `APPROVED & IMPLEMENTED — CLOSED`
+- **Phase 판정:** `PHASE 3-B: CLOSED`
+- **선행 조건:** Phase 2 CLOSED, Phase 3-A CLOSED, Phase 3-B CLOSED
+- **코드 동결:** `Code Freeze: ACTIVE — RE-FROZEN`, `Execution Freeze: ACTIVE — RE-FROZEN`, `Implementation Authorization: COMPLETED`
+- **목적:** 수집기(`BootstrapEngine`)의 재수집(Re-Bootstrap) 시 기존 `project_state.json`을 손상시키지 않고, 안전하게 새로운 SSoT로 원자적 교체(Atomic Swap)하는 엄격한 계약 확정 및 구현 종결.
 
 ---
 
@@ -91,7 +92,7 @@
 | 임시 파일 동기화 실패, Rename 이전 | `NOT_COMMITTED` | 교체 미수행, 임시 파일 삭제, 기존 SSoT 100% 보존. |
 | Rename 실패 (재시도 소진 포함) | `NOT_COMMITTED` | 교체 미수행, 임시 파일 삭제, 기존 SSoT 100% 보존. |
 | Rename 성공, 부모 디렉터리 동기화 성공 | `COMMITTED` | POSIX 디렉터리 엔트리 동기화 완료. |
-| Rename 성공, 부모 디렉터리 동기화 실패 또는 미지원 | `COMMITTED_DURABILITY_UNCONFIRMED` | 파일 자체는 성공적으로 원자적 교체되었으나 플랫폼 한계로 디렉터리 엔트리 내구성 미확인 (정상 진행). |
+| Rename 성공, 부모 디렉터리 동기화 실패 또는 미지원 | `COMMITTED` (`[SSOT_DURABILITY_UNCONFIRMED]`) | 파일 자체는 성공적으로 원자적 교체 완료(COMMITTED). API 반환은 Promise&lt;void&gt;를 유지하며, 플랫폼 한계로 인한 디렉터리 엔트리 내구성 미확인은 호스트 진단 로그 분류로 처리하고 정상 진행. |
 
 #### B. Windows 잠금 재시도 정책 명세
 - **대상 오류 코드:** 타 프로세스(백신, 검색 인덱서, VS Code 파일 감시기)에 의한 일시적 파일 잠금인 `EBUSY`, `EPERM`으로 엄격 한정 (기타 `ENOENT`, `ENOSPC` 등 비일시적 오류는 재시도 없이 즉시 중단).

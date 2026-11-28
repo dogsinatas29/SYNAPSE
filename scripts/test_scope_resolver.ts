@@ -140,6 +140,32 @@ try {
     assertThrows(() => ScopeResolver.loadConfig(tempDir), 'INVALID_CONFIG', 'Reject invalid JSON in SYNAPSE_SCOPE_EXCLUSIONS environment variable');
 
     delete process.env.SYNAPSE_SCOPE_EXCLUSIONS;
+
+    // 11-b. JSONC .vscode/settings.json without scopeExclusions parses cleanly and falls through to synapse.config.json
+    fs.writeFileSync(
+        path.join(tempDir, '.vscode', 'settings.json'),
+        `\uFEFF{\n\t// Line comment with // and /* fake block */\n\t"editor.tabSize": 4,\n\t"url": "https://example.com/a//b/*c*/", /* trailing comment */\n\t"trailingCommaStr": "keep, }", // comment after value\n\t"arr": [\n\t\t"item1",\n\t],\n}\n`
+    );
+    const resJsoncFallthrough = ScopeResolver.loadConfig(tempDir);
+    assert(
+        resJsoncFallthrough.getSource() === 'PROJECT_CONFIG' && resJsoncFallthrough.getPatterns()[0] === 'from_config/**',
+        'JSONC .vscode/settings.json without scopeExclusions falls through to synapse.config.json'
+    );
+
+    // 11-c. JSONC .vscode/settings.json with scopeExclusions + comments + trailing commas loads VSCODE_SETTINGS
+    fs.writeFileSync(
+        path.join(tempDir, '.vscode', 'settings.json'),
+        `{\n  // Line comment\n  /* Block\n     comment */\n  "synapse.analysis.scopeExclusions": [\n    "from_jsonc/**", // trailing comma below\n  ],\n}\n`
+    );
+    const resJsoncActive = ScopeResolver.loadConfig(tempDir);
+    assert(
+        resJsoncActive.getSource() === 'VSCODE_SETTINGS' && resJsoncActive.getPatterns().length === 1 && resJsoncActive.getPatterns()[0] === 'from_jsonc/**',
+        'JSONC .vscode/settings.json with comments and trailing commas loads VSCODE_SETTINGS'
+    );
+
+    // 11-d. Genuinely malformed .vscode/settings.json still throws INVALID_CONFIG
+    fs.writeFileSync(path.join(tempDir, '.vscode', 'settings.json'), '{ bad_unquoted_key: 1 }');
+    assertThrows(() => ScopeResolver.loadConfig(tempDir), 'INVALID_CONFIG', 'Reject malformed JSONC .vscode/settings.json');
 } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
 }
@@ -211,6 +237,69 @@ assert(matchCounts.get('unmatched/**') === 0, 'unmatched/** matched 0 files (tri
         !!a1Section && a1Section.content.includes('- Scope Status: Partially Excluded (Eligible: 2/3, Excluded: 1/3)'),
         'Report Markdown renders "- Scope Status: Partially Excluded (Eligible: 2/3, Excluded: 1/3)"'
     );
+}
+
+// 14. Explorer Toggle Helper Tests (ScopeResolver.toggleScopeExclusion)
+{
+    const toggleDir = path.join(__dirname, '..', '.tmp_test_scope_toggle');
+    fs.rmSync(toggleDir, { recursive: true, force: true });
+    fs.mkdirSync(path.join(toggleDir, 'tests'), { recursive: true });
+    fs.mkdirSync(path.join(toggleDir, 'platform', 'android'), { recursive: true });
+    fs.writeFileSync(path.join(toggleDir, 'platform', 'android', 'Foo.java'), 'class Foo {}');
+
+    try {
+        // 14-a. Missing synapse.config.json + folder 'tests' -> creates minimal file with ["tests/**"]
+        const addFolder = ScopeResolver.toggleScopeExclusion(toggleDir, path.join(toggleDir, 'tests'), true);
+        assert(addFolder.action === 'added' && addFolder.pattern === 'tests/**', 'Folder toggle adds tests/**');
+        assert(fs.existsSync(path.join(toggleDir, 'synapse.config.json')), 'synapse.config.json created cleanly');
+        const createdRaw = JSON.parse(fs.readFileSync(path.join(toggleDir, 'synapse.config.json'), 'utf8'));
+        assert(
+            Array.isArray(createdRaw.scopeExclusions) && createdRaw.scopeExclusions.length === 1 && createdRaw.scopeExclusions[0] === 'tests/**' && Object.keys(createdRaw).length === 1,
+            'Minimal synapse.config.json only contains scopeExclusions when newly created'
+        );
+        const loaded = ScopeResolver.loadConfig(toggleDir);
+        assert(loaded.getSource() === 'PROJECT_CONFIG' && loaded.getPatterns()[0] === 'tests/**', 'ScopeResolver.loadConfig() loads toggled tests/**');
+
+        // 14-b. Preserves existing keys (blacklist, custom) and toggles file + removes tests/**
+        fs.writeFileSync(
+            path.join(toggleDir, 'synapse.config.json'),
+            JSON.stringify({ project: 'TEST', blacklist: { folders: ['dist'], files: [] }, scopeExclusions: ['tests/**'] }, null, 2)
+        );
+        const addFile = ScopeResolver.toggleScopeExclusion(toggleDir, path.join(toggleDir, 'platform', 'android', 'Foo.java'), false);
+        assert(addFile.action === 'added' && addFile.pattern === 'platform/android/Foo.java', 'File toggle adds exact relative file path');
+        const removeFolder = ScopeResolver.toggleScopeExclusion(toggleDir, path.join(toggleDir, 'tests'), true);
+        assert(removeFolder.action === 'removed' && removeFolder.pattern === 'tests/**', 'Second folder toggle removes tests/**');
+        const preservedRaw = JSON.parse(fs.readFileSync(path.join(toggleDir, 'synapse.config.json'), 'utf8'));
+        assert(
+            preservedRaw.project === 'TEST' &&
+            Array.isArray(preservedRaw.blacklist?.folders) && preservedRaw.blacklist.folders[0] === 'dist' &&
+            preservedRaw.scopeExclusions.length === 1 && preservedRaw.scopeExclusions[0] === 'platform/android/Foo.java',
+            'Toggle preserves existing keys (project, blacklist) and updates only scopeExclusions'
+        );
+
+        // 14-c. Rejects workspace root and outside-workspace path
+        assertThrows(
+            () => ScopeResolver.toggleScopeExclusion(toggleDir, toggleDir, true),
+            'INVALID_TARGET',
+            'Reject workspace root target'
+        );
+        assertThrows(
+            () => ScopeResolver.toggleScopeExclusion(toggleDir, path.resolve(toggleDir, '..', 'outside_file.ts'), false),
+            'INVALID_TARGET',
+            'Reject target outside workspace root'
+        );
+
+        // 14-d. Reports shadowedByVscodeSettings when JSONC .vscode/settings.json sets synapse.analysis.scopeExclusions
+        fs.mkdirSync(path.join(toggleDir, '.vscode'), { recursive: true });
+        fs.writeFileSync(
+            path.join(toggleDir, '.vscode', 'settings.json'),
+            `{\n  // JSONC override\n  "synapse.analysis.scopeExclusions": ["override/**"],\n}\n`
+        );
+        const shadowed = ScopeResolver.toggleScopeExclusion(toggleDir, path.join(toggleDir, 'tests'), true);
+        assert(shadowed.shadowedByVscodeSettings === true, 'Reports shadowedByVscodeSettings when JSONC .vscode/settings.json overrides scopeExclusions');
+    } finally {
+        fs.rmSync(toggleDir, { recursive: true, force: true });
+    }
 }
 
 console.log("=== All ScopeResolver Unit Tests Passed! ===");

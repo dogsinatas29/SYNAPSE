@@ -996,19 +996,22 @@ ${top100Suspicious.slice(0, 100).map((x, i) => `  ${i+1}. ${x[0]} (Total: ${x[1]
     // [v0.3.32.2] Diagnostic: Cluster Bounds & Overlaps
     diagnosticOutput += generateBoundsDiagnostics(layoutResult, nodes, clusters);
     Logger.info(diagnosticOutput);
-    // Write to a file in the project root so the user can see it easily
-    try {
-        const fs = require('fs');
-        const path = require('path');
-        const vscode = require('vscode');
-        if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-            const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
-            const reportDir = path.join(rootPath, 'synapse_report');
-            if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
-            fs.writeFileSync(path.join(reportDir, 'diagnostic_log.txt'), diagnosticOutput, 'utf8');
+    const shouldWriteDiagnosticLog =
+        process.env.SYNAPSE_WRITE_DIAGNOSTIC_LOG === '1';
+    if (shouldWriteDiagnosticLog) {
+        try {
+            const fs = require('fs');
+            const path = require('path');
+            const vscode = require('vscode');
+            if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+                const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+                const reportDir = path.join(rootPath, 'synapse_report');
+                if (!fs.existsSync(reportDir)) fs.mkdirSync(reportDir, { recursive: true });
+                fs.writeFileSync(path.join(reportDir, 'diagnostic_log.txt'), diagnosticOutput, 'utf8');
+            }
+        } catch (e) {
+            Logger.warn('Failed to write diagnostic_log.txt: ' + e);
         }
-    } catch (e) {
-        Logger.warn('Failed to write diagnostic_log.txt: ' + e);
     }
 
     // [Phase 2B.13] Generate Meta Edges

@@ -25,6 +25,9 @@ export class ReportBundleGenerator {
         const selectionSource = message.selectionSource || SelectionSource.USER_SELECTED;
         
         // Update context for InsightEngine
+        if (!context.workspaceRoot && rootPath) {
+            context.workspaceRoot = rootPath;
+        }
         context.reportScope = scope;
         context.reportTarget = target;
         context.selectionSource = selectionSource;

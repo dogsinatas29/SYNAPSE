@@ -15,32 +15,32 @@ describe('InterventionEngine Stability Test', () => {
 
         // Internal edges for community 1 (0-99)
         for (let i = 0; i < 99; i++) {
-            edges.push({ id: `e_${i}_${i+1}`, source: `node_${i}`, target: `node_${i+1}`, layer: 'user' });
+            edges.push({ id: `e_${i}_${i+1}`, from: `node_${i}`, to: `node_${i+1}`, layer: 'user' });
             // Add some cycles
             if (i % 5 === 0) {
-                edges.push({ id: `e_${i+1}_${i-1}`, source: `node_${i+1}`, target: `node_${i-1}`, layer: 'user' });
+                edges.push({ id: `e_${i+1}_${i-1}`, from: `node_${i+1}`, to: `node_${i-1}`, layer: 'user' });
             }
         }
         // Force community 1 to be strongly connected
-        edges.push({ id: 'e_99_0', source: 'node_99', target: 'node_0', layer: 'user' });
+        edges.push({ id: 'e_99_0', from: 'node_99', to: 'node_0', layer: 'user' });
 
         // Internal edges for community 2 (100-199)
         for (let i = 100; i < 199; i++) {
-            edges.push({ id: `e_${i}_${i+1}`, source: `node_${i}`, target: `node_${i+1}`, layer: 'user' });
+            edges.push({ id: `e_${i}_${i+1}`, from: `node_${i}`, to: `node_${i+1}`, layer: 'user' });
             if (i % 5 === 0) {
-                edges.push({ id: `e_${i+1}_${i-1}`, source: `node_${i+1}`, target: `node_${i-1}`, layer: 'user' });
+                edges.push({ id: `e_${i+1}_${i-1}`, from: `node_${i+1}`, to: `node_${i-1}`, layer: 'user' });
             }
         }
-        edges.push({ id: 'e_199_100', source: 'node_199', target: 'node_100', layer: 'user' });
+        edges.push({ id: 'e_199_100', from: 'node_199', to: 'node_100', layer: 'user' });
 
         // Potential Bridges between the two communities
         // Bridge 1 (High Degree Hub)
-        edges.push({ id: 'bridge_hub', source: 'node_0', target: 'node_100', layer: 'user' });
-        edges.push({ id: 'bridge_hub_ret', source: 'node_100', target: 'node_0', layer: 'user' }); // Make it an SCC
+        edges.push({ id: 'bridge_hub', from: 'node_0', to: 'node_100', layer: 'user' });
+        edges.push({ id: 'bridge_hub_ret', from: 'node_100', to: 'node_0', layer: 'user' }); // Make it an SCC
 
         // Bridge 2 (Low Degree Gate)
-        edges.push({ id: 'bridge_gate', source: 'node_50', target: 'node_150', layer: 'user' });
-        edges.push({ id: 'bridge_gate_ret', source: 'node_150', target: 'node_50', layer: 'user' });
+        edges.push({ id: 'bridge_gate', from: 'node_50', to: 'node_150', layer: 'user' });
+        edges.push({ id: 'bridge_gate_ret', from: 'node_150', to: 'node_50', layer: 'user' });
 
         const state: ProjectState = {
             nodes,

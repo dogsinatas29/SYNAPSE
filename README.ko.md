@@ -476,6 +476,31 @@ SYNAPSE는 관찰된 구조와 해석을 명확히 구분합니다. 증거가 �
 
 보고서는 분석 파이프라인에서 검증된 결과만을 제시합니다. 독자가 보고된 결론을 뒷받침하는 관찰 및 메트릭으로 다시 추적할 수 있도록 상세 증거는 항상 검사 가능한 상태로 유지되어야 합니다.
 
+#### 분석 제외 범위 설정 (`scopeExclusions`)
+
+서드파티(`thirdparty/**`), 벤더링 코드, 테스트(`tests/**`), 자동 생성 코드 등이 리포트 상위 추천(O2 / A1 / E2)에 노출되지 않도록 **분석 제외 범위**를 선언할 수 있습니다.
+
+- **Blacklist와의 차이:** `SYNAPSE: Toggle Blacklist`는 그래프에서 노드 자체를 숨기지만, `scopeExclusions`는 원본 SSoT(`project_state.json`)와 구조적 의존성 그래프를 그대로 보존한 채 **리포트 후보 선정 단계(Candidate Eligibility)에서만 제외**합니다. 제외된 내역과 모수 변화는 각 보고서 상단의 `Declared Scope Exclusions` 및 `Scope Exclusion Accounting`에 투명하게 기록됩니다.
+
+**방법 1: VS Code 탐색기 우클릭 토글 (권장)**
+1. VS Code 탐색기에서 제외할 폴더 또는 파일을 선택(다중 선택 지원)하고 마우스 우클릭합니다.
+2. **`SYNAPSE: Toggle Analysis Scope Exclusion`**을 클릭합니다.
+   - 폴더는 `<폴더명>/**`(예: `tests` → `tests/**`) 형식으로 자동 정규화되고, 파일은 상대 경로 그대로 `synapse.config.json`의 `scopeExclusions` 배열에 추가/제거됩니다.
+   - `synapse.config.json`이 없으면 최소 구성으로 자동 생성되며, 기존 파일이 있으면 `blacklist` 등 다른 설정 키는 그대로 보존됩니다.
+3. Verify 메뉴에서 보고서(`Simulation Debug`, `Architecture Report`, `Onboarding Report`)를 다시 생성하면 즉시 반영됩니다.
+
+**방법 2: `synapse.config.json` 직접 편집**
+```json
+{
+  "scopeExclusions": [
+    "thirdparty/**",
+    "tests/**"
+  ]
+}
+```
+- **설정 우선순위 (First-Win, 병합 없음):** CLI 플래그 > 환경변수(`SYNAPSE_SCOPE_EXCLUSIONS`) > `.vscode/settings.json`(`"synapse.analysis.scopeExclusions"`, JSONC 주석 지원) > `synapse.config.json`
+- **패턴 규칙:** 워크스페이스 기준 상대 경로와 `/` 구분자만 허용합니다. 폴더 전체 제외 시 `tests/` 대신 `tests/**`를 사용해야 합니다(선행/후행 슬래시는 `INVALID_PATTERN`으로 거부됨).
+
 ### 📝 보고서 샘플 (v0.3.34.73)
 
 | 프로젝트 | Architect Report | Onboarding Report | Simulation Debug | Evidence Viewer |
@@ -529,6 +554,7 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 | 버전 | 릴리스 날짜 | 설명 |
 | :---: | :---: | :--- |
+| **v0.3.34.75** | 2026-11-28 | **선언적 분석 범위 제외(`scopeExclusions`), SSoT 분리·원자적 Re-Bootstrap, IDE 리포트 UX 및 안정화**: 원본 `project_state.json`과 측정 그래프를 보존한 채 리포트 후보 선정(O2/A1/E2)에서만 선언 경로(`thirdparty/**`, `tests/**` 등)를 제외하는 `ScopeResolver`(`CLI > 환경변수 > .vscode/settings.json(JSONC) > synapse.config.json`)와 리포트 헤더 `Declared Scope Exclusions` / `Scope Exclusion Accounting`·Partial-Match 표기를 도입했습니다. VS Code 탐색기 우클릭 **`SYNAPSE: Toggle Analysis Scope Exclusion`**(단일·다중 선택, 폴더 `<folder>/**` 자동 정규화, 기존 `synapse.config.json` 키 보존)을 추가했습니다. 캔버스 좌표(`LayoutStorage`)와 사용자 편집(`UserGraphStorage`)을 불변 SSoT에서 분리하고, `CanvasPanel`의 Re-Bootstrap 이중 쓰기·선행 초기화를 제거하여 `BootstrapEngine` 단일 쓰기 소유권을 확립했으며, `liteBootstrap()` 원자적 교체(`atomicSaveProjectState`)와 7대 편집 선행 가드를 구현했습니다. `NodeBuilder`의 루트 `tests/...` 테스트 분류 우회를 교정하고, `diagnostic_log.txt` 쓰기를 `SYNAPSE_WRITE_DIAGNOSTIC_LOG=1` Opt-In(기본 OFF)으로 전환했으며, Full Jest(`6/6` 스위트·`40/40` 테스트 PASS) 정상화, Onboarding/Architect `workspaceRoot` 누락 수정, `VirtualDebugger` 리포트 오류 표출, 전 보고서 버튼 `withProgress` 진행 알림 및 2중 중복 클릭 방지 가드를 적용했습니다.<br>**보고서 알려진 한계점 (Known Limitations)**: C/C++ 프로젝트에서 CALL 엣지 유입으로 인해 실제 진입점(`main.cpp`)의 `inDegree > 0`이 되어 `fanIn === 0` 기준을 탈락하고 말단 구현 파일이 `inDegree = 0`을 유지하며 상위로 올라오는 O2 진입점 역전 현상이 잔존합니다 (Phase D-2 Policy C 검토는 `DEFERRED — SEMANTIC REVIEW REQUIRED`로 보류되었으며, O2는 `STATIC DEPENDENCY ROOT` 지표로 유지됩니다). |
 | **v0.3.34.74** | 2026-11-11 | **빌드 자산 격리, Rust 로컬 크레이트 해석 및 리포트 품질 개선**: NodeBuilder에 빌드 및 패키징 스크립트 격리 원칙($V_{\text{build}} \cap V_{\text{app}} = \varnothing$)을 적용하여 빌드 메타데이터 파일이 런타임 그래프로 누출되는 현상을 원천 차단했습니다. ReferenceResolver에 Rust 워크스페이스/로컬 크레이트 해석기를 탑재하여 멀티 크레이트 프로젝트의 유령 노드(Ghost)를 대폭 축소했습니다. 아키텍처 리포트(O2/A1/E2) 전면 고도화: O2 섹션 제목의 불필요한 확장자 나열 제거, A1 및 E2 랭킹에 동적 P90 상위 10% 컷오프(`ceil(0.1 * N)`) 적용, 비결정론적 슬라이스 설명 문구를 팩트 기반 기준으로 교체, 마크다운 표 소수점 3자리 통일, 가상 노드 식별자 불일치(`Node.id === Node.filePath`)를 해결했습니다.<br>**보고서 알려진 한계점 (Known Limitations)**: (1) 최상위 루트 테스트 경로(`tests/...`)의 선두 슬래시 누락으로 인해 NodeBuilder의 테스트 컴포넌트 필터가 우회되는 현상, (2) 명시적 스코프 경계 선언이 없어 thirdparty/vendored 코드가 상위 후보군에 잔존하는 문제, (3) C/C++ 프로젝트에서 CALL 엣지로 인해 실제 진입점(`main.cpp`)의 `inDegree > 0`이 되어 `fanIn === 0` 기준을 탈락하고 말단 구현 파일이 상위로 올라오는 O2 진입점 역전 현상이 보고되었습니다. |
 | [**v0.3.34.73.fix1**](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1) | 2026-10-10 | **무한 부트스트랩(EROFS) 해결 및 UX 개선**: 샌드박스 외 파일 생성 시 크래시 및 무한 재시도 현상 수정. `.inc`, `.inl`, `.hh` 스캐너 지원을 통해 누락되었던 핵심 엣지 593건 복구 완료. 화면 줌 비율에 맞춰 클러스터 헤더 이동 판정 범위를 동적으로 확대하여 편의성 대폭 개선. |
 | **v0.3.34.41** | 2026-09-07 | **Validation Engine Completion & Provenance Tracking**: 단순 정적 분석을 넘어 구조 붕괴를 시뮬레이션하는 Validation Engine(Level 3.5) 구축. `ValidationClaim`에 `supportingStudyIds`를 도입하여 Claim과 Study의 소유권을 명확히 분리하고 완벽한 증거 추적(Provenance) 체계 확립. Executive Report를 대개편하여 어림짐작이 아닌 검증된(`SUPPORTED`) 사실만 렌더링하도록 수정("연구자가 증명하고 출판사가 렌더링한다" 원칙). VSCode 단일 데이터셋 과적합 문제를 해결하기 위해 Decision Engine(P4) 도입을 보류하고 NestJS, Linux Kernel 등 다수 이기종 프로젝트 교차 검증을 우선 목표로 재설정. |

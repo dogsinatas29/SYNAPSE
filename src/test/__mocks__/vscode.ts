@@ -37,6 +37,7 @@ const commands = {
 
 const languages = {
     createDiagnosticCollection: (_name: string) => ({ set: () => {}, clear: () => {}, delete: () => {}, dispose: () => {} }),
+    onDidChangeDiagnostics: (_listener: any) => ({ dispose: () => {} }),
 };
 
 const Uri = {

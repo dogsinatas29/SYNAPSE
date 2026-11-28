@@ -11,6 +11,7 @@ jest.mock('fs');
 jest.mock('vscode', () => ({
     window: { showErrorMessage: jest.fn(), showInformationMessage: jest.fn(), showWarningMessage: jest.fn() },
     workspace: { getConfiguration: jest.fn(() => ({ get: jest.fn() })), onDidSaveTextDocument: jest.fn() },
+    languages: { onDidChangeDiagnostics: jest.fn(() => ({ dispose: jest.fn() })), createDiagnosticCollection: jest.fn(() => ({ set: jest.fn(), clear: jest.fn(), delete: jest.fn(), dispose: jest.fn() })) },
     Uri: { joinPath: jest.fn(), file: jest.fn() }
 }), { virtual: true });
 

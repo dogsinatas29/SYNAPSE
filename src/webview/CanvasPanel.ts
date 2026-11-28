@@ -104,6 +104,8 @@ export class CanvasPanel {
     private proposedEdges: any[] = [];
     private _contextRequestCallback: ((data: any) => void) | undefined;
     private _isProcessingConfirm: boolean = false; // [v0.2.17 Patch 13.2] Prevent duplicate dialogs
+    private _isGeneratingReport: boolean = false;
+    private _activeReportTask: string | null = null;
     private _taskQueue = new SequentialTaskQueue();
     private projectState: ProjectState | undefined;
 
@@ -186,6 +188,12 @@ export class CanvasPanel {
     private async saveOverlayAndPush(mutator: (overlay: UserGraphData) => void | Promise<void>): Promise<void> {
         const workspaceFolder = this._workspaceFolder;
         if (!workspaceFolder) return;
+
+        // [Phase 3-B A-02] 중앙 저장 관문 가드: Re-Bootstrap 중이거나 Safe Mode인 경우 비동기 재개 후속 작업 즉시 차단
+        if (this._isReBootstrapping || this._isReadOnlySafeMode) {
+            Logger.warn('[CanvasPanel] saveOverlayAndPush dropped: Re-Bootstrap or SafeMode is active');
+            return;
+        }
 
         this._overlayQueue = this._overlayQueue.then(async () => {
             const overlay = await this.ensureUserGraphLoaded();
@@ -434,38 +442,83 @@ export class CanvasPanel {
         };
     }
     
-    private async handleUnifiedReportGeneration(message: any) {
+    private _setReportButtonsBusy(busy: boolean, label?: string) {
         try {
-            const workspaceFolders = vscode.workspace.workspaceFolders;
-            if (!workspaceFolders || workspaceFolders.length === 0) return;
-            const root = workspaceFolders[0].uri.fsPath;
-            
-            const { ValidationEngine } = require('../core/validation/ValidationEngine');
-            const stateFile = path.join(root, 'synapse_data', 'project_state.json');
-            let state: any = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
-            if (typeof state === 'string') state = JSON.parse(state);
-            const snapshot = {
-                nodes: state.nodes || [],
-                edges: state.edges || [],
-                clusters: state.clusters || []
-            };
-            Logger.info(`[REPORT] START: ${message.command}`);
-            
-            const context: any = {
-                snapshot,
-                metrics: { topImpactFiles: [], systemAssemblyPoints: [] }
-            };
-            
-            const { ReportBundleGenerator } = require('../core/reporting/ReportBundleGenerator');
-            
-            Logger.info(`[REPORT] Calling generateBundle`);
-            const summaryPath = await ReportBundleGenerator.generateBundle(context, root, message);
-            Logger.info(`[REPORT] generateBundle FINISHED: ${summaryPath}`);
+            if (this._panel && this._panel.webview) {
+                this._panel.webview.postMessage({ command: 'reportBusyState', busy, label });
+                if (busy) {
+                    this._panel.webview.postMessage({ command: 'progress', taskId: 'report', label: label || 'Generating report...', progress: 25 });
+                } else {
+                    this._panel.webview.postMessage({ command: 'progressComplete', taskId: 'report' });
+                }
+            }
+        } catch {
+            // Ignore if panel was already disposed
+        }
+    }
+
+    private async handleUnifiedReportGeneration(message: any) {
+        const taskTitle = message?.command === 'fetchArchitectureReport' ? 'Architecture Report' : 'Onboarding Report';
+        if (this._isGeneratingReport) {
+            Logger.info(`[CanvasPanel] Ignored duplicate report request (${taskTitle}) while "${this._activeReportTask}" is in progress.`);
+            vscode.window.showInformationMessage(`[SYNAPSE] Already running ${this._activeReportTask}. Please wait...`);
+            return;
+        }
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (!workspaceFolders || workspaceFolders.length === 0) {
+            this._setReportButtonsBusy(false);
+            return;
+        }
+        const root = workspaceFolders[0].uri.fsPath;
+        this._isGeneratingReport = true;
+        this._activeReportTask = taskTitle;
+        this._setReportButtonsBusy(true, `Generating ${taskTitle}...`);
+
+        try {
+            const summaryPath = await vscode.window.withProgress(
+                {
+                    location: vscode.ProgressLocation.Notification,
+                    title: `[SYNAPSE] Generating ${taskTitle}...`,
+                    cancellable: false
+                },
+                async (progress) => {
+                    progress.report({ message: 'Loading project state & computing findings...' });
+                    await new Promise(resolve => setTimeout(resolve, 25));
+
+                    const { ValidationEngine } = require('../core/validation/ValidationEngine');
+                    const stateFile = path.join(root, 'synapse_data', 'project_state.json');
+                    let state: any = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+                    if (typeof state === 'string') state = JSON.parse(state);
+                    const snapshot = {
+                        nodes: state.nodes || [],
+                        edges: state.edges || [],
+                        clusters: state.clusters || []
+                    };
+                    Logger.info(`[REPORT] START: ${message.command}`);
+                    
+                    const context: any = {
+                        snapshot,
+                        workspaceRoot: root,
+                        metrics: { topImpactFiles: [], systemAssemblyPoints: [] }
+                    };
+                    
+                    const { ReportBundleGenerator } = require('../core/reporting/ReportBundleGenerator');
+                    
+                    Logger.info(`[REPORT] Calling generateBundle`);
+                    const outPath = await ReportBundleGenerator.generateBundle(context, root, message);
+                    Logger.info(`[REPORT] generateBundle FINISHED: ${outPath}`);
+                    return outPath;
+                }
+            );
             
             await vscode.commands.executeCommand('markdown.showPreview', vscode.Uri.file(summaryPath));
         } catch (e: any) {
             Logger.error(`[CanvasPanel] Error generating unified reports: ${e.message}`);
             vscode.window.showErrorMessage(`Failed to generate reports: ${e.message}`);
+        } finally {
+            this._isGeneratingReport = false;
+            this._activeReportTask = null;
+            this._setReportButtonsBusy(false);
         }
     }
 
@@ -3264,96 +3317,122 @@ export class CanvasPanel {
         console.log("[VD-4]", Date.now());
         console.log("[VD_ENTRY] handleVirtualDebug started!");
         console.log("[VD_STEP_1]");
+        if (this._isGeneratingReport) {
+            Logger.info(`[CanvasPanel] Ignored duplicate virtualDebug request while "${this._activeReportTask}" is in progress.`);
+            vscode.window.showInformationMessage(`[SYNAPSE] Already running ${this._activeReportTask}. Please wait...`);
+            return;
+        }
         const workspaceFolder = this._workspaceFolder;
-        if (!workspaceFolder) return;
+        if (!workspaceFolder) {
+            this._setReportButtonsBusy(false);
+            return;
+        }
+        this._isGeneratingReport = true;
+        this._activeReportTask = 'Simulation Debug';
+        this._setReportButtonsBusy(true, 'Running Simulation Debug...');
 
         try {
-            Logger.info("[SIM_DEBUG_BACKEND_REQUESTING_CONTEXT] handleVirtualDebug start (Requesting ContextData from WebView)");
-            console.time("SIM_TOTAL");
+            const vdResult = await vscode.window.withProgress(
+                {
+                    location: vscode.ProgressLocation.Notification,
+                    title: '[SYNAPSE] Running Simulation Debug...',
+                    cancellable: false
+                },
+                async (progress) => {
+                    progress.report({ message: 'Collecting canvas context...' });
+                    Logger.info("[SIM_DEBUG_BACKEND_REQUESTING_CONTEXT] handleVirtualDebug start (Requesting ContextData from WebView)");
+                    console.time("SIM_TOTAL");
 
-            // 1. Get current project state FROM WEBVIEW to reflect UI visibility
-            const state = await this._getContextDataFromWebView();
-            if (!state) {
-                Logger.error("[VirtualDebug] Failed to receive ContextData from WebView. Using fallback.");
-                return;
-            }
-            Logger.info("[STEP-0.5] WebView state received");
-            Logger.info(`[CONTEXT_SIZE] ${JSON.stringify(state).length}`);
-            const backendRaw = canvasEngine.getRawSnapshot();
-            console.log("[BACKEND_GRAPH]", {
-                nodes: backendRaw.nodes?.length,
-                edges: backendRaw.edges?.length,
-                clusters: backendRaw.clusters?.length
-            });
-            console.log("[VD_STEP_2]", state.nodes?.length || 0);
-
-            const nodes = Array.isArray(state.nodes) ? state.nodes : Object.values(state.nodes || {});
-            const edges = Array.isArray(state.edges) ? state.edges : Object.values(state.edges || {});
-            const allClusters = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {});
-
-            console.log("[SIM_DEBUG_INPUT]", {
-                nodes: nodes.length,
-                edges: edges.length,
-                clusters: allClusters.length,
-                collapsedClusters: allClusters.filter((c: any) => c?.collapsed === true).length
-            });
-
-            console.log(
-                "[VD_GRAPH_STATS]",
-                nodes.length,
-                edges.length,
-                allClusters.length
-            );
-
-            let visibleClusterIds: string[] = [];
-            // [v0.3.34.6] Cluster Coupling Analysis on Demand
-            if (state.clusters) {
-                if (state.visibleClusterIds && Array.isArray(state.visibleClusterIds)) {
-                    visibleClusterIds = state.visibleClusterIds;
-                    Logger.info(`[CTX_BACKEND_VISIBLE] Received directly from frontend: ${visibleClusterIds.length}`);
-                } else {
-                    Logger.info('[CTX_BACKEND_COLLAPSE]', allClusters.filter((c: any) => c?.collapsed === true).length);
-                    visibleClusterIds = allClusters
-                        .filter((c: any) => c && c.id && typeof c.id === 'string' && c.collapsed !== true && !c.id.startsWith('client::'))
-                        .map((c: any) => c.id);
-                }
-                    
-                console.log(
-                    "[VD_VISIBLE_STATS]",
-                    "Nodes N/A", // visibleNodes not calculated here
-                    "Edges N/A",
-                    visibleClusterIds.length
-                );
-
-                if (visibleClusterIds.length >= 2) {
-                    Logger.info(`[STEP-0.6] visibleClusterIds length = ${visibleClusterIds.length}`);
-                    console.log('[COUPLING_CALL_CANVAS]', {
-                        visibleClusterIds: visibleClusterIds.length,
-                        nodes: nodes.length,
-                        edges: edges.length
+                    // 1. Get current project state FROM WEBVIEW to reflect UI visibility
+                    const state = await this._getContextDataFromWebView();
+                    if (!state) {
+                        Logger.error("[VirtualDebug] Failed to receive ContextData from WebView. Using fallback.");
+                        return null;
+                    }
+                    Logger.info("[STEP-0.5] WebView state received");
+                    Logger.info(`[CONTEXT_SIZE] ${JSON.stringify(state).length}`);
+                    const backendRaw = canvasEngine.getRawSnapshot();
+                    console.log("[BACKEND_GRAPH]", {
+                        nodes: backendRaw.nodes?.length,
+                        edges: backendRaw.edges?.length,
+                        clusters: backendRaw.clusters?.length
                     });
-                    // @ts-ignore
-                    const bridges = ClusterBridgeAnalyzer.analyzeVisibleClusters(visibleClusterIds, nodes, edges, allClusters as any);
-                    console.log('[COUPLING_RESULT_CANVAS]', { bridges: bridges.length });
-                    Logger.info(`[STEP-0.8] ClusterBridgeAnalyzer returned ${bridges.length} bridges.`);
-                    
-                    if (bridges.length > 0) {
-                        Logger.info(`[CLUSTER_COUPLING_ANALYSIS] (VirtualDebug) Found ${bridges.length} bridges.`);
-                        const bridgesUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'cluster_bridges.json');
-                        await vscode.workspace.fs.writeFile(bridgesUri, Buffer.from(JSON.stringify(bridges, null, 2), 'utf-8'));
-                        
-                        if (this._panel) {
-                            this._panel.webview.postMessage({ command: 'updateClusterBridges', data: bridges });
+                    console.log("[VD_STEP_2]", state.nodes?.length || 0);
+
+                    const nodes = Array.isArray(state.nodes) ? state.nodes : Object.values(state.nodes || {});
+                    const edges = Array.isArray(state.edges) ? state.edges : Object.values(state.edges || {});
+                    const allClusters = Array.isArray(state.clusters) ? state.clusters : Object.values(state.clusters || {});
+
+                    console.log("[SIM_DEBUG_INPUT]", {
+                        nodes: nodes.length,
+                        edges: edges.length,
+                        clusters: allClusters.length,
+                        collapsedClusters: allClusters.filter((c: any) => c?.collapsed === true).length
+                    });
+
+                    console.log(
+                        "[VD_GRAPH_STATS]",
+                        nodes.length,
+                        edges.length,
+                        allClusters.length
+                    );
+
+                    let visibleClusterIds: string[] = [];
+                    // [v0.3.34.6] Cluster Coupling Analysis on Demand
+                    if (state.clusters) {
+                        if (state.visibleClusterIds && Array.isArray(state.visibleClusterIds)) {
+                            visibleClusterIds = state.visibleClusterIds;
+                            Logger.info(`[CTX_BACKEND_VISIBLE] Received directly from frontend: ${visibleClusterIds.length}`);
+                        } else {
+                            Logger.info('[CTX_BACKEND_COLLAPSE]', allClusters.filter((c: any) => c?.collapsed === true).length);
+                            visibleClusterIds = allClusters
+                                .filter((c: any) => c && c.id && typeof c.id === 'string' && c.collapsed !== true && !c.id.startsWith('client::'))
+                                .map((c: any) => c.id);
+                        }
+                            
+                        console.log(
+                            "[VD_VISIBLE_STATS]",
+                            "Nodes N/A", // visibleNodes not calculated here
+                            "Edges N/A",
+                            visibleClusterIds.length
+                        );
+
+                        if (visibleClusterIds.length >= 2) {
+                            Logger.info(`[STEP-0.6] visibleClusterIds length = ${visibleClusterIds.length}`);
+                            console.log('[COUPLING_CALL_CANVAS]', {
+                                visibleClusterIds: visibleClusterIds.length,
+                                nodes: nodes.length,
+                                edges: edges.length
+                            });
+                            // @ts-ignore
+                            const bridges = ClusterBridgeAnalyzer.analyzeVisibleClusters(visibleClusterIds, nodes, edges, allClusters as any);
+                            console.log('[COUPLING_RESULT_CANVAS]', { bridges: bridges.length });
+                            Logger.info(`[STEP-0.8] ClusterBridgeAnalyzer returned ${bridges.length} bridges.`);
+                            
+                            if (bridges.length > 0) {
+                                Logger.info(`[CLUSTER_COUPLING_ANALYSIS] (VirtualDebug) Found ${bridges.length} bridges.`);
+                                const bridgesUri = vscode.Uri.joinPath(workspaceFolder.uri, 'synapse_data', 'cluster_bridges.json');
+                                await vscode.workspace.fs.writeFile(bridgesUri, Buffer.from(JSON.stringify(bridges, null, 2), 'utf-8'));
+                                
+                                if (this._panel) {
+                                    this._panel.webview.postMessage({ command: 'updateClusterBridges', data: bridges });
+                                }
+                            }
                         }
                     }
+
+                    console.log("[VD_STEP_3]");
+                    progress.report({ message: 'Analyzing architecture & generating report...' });
+                    await new Promise(resolve => setTimeout(resolve, 25));
+
+                    // 2. Perform Virtual Debug scan (Architecture Surgery Pipeline)
+                    const vDebugger = new VirtualDebugger();
+                    return await vDebugger.performVirtualDebug(state, workspaceFolder.uri.fsPath, visibleClusterIds, message?.scope, message?.target, message?.selectionSource);
                 }
-            }
+            );
 
-            console.log("[VD_STEP_3]");
-
-            // 2. Perform Virtual Debug scan (Architecture Surgery Pipeline)
-            const vDebugger = new VirtualDebugger();
-            const { evidence, reports, analyzedNodeCount, surgeryReportUri } = await vDebugger.performVirtualDebug(state, workspaceFolder.uri.fsPath, visibleClusterIds, message?.scope, message?.target, message?.selectionSource);
+            if (!vdResult) return;
+            const { evidence, reports, analyzedNodeCount, surgeryReportUri, surgeryReportError } = vdResult;
 
             console.log("[VD_STEP_4]");
 
@@ -3372,7 +3451,10 @@ export class CanvasPanel {
             const warningCount = necroFindings.length - errorCount;
             const fractureCount = fractureFindings.length;
             
-            if (analyzedNodeCount === 0) {
+            if (surgeryReportError) {
+                Logger.error(`[SYNAPSE] Simulation Debug report failed: ${surgeryReportError}`);
+                vscode.window.showErrorMessage(`[SYNAPSE] Simulation Debug report failed: ${surgeryReportError}`);
+            } else if (analyzedNodeCount === 0) {
                 vscode.window.showInformationMessage(`[SYNAPSE] 분석 대상 없음: 가시화된 클러스터 내부에 로직 노드가 없습니다.`);
             } else if (necroFindings.length > 0 || fractureCount > 0) {
                 vscode.window.showWarningMessage(`[SYNAPSE] Architecture Surgery found ${errorCount} Errors, ${warningCount} Warnings, and ${fractureCount} Fractured Edges.`);
@@ -3388,13 +3470,17 @@ export class CanvasPanel {
                     Logger.warn(`[SYNAPSE] Failed to open Surgery Report Preview, falling back to editor: ${e}`);
                     await vscode.commands.executeCommand('vscode.open', surgeryReportUri, vscode.ViewColumn.Beside);
                 }
-            } else {
+            } else if (!surgeryReportError) {
                 Logger.warn(`[SYNAPSE] No Surgery Report URI returned.`);
             }
 
         } catch (error: any) {
             Logger.error(`[AAE_STACK] Architecture Analysis failed: ${error?.stack || error}`);
             vscode.window.showErrorMessage(`Architecture Analysis failed: ${error?.message || error}`);
+        } finally {
+            this._isGeneratingReport = false;
+            this._activeReportTask = null;
+            this._setReportButtonsBusy(false);
         }
     }
 
@@ -3995,6 +4081,8 @@ export class CanvasPanel {
                 { modal: true }, '✅ 확정', '❌ 취소'
             );
             if (choice !== '✅ 확정') return;
+            // [Phase 3-B A-02] 모달 응답 지연 후속 편집 차단 가드
+            if (this.checkEditBlocked()) return;
 
             // 1. Update Edge Status via Engine
             canvasEngine.dispatch('UPDATE_EDGE', { 
@@ -4090,6 +4178,8 @@ export class CanvasPanel {
         if (confirm !== '초기화') {
             return;
         }
+        // [Phase 3-B A-02] 모달 응답 지연 후속 편집 차단 가드
+        if (this.checkEditBlocked()) return;
 
         // [Phase 1 & 2] Layout & UserGraph Reset (SSoT project_state.json untouched)
         try {

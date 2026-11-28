@@ -2,38 +2,24 @@ import * as cp from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import * as crypto from 'crypto';
 
 describe('SYNAPSE Security Integration E2E', () => {
     let serverProcess: cp.ChildProcess;
     let baseURL: string;
     let dummyRoot: string;
+    let projectUUID = '';
     const adminSecret = 'e2e-secret-' + Date.now();
     let tokens = { admin: '', lead: '', member: '' };
     let projectStatePath: string;
-
-    const hashPassword = (password: string) => {
-        return crypto.createHash('sha256').update(password).digest('hex');
-    };
 
     beforeAll(async () => {
         // 1. Create a dummy project root
         dummyRoot = path.join(os.tmpdir(), 'synapse-e2e-' + Date.now());
         fs.mkdirSync(path.join(dummyRoot, 'src'), { recursive: true });
-        const accountsDir = path.join(dummyRoot, '.synapse', 'accounts');
-        fs.mkdirSync(accountsDir, { recursive: true });
         
         projectStatePath = path.join(dummyRoot, 'synapse_data', 'project_state.json');
         fs.mkdirSync(path.join(dummyRoot, 'synapse_data'), { recursive: true });
         fs.writeFileSync(projectStatePath, JSON.stringify({ nodes: [] }), 'utf-8');
-
-        // Pre-create accounts
-        const accounts = [
-            { userId: 'u-admin', username: 'admin_user', passwordHash: hashPassword('pass'), role: 'admin' },
-            { userId: 'u-lead', username: 'lead_user', passwordHash: hashPassword('pass'), role: 'lead' },
-            { userId: 'u-member', username: 'member_user', passwordHash: hashPassword('pass'), role: 'member' },
-        ];
-        fs.writeFileSync(path.join(accountsDir, 'accounts.json'), JSON.stringify(accounts, null, 2), 'utf-8');
 
         // 2. Start standalone server via child_process
         const standaloneScript = path.join(__dirname, '../../dist/server/standalone.js');
@@ -61,10 +47,12 @@ describe('SYNAPSE Security Integration E2E', () => {
                     if (fs.existsSync(serverInfoPath)) {
                         const info = JSON.parse(fs.readFileSync(serverInfoPath, 'utf-8'));
                         baseURL = `http://127.0.0.1:${info.port}`;
-                        const res = await fetch(`${baseURL}/api/version`);
+                        const res = await fetch(`${baseURL}/api/ping`);
                         if (res.status === 200) {
                             clearInterval(interval);
                             clearTimeout(timeout);
+                            const pingData = await res.json() as any;
+                            projectUUID = pingData.projectUUID;
                             resolve();
                         }
                     }
@@ -75,19 +63,74 @@ describe('SYNAPSE Security Integration E2E', () => {
         });
 
         await new Promise(r => setTimeout(r, 1000));
-        
-        // 4. Create Sessions (Admin, Lead, Member) via Login
-        const login = async (username: string) => {
+
+        if (!projectUUID) {
+            throw new Error('Failed to obtain projectUUID from /api/ping');
+        }
+
+        // 4. Authenticate Admin & Provision Lead/Member Accounts and Roles via Current APIs
+        const adminAuthRes = await fetch(`${baseURL}/api/admin/auth`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ adminSecret })
+        });
+        const adminAuthData = await adminAuthRes.json() as any;
+        if (adminAuthRes.status !== 200 || adminAuthData.success !== true || typeof adminAuthData.token !== 'string') {
+            throw new Error(`Admin auth failed: ${adminAuthRes.status} ${JSON.stringify(adminAuthData)}`);
+        }
+        tokens.admin = adminAuthData.token;
+
+        const createAccount = async (username: string): Promise<string> => {
+            const res = await fetch(`${baseURL}/api/admin/create-account`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${tokens.admin}`,
+                    'x-admin-secret': adminSecret
+                },
+                body: JSON.stringify({ username, password: 'pass' })
+            });
+            const data = await res.json() as any;
+            if (res.status !== 200 || data.success !== true || typeof data.user?.userId !== 'string') {
+                throw new Error(`Create account failed for ${username}: ${res.status} ${JSON.stringify(data)}`);
+            }
+            return data.user.userId;
+        };
+
+        const assignRole = async (userId: string, role: 'lead' | 'member'): Promise<void> => {
+            const res = await fetch(`${baseURL}/api/admin/assign-role`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${tokens.admin}`,
+                    'x-admin-secret': adminSecret
+                },
+                body: JSON.stringify({ projectUUID, userId, role })
+            });
+            const data = await res.json() as any;
+            if (res.status !== 200 || data.success !== true) {
+                throw new Error(`Assign role failed for ${userId} (${role}): ${res.status} ${JSON.stringify(data)}`);
+            }
+        };
+
+        const leadUserId = await createAccount('lead_user');
+        const memberUserId = await createAccount('member_user');
+        await assignRole(leadUserId, 'lead');
+        await assignRole(memberUserId, 'member');
+
+        const login = async (username: string): Promise<string> => {
             const res = await fetch(`${baseURL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password: 'pass' })
             });
             const data = await res.json() as any;
+            if (res.status !== 200 || data.success !== true || typeof data.token !== 'string') {
+                throw new Error(`Login failed for ${username}: ${res.status} ${JSON.stringify(data)}`);
+            }
             return data.token;
         };
 
-        tokens.admin = await login('admin_user');
         tokens.lead = await login('lead_user');
         tokens.member = await login('member_user');
 
@@ -177,22 +220,20 @@ describe('SYNAPSE Security Integration E2E', () => {
         expect(res.status).toBe(200);
         const data = await res.json() as any;
         expect(data.success).toBe(true);
+        expect(data.snapshot?.id).toBeDefined();
 
         // Check if author was overridden to the actual session user (lead_user)
-        const snapshotsDir = path.join(dummyRoot, '.synapse', 'snapshots');
-        const files = fs.readdirSync(snapshotsDir);
-        expect(files.length).toBeGreaterThan(0);
-        
-        let found = false;
-        for (const file of files) {
-            const snap = JSON.parse(fs.readFileSync(path.join(snapshotsDir, file), 'utf-8'));
-            if (snap.id === data.snapshotId) {
-                expect(snap.author).toBe('lead_user'); // Not HOST_IMPERSONATOR
-                expect((snap as any).isAdmin).toBeUndefined(); // Prototype pollution blocked
-                found = true;
-            }
-        }
-        expect(found).toBe(true);
+        const historyPath = path.join(dummyRoot, 'synapse_data', 'synapse_history.json');
+        expect(fs.existsSync(historyPath)).toBe(true);
+        const historyJson = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
+        const historyList = Array.isArray(historyJson) ? historyJson : (historyJson.history || []);
+        expect(historyList.length).toBeGreaterThan(0);
+
+        const snap = historyList.find((item: any) => item.id === data.snapshot.id);
+        expect(snap).toBeDefined();
+        expect(snap.data.author).toBe('lead_user'); // Not HOST_IMPERSONATOR
+        expect((snap as any).isAdmin).toBeUndefined(); // Prototype pollution blocked
+        expect((snap.data as any).isAdmin).toBeUndefined(); // Prototype pollution blocked on data
     });
 
     it('[SYN-SEC-E2E-05] Harvest Replay Test (Concurrency)', async () => {
@@ -206,19 +247,20 @@ describe('SYNAPSE Security Integration E2E', () => {
         // Wait, if it fails because it's not in Approving state, that's normal.
         // We need to put it into Approving state first!
         // To put into Approving, we need to do start -> compare.
-        await fetch(`${baseURL}/api/harvest/start`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokens.lead}` }
-        });
-
-        // Now state is Locked.
-        await fetch(`${baseURL}/api/harvest/compare`, {
+        const startRes = await fetch(`${baseURL}/api/harvest/start`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokens.lead}` },
-            body: JSON.stringify({
-                candidates: [ { filePath: '/test', sourcePath: '/test', targetPath: '/test', clientUsername: 'lead_user', userId: 'u-lead' } ]
-            })
+            body: JSON.stringify({ visibleClientIds: [] })
         });
+        expect(startRes.status).toBe(200);
+
+        // Now state is Locked.
+        const compareRes = await fetch(`${baseURL}/api/harvest/compare`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokens.lead}` },
+            body: JSON.stringify({ visibleClientIds: [] })
+        });
+        expect(compareRes.status).toBe(200);
 
         // Now state is Approving.
         
@@ -236,20 +278,25 @@ describe('SYNAPSE Security Integration E2E', () => {
         const responses = await Promise.all(requests);
         let successCount = 0;
         let rejectCount = 0;
+        const unexpectedResponses: Array<{ status: number; body: any }> = [];
 
         for (const r of responses) {
             const body = await r.json() as any;
-            if (body.success) {
+            if (r.status === 200 && body.success === true) {
                 successCount++;
-            } else if (r.status === 400 && body.error === 'Invalid state transition or concurrent execution') {
+            } else if (
+                r.status === 409 &&
+                body.success === false &&
+                body.error === 'Invalid state transition or concurrent execution (Conflict)'
+            ) {
                 rejectCount++;
-            } else if (!body.success) {
-                // Ignore other failures (like file not found), we just care if CAS blocked it
-                if (r.status === 500) successCount++; // It passed CAS but failed actual execute
+            } else {
+                unexpectedResponses.push({ status: r.status, body });
             }
         }
 
-        // Exactly one should pass the CAS.
+        // Exactly one should pass the CAS, 99 rejected with 409 Conflict, 0 unexpected.
+        expect(unexpectedResponses).toEqual([]);
         expect(successCount).toBe(1);
         expect(rejectCount).toBe(99);
     });

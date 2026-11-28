@@ -440,6 +440,31 @@ SYNAPSE distinguishes observed structure from interpretation. When evidence is i
 
 Reports present validated results from the analysis pipeline. Detailed evidence should remain available for inspection so that readers can trace a reported conclusion back to its supporting observations and metrics.
 
+#### Analysis Scope Exclusions (`scopeExclusions`)
+
+You can declare **scope exclusions** to keep third-party libraries (`thirdparty/**`), vendored directories, tests (`tests/**`), or generated code out of report candidate rankings (O2 / A1 / E2).
+
+- **Difference from Blacklist:** `SYNAPSE: Toggle Blacklist` hides nodes from the graph itself, whereas `scopeExclusions` leaves the immutable SSoT (`project_state.json`) and measurement graph intact and excludes matched paths **only during report candidate eligibility**. Excluded counts and eligible totals are recorded transparently in each report header (`Declared Scope Exclusions` and `Scope Exclusion Accounting`).
+
+**Option 1: VS Code Explorer Right-Click Toggle (Recommended)**
+1. In the VS Code Explorer, right-click any folder or file (multi-select supported).
+2. Select **`SYNAPSE: Toggle Analysis Scope Exclusion`**.
+   - Folders are automatically normalized to `<folder>/**` (e.g., `tests` → `tests/**`), and files are toggled by their relative path in `synapse.config.json` (`scopeExclusions`).
+   - If `synapse.config.json` does not exist, a minimal config file is created automatically; existing keys (such as `blacklist`) are preserved untouched.
+3. Re-run reports from the **Verify** menu (`Simulation Debug`, `Architecture Report`, `Onboarding Report`) to apply the updated scope.
+
+**Option 2: Edit `synapse.config.json` Directly**
+```json
+{
+  "scopeExclusions": [
+    "thirdparty/**",
+    "tests/**"
+  ]
+}
+```
+- **Configuration Priority (First-Win, No Merge):** CLI flag > `SYNAPSE_SCOPE_EXCLUSIONS` env var > `.vscode/settings.json` (`"synapse.analysis.scopeExclusions"`, JSONC supported) > `synapse.config.json`.
+- **Pattern Rules:** Use workspace-relative forward-slash paths. Exclude directories with `tests/**` rather than a trailing slash (`tests/` and `/tests` are rejected as `INVALID_PATTERN`).
+
 ### 📝 Report Samples (v0.3.34.73)
 
 | Project | Architect Report | Onboarding Report | Simulation Debug | Evidence Viewer |
@@ -493,6 +518,7 @@ SYNAPSE was created to overcome the limitations of code-centric development. It 
 
 | Version | Release Date | Description |
 | :---: | :---: | :--- |
+| **v0.3.34.75** | 2026-11-28 | **Declared Scope Exclusions, SSoT Separation & Atomic Re-Bootstrap, IDE Report UX & Stabilization**: Introduced `ScopeResolver` (`CLI > ENV > .vscode/settings.json (JSONC) > synapse.config.json`) to exclude declared paths (e.g., `thirdparty/**`, `tests/**`) at Tier 3 Candidate Eligibility (O2/A1/E2) without mutating `project_state.json` or the measurement graph, complete with transparent `Declared Scope Exclusions` / `Scope Exclusion Accounting` report headers and Partial-Match status rendering. Added VS Code Explorer right-click **`SYNAPSE: Toggle Analysis Scope Exclusion`** (single & multi-select, automatic `<folder>/**` normalization, preserving existing `synapse.config.json` keys). Separated canvas layout (`LayoutStorage` / `layout.json`) and user edits (`UserGraphStorage` / `user_graph.json`) from immutable SSoT, eliminated `CanvasPanel` Re-Bootstrap double-write/pre-reset to enforce single SSoT write ownership in `BootstrapEngine`, and implemented `atomicSaveProjectState()` on `liteBootstrap()` with pre-guards on 7 user edit handlers. Resolved root-relative `tests/...` test-role bypass in `NodeBuilder`, gated `diagnostic_log.txt` output behind `SYNAPSE_WRITE_DIAGNOSTIC_LOG=1` (opt-in OFF by default), normalized Full Jest (`6/6` suites, `40/40` tests PASS), fixed `workspaceRoot` propagation for Onboarding/Architect reports, exposed silent `VirtualDebugger` report errors, and added `withProgress` notifications with two-layer double-click guards across all report buttons.<br>**Known Report Limitations**: In C/C++ projects, O2 entry-point detection can invert ranking because actual root files (`main.cpp`) receive internal call edges (`inDegree > 0`), whereas leaf implementation files retain `inDegree = 0` (Phase D-2 Policy C review deferred as `DEFERRED — SEMANTIC REVIEW REQUIRED`; O2 remains fixed as `STATIC DEPENDENCY ROOT`). |
 | **v0.3.34.74** | 2026-11-11 | **Build Asset Isolation, Rust Crate Resolution & Report Quality Refinements**: Enforced strict build & packaging asset isolation ($V_{\text{build}} \cap V_{\text{app}} = \varnothing$) in NodeBuilder, eliminating build-script leakage into runtime graphs. Added native Rust workspace/local crate reference resolution in ReferenceResolver, reducing false ghosts across multi-crate Rust projects. Refined architecture reports (O2/A1/E2): eliminated redundant O2 file extensions in section titles, applied dynamic P90 ceiling cutoff (`ceil(0.1 * N)`) to A1 & E2 rankings, removed non-deterministic rank-slice descriptions in favor of factual criteria, and enforced 3-decimal float precision in Markdown tables. Resolved virtual-node identity mismatch (`Node.id === Node.filePath`).<br>**Known Report Limitations**: (1) Root-level test directories without leading slashes (e.g., `tests/...`) bypass the test component filter in NodeBuilder; (2) Third-party and vendored code lacking an explicit scope boundary declaration still surface in top-level candidates; (3) In C/C++ projects, O2 entry-point detection can invert ranking because actual root files (`main.cpp`) receive internal call edges (`inDegree > 0`), whereas leaf implementation files retain `inDegree = 0`. |
 | [**v0.3.34.73.fix1**](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1) | 2026-10-10 | **Infinite Bootstrap Fix & UX Expansion**: Resolved EROFS infinite loop during mock node creation. Added `.inc`, `.inl`, `.hh` scanner support properly restoring 593 ghosts. Increased cluster dragging hit-box padding proportional to camera zoom. |
 | [**v0.3.34.73**](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73) | 2026-10-09 | **Resolver Trace Instrumentation**: Implemented P1 trace generation feature that records the entire internal reference resolution process by success/failure facts (`targetPathExists`, `targetNodeExists`, `resolverMatched`, `edgeCreated`). |

@@ -45,6 +45,7 @@ import { snapshotSystem } from './core/SnapshotSystem';
 import { ProjectMetadata } from './core/ProjectMetadata';
 import { SymbolIndex } from './core/SymbolIndex';
 import { RuntimeInitializer } from './core/collaboration/RuntimeInitializer';
+import { ScopeResolver } from './core/analysis/ScopeResolver';
 
 export async function activate(context: vscode.ExtensionContext) {
     Logger.initialize(context);
@@ -435,6 +436,63 @@ export async function activate(context: vscode.ExtensionContext) {
                     }
                 } catch (e) {
                     vscode.window.showErrorMessage(`Failed to update blacklist: ${e}`);
+                }
+            })
+        );
+        context.subscriptions.push(
+            vscode.commands.registerCommand('synapse.toggleScopeExclusion', async (uri: vscode.Uri | undefined, uris?: vscode.Uri[]) => {
+                const rawTargets = uris && uris.length > 0
+                    ? uris
+                    : uri
+                        ? [uri]
+                        : vscode.window.activeTextEditor?.document.uri
+                            ? [vscode.window.activeTextEditor.document.uri]
+                            : [];
+
+                if (rawTargets.length === 0) return;
+
+                const uniqueTargets = new Map<string, vscode.Uri>();
+                for (const item of rawTargets) {
+                    if (item?.fsPath && !uniqueTargets.has(item.fsPath)) {
+                        uniqueTargets.set(item.fsPath, item);
+                    }
+                }
+
+                const added: string[] = [];
+                const removed: string[] = [];
+                let anyShadowed = false;
+
+                try {
+                    for (const targetUri of uniqueTargets.values()) {
+                        const workspaceFolder = vscode.workspace.getWorkspaceFolder(targetUri);
+                        if (!workspaceFolder) continue;
+
+                        const projectRoot = workspaceFolder.uri.fsPath;
+                        const stats = fs.statSync(targetUri.fsPath);
+                        const result = ScopeResolver.toggleScopeExclusion(projectRoot, targetUri.fsPath, stats.isDirectory());
+
+                        if (result.action === 'added') {
+                            added.push(result.pattern);
+                        } else {
+                            removed.push(result.pattern);
+                        }
+                        if (result.shadowedByVscodeSettings) {
+                            anyShadowed = true;
+                        }
+                    }
+
+                    if (added.length === 0 && removed.length === 0) return;
+
+                    const parts: string[] = [];
+                    if (added.length > 0) parts.push(`🚫 Excluded: ${added.join(', ')}`);
+                    if (removed.length > 0) parts.push(`✅ Restored: ${removed.join(', ')}`);
+                    const suffix = anyShadowed
+                        ? ' (.vscode/settings.json "synapse.analysis.scopeExclusions" currently takes precedence.)'
+                        : ' (Re-run reports to apply.)';
+
+                    vscode.window.showInformationMessage(`[SYNAPSE] Report scope updated — ${parts.join(' | ')}${suffix}`);
+                } catch (e: any) {
+                    vscode.window.showErrorMessage(`Failed to update analysis scope exclusion: ${e?.message || e}`);
                 }
             })
         );

@@ -102,7 +102,7 @@ export class VirtualDebugger {
     /**
      * Harvests diagnostics from VS Code and maps them to the current project state.
      */
-    public async performVirtualDebug(state: ProjectState, workspaceRoot: string, visibleClusterIds?: string[], reportScope?: string, reportTarget?: string, selectionSource?: string): Promise<{ evidence: any, reports: any[], analyzedNodeCount: number, surgeryReportUri?: any }> {
+    public async performVirtualDebug(state: ProjectState, workspaceRoot: string, visibleClusterIds?: string[], reportScope?: string, reportTarget?: string, selectionSource?: string): Promise<{ evidence: any, reports: any[], analyzedNodeCount: number, surgeryReportUri?: any, surgeryReportError?: string }> {
         const perfLog = (stage: string, context?: any) => {
             const mem = process.memoryUsage();
             console.log(`[MEM_TRACE] [${stage}]`, JSON.stringify({
@@ -567,6 +567,7 @@ export class VirtualDebugger {
 
 
         let surgeryReportUri: any = null;
+        let surgeryReportError: string | undefined = undefined;
         if (workspaceRoot) {
             Logger.info(`[CHECKPOINT-F] before ValidationEngine execution (Surgery Pipeline)`);
             const fs = require('fs');
@@ -740,8 +741,9 @@ export class VirtualDebugger {
                 surgeryReportUri = vscode.Uri.file(mdPath);
                 console.log("[ASR] report generated", surgeryReportUri.fsPath);
             } catch (err: any) {
-                Logger.error(`[Surgery Error] Engine execution failed: ${err.message}`);
-                console.log("[ASR] execution failed", err.message);
+                surgeryReportError = err?.message || String(err);
+                Logger.error(`[Surgery Error] Engine execution failed: ${surgeryReportError}`);
+                console.log("[ASR] execution failed", surgeryReportError);
                 if (err.stack) Logger.error(`STACK: ${err.stack}`);
             }
             Logger.info(`[CHECKPOINT-G] after ValidationEngine execution`);
@@ -866,7 +868,8 @@ export class VirtualDebugger {
             evidence: evidenceBundle,
             reports,
             analyzedNodeCount: targetNodes.length,
-            surgeryReportUri
+            surgeryReportUri,
+            surgeryReportError
         };
     }
 

@@ -79,6 +79,11 @@
                 "command": "synapse.openBlacklistConfig",
                 "title": "SYNAPSE: Configure Blacklist (SSOT)",
                 "icon": "$(gear)"
+            },
+            {
+                "command": "synapse.toggleScopeExclusion",
+                "title": "SYNAPSE: Toggle Analysis Scope Exclusion",
+                "icon": "$(filter)"
             }
         ],
         "keybindings": [
@@ -135,6 +140,10 @@
                 {
                     "command": "synapse.addToBlacklist",
                     "group": "synapse@1"
+                },
+                {
+                    "command": "synapse.toggleScopeExclusion",
+                    "group": "synapse@2"
                 }
             ]
         },
@@ -188,7 +197,16 @@
         "preset": "ts-jest",
         "testEnvironment": "node",
         "testMatch": [
-            "**/src/test/**/*.test.ts"
+            "<rootDir>/src/test/**/*.test.ts"
+        ],
+        "testPathIgnorePatterns": [
+            "/node_modules/",
+            "/scratch/",
+            "/dist/"
+        ],
+        "modulePathIgnorePatterns": [
+            "<rootDir>/dist/",
+            "<rootDir>/scratch/"
         ],
         "moduleNameMapper": {
             "vscode": "<rootDir>/src/test/__mocks__/vscode.ts"

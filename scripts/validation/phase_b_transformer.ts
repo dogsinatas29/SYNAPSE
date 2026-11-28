@@ -53,11 +53,22 @@ export function normalizePathCanonical(rawPath: string): string {
   let p = rawPath.replace(/\\/g, '/');
 
   // 1. Strict UNC detection: Starts with exactly two slashes and has valid server & share segments
-  const isStrictUNC = /^\/\/[^\/\s]+\/[^\/\s]+/.test(p) && !p.startsWith('///');
+  const isStrictUNC = /^\/\/[^\/\s]+\/[^\/\s]+(?:\/|$)/.test(p) && !p.startsWith('///');
 
   let prefix = '';
+  let isDriveWithSlash = false;
+
   if (isStrictUNC) {
     prefix = '//';
+    p = p.substring(2);
+  } else if (/^[a-zA-Z]:\//.test(p)) {
+    // Windows drive with slash root/path (e.g. C:/ or C:/foo)
+    prefix = p.substring(0, 2) + '/';
+    p = p.substring(3);
+    isDriveWithSlash = true;
+  } else if (/^[a-zA-Z]:/.test(p)) {
+    // Windows drive-relative (e.g. C:foo)
+    prefix = p.substring(0, 2);
     p = p.substring(2);
   } else if (p.startsWith('/')) {
     prefix = '/';
@@ -74,9 +85,20 @@ export function normalizePathCanonical(rawPath: string): string {
     if (part === '' || part === '.') continue;
     resolvedParts.push(part);
   }
-  p = resolvedParts.join('/');
+  const resolved = resolvedParts.join('/');
 
-  return prefix + p;
+  // Preserve drive root C:/ when remaining segments are empty
+  if (isDriveWithSlash && resolvedParts.length === 0) {
+    return prefix;
+  }
+
+  if (prefix.endsWith('/')) {
+    return prefix + resolved;
+  }
+  if (prefix) {
+    return resolved ? prefix + (prefix.endsWith(':') ? '' : '/') + resolved : prefix;
+  }
+  return resolved;
 }
 
 /**
@@ -127,8 +149,8 @@ export function determineNodeRoleCanonical(filePath: string): { role: string; ca
     return { role: 'ASSET', category: 'Asset' };
   }
 
-  // Priority 6: Test Code & Runner (Segment-based or Basename patterns)
-  const isTestSegment = /(^|\/)(test|tests|unit_tests)(\/|$)/i.test(relPath);
+  // Priority 6: Test Code & Runner (Includes test, tests, unit_tests, specs, __tests__)
+  const isTestSegment = /(^|\/)(test|tests|unit_tests|specs|__tests__)(\/|$)/i.test(relPath);
   const isTestFile = (
     baseNameLower.includes('.test.') ||
     baseNameLower.includes('.spec.') ||
@@ -186,27 +208,46 @@ export function transformProjectStatePhaseB(originalState: ProjectState): {
     }
 
     // NodeBuilder nodes:
+    // P0-2: Role calculation MUST be based on normalized filePath (matching NodeBuilder.ts contract)
+    const rawTargetFilePath = node.filePath !== undefined ? node.filePath : origId;
+    const newFilePath = normalizePathCanonical(rawTargetFilePath);
     const newId = normalizePathCanonical(origId);
-    const newRole = determineNodeRoleCanonical(newId).role;
+    const newRole = determineNodeRoleCanonical(newFilePath).role;
     idMapping.set(origId, newId);
 
     if (newRole !== node.role) {
       roleTransitions.push({ id: origId, from: node.role || 'UNKNOWN', to: newRole });
     }
 
-    transformedNodes.push({
+    const transformedNode: Node = {
       ...node,
       id: newId,
-      filePath: node.filePath ? normalizePathCanonical(node.filePath) : newId,
+      filePath: newFilePath,
       role: newRole
-    });
+    };
+
+    // Transform Node.data.file strictly if data exists and contains own file property
+    if (node.data && typeof node.data === 'object' && Object.prototype.hasOwnProperty.call(node.data, 'file')) {
+      transformedNode.data = {
+        ...node.data,
+        file: transformedNode.filePath
+      };
+    }
+
+    transformedNodes.push(transformedNode);
   }
 
   // Transform Edges
   const transformedEdges: Edge[] = [];
   for (const edge of originalState.edges) {
-    const mappedFrom = idMapping.has(edge.from) ? idMapping.get(edge.from)! : edge.from;
-    const mappedTo = idMapping.has(edge.to) ? idMapping.get(edge.to)! : edge.to;
+    if (!idMapping.has(edge.from)) {
+      throw new Error(`[TRANSFORMER_EDGE_ENDPOINT_UNMAPPED] Edge "${edge.id}" from endpoint "${edge.from}" not in idMapping!`);
+    }
+    if (!idMapping.has(edge.to)) {
+      throw new Error(`[TRANSFORMER_EDGE_ENDPOINT_UNMAPPED] Edge "${edge.id}" to endpoint "${edge.to}" not in idMapping!`);
+    }
+    const mappedFrom = idMapping.get(edge.from)!;
+    const mappedTo = idMapping.get(edge.to)!;
 
     transformedEdges.push({
       ...edge,

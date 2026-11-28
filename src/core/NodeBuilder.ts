@@ -13,47 +13,128 @@ function getClusterIdForPath(relPath: string, rootDir: DirNode): string {
     return `folder_${normalizedDir.replace(/[^a-zA-Z0-9]/g, '_')}`;
 }
 
-export function determineNodeRole(filePath: string): { role: NodeRole, category: string } {
-    const ext = path.extname(filePath).toLowerCase();
-    const basename = path.basename(filePath);
-    const relPath = filePath.replace(/\\/g, '/');
+/**
+ * [Phase B v1.0.15 Canonical] Robust Path Normalizer
+ * Preserves POSIX absolute paths, strict UNC (//server/share), Windows drive root (C:/) & drive relative (C:foo),
+ * and parent directories (..), while removing redundant dots and collapsing consecutive slashes.
+ */
+export function normalizePath(rawPath: string): string {
+    if (!rawPath) return rawPath;
+    if (rawPath.startsWith('ghost://') || rawPath.startsWith('external://') || rawPath.startsWith('builtin://')) {
+        return rawPath;
+    }
 
+    let p = rawPath.replace(/\\/g, '/');
+
+    // Strict UNC detection: Starts with exactly two slashes and valid segments
+    const isStrictUNC = /^\/\/[^\/\s]+\/[^\/\s]+(?:\/|$)/.test(p) && !p.startsWith('///');
+
+    let prefix = '';
+    let isDriveWithSlash = false;
+
+    if (isStrictUNC) {
+        prefix = '//';
+        p = p.substring(2);
+    } else if (/^[a-zA-Z]:\//.test(p)) {
+        // Windows drive with slash root/path (e.g. C:/ or C:/foo)
+        prefix = p.substring(0, 2) + '/';
+        p = p.substring(3);
+        isDriveWithSlash = true;
+    } else if (/^[a-zA-Z]:/.test(p)) {
+        // Windows drive-relative (e.g. C:foo)
+        prefix = p.substring(0, 2);
+        p = p.substring(2);
+    } else if (p.startsWith('/')) {
+        prefix = '/';
+        p = p.replace(/^\/+/, '');
+    }
+
+    p = p.replace(/\/+/g, '/');
+
+    const parts = p.split('/');
+    const resolvedParts: string[] = [];
+    for (const part of parts) {
+        if (part === '' || part === '.') continue;
+        resolvedParts.push(part);
+    }
+    const resolved = resolvedParts.join('/');
+
+    // Preserve drive root C:/ when remaining segments are empty
+    if (isDriveWithSlash && resolvedParts.length === 0) {
+        return prefix;
+    }
+
+    if (prefix.endsWith('/')) {
+        return prefix + resolved;
+    }
+    if (prefix) {
+        return resolved ? prefix + (prefix.endsWith(':') ? '' : '/') + resolved : prefix;
+    }
+    return resolved;
+}
+
+export function determineNodeRole(filePath: string): { role: NodeRole, category: string } {
+    const relPath = filePath.replace(/\\/g, '/');
+    const basename = path.posix.basename(relPath);
+    const ext = path.posix.extname(relPath).toLowerCase();
+    const baseNameLower = basename.toLowerCase();
+
+    // Priority 1: Grammar
     if (ext === '.json' && basename.includes('.tmLanguage')) {
         return { role: NodeRole.GRAMMAR, category: 'Grammar' };
     }
 
+    // Priority 2: Config
     if (['package.json', 'tsconfig.json', 'webpack.config.js', 'vite.config.ts', '.eslintrc.js', '.prettierrc'].includes(basename) || ext === '.yaml' || ext === '.yml' || ext === '.json' || ext === '.toml') {
         return { role: NodeRole.CONFIG, category: 'Config' };
     }
 
+    // Priority 3: Build or Packaging Asset
     if (isBuildOrPackagingAsset(relPath)) {
         return { role: NodeRole.TOOLING, category: 'Tooling' };
     }
     
+    // Priority 4: Document
     if (ext === '.md' || ext === '.txt') {
         return { role: NodeRole.DOCUMENT, category: 'Document' };
     }
     
+    // Priority 5: Asset
     if (['.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif', '.ico', '.woff', '.woff2', '.ttf', '.eot'].includes(ext)) {
         return { role: NodeRole.ASSET, category: 'Asset' };
     }
     
-    if (relPath.includes('/test/') || relPath.includes('/tests/') || basename.includes('.test.') || basename.includes('.spec.') || basename === 'test-utils.ts') {
+    // Priority 6: Test Code & Runner (Includes test, tests, unit_tests, specs, __tests__)
+    const isTestSegment = /(^|\/)(test|tests|unit_tests|specs|__tests__)(\/|$)/i.test(relPath);
+    const isTestFile = (
+        baseNameLower.includes('.test.') ||
+        baseNameLower.includes('.spec.') ||
+        baseNameLower.startsWith('test_') ||
+        baseNameLower.endsWith('_test.cpp') ||
+        baseNameLower.endsWith('_test.h') ||
+        baseNameLower.endsWith('_test.py') ||
+        baseNameLower === 'test-utils.ts'
+    );
+    if (isTestSegment || isTestFile) {
         return { role: NodeRole.TEST, category: 'Test' };
     }
     
+    // Priority 7: Tooling Scripts (Preserve exact NodeBuilder.ts rule)
     if (relPath.includes('/scripts/') || relPath.includes('/build/') || relPath.includes('/tools/')) {
         return { role: NodeRole.TOOLING, category: 'Tooling' };
     }
     
+    // Priority 8: Domain Model
     if (['schema.ts', 'types.ts', 'interfaces.ts', 'constants.ts'].includes(basename) || basename.endsWith('.d.ts')) {
         return { role: NodeRole.DOMAIN_MODEL, category: 'Domain' };
     }
     
+    // Priority 9: Runtime Entry
     if (['extension.ts', 'main.ts', 'index.ts', 'activate.ts'].includes(basename)) {
         return { role: NodeRole.RUNTIME_ENTRY, category: 'Entry' };
     }
     
+    // Priority 10: Runtime Default
     return { role: NodeRole.RUNTIME, category: 'Source' };
 }
 
@@ -155,11 +236,12 @@ export function buildNodes(
             nodeSubcontinent = subcontinent;
         }
         
-        const roleInfo = determineNodeRole(item.filePath);
+        const normalizedFilePath = normalizePath(item.filePath);
+        const roleInfo = determineNodeRole(normalizedFilePath);
 
         const newNode: Node = {
-            id: item.filePath,
-            filePath: item.filePath,
+            id: normalizedFilePath,
+            filePath: normalizedFilePath,
             type: doc ? NodeType.DOCUMENTATION : NodeType.FILE,
             label: fileName,
             cluster_id: clusterId,
@@ -171,7 +253,7 @@ export function buildNodes(
             category: roleInfo.category,
             data: {
                 label: fileName,
-                file: item.filePath,
+                file: normalizedFilePath,
                 cluster_id: clusterId,
                 icon: doc ? '📚' : (item.summary.hasAtomicSignature ? '⚡' : '📄'),
                 hiddenOnCanvas: doc,
@@ -189,7 +271,7 @@ export function buildNodes(
         };
 
         nodes.push(newNode);
-        nodeIds.add(item.filePath);
+        nodeIds.add(normalizedFilePath);
     }
 
     return { nodes, nodeIds, directoryTree, internalNamespace };

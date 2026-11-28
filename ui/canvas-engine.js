@@ -14271,6 +14271,19 @@ function initCanvas() {
         window.vscode = acquireVsCodeApi();
     }
 
+    window.__setSynapseReportBusy = (busy) => {
+        const isBusy = !!busy;
+        window.__SYNAPSE_REPORT_BUSY__ = isBusy;
+        ['btn-virtual-debug', 'btn-report-arch', 'btn-report-onboard'].forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.disabled = isBusy;
+                el.style.opacity = isBusy ? '0.5' : '';
+                el.style.cursor = isBusy ? 'wait' : '';
+            }
+        });
+    };
+
     // [v0.2.25] 메시지 처리 통합 및 핸들러 등록
     engine.handleMessage = (message) => {
         if (!message) return;
@@ -14293,6 +14306,10 @@ function initCanvas() {
                 if (loader) loader.style.display = 'none';
                 break;
             }
+            case 'reportBusyState': {
+                window.__setSynapseReportBusy?.(message.busy);
+                break;
+            }
             case 'updateEvidenceOverlay': {
                 if (message.evidence) {
                     engine.setEvidenceBundle(message.evidence);
@@ -14300,9 +14317,11 @@ function initCanvas() {
                 const btnArch = document.getElementById('btn-report-arch');
                 const btnOnboard = document.getElementById('btn-report-onboard');
                 const btnExec = document.getElementById('btn-report-exec');
-                if (btnArch) btnArch.disabled = false;
-                if (btnOnboard) btnOnboard.disabled = false;
-                if (btnExec) btnExec.disabled = false;
+                if (!window.__SYNAPSE_REPORT_BUSY__) {
+                    if (btnArch) btnArch.disabled = false;
+                    if (btnOnboard) btnOnboard.disabled = false;
+                    if (btnExec) btnExec.disabled = false;
+                }
                 break;
             }
             case 'updateClusterBridges': {
@@ -15149,7 +15168,9 @@ function initCanvas() {
     }
 
     document.getElementById('btn-report-arch')?.addEventListener('click', () => {
+        if (window.__SYNAPSE_REPORT_BUSY__) return;
         if (typeof vscode !== 'undefined') {
+            window.__setSynapseReportBusy?.(true);
             const { scope, target } = getReportScopeAndTarget(window.engine);
             vscode.postMessage({ 
                 command: 'fetchArchitectureReport',
@@ -15163,7 +15184,9 @@ function initCanvas() {
     });
 
     document.getElementById('btn-report-onboard')?.addEventListener('click', () => {
+        if (window.__SYNAPSE_REPORT_BUSY__) return;
         if (typeof vscode !== 'undefined') {
+            window.__setSynapseReportBusy?.(true);
             const { scope, target } = getReportScopeAndTarget(window.engine);
             vscode.postMessage({ 
                 command: 'fetchOnboardingReport',
@@ -15201,6 +15224,7 @@ function initCanvas() {
         if (typeof vscode !== 'undefined') vscode.postMessage({ command: 'log', level: 'info', text: `[VD_INIT] Assigned instanceId: ${vdBtn.dataset.instanceId}` });
         
         vdBtn.addEventListener('click', () => {
+            if (window.__SYNAPSE_REPORT_BUSY__) return;
             console.log('[VIRTUAL_DEBUG_CLICKED]');
 
         const _collapsedCount = engine.clusters.filter(c => c.collapsed === true).length;
@@ -15230,6 +15254,7 @@ function initCanvas() {
         console.log("[SIM_DEBUG_STATE]", engine.nodes?.length, engine.edges?.length, engine._visibleNodesCache?.length, engine._visibleGraphClusters?.length);
         
         if (typeof vscode !== 'undefined') {
+            window.__setSynapseReportBusy?.(true);
             const { scope, target } = getReportScopeAndTarget(window.engine);
             const payload = { command: 'virtualDebug', timestamp: Date.now(), panelId: window.__PANEL_ID__, scope: scope, target: target, selectionSource: 'USER_SELECTED' };
             

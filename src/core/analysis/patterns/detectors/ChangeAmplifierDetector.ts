@@ -3,7 +3,6 @@ import { PatternDetector } from '../PatternDetector';
 import { PatternFinding } from '../PatternFinding';
 import { PatternId } from '../PatternId';
 import { EvidenceItem } from '../EvidenceItem';
-import { NodeRole } from '../../../../types/schema';
 import { ScopeResolver } from '../../ScopeResolver';
 
 export class ChangeAmplifierDetector implements PatternDetector {
@@ -20,50 +19,8 @@ export class ChangeAmplifierDetector implements PatternDetector {
             return findings;
         }
 
-        // 1. Build nodeRoleMap from context.snapshot.nodes
-        const nodeRoleMap = new Map<string, string>();
-        if (context?.snapshot?.nodes) {
-            for (const n of context.snapshot.nodes) {
-                if (n.role) {
-                    nodeRoleMap.set(n.id || n.filePath, String(n.role).toLowerCase());
-                }
-            }
-        }
-
-        // 2. Pre-filter test components BEFORE score and percentile cutoff calculation
-        const nonTestSemanticFindings: any[] = [];
-        const excludedTestComponents: string[] = [];
-
-        for (const f of semanticFindings) {
-            const members: string[] = f.metadata?.members || [];
-            let isTestComponent = false;
-            if (members.length > 0 && nodeRoleMap.size > 0) {
-                let testNodeCount = 0;
-                for (const m of members) {
-                    const r = nodeRoleMap.get(m);
-                    if (r === 'test' || r === NodeRole.TEST.toLowerCase()) {
-                        testNodeCount++;
-                    }
-                }
-                const testRatio = testNodeCount / members.length;
-                if (testRatio >= 0.8) {
-                    isTestComponent = true;
-                }
-            }
-
-            if (isTestComponent) {
-                excludedTestComponents.push(f.targetId);
-            } else {
-                nonTestSemanticFindings.push(f);
-            }
-        }
-
-        if (excludedTestComponents.length > 0) {
-            console.log(`[CHANGE_AMPLIFIER_DETECTOR] Excluded ${excludedTestComponents.length} test components: ${excludedTestComponents.join(', ')}`);
-        }
-
         // Calculate complexity scores for Change Amplifier (Blast Radius)
-        let scoredCandidates = nonTestSemanticFindings.map((f: any) => {
+        let scoredCandidates = semanticFindings.map((f: any) => {
             const size = f.metadata?.size || 0;
             const internalEdges = f.metadata?.internalEdges || 0;
             const externalEdges = f.metadata?.externalEdges || 0;

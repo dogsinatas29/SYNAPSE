@@ -13,6 +13,14 @@ export interface ScopeConfigResult {
     source: 'CLI_FLAG' | 'ENV_VAR' | 'VSCODE_SETTINGS' | 'PROJECT_CONFIG' | 'DEFAULT_EMPTY';
 }
 
+export interface ScopeToggleResult {
+    action: 'added' | 'removed';
+    pattern: string;
+    configPath: string;
+    patterns: string[];
+    shadowedByVscodeSettings: boolean;
+}
+
 export class ScopeResolver {
     private patterns: string[];
     private source: ScopeConfigResult['source'];
@@ -51,7 +59,7 @@ export class ScopeResolver {
             const vscodeSettingsPath = path.join(workspaceRoot, '.vscode', 'settings.json');
             if (fs.existsSync(vscodeSettingsPath)) {
                 try {
-                    const settings = JSON.parse(fs.readFileSync(vscodeSettingsPath, 'utf8'));
+                    const settings = ScopeResolver.parseJsonc(fs.readFileSync(vscodeSettingsPath, 'utf8'));
                     if (settings['synapse.analysis.scopeExclusions'] !== undefined) {
                         const val = settings['synapse.analysis.scopeExclusions'];
                         ScopeResolver.validatePatterns(val);
@@ -85,6 +93,171 @@ export class ScopeResolver {
         // Default empty
         console.log(`[SCOPE_CONFIG] Loaded scopeExclusions from: DEFAULT_EMPTY (count: 0)`);
         return new ScopeResolver([], 'DEFAULT_EMPTY');
+    }
+
+    public static buildPatternForTarget(projectRoot: string, targetFsPath: string, isDir: boolean): string {
+        const relPath = path.relative(projectRoot, targetFsPath).replace(/\\/g, '/').replace(/\/+$/, '');
+        if (!relPath || relPath === '.' || relPath === '..' || relPath.startsWith('../') || path.isAbsolute(relPath)) {
+            throw new Error('INVALID_TARGET: Target must be a file or subfolder inside the workspace root.');
+        }
+        const pattern = isDir ? `${relPath}/**` : relPath;
+        ScopeResolver.validatePatterns([pattern]);
+        return pattern;
+    }
+
+    public static toggleScopeExclusion(projectRoot: string, targetFsPath: string, isDir: boolean): ScopeToggleResult {
+        const pattern = ScopeResolver.buildPatternForTarget(projectRoot, targetFsPath, isDir);
+        const configPath = path.join(projectRoot, 'synapse.config.json');
+
+        let config: Record<string, any> = {};
+        if (fs.existsSync(configPath)) {
+            let parsed: any;
+            try {
+                parsed = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+            } catch (err: any) {
+                throw new Error(`INVALID_CONFIG: Failed to parse synapse.config.json (${err?.message || err})`);
+            }
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                throw new Error('INVALID_CONFIG: synapse.config.json must be a JSON object');
+            }
+            config = parsed;
+        }
+
+        let existing: string[] = [];
+        if (config.scopeExclusions !== undefined) {
+            ScopeResolver.validatePatterns(config.scopeExclusions);
+            existing = [...config.scopeExclusions];
+        }
+
+        const idx = existing.indexOf(pattern);
+        let action: 'added' | 'removed';
+        if (idx !== -1) {
+            existing.splice(idx, 1);
+            action = 'removed';
+        } else {
+            existing.push(pattern);
+            action = 'added';
+        }
+
+        config.scopeExclusions = existing;
+        fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n', 'utf8');
+
+        let shadowedByVscodeSettings = false;
+        const vscodeSettingsPath = path.join(projectRoot, '.vscode', 'settings.json');
+        if (fs.existsSync(vscodeSettingsPath)) {
+            try {
+                const settings = ScopeResolver.parseJsonc(fs.readFileSync(vscodeSettingsPath, 'utf8'));
+                shadowedByVscodeSettings = settings?.['synapse.analysis.scopeExclusions'] !== undefined;
+            } catch {
+                shadowedByVscodeSettings = false;
+            }
+        }
+
+        return {
+            action,
+            pattern,
+            configPath,
+            patterns: existing,
+            shadowedByVscodeSettings
+        };
+    }
+
+    private static parseJsonc(raw: string): any {
+        const text = raw.charCodeAt(0) === 0xFEFF ? raw.slice(1) : raw;
+
+        // Pass 1: Strip // and /* */ comments outside double-quoted strings
+        let noComments = '';
+        let inString = false;
+        let escaped = false;
+        for (let i = 0; i < text.length; i++) {
+            const ch = text[i];
+            if (inString) {
+                noComments += ch;
+                if (escaped) {
+                    escaped = false;
+                } else if (ch === '\\') {
+                    escaped = true;
+                } else if (ch === '"') {
+                    inString = false;
+                }
+                continue;
+            }
+            if (ch === '"') {
+                inString = true;
+                noComments += ch;
+                continue;
+            }
+            if (ch === '/' && text[i + 1] === '/') {
+                i += 2;
+                while (i < text.length && text[i] !== '\n') {
+                    i++;
+                }
+                if (i < text.length && text[i] === '\n') {
+                    noComments += '\n';
+                }
+                continue;
+            }
+            if (ch === '/' && text[i + 1] === '*') {
+                i += 2;
+                let closed = false;
+                while (i < text.length) {
+                    if (text[i] === '*' && text[i + 1] === '/') {
+                        i += 1;
+                        closed = true;
+                        break;
+                    }
+                    if (text[i] === '\n') {
+                        noComments += '\n';
+                    }
+                    i++;
+                }
+                if (!closed) {
+                    noComments += '/*';
+                    break;
+                }
+                continue;
+            }
+            noComments += ch;
+        }
+
+        // Pass 2: Strip trailing commas before } or ] outside strings
+        let cleaned = '';
+        inString = false;
+        escaped = false;
+        for (let i = 0; i < noComments.length; i++) {
+            const ch = noComments[i];
+            if (inString) {
+                cleaned += ch;
+                if (escaped) {
+                    escaped = false;
+                } else if (ch === '\\') {
+                    escaped = true;
+                } else if (ch === '"') {
+                    inString = false;
+                }
+                continue;
+            }
+            if (ch === '"') {
+                inString = true;
+                cleaned += ch;
+                continue;
+            }
+            if (ch === ',') {
+                let j = i + 1;
+                while (
+                    j < noComments.length &&
+                    (noComments[j] === ' ' || noComments[j] === '\t' || noComments[j] === '\r' || noComments[j] === '\n')
+                ) {
+                    j++;
+                }
+                if (j < noComments.length && (noComments[j] === '}' || noComments[j] === ']')) {
+                    continue;
+                }
+            }
+            cleaned += ch;
+        }
+
+        return JSON.parse(cleaned);
     }
 
     private static validatePatterns(patterns: any): void {

@@ -68,8 +68,9 @@ export class FindingReportAdapter {
         const o2Count = uniqueO2.size;
         
         if (o2Count > 0) {
-            contentO2 += `Finding:\nTop ${o2Count} dependency roots observed (ranked by outgoing fan-out).\n\n`;
+            contentO2 += `Finding:\nTop ${o2Count} static dependency roots observed as architecture exploration candidates (ranked by outgoing fan-out).\n\n`;
             contentO2 += this.formatDetailedFindings(uniqueO2, o2Count, "O2", ['inDegree', 'outDegree']);
+            contentO2 += `\n> Note: These static dependency roots are structural exploration candidates only and do not guarantee runtime execution entry points or an optimal code reading order.\n`;
             
             o2Findings.forEach(f => {
                 if (f.findingId) traceReportConsume(f.findingId, 'ONBOARDING_REPORT', 'onboarding.entry_points');
@@ -80,7 +81,7 @@ export class FindingReportAdapter {
         }
         
         sections.push({
-            title: "O2 — Dependency Root Observation",
+            title: "O2 — Architecture Exploration Candidates (Static Dependency Roots)",
             content: contentO2
         });
 

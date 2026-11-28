@@ -110,6 +110,6 @@ export const QUESTION_DICTIONARY: Record<string, ReportQuestionContract> = {
         vocabulary: ["DEPENDENCY_ROOT"],
         supportingPatterns: ["DEPENDENCY_ROOT"],
         allowedEvidence: ["inDegree", "outDegree"],
-        interpretationGuide: "Dependency roots are files with zero observed incoming dependency edges and at least one observed outgoing dependency edge in the analyzed graph."
+        interpretationGuide: "Static dependency roots are files with zero observed incoming dependency edges and at least one observed outgoing dependency edge in the analyzed graph. They can serve as architecture exploration candidates when orienting in a codebase, but do not indicate actual runtime execution entry points or an optimal reading order."
     }
 };

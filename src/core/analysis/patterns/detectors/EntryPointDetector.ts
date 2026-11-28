@@ -100,7 +100,7 @@ export class EntryPointDetector implements PatternDetector {
                     evidenceId: `E-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
                     type: "EXECUTION_METRIC",
                     sourceId: targetId,
-                    description: `Observable root entry point with outDegree=${topExec.fanOut || 0}, inDegree=${topExec.fanIn || 0}`,
+                    description: `Observed static dependency root with outDegree=${topExec.fanOut || 0}, inDegree=${topExec.fanIn || 0}`,
                     filePath: targetId,
                     graphNodeId: topExec.id,
                     metadata: {

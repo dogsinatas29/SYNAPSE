@@ -12,8 +12,8 @@ SYNAPSE는 소스 코드를 탐색 가능한 아키텍처 맵으로 변환하여
 엔지니어가 대규모 소프트웨어 시스템 전반의 의존성, 실행 흐름,
 병목 현상, 그리고 시스템 전체의 상호작용을 시각화할 수 있게 해줍니다.
 
-[![Version](https://img.shields.io/badge/version-v0.3.34.75-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.75)
-[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.75-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.75)
+[![Version](https://img.shields.io/badge/version-v0.3.34.76-brightgreen.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.76)
+[![Latest Release](https://img.shields.io/badge/latest-v0.3.34.76-orange.png)](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.76)
 ![Status](https://img.shields.io/badge/status-Experimental-blue.png)
 
 [🇺🇸 English Version](./README.md)
@@ -190,7 +190,7 @@ SYNAPSE는 `SYNAPSE_THEME.EDGES` / `getEdgeStyle`을 통해 논리적 연결과 
 ### 1. 확장 프로그램 설치
 [Releases](https://github.com/dogsinatas29/SYNAPSE/releases)에서 최신 `.vsix` 파일을 다운로드하고 다음 명령을 실행하세요:
 ```bash
-code --install-extension synapse-visual-architecture-v0.3.34.75.vsix
+code --install-extension synapse-visual-architecture-v0.3.34.76.vsix
 ```
 
 ### 2. 캔버스 실행
@@ -453,7 +453,7 @@ SYNAPSE는 관찰된 구조와 해석을 명확히 구분합니다. 증거가 �
 
 - **Virtual Debug:** 구조적 관찰, 검증 결과 및 이를 뒷받침하는 증거를 추적합니다.
 - **Architect:** 숙련된 엔지니어가 시스템 구조, 핵심 노드, 경계 및 의존성 관계를 이해할 수 있도록 돕습니다.
-- **Onboarding:** 새로운 기여자가 가용한 증거의 범위 내에서 진입점과 주요 구조 영역을 탐색할 수 있도록 안내합니다.
+- **Onboarding:** 새로운 기여자가 가용한 증거의 범위 내에서 아키텍처 탐색 후보(관측된 수신 의존성이 없는 정적 의존성 루트, Static Dependency Roots)와 주요 구조 영역을 탐색할 수 있도록 안내합니다. 이는 실제 런타임 실행 진입점이나 최적의 코드 읽기 순서를 보장하지 않습니다.
 
 보고서는 분석 파이프라인에서 검증된 결과만을 제시합니다. 독자가 보고된 결론을 뒷받침하는 관찰 및 메트릭으로 다시 추적할 수 있도록 상세 증거는 항상 검사 가능한 상태로 유지되어야 합니다.
 
@@ -532,6 +532,7 @@ SYNAPSE는 코드 중심 개발의 한계를 극복하기 위해 만들어졌습
 
 | 버전 | 릴리스 날짜 | 설명 |
 | :---: | :---: | :--- |
+| **v0.3.34.76** | 2026-11-28 | **O2 의미 정합성 보완 (`Static Dependency Roots` / `Architecture Exploration Candidates`)**: O2 탐지 알고리즘(`inDegree === 0 && outDegree > 0`), 원본 SSoT(`project_state.json`), 그래프 데이터는 변경하지 않고 온보딩 보고서 표현과 Evidence 설명을 O2의 실제 정체성에 맞게 정렬했습니다. `FindingReportAdapter.ts`(O2 제목을 `O2 — Architecture Exploration Candidates (Static Dependency Roots)`로 변경, Finding 리드 정정, 실제 런타임 실행 진입점 및 최적 코드 읽기 순서 비보장 `> Note:` 추가, `onboarding.entry_points` 키 유지), `ReportContract.ts`(O2 `interpretationGuide` 보완), `EntryPointDetector.ts`(`DEPENDENCY_ROOT` Evidence `description` 정합화 및 하위 호환용 `type: "EXECUTION_METRIC"` 유지) 3개 파일을 정밀 수정했습니다. 격리 Phase 5 검증(실행 예외 기록 포함: `tsc --noEmit`, 단위 테스트 `6/6` 스위트·`40/40` 테스트, `ScopeResolver` 검증, Godot/VSCode Before/After Diff 동등성) 및 실제 5개 코드베이스(Godot, AntennaPod, PostgreSQL, VS Code, Linux Kernel) 신규 생성 보고서 직접 확인·교차 검토를 완료했습니다.<br>**범위 및 알려진 한계점**: 실제 런타임 실행 진입점 탐지는 이번 범위 제외(향후 `E3` 후보), Phase D-2 Policy C는 `DEFERRED — SEMANTIC REVIEW REQUIRED` 유지, 원시 JSON Evidence의 `type: "EXECUTION_METRIC"` 필드는 하위 호환성을 위해 유지됩니다. |
 | **v0.3.34.75** | 2026-11-28 | **선언적 분석 범위 제외(`scopeExclusions`), SSoT 분리·원자적 Re-Bootstrap, IDE 리포트 UX 및 안정화**: 원본 `project_state.json`과 측정 그래프를 보존한 채 리포트 후보 선정(O2/A1/E2)에서만 선언 경로(`thirdparty/**`, `tests/**` 등)를 제외하는 `ScopeResolver`(`CLI > 환경변수 > .vscode/settings.json(JSONC) > synapse.config.json`)와 리포트 헤더 `Declared Scope Exclusions` / `Scope Exclusion Accounting`·Partial-Match 표기를 도입했습니다. VS Code 탐색기 우클릭 **`SYNAPSE: Toggle Analysis Scope Exclusion`**(단일·다중 선택, 폴더 `<folder>/**` 자동 정규화, 기존 `synapse.config.json` 키 보존)을 추가했습니다. 캔버스 좌표(`LayoutStorage`)와 사용자 편집(`UserGraphStorage`)을 불변 SSoT에서 분리하고, `CanvasPanel`의 Re-Bootstrap 이중 쓰기·선행 초기화를 제거하여 `BootstrapEngine` 단일 쓰기 소유권을 확립했으며, `liteBootstrap()` 원자적 교체(`atomicSaveProjectState`)와 7대 편집 선행 가드를 구현했습니다. `NodeBuilder`의 루트 `tests/...` 테스트 분류 우회를 교정하고, `diagnostic_log.txt` 쓰기를 `SYNAPSE_WRITE_DIAGNOSTIC_LOG=1` Opt-In(기본 OFF)으로 전환했으며, Full Jest(`6/6` 스위트·`40/40` 테스트 PASS) 정상화, Onboarding/Architect `workspaceRoot` 누락 수정, `VirtualDebugger` 리포트 오류 표출, 전 보고서 버튼 `withProgress` 진행 알림 및 2중 중복 클릭 방지 가드를 적용했습니다.<br>**보고서 알려진 한계점 (Known Limitations)**: C/C++ 프로젝트에서 CALL 엣지 유입으로 인해 실제 진입점(`main.cpp`)의 `inDegree > 0`이 되어 `fanIn === 0` 기준을 탈락하고 말단 구현 파일이 `inDegree = 0`을 유지하며 상위로 올라오는 O2 진입점 역전 현상이 잔존합니다 (Phase D-2 Policy C 검토는 `DEFERRED — SEMANTIC REVIEW REQUIRED`로 보류되었으며, O2는 `STATIC DEPENDENCY ROOT` 지표로 유지됩니다). |
 | **v0.3.34.74** | 2026-11-11 | **빌드 자산 격리, Rust 로컬 크레이트 해석 및 리포트 품질 개선**: NodeBuilder에 빌드 및 패키징 스크립트 격리 원칙($V_{\text{build}} \cap V_{\text{app}} = \varnothing$)을 적용하여 빌드 메타데이터 파일이 런타임 그래프로 누출되는 현상을 원천 차단했습니다. ReferenceResolver에 Rust 워크스페이스/로컬 크레이트 해석기를 탑재하여 멀티 크레이트 프로젝트의 유령 노드(Ghost)를 대폭 축소했습니다. 아키텍처 리포트(O2/A1/E2) 전면 고도화: O2 섹션 제목의 불필요한 확장자 나열 제거, A1 및 E2 랭킹에 동적 P90 상위 10% 컷오프(`ceil(0.1 * N)`) 적용, 비결정론적 슬라이스 설명 문구를 팩트 기반 기준으로 교체, 마크다운 표 소수점 3자리 통일, 가상 노드 식별자 불일치(`Node.id === Node.filePath`)를 해결했습니다.<br>**보고서 알려진 한계점 (Known Limitations)**: (1) 최상위 루트 테스트 경로(`tests/...`)의 선두 슬래시 누락으로 인해 NodeBuilder의 테스트 컴포넌트 필터가 우회되는 현상, (2) 명시적 스코프 경계 선언이 없어 thirdparty/vendored 코드가 상위 후보군에 잔존하는 문제, (3) C/C++ 프로젝트에서 CALL 엣지로 인해 실제 진입점(`main.cpp`)의 `inDegree > 0`이 되어 `fanIn === 0` 기준을 탈락하고 말단 구현 파일이 상위로 올라오는 O2 진입점 역전 현상이 보고되었습니다. |
 | [**v0.3.34.73.fix1**](https://github.com/dogsinatas29/SYNAPSE/releases/tag/v0.3.34.73.fix1) | 2026-10-10 | **무한 부트스트랩(EROFS) 해결 및 UX 개선**: 샌드박스 외 파일 생성 시 크래시 및 무한 재시도 현상 수정. `.inc`, `.inl`, `.hh` 스캐너 지원을 통해 누락되었던 핵심 엣지 593건 복구 완료. 화면 줌 비율에 맞춰 클러스터 헤더 이동 판정 범위를 동적으로 확대하여 편의성 대폭 개선. |

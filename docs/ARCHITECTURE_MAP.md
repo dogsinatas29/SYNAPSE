@@ -41,13 +41,28 @@ Validation Engine은 Reporting의 하위 시스템이 아니라 엔진의 독립
 ---
 
 ## 2. ROOT Structure (디렉터리 트리 및 산출물)
-*Last Updated: v0.3.34.75 (2026-11-28)*
+*Last Updated: v0.3.34.76 (2026-11-28)*
 
-### 2.1 📂 Source Directory Tree (v0.3.34.75)
+### 2.1 📂 Source Directory Tree (v0.3.34.76)
 ```text
 .
+├── .agents
+│   ├── rules
+│   │   ├── canvas-rendering.md
+│   │   ├── core-pipeline-ssot.md
+│   │   └── reporting-layer.md
+│   └── skills
+│       ├── edit-report
+│       │   └── SKILL.md
+│       ├── milestone-release
+│       │   └── SKILL.md
+│       └── synapse-validation
+│           └── SKILL.md
 ├── demo
 │   └── canvas-engine.js
+├── docs
+│   ├── ARCHITECTURE_MAP.md
+│   └── determinism.md
 ├── scripts
 │   ├── debug
 │   │   └── debug_entrypoint_detector.ts
@@ -436,6 +451,7 @@ Validation Engine은 Reporting의 하위 시스템이 아니라 엔진의 독립
 ├── synapse-visual-architecture-v0.3.34.73_fix1.vsix
 ├── synapse-visual-architecture-v0.3.34.74.vsix
 ├── synapse-visual-architecture-v0.3.34.75.vsix
+├── synapse-visual-architecture-v0.3.34.76.vsix
 ├── synapse.config.json
 ├── tsconfig.json
 └── webpack.config.js
@@ -455,12 +471,12 @@ Validation Engine은 Reporting의 하위 시스템이 아니라 엔진의 독립
 | `src/core/build/` | 🟢 Active (v0.3.34.74) | 빌드 산출물 메타데이터 수집 어댑터 (`BuildMetadataAdapter.ts`, `BuildMetadataTypes.ts`)[cite: 2] |
 | `src/core/analysis/ScopeResolver.ts` | 🟢 Active (v0.3.34.75) | Tier 3 선언적 범위 제외 해석기 (CLI > ENV > `.vscode/settings.json` JSONC > `synapse.config.json` First-Win, `parseJsonc()`, `buildPatternForTarget()`, `toggleScopeExclusion()`) |
 | `src/core/layout/` | 🟢 Active (v0.3.34.75) | `LayoutStorage.ts`, `UserGraphStorage.ts` — UI 캔버스 좌표 분리 저장소 및 사용자 오버레이 레이어 저장소 (`project_state.json` 불변 격리) |
-| `src/core/analysis/patterns/detectors/EntryPointDetector.ts` | 🟢 Active (v0.3.34.75) | 진입점(O2) 감지기; `NodeRole.TEST` 필터링 + `ScopeResolver` 기반 O2 후보 제외 (엄격 `inDegree=0` 유지) |
+| `src/core/analysis/patterns/detectors/EntryPointDetector.ts` | 🟢 Active (v0.3.34.76) | O2 정적 의존성 루트(`STATIC DEPENDENCY ROOT`) 감지기 (`inDegree=0 && outDegree>0`); `NodeRole.TEST` 필터링 + `ScopeResolver` 기반 O2 후보 제외, Evidence `description` 정적 의존성 루트 문구 정합화 (`type: "EXECUTION_METRIC"` 호환 유지) |
 | `src/core/analysis/patterns/detectors/SystemCoreDetector.ts` | 🟢 Active (v0.3.34.75) | 시스템 코어(A1) 감지기; 레거시 `testNodeRatio >= 0.8` 필터 제거, `ScopeResolver` Full-Match 제외 및 Partial-Match 메타데이터 기록, P90 컷오프 및 결정론적 2차 정렬 |
 | `src/core/analysis/patterns/detectors/ChangeAmplifierDetector.ts` | 🟢 Active (v0.3.34.75) | 변경 증폭기(E2) 감지기; 레거시 `testNodeRatio >= 0.8` 필터 제거, `ScopeResolver` Full-Match 제외 및 Partial-Match 메타데이터 기록, P90 컷오프 및 결정론적 2차 정렬 |
-| `src/core/reporting/FindingReportAdapter.ts` | 🟢 Active (v0.3.34.75) | E2, O2, A1~A5 정규 리포트 본문 렌더링, Partial-Match `Scope Status` 렌더링, `toPrecision(3)` 가드 및 모수 비율 동기화 |
+| `src/core/reporting/FindingReportAdapter.ts` | 🟢 Active (v0.3.34.76) | E2, O2, A1~A5 정규 리포트 본문 렌더링, O2 제목(`Architecture Exploration Candidates (Static Dependency Roots)`)·Finding 리드·런타임 실행 진입점/최적 읽기 순서 비보장 `> Note:` 반영 (`onboarding.entry_points` 키 유지), Partial-Match `Scope Status` 렌더링, `toPrecision(3)` 가드 및 모수 비율 동기화 |
 | `src/core/reporting/ReportBundleGenerator.ts` | 🟢 Active (v0.3.34.75) | 3대 정규 보고서(`ARCHITECT_REPORT`, `ONBOARDING_REPORT`, `SIMULATION_DEBUG`) 생성기; `Declared Scope Exclusions` / `Scope Exclusion Accounting` 헤더 렌더링 및 `context.workspaceRoot` 자동 보완 |
-| `src/core/reporting/ReportContract.ts` | 🟢 Active (v0.3.34.74) | A1~O2 리포트 지원 패턴, 허용 증거 및 A1 controlScore 사실적 해석 가이드 명세[cite: 2] |
+| `src/core/reporting/ReportContract.ts` | 🟢 Active (v0.3.34.76) | A1~O2 리포트 지원 패턴, 허용 증거, A1 controlScore 및 O2 `interpretationGuide`(정적 의존성 루트 정의 및 실행 진입점/최적 읽기 순서 비보장) 해석 가이드 명세 |
 | `src/core/reporting/BoundaryAnalysisReportBuilder.ts` | 🟡 Diagnostic | 정규 계약을 우회하는 디버그/진단용 덤프 빌더 (`REJECTED_CANDIDATE` 기록 용도)[cite: 2] |
 | `src/core/ReferenceResolver.ts` | 🟢 Active (v0.3.34.74) | 참조/심볼 해석기; Rust `Cargo.toml` 로컬 크레이트 경로 매핑 및 미초기화 서브모듈 방어[cite: 2] |
 | `src/core/NodeBuilder.ts` | 🟢 Active (v0.3.34.75) | 노드 생성기; 루트 `tests/...` 경로를 포함한 세그먼트 기반 `NodeRole.TEST` 분류 보강 및 빌드 자산 격리 |
@@ -469,6 +485,8 @@ Validation Engine은 Reporting의 하위 시스템이 아니라 엔진의 독립
 | `RULES.md` | 유지 | 프로젝트 코딩 규칙 및 아키텍처 제약 문서[cite: 2] |
 | `synapse.config.json` | 유지 | 시냅스 아키텍처 규칙 및 `scopeExclusions` 설정 보관 파일 |
 | `.synapseignore` | 유지 | Gitignore-style 제외 패턴; 프로젝트 스캔/분석/시각화에서 파일 필터링[cite: 2] |
+| `.agents/rules/` | 🟢 Active (v0.3.34.76) | `AGENTS.md` 하네스 라우팅 도메인 불변 규칙 3종 (`canvas-rendering.md`, `core-pipeline-ssot.md`, `reporting-layer.md`) |
+| `.agents/skills/` | 🟢 Active (v0.3.34.76) | `AGENTS.md` 하네스 라우팅 작업 워크플로우 스킬 3종 (`edit-report`, `milestone-release`, `synapse-validation`) |
 | `ui/index.html` | 변경됨 | 캔버스 웹뷰 마크업 및 UI 요소 (`LINES (No Badges)` 엣지 가시성 버튼 포함)[cite: 2] |
 | `ui/synapse-theme.js` | 유지 | 웹뷰 전용 UI 테마 컬러 및 스타일링 데이터[cite: 2] |
 | `ui/i18n.js` | 🟢 Active | 정적 마크업 메뉴, 버튼, 패널 제목 다국어 지원 로직 (`data-i18n`)[cite: 2] |
@@ -484,7 +502,7 @@ Validation Engine은 Reporting의 하위 시스템이 아니라 엔진의 독립
 | `src/core/canvas-engine/` | Active | `CanvasEngine`, `Intent`, `PhaseGate`, `StateManager`, `RuleEngine`, `VisualRuleBook`, `SpatialRuleBook`, `ValidationHarness`, `ScenarioRunner`, `RenderProtocol` (10개 파일)[cite: 2] |
 | `src/core/transaction/` | Active | `CommitManager`, `ExecutionLayer`, `VerificationLayer`, `ProjectStateSerializer` — 상태 변경 트랜잭션 무결성 검증[cite: 2] |
 | `src/core/projection/` | Active | `ProjectionLayer`, `RuleStore` — 추상화된 설계 룰을 시각적 레이어에 투영[cite: 2] |
-| `src/core/reporting/` | 🟢 Active | `OnboardingReportBuilder`, `ArchitectReportBuilder` 등 의존성 없는 순수 리포트 뷰[cite: 2] |
+| `src/core/reporting/` | 🟢 Active (v0.3.34.76) | `ReportBundleGenerator`, `FindingReportAdapter`, `ReportContract`, `EvidenceViewerBuilder` 중심의 3대 정규 보고서 파이프라인 (`OnboardingReportBuilder.ts`는 v0.3.34.71 이후 정규 온보딩 번들 경로 미호출, 파일·미사용 import만 잔존) |
 | `src/core/simulation/` | 🟢 Active | `TopologyOverlay`, `SimulationSession`, `DiffBuilder` — 기존 구조 파괴 없이 가상 Action과 Undo를 테스트하는 What-if 시뮬레이터[cite: 2] |
 | `src/core/StateAuditPipeline.ts` | 🟢 Active | Anomaly, FSMAudit, Propagation을 연결하는 뷰/시뮬레이션 전단 오케스트레이터[cite: 2] |
 | `src/core/FailurePropagator.ts` | 🟢 Active | 노드 고장에 따른 정적 파급 효과(Blast Radius) 연산기 (`IGraphView` 추상화)[cite: 2] |

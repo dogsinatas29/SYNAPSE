@@ -304,24 +304,6 @@ Clusters created by clients connected to the network are clearly distinguished i
 
 ![Network Attached Cluster](assets/network_attached_cluster.png)
 
-### 5. Adaptive Scale Profile
-To proactively prevent browser lockups in massive monorepo environments, SYNAPSE analyzes the graph scale on project load and automatically applies the optimal visibility profile.
-
-![Adaptive Scale Profile](assets/profile.png)
-
-#### Scale Score Formula
-The project scale score is calculated using the following formula:
-> **`Scale Score` = `Nodes` + `(Edges × 5)` + `(Clusters × 10)`**
-
-When the score exceeds the safety threshold (`500,000`), the **EXTREME_SCALE** profile is triggered, enforcing the following settings to control visual density and rendering overhead:
-
-#### Auto-Applied Settings (`EXTREME_SCALE`)
-- `[x] Show Nodes`: Rendering enabled
-- `[x] Show Edges`: Rendering enabled (with LOD optimization)
-- `[ ] Show External Clusters`: **Off (Hide)** — Hides hundreds of external dependency package nodes to immediately cut rendering overhead (can be manually re-enabled in the visibility panel if needed).
-- `[ ] Show Heatmap`: **Off (Hide)** — Disables real-time traffic heatmap calculations.
-- `[x] Roots Only`: **On (Roots Only)** — Keeps only top-level root clusters expanded and collapses all sub-clusters at depth 2 and below to maintain a clean macro overview.
-
 ---
 
 ## 🌾 Harvest

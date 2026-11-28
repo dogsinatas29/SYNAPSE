@@ -303,29 +303,7 @@ SYNAPSE는 방대한 아키텍처를 효과적으로 관리하기 위해 **클�
 
 ![Network Attached Cluster](assets/network_attached_cluster.png)
 
-### 5. 자동 스케일 프로파일 (Adaptive Scale Profile)
-초거대 모노레포 환경에서 브라우저가 과부하로 인해 멈추는(Lockup) 것을 선제적으로 방지하기 위해, SYNAPSE는 프로젝트 로드 시 그래프 규모를 분석하여 최적의 가시성 프로파일을 자동 적용합니다.
-
-![Adaptive Scale Profile](assets/profile.png)
-
-#### 규모 분석 공식 (Scale Score)
-프로젝트 규모 점수는 다음 공식을 통해 산정됩니다:
-> **`Scale Score` = `노드 수(Nodes)` + `(엣지 수(Edges) × 5)` + `(클러스터 수(Clusters) × 10)`**
-
-점수가 안전 임계값(예: 500,000점)을 초과하면 **EXTREME_SCALE** 프로파일이 발동하며, 시각적 정보량과 렌더링 부하를 제어하기 위해 다음 설정이 강제 적용됩니다:
-
-#### 자동 적용 항목 (EXTREME_SCALE 기준)
-- `[x] 노드 표시`: 렌더링 유지
-- `[x] 엣지 표시`: 렌더링 유지 (LOD 최적화 적용)
-- `[ ] 익스터널 클러스터 표시`: **꺼짐(Hide)** - 수백 개의 외부 의존성(External Packages) 노드들을 화면에서 숨겨 렌더링 부하를 즉시 삭감합니다. (필요 시 가시성 패널에서 수동으로 다시 켤 수 있습니다.)
-- `[ ] 히트맵 표시`: **꺼짐(Hide)** - 실시간 트래픽 연산을 중지합니다.
-- `[x] 루트 클러스터만 표시`: **활성화(Roots Only)** - 대륙 단위의 최상위 폴더(Root)만 펼쳐두고, 2-Depth 이하의 모든 하위 폴더들을 전부 접음(Collapse) 상태로 초기화하여 광활한 시야를 확보합니다.
-
 ---
-
-
-
-
 
 ## 🌾 Harvest
 
